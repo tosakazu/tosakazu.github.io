@@ -19,3 +19,7 @@ Hello **world!** My name is *User* @Japan.
     :::python
     print('hello world!')
 
+テスト$x=x^2$
+$$
+y=f(x)
+$$

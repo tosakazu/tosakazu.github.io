@@ -1,5 +1,5 @@
 AUTHOR = 'tosakazu'
-SITENAME = 'SSBU Another Banzuke'
+SITENAME = 'みんなのランキング スマブラSP - Minna-no Ranking SSBU'
 SITEURL = "https://tosakazu.github.io/"
 
 PATH = "content"
@@ -34,3 +34,5 @@ DEFAULT_PAGINATION = 10
 # Uncomment following line if you want document-relative URLs when developing
 # RELATIVE_URLS = True
 STATIC_PATHS = ['data']
+PLUGIN_PATHS = ['pelican-plugins']
+PLUGINS = ['render_math']
