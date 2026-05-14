@@ -1,0 +1,415 @@
+# event_id=1622014 event_name=KOWLOON_SP count=414 tournament=tournament/kowloon-18
+None	3365626	ななしの
+None	2795089	とらきちアイス
+None	2400645	わし
+None	3364817	オーバー
+None	1838658	虹のゴキブリ
+None	959187	モーリス
+None	3364986	ちょとたんま | ちょとたんま
+None	3164684	もかち
+None	1840022	この
+None	2237240	SFS/しき
+None	2492275	HAMUN
+None	1788914	ゐわ
+None	1843474	かるび
+None	2205343	ruku
+None	3168281	ともえ
+None	2894347	せーーーん
+None	1824630	こいけ
+None	3069539	ハヤブサ
+None	2971470	崩壊へのかけ橋
+None	1858290	なさ
+None	2123911	しぇる
+None	2330237	integral
+None	1907997	おむつ
+None	3361136	ふーりん
+None	2407203	木綿豆腐
+None	2968487	ニフ
+None	1817891	すみひら
+None	214894	Suinoko
+None	3234930	かいしゃん
+None	1838725	ろま
+None	926139	くり
+None	3363036	Orfèvre
+None	3363323	08091458744 | サワッディー
+None	1787715	ZETA | らる
+None	1691390	ちょんれん
+None	1532207	どしろーと
+None	1691675	nzm
+None	2081746	ハルーワスウィート
+None	2807546	とるて
+None	3225119	ともぴと
+None	1701814	Te-sHi
+None	2374451	芽亜
+None	2236501	マナフィ
+None	1870182	SNG | つゆだく
+None	3361135	ぴゅや
+None	3365239	ジェシカR
+None	1887651	近藤ブレス
+None	2346479	エるン
+None	3275208	かまぼこくえYO
+None	1853865	るみる
+None	1815232	にやえ
+None	2207468	えす
+None	1859104	やっほい
+None	2968488	おもちカテキン
+None	1787030	Az/あず
+None	2364224	Artsn(アルチザン)
+None	2447265	バクオト
+None	3363694	えーる
+None	2132645	つばさ(しょたがきぶひどう)
+None	1003880	えある*ころねすきー
+None	1017485	eyuki
+None	2047898	しゅりけんふぃっしんぐ
+None	836465	E36 | Hurt
+None	2079099	まくら
+None	925386	ねたん
+None	1453370	みきはと
+None	3364352	np | napo
+None	3365578	あず
+None	1894384	TERAHORNS | あいうえおかん
+None	1931086	しろ/はじめ
+None	1637955	エスケー
+None	2968486	TRA
+None	2930366	バツイチのバーバパパ
+None	3174316	イルカくん
+None	3287504	Kiku
+None	2132685	こうや
+None	3366351	奇跡
+None	2128713	おぎみー
+None	2244372	かえ
+None	2059444	コアリクイLOVE
+None	1858093	しゃきしゃき
+None	2416204	あべJr.
+None	1843544	Kiko
+None	2518678	ハムたけ_公竹
+None	1842479	セイ.エーケーエー.スギ
+None	3354822	たまぶくろきんじろう
+None	2252382	かきP
+None	1002311	FENNEL | Miya
+None	3366496	うい
+None	1689037	からあげ
+None	1941110	ガッツ
+None	3282255	kazunoko
+None	1792760	TERAHORNS | きょっきょー
+None	2270132	むきむきがいこつ
+None	2016128	ふぶ余
+None	2085373	いーぐる
+None	2928190	ジョニー
+None	1856651	わんしー
+None	3366809	シゲ
+None	1815290	AREA310 | ドラ右
+None	1704949	AREA310 | TG(トリグリ)
+None	3158459	ネスアンチ
+None	2914890	ガパス
+None	2912857	アオハナピエロ
+None	2327899	ライスヘッド
+None	1858965	ひろ
+None	3197632	ぐらたんのすけ
+None	2702442	サカアキ
+None	1876251	スモーク
+None	3361060	ドカ右
+None	1861458	crebow くりぼー
+None	1309481	黒船
+None	2128780	つもりんご
+None	1858126	かまきり
+None	3361159	るか
+None	2658415	MfA | よわスラ
+None	2565825	そうま
+None	401093	EGS | OMNaoto
+None	2893008	Khaku(けーはく)
+None	2216351	たけとんぼ
+None	1858969	なり
+None	1634432	はしおき
+None	957886	Kishiri
+None	2548684	から
+None	2332151	様
+None	1931160	ふるあ
+None	529856	Nukunuku
+None	2497422	すずら
+None	3355379	もっちもちなおもち
+None	964513	ふみおー/Fumi_Oh
+None	1535173	Bee | taguyan
+None	1738336	R2G | ゆきらと
+None	3362291	のあ
+None	3362221	りおりま
+None	3202950	テク
+None	843081	源三郎/GENtheBlow
+None	3362275	カシウス
+None	1993896	おかし
+None	2163781	Lv7
+None	2052114	mio
+None	855994	テツクズ
+None	2131899	ふつうくん
+None	3024527	だいななそーち
+None	2124578	へし
+None	2782073	ゼロール/Zeroll
+None	1328472	さゆりん
+None	1788892	狐狐
+None	3023729	User.9
+None	1805730	ゆーふぉ
+None	2175211	けん
+None	3296825	かゆい
+None	2093138	まるれり
+None	2699958	hara
+None	2205262	DaiDai
+None	357207	Yone
+None	3318131	のん
+None	1672088	おとや
+None	3361293	ちるたろう
+None	2000197	まじっく
+None	2282649	がりがりがいこつ
+None	2059450	Hisa
+None	1337016	AKはにゅ
+None	2510595	かわさん
+None	2508102	KU | いなばこうし#星詠み
+None	2245568	radon
+None	1838623	QG | とど
+None	3113765	Kony
+None	2260025	GMa
+None	1875566	RU | とめいと
+None	3077694	YCR
+None	1912170	ビシャビシャヤマイモ
+None	1842410	KdU | こあ
+None	3069386	ワンタ
+None	1520970	SOL | Marcos/まるこす
+None	2168251	kei2525
+None	3361077	バリスタ
+None	3049851	とかげ
+None	1788648	ハルナコ
+None	2129644	はるわた
+None	1999150	振り酢
+None	3023761	あきみや
+None	2162543	KdU | FujiHa
+None	2197660	ミジンコ
+None	1871074	いかろす
+None	2240667	サナ
+None	930935	KBTIT
+None	1858782	キラ
+None	3361049	さてつssr
+None	2449294	いしポン
+None	3152405	ドラゴンくん
+None	2163816	けん/KENsma管理人
+None	1681905	Tuden
+None	2244465	ながれ
+None	1851317	Van
+None	2614460	じゅーさん
+None	3157834	IJ | なるぽちゃん
+None	2370020	たくみ
+None	926998	ZARIQ
+None	2447494	つましや
+None	2637810	マサキ
+None	1635517	ヨガンチュ
+None	840764	わしー
+None	1858963	ウスラカゲ
+None	1904823	久遠
+None	2425260	ヤイギカメハメハ
+None	1843412	ふれあ
+None	1939044	ウラ
+None	3145906	アイプリジグパー
+None	2182336	ゆたまる
+None	708502	AZYU | まつり
+None	3360960	しげ
+None	2628945	わでぃー
+None	1960501	Dieごろう
+None	1814318	うにたま
+None	2078882	ぬこすけ
+None	2326761	けばんが
+None	2951575	ma/まー
+None	2552001	Sku11
+None	2046842	るんるん
+None	1858863	みすみ
+None	1987851	ものくろ
+None	2051138	隊長X
+None	2718725	おーがすと
+None	2519563	はないきのかみ
+None	1814991	きさか
+None	2047521	フラット
+None	288990	かいデデデ
+None	2723462	キノピオ
+None	1562700	カモニラ
+None	3126804	おさる
+None	2432570	マゲドン
+None	2695463	でぃあ
+None	3222132	Reo
+None	2340425	ナイアルラ
+None	3334774	きわみ
+None	2898020	S.S.(エスツー)
+None	2223698	すみ
+None	1823813	EK
+None	2338919	うい
+None	2320886	けー
+None	2355727	こぉぎぃ
+None	2923927	あんちゃん
+None	1910962	まいやん
+None	3137630	チワワ
+None	2571460	コジャ
+None	2574614	うめまよ
+None	1176812	RFJN | 闇落ちのれーにゃん
+None	2009590	うえちょい
+None	2163007	ビーン
+None	2968631	bluu
+None	3164548	れもん
+None	1812084	タイキ
+None	3081729	おば
+None	2280716	ひさめ
+None	2205458	ふー
+None	257160	EGS | Tempra
+None	2164253	浜ぞう
+None	1710915	EGS | wawon
+None	960232	MerCy
+None	2329402	なかぞーの
+None	2549375	にょのknb
+None	2223780	ゴズ
+None	2576928	yonE
+None	2136686	NIX | あるあるさ
+None	387508	akasa
+None	2177661	はとほ
+None	3353910	まこせい
+None	1816059	りお
+None	1352219	K.O.G | エルオン
+None	2825176	make friends
+None	3291336	エア
+None	2099259	ほーきー
+None	1891118	ギンタマ
+None	3360748	れんん
+None	2101012	しーのまる
+None	1729086	まっT
+None	1871154	おしぼり
+None	2018057	けんたまろ
+None	2522186	なかたえ
+None	1660537	Celestia
+None	2022793	クーティニー
+None	1858129	みるかげ
+None	1852705	ヱヰリリ
+None	3292843	ラナオ
+None	2560502	あめ
+None	2005060	やっと
+None	388117	saboten
+None	2583783	なはたや
+None	2165393	ttエリソン
+None	3144495	aira
+None	2322501	きつつき
+None	1970450	ヤコーン
+None	2349793	よう
+None	998485	でんこた/DenKOTA
+None	1210760	マッスオ
+None	1630665	fren
+None	1791137	RMY | マネーライト
+None	1896261	leiser
+None	1858103	いふてぃ
+None	1037104	tama
+None	2775960	はと/Hato
+None	3359902	YOZE
+None	1790264	いなかもん
+None	355666	Karoegu
+None	2718193	ろろろ
+None	1442610	あすと
+None	2279824	えだよー
+None	3134690	Butterfree
+None	1858953	flea
+None	936904	おいもや
+None	2526245	シオン
+None	2939639	むーる
+None	399533	KRB | AyaLin
+None	2053217	りんせい!
+None	2768693	うっちー
+None	965020	けんぴ
+None	837691	Lem
+None	3018060	でめ
+None	2164164	影龍
+None	992678	Kometani
+None	1838626	ナオ
+None	1348835	KR | うっちー
+None	823609	よーよー
+None	2060250	badTube | 龍神
+None	3104926	user
+None	2511491	さや
+None	1830261	あすみ
+None	2932430	くさびもち
+None	3278522	よしぴ
+None	2967313	HU | しゅうかい
+None	2892298	ギラファ
+None	3177221	ガノハラ
+None	2215482	かいと
+None	355880	Waishi
+None	2365806	トミトミ
+None	2335909	プレア
+None	1838577	Peric
+None	2158936	UOG | マロロン
+None	1858964	あぶすていん
+None	2968507	くらり
+None	3360612	テング
+None	2583764	たに
+None	2865048	しまとら
+None	2344815	ぽん
+None	2019779	SYU
+None	2843007	HaQ
+None	1584000	UZ(ユリ)
+None	1858084	れんじー
+None	2067834	アドネス | マイルドなH.O/Mild na H.O
+None	2028351	はいよう/Haiyou
+None	1981194	アクシズ
+None	2531336	wacchi
+None	2965884	Aokage
+None	2713572	DPS | りんごあめ
+None	2518570	ハカタコ
+None	2768870	へんぷく
+None	2378547	K.T.こあくん
+None	1859032	alm
+None	2304331	かいあい
+None	1819607	デミヤ
+None	1392435	Insulin
+None	2039287	ソロア
+None	825272	ナキ
+None	1559550	SUZUNE
+None	2023900	AOMORI
+None	2774333	ステノン
+None	2209359	kosyo
+None	2402188	Alus
+None	1994231	やぅや
+None	1892085	ふぃん
+None	1817719	アスタリスク
+None	999128	かしや
+None	1874609	れじか
+None	1983939	スラリン
+None	2907036	KU | ゆり
+None	2966202	Ninu
+None	2205220	りっちー
+None	1468612	ブドー酒
+None	2130962	みこ
+None	2603978	るーぺ
+None	1817784	くしゃ
+None	1994265	とんがりあご
+None	1927802	ろーたす
+None	1994099	双月
+None	2197142	Aqua
+None	3290331	やさい80
+None	1798499	右肩 | はすまち
+None	2520667	キャスさん
+None	2110626	レオン
+None	2548203	ごりしん
+None	1888896	南郷
+None	1838147	ゆとり
+None	2568082	DPS | SHOOさん
+None	2383718	そーわ
+None	3360513	しろぱぷ
+None	2649414	DPS | NIKAtto
+None	2568072	DPS | コロタヌキ
+None	1563520	ロッキー
+None	2031803	Luruca
+None	2680122	なぎぃ
+None	1994223	バクドウ
+None	2934592	Raymond
+None	2845550	スパフラ
+None	1912268	ぬーぶごりら
+None	2839454	リーゼロッテ
+None	1459722	クウヤ
+None	394393	Komugiko
+None	1994105	霊園
+None	370968	yasaikakiage
+None	1913479	ざわ
+None	1858109	ハイト
+None	1652457	カラス
+None	853186	愚羅素裸組 | あのあ
+None	2130382	くたま

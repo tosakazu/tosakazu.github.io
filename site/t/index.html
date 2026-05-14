@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>大会詳細 — SPSP</title>
+<style>
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Hiragino Sans", sans-serif;
+    background: #ffffff; color: #111827; font-size: 14px;
+    -webkit-text-size-adjust: 100%;
+  }
+  .nav {
+    background: #ffffff; border-bottom: 1px solid #e5e7eb;
+    padding: 10px 16px; display: flex; gap: 12px; align-items: center;
+    flex-wrap: wrap; position: sticky; top: 0; z-index: 10;
+  }
+  .nav a { color: #6b7280; text-decoration: none; font-size: 13px; padding: 4px 8px; border-radius: 4px; }
+  .nav a:hover { color: #111827; background: #f3f4f6; }
+  .nav .brand { font-size: 15px; color: #111827; font-weight: 600; margin-right: 8px; }
+  .nav .brand a { color: #111827; font-size: 15px; padding: 0; }
+
+  main { max-width: 480px; margin: 0 auto; padding: 16px; }
+
+  #share-card {
+    background: linear-gradient(180deg, #fafafa 0%, #ffffff 30%, #ffffff 100%);
+    border: 1px solid #e5e7eb; border-radius: 12px;
+    padding: 16px 14px; overflow: hidden;
+  }
+
+  /* Hero */
+  .hero .name {
+    font-size: 22px; font-weight: 700; color: #111827;
+    line-height: 1.25; word-break: break-word;
+  }
+  .hero .event {
+    font-size: 13px; color: #6b7280; margin-top: 4px;
+  }
+  .hero .meta-line {
+    margin-top: 8px; font-size: 12px; color: #374151;
+  }
+  .hero .meta-line .chip {
+    display: inline-block; padding: 2px 8px; border-radius: 10px;
+    background: #f3f4f6; font-size: 11px; margin-right: 4px;
+  }
+  .hero .meta-line .chip.wk { background: #dbeafe; color: #1e40af; }
+  .hero .meta-line .chip.sm { background: #fef3c7; color: #92400e; }
+  .hero .meta-line .chip.pre { background: #f3e8ff; color: #6b21a8; }
+
+  /* Podium (Top 3) */
+  .podium {
+    display: grid; grid-template-columns: 1fr 1.1fr 1fr; gap: 6px;
+    align-items: end; margin: 16px 0;
+  }
+  .podium-card {
+    background: #f9fafb; border: 1px solid #f3f4f6; border-radius: 10px;
+    padding: 10px 6px; text-align: center;
+  }
+  .podium-card.gold { background: linear-gradient(135deg, #fde68a, #f9fafb); border-color: #fbbf24; }
+  .podium-card.silver { background: linear-gradient(135deg, #f3f4f6, #f9fafb); border-color: #9ca3af; }
+  .podium-card.bronze { background: linear-gradient(135deg, #ddd6fe, #f9fafb); border-color: #a78bfa; }
+  .podium-card .medal { font-size: 22px; line-height: 1; }
+  .podium-card .place { font-size: 11px; color: #6b7280; margin: 2px 0; }
+  .podium-card .player {
+    font-size: 12px; color: #111827; font-weight: 600;
+    word-break: break-word; line-height: 1.2;
+    display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
+  }
+  .podium-card .player a { color: #111827; text-decoration: none; }
+  .podium-card .player a:hover { color: #dc2626; }
+  .podium-card .grank { font-size: 10px; color: #9ca3af; margin-top: 4px; }
+
+  /* Sections */
+  .section { margin-top: 14px; }
+  .section h2 {
+    font-size: 12px; color: #374151; text-transform: uppercase; letter-spacing: 0.08em;
+    margin: 0 0 8px; font-weight: 600;
+  }
+  /* Highlight rows */
+  .hl-row {
+    display: grid; grid-template-columns: 32px 1fr auto; gap: 8px;
+    padding: 8px 0; border-bottom: 1px solid #f3f4f6; align-items: center;
+  }
+  .hl-row:last-child { border-bottom: none; }
+  .hl-row .place { font-size: 16px; font-weight: 700; color: #111827; text-align: center; font-variant-numeric: tabular-nums; }
+  .hl-row .place.gold { color: #92400e; }
+  .hl-row .place.silver { color: #4b5563; }
+  .hl-row .place.bronze { color: #6b21a8; }
+  .hl-row .player-info {
+    font-size: 12px; line-height: 1.3;
+    word-break: break-word;
+    min-width: 0;
+  }
+  .hl-row .player-info a { color: #dc2626; text-decoration: none; font-weight: 500; font-size: 13px; }
+  .hl-row .player-info .sub { color: #9ca3af; font-size: 10px; margin-top: 2px; }
+  .hl-row .v {
+    text-align: right; font-variant-numeric: tabular-nums; font-weight: 700;
+    color: #dc2626; font-size: 14px;
+  }
+  .hl-row .v.green { color: #16a34a; }
+  .hl-row .v small { font-size: 10px; color: #9ca3af; font-weight: 400; display: block; }
+
+  /* Match upset row (winner vs loser) */
+  .upset-row {
+    display: grid; grid-template-columns: 1fr auto; gap: 10px;
+    padding: 8px 0; border-bottom: 1px solid #f3f4f6; align-items: center;
+  }
+  .upset-row:last-child { border-bottom: none; }
+  .upset-row .match-info { font-size: 12px; line-height: 1.45; min-width: 0; word-break: break-word; }
+  .upset-row .match-info a { color: #dc2626; text-decoration: none; font-weight: 600; font-size: 13px; }
+  .upset-row .match-info .seed { color: #9ca3af; font-size: 11px; }
+  .upset-row .match-info .arrow { color: #9ca3af; margin: 0 4px; }
+  .upset-row .match-info .loser-line { color: #6b7280; margin-top: 1px; }
+  .upset-row .match-info .loser-line a { color: #6b7280; font-weight: 500; font-size: 12px; }
+  .upset-row .uf {
+    text-align: right; font-variant-numeric: tabular-nums; font-weight: 700;
+    color: #16a34a; font-size: 14px; white-space: nowrap;
+  }
+  .upset-row .uf small { font-size: 10px; color: #9ca3af; font-weight: 400; display: block; }
+
+  /* Standings full table */
+  .standings-controls { display: flex; gap: 6px; margin-bottom: 6px; flex-wrap: wrap; }
+  .standings-controls input {
+    flex: 1; min-width: 120px;
+    padding: 7px 10px;
+    background: #f9fafb; color: #111827;
+    border: 1px solid #e5e7eb; border-radius: 6px;
+    font-size: 12px; font-family: inherit;
+  }
+  table.std-table {
+    width: 100%; border-collapse: collapse; font-size: 12px;
+  }
+  table.std-table th, table.std-table td {
+    padding: 6px 4px; text-align: left;
+    border-bottom: 1px solid #f3f4f6;
+  }
+  table.std-table th {
+    background: #f9fafb; color: #6b7280; font-weight: 600;
+    font-size: 10px; text-transform: uppercase; letter-spacing: 0.05em;
+  }
+  table.std-table td.num { text-align: right; font-variant-numeric: tabular-nums; }
+  table.std-table td a { color: #dc2626; text-decoration: none; }
+  table.std-table td a:hover { text-decoration: underline; }
+  table.std-table td .grank { color: #9ca3af; font-size: 10px; }
+  table.std-table .pos { color: #16a34a; }
+  table.std-table .neg { color: #dc2626; }
+
+  /* Share */
+  .share-row { display: flex; gap: 8px; margin-top: 14px; }
+  .share-btn {
+    flex: 1; padding: 10px 12px; border: none; border-radius: 8px;
+    font-size: 13px; font-weight: 600; cursor: pointer; font-family: inherit;
+  }
+  .share-btn.save { background: #16a34a; color: #fff; }
+  .share-btn.share { background: #dc2626; color: #fff; }
+  .share-btn:disabled { background: #d1d5db; cursor: wait; }
+
+  .footer { text-align: center; color: #9ca3af; font-size: 11px; padding: 22px 0 16px; }
+  .empty-msg { text-align: center; color: #6b7280; padding: 24px 16px; font-size: 13px; }
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <span class="brand"><a href="../index.html">← SPSP</a></span>
+  <a href="../overview.html">概要</a>
+  <a href="../details.html">詳細</a>
+  <a href="../seed/">シード生成</a>
+</nav>
+
+<main>
+  <div id="loading" class="empty-msg">読み込み中…</div>
+  <div id="not-found" class="empty-msg" style="display:none">大会が見つかりません。URL を確認してください。</div>
+
+  <div id="share-card" style="display:none">
+    <div id="share-top">
+    <div class="hero">
+      <div class="name" id="name">—</div>
+      <div class="event" id="event">—</div>
+      <div class="meta-line" id="meta-line"></div>
+    </div>
+
+    <div class="podium" id="podium"></div>
+
+    <div class="section">
+      <h2>💥 アップセット TOP 5 (シード差での番狂わせマッチ)</h2>
+      <div id="top-upsets"></div>
+    </div>
+
+    <div class="section">
+      <h2>💎 順位評価pt 獲得 TOP 5</h2>
+      <div id="top-points"></div>
+    </div>
+
+    <div class="section">
+      <h2>📈 直対評価 上昇 TOP 5</h2>
+      <div id="top-bt"></div>
+    </div>
+    </div><!-- /#share-top -->
+
+    <div class="section">
+      <h2>📋 全順位表</h2>
+      <div class="standings-controls">
+        <input type="search" id="std-search" placeholder="プレイヤー名で検索…" autocomplete="off">
+      </div>
+      <table class="std-table">
+        <thead><tr>
+          <th>#</th><th>プレイヤー</th><th class="num">seed</th><th class="num">SPR</th>
+          <th class="num">順位評価pt</th><th class="num">直対変化</th>
+        </tr></thead>
+        <tbody id="std-tbody"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="share-row" id="share-row" style="display:none">
+    <button class="share-btn save" id="save-btn" style="display:none">画像で保存</button>
+    <button class="share-btn share" id="share-btn">URL を共有</button>
+  </div>
+
+  <div class="footer" id="footer-info">
+    <span class="site-version" style="font-size:11px;color:#9ca3af">__SITE_VERSION__</span>
+  </div>
+</main>
+
+<script>
+'use strict';
+
+const params = new URLSearchParams(location.search);
+const TID = parseInt(params.get('id') || location.hash.replace(/^#/, '') || '0');
+
+let META = null;
+let TOURNEY = null;
+
+function fmtRank(r) { return r != null && r > 0 ? r.toLocaleString() : '—'; }
+
+async function load() {
+  if (!TID || TID < 1) { showNotFound(); return; }
+  try {
+    const [metaRes, tRes] = await Promise.all([
+      fetch('../meta.json'),
+      fetch(`../tournaments/${TID}.json`),
+    ]);
+    if (!tRes.ok) { showNotFound(); return; }
+    META = await metaRes.json();
+    TOURNEY = await tRes.json();
+    render();
+  } catch (e) {
+    console.error(e);
+    showNotFound();
+  }
+}
+
+function showNotFound() {
+  document.getElementById('loading').style.display = 'none';
+  document.getElementById('not-found').style.display = '';
+}
+
+function escapeHtml(s) {
+  return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+
+function playerLink(p) {
+  if (p.user_id == null) return escapeHtml(p.display);
+  return `<a href="../p/?uid=${p.user_id}">${escapeHtml(p.display)}</a>`;
+}
+
+function placeClass(p) {
+  if (p === 1) return 'gold';
+  if (p === 2) return 'silver';
+  if (p === 3) return 'bronze';
+  return '';
+}
+
+function render() {
+  document.getElementById('loading').style.display = 'none';
+  document.getElementById('share-card').style.display = '';
+  document.getElementById('share-row').style.display = '';
+  document.title = `${TOURNEY.name} — SPSP`;
+
+  // Hero
+  document.getElementById('name').textContent = TOURNEY.name;
+  document.getElementById('event').textContent = TOURNEY.event_name || '';
+  const chips = [];
+  if (TOURNEY.is_weekend) chips.push('<span class="chip wk">休日</span>');
+  if (TOURNEY.is_smapa) chips.push('<span class="chip sm">スマパ</span>');
+  if (TOURNEY.is_pre) chips.push('<span class="chip pre">プレ大会</span>');
+  document.getElementById('meta-line').innerHTML =
+    `${TOURNEY.date}${TOURNEY.end_date && TOURNEY.end_date !== TOURNEY.date ? ' 〜 ' + TOURNEY.end_date : ''} · ` +
+    `<b style="color:#111827">${TOURNEY.nent || TOURNEY.standings.length}</b> 名 ${chips.join('')}`;
+
+  // Podium
+  const top3 = TOURNEY.standings.slice(0, 3);
+  const podiumOrder = [top3[1], top3[0], top3[2]]; // silver, gold, bronze visually
+  const cls = ['silver', 'gold', 'bronze'];
+  const medals = ['🥈', '🥇', '🥉'];
+  document.getElementById('podium').innerHTML = podiumOrder.map((p, i) => {
+    if (!p) return '<div></div>';
+    const grank = p.global_ranks && p.global_ranks.ensemble != null
+      ? `<div class="grank">全国 #${p.global_ranks.ensemble}</div>` : '';
+    return `<div class="podium-card ${cls[i]}">
+      <div class="medal">${medals[i]}</div>
+      <div class="place">${p.place} 位</div>
+      <div class="player">${playerLink(p)}</div>
+      ${grank}
+    </div>`;
+  }).join('');
+
+  // Highlights
+  const hl = TOURNEY.highlights || {};
+  function renderHl(arr, valueFn, emptyMsg) {
+    if (!arr || !arr.length) return `<div class="empty-msg" style="padding:12px">${emptyMsg}</div>`;
+    return arr.map(p => {
+      const grank = p.global_ranks && p.global_ranks.ensemble != null
+        ? `<div class="sub">全国 #${p.global_ranks.ensemble}</div>` : '';
+      return `<div class="hl-row">
+        <span class="place ${placeClass(p.place)}">${p.place}</span>
+        <div class="player-info">${playerLink(p)}${grank}</div>
+        <div class="v">${valueFn(p)}</div>
+      </div>`;
+    }).join('');
+  }
+  function renderMatchUpsets(arr) {
+    if (!arr || !arr.length) return `<div class="empty-msg" style="padding:12px">アップセットなし</div>`;
+    return arr.map(u => {
+      const w = u.winner, l = u.loser;
+      return `<div class="upset-row">
+        <div class="match-info">
+          <div>${playerLink(w)} <span class="arrow">▶</span> <span class="seed">seed ${w.seed} → ${w.place}位</span></div>
+          <div class="loser-line">vs ${playerLink(l)} <span class="seed">seed ${l.seed} (${l.place}位)</span></div>
+        </div>
+        <div class="uf">+${u.uf}<small>UF</small></div>
+      </div>`;
+    }).join('');
+  }
+  document.getElementById('top-upsets').innerHTML = renderMatchUpsets(hl.top_match_upsets);
+  const ELO_PER_UNIT = (META.params && META.params.ELO_PER_UNIT) || 29.48;
+  const TJPR_SCALE = (META.params && META.params.TJPR_ELO_SCALE) || 100;
+  document.getElementById('top-points').innerHTML = renderHl(hl.biggest_point_gains,
+    p => `+${((p.tjpr_raw || 0) * TJPR_SCALE).toFixed(1)}<small>pt</small>`,
+    'ポイント獲得者なし');
+  document.getElementById('top-bt').innerHTML = renderHl(hl.top_bt_gains,
+    p => `<span class="green">+${(p.bt_d * ELO_PER_UNIT).toFixed(1)}</span>`,
+    'BT 上昇なし');
+
+  // Full standings
+  renderStandings();
+}
+
+let stdFilter = '';
+function renderStandings() {
+  const tbody = document.getElementById('std-tbody');
+  const ELO_PER_UNIT = (META.params && META.params.ELO_PER_UNIT) || 29.48;
+  const TJPR_SCALE = (META.params && META.params.TJPR_ELO_SCALE) || 100;
+  const ft = stdFilter.toLowerCase();
+  const rows = TOURNEY.standings.filter(p => !ft || (p.display || '').toLowerCase().includes(ft));
+  tbody.innerHTML = rows.map(p => {
+    const grank = p.global_ranks && p.global_ranks.ensemble != null
+      ? `<span class="grank">全国#${p.global_ranks.ensemble}</span>` : '';
+    const sprStr = p.spr != null
+      ? (p.spr > 0 ? `<span class="pos">+${p.spr}</span>` : (p.spr < 0 ? `<span class="neg">${p.spr}</span>` : '0'))
+      : '—';
+    const pts = (p.tjpr_raw || 0) > 0 ? '+' + (p.tjpr_raw * TJPR_SCALE).toFixed(1) : '—';
+    const btd = (p.bt_d || 0) !== 0
+      ? `<span class="${p.bt_d > 0 ? 'pos' : 'neg'}">${p.bt_d > 0 ? '+' : ''}${(p.bt_d * ELO_PER_UNIT).toFixed(1)}</span>`
+      : '—';
+    return `<tr>
+      <td class="num">${p.place != null ? p.place : '—'}</td>
+      <td>${playerLink(p)}<br>${grank}</td>
+      <td class="num">${p.seed != null ? p.seed : '—'}</td>
+      <td class="num">${sprStr}</td>
+      <td class="num">${pts}</td>
+      <td class="num">${btd}</td>
+    </tr>`;
+  }).join('');
+}
+
+document.getElementById('std-search').addEventListener('input', e => {
+  stdFilter = e.target.value;
+  renderStandings();
+});
+
+// ── Share ──
+let HTML2CANVAS_LOADED = null;
+function ensureHtml2Canvas() {
+  if (HTML2CANVAS_LOADED) return HTML2CANVAS_LOADED;
+  HTML2CANVAS_LOADED = new Promise((resolve, reject) => {
+    const s = document.createElement('script');
+    s.src = 'https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js';
+    s.onload = resolve; s.onerror = reject;
+    document.head.appendChild(s);
+  });
+  return HTML2CANVAS_LOADED;
+}
+
+async function capturePng() {
+  await ensureHtml2Canvas();
+  const target = document.getElementById('share-top') || document.getElementById('share-card');
+  const w = target.offsetWidth;
+  const h = target.offsetHeight;
+  const canvas = await window.html2canvas(target, {
+    backgroundColor: '#ffffff', scale: 2, useCORS: true, logging: false,
+    width: w, height: h,
+    windowWidth: w, windowHeight: h,
+  });
+  return new Promise(resolve => canvas.toBlob(resolve, 'image/png'));
+}
+
+function safeName() {
+  return (TOURNEY && TOURNEY.name || 'tournament').replace(/[\\/:*?"<>|]/g, '_');
+}
+
+document.getElementById('save-btn').addEventListener('click', async (e) => {
+  e.target.disabled = true; e.target.textContent = '生成中...';
+  try {
+    const blob = await capturePng();
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url; a.download = `smash_banzuke_${safeName()}.png`;
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
+  } catch (err) {
+    alert('画像生成に失敗: ' + err.message);
+  } finally {
+    e.target.disabled = false; e.target.textContent = '画像で保存';
+  }
+});
+
+document.getElementById('share-btn').addEventListener('click', async (e) => {
+  const shareUrl = location.href;
+  const shareData = {
+    title: TOURNEY.name,
+    text: `${TOURNEY.name} (${TOURNEY.nent} 名) — SPSP`,
+    url: shareUrl,
+  };
+  try {
+    if (navigator.share) {
+      await navigator.share(shareData);
+    } else {
+      await navigator.clipboard.writeText(shareUrl);
+      alert('URL をクリップボードにコピーしました');
+    }
+  } catch (err) {
+    if (err.name === 'AbortError') return;
+    try {
+      await navigator.clipboard.writeText(shareUrl);
+      alert('URL をコピーしました');
+    } catch (e2) {
+      alert('共有失敗: ' + err.message + '\n' + shareUrl);
+    }
+  }
+});
+
+load();
+</script>
+</body>
+</html>

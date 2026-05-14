@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SPSP — 詳細解説</title>
+<style>
+  * { box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Hiragino Sans", sans-serif;
+    margin: 0; padding: 0;
+    background: #ffffff; color: #111827;
+  }
+  .nav {
+    background: #ffffff; border-bottom: 1px solid #e5e7eb;
+    padding: 12px 24px; display: flex; gap: 24px; align-items: center;
+    position: sticky; top: 0; z-index: 10;
+  }
+  .nav a { color: #6b7280; text-decoration: none; font-size: 14px; padding: 4px 8px; border-radius: 4px; }
+  .nav a:hover { color: #111827; background: #f3f4f6; }
+  .nav a.current { color: #dc2626; background: #f3f4f6; }
+  .nav .brand { font-size: 16px; color: #111827; font-weight: 600; margin-right: 16px; }
+
+  main { max-width: 920px; margin: 0 auto; padding: 32px 24px; }
+  h1 { font-size: 26px; color: #111827; margin: 0 0 8px; }
+  h2 { font-size: 20px; color: #dc2626; margin: 32px 0 12px; padding-bottom: 6px; border-bottom: 1px solid #e5e7eb; }
+  h3 { font-size: 16px; color: #111827; margin: 20px 0 8px; }
+  p { line-height: 1.7; color: #374151; }
+  ul, ol { line-height: 1.8; color: #374151; }
+  li { margin: 4px 0; }
+  code {
+    background: #ffffff; padding: 2px 6px; border-radius: 4px;
+    font-size: 13px; color: #dc2626; font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  }
+  pre {
+    background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 6px;
+    padding: 12px 16px; overflow-x: auto; font-size: 13px;
+    color: #111827; font-family: ui-monospace, "SF Mono", Menlo, monospace;
+    line-height: 1.5;
+  }
+  .formula {
+    background: #ffffff; border-left: 3px solid #dc2626;
+    padding: 12px 16px; margin: 12px 0;
+    font-family: ui-monospace, "SF Mono", Menlo, monospace;
+    font-size: 14px; color: #dc2626;
+  }
+  .nb {
+    background: #dcfce7; border-left: 3px solid #16a34a;
+    padding: 8px 14px; margin: 12px 0; color: #374151; font-size: 13px;
+  }
+  .warn {
+    background: #fee2e2; border-left: 3px solid #dc2626;
+    padding: 8px 14px; margin: 12px 0; color: #374151; font-size: 13px;
+  }
+  table { border-collapse: collapse; margin: 12px 0; font-size: 13px; }
+  th, td { padding: 6px 12px; border-bottom: 1px solid #e5e7eb; text-align: left; }
+  th { background: #ffffff; color: #374151; }
+  .footer { text-align: center; color: #9ca3af; font-size: 12px; padding: 32px 0 16px; }
+
+  @media (max-width: 720px) {
+    body { -webkit-text-size-adjust: 100%; }
+    .nav { padding: 10px 14px; gap: 12px; font-size: 12px; flex-wrap: wrap; }
+    .nav .brand { font-size: 14px; }
+    main { padding: 20px 14px; }
+    h1 { font-size: 20px; }
+    h2 { font-size: 17px; }
+    h3 { font-size: 14px; }
+    p, ul, ol { font-size: 13px; line-height: 1.6; }
+    pre { font-size: 11px; padding: 8px 10px; }
+    .formula { font-size: 12px; padding: 8px 10px; }
+    table { font-size: 11px; display: block; overflow-x: auto; -webkit-overflow-scrolling: touch; white-space: nowrap; }
+    th, td { padding: 4px 8px; }
+  }
+</style>
+</head>
+<body>
+<nav class="nav">
+  <span class="brand">SPSP</span>
+  <a href="index.html">ランキング</a>
+  <a href="overview.html">概要</a>
+  <a href="details.html" class="current">詳細</a>
+  <a href="seed/">シード生成</a>
+  <a href="seed-upload/">アップロード</a>
+</nav>
+
+<main>
+  <h1>SPSP 詳細解説</h1>
+  <p style="color: #6b7280;">
+    <strong style="color:#111827">SPSP</strong> = <strong style="color:#111827">Saikyo Player SPECIAL</strong>。
+    日本大会対象のスマブラSPプレイヤーランキング。
+    数式とパラメータの全容。概要 (<a href="overview.html" style="color: #dc2626;">overview</a>) を先に読むのを推奨。
+  </p>
+
+  <h2>1. 順位評価 (Banzuke) ポイント計算</h2>
+
+  <p>
+    各大会の bracket 試合を仮想 DE bracket に再配置 (= seed 順にレートで並べる) し、ラウンドごとに「期待される勝ち」を Elo の logistic 公式で計算してポイント化する。
+    プレイヤーの実際の placement に応じて「勝ち上がったラウンド数」分のポイント和を貰う。
+  </p>
+
+  <h3>1.1 gain 関数 (Elo win probability)</h3>
+  <div class="formula">
+    gain(r) = 1 − 1 / (1 + 10<sup>(r − base) / 400</sup>)
+  </div>
+  <p>
+    <code>r</code> は対戦相手の正規化 Elo レート、<code>base</code> はその層のしきい値。
+    base &lt; r なら gain &gt; 0.5、base &gt; r なら gain &lt; 0.5。<br>
+    <code>base</code> は「このランク帯にいる人にとってこのレートの人は脅威か」のしきい値。
+  </p>
+
+  <h3>1.2 ラウンドポイント (m<sub>j</sub>)</h3>
+  <p>
+    DE bracket の各ラウンド <code>j</code> で、そのラウンドの「対戦相手集合」 (= シード位置で確率的に当たる相手) の gain を平均し、ε = 0.01 を足す。
+  </p>
+  <div class="formula">
+    m<sub>j</sub> = ε + mean( max(0, gain(r<sub>opp</sub>)) for opp in round<sub>j</sub> )
+  </div>
+  <p>
+    <code>round<sub>j</sub></code> はラウンド j で当たる相手のシード集合 (DE losers' bracket 構造から導出)。
+    レートが <code>floor</code> 以下なら <code>floor</code> にクリップしてから gain 計算。
+  </p>
+
+  <h3>1.3 大会あたりのポイント</h3>
+  <p>
+    プレイヤーが大会で <code>k</code> ラウンド勝ち上がったら、最初の k 個の <code>m<sub>j</sub></code> を合計:
+  </p>
+  <div class="formula">
+    P(大会) = Σ<sub>j=1..k</sub> m<sub>j</sub>
+  </div>
+  <p>
+    k は <code>k = max_tier_n(nent) − placement_to_tier(place)</code> で計算 (DE bracket の「敗退ラウンド」由来)。
+  </p>
+
+  <h3>1.4 集計 (age decay + top-N + position decay)</h3>
+  <p>各プレイヤーの大会別ポイントに次の重みを掛けて合計:</p>
+  <ul>
+    <li><strong>age decay</strong>: 古い大会ほど重みが小さい。半減期 ~2 年。<br>
+      <code>age_decay = 0.97<sup>days / 30</sup></code> (exp_monthly(0.97))
+    </li>
+    <li><strong>position decay</strong>: 一人のプレイヤーの大会群を <code>P × age_decay</code> で降順ソートし、最初の <code>topN</code> 個は重み 1、その後は <code>pd<sup>i−topN+1</sup></code>。
+    </li>
+  </ul>
+  <div class="formula">
+    score = Σ<sub>i</sub> P<sub>i</sub> × age_decay<sub>i</sub> × pos_factor(i)<br>
+    pos_factor(i) = 1 if i &lt; topN else pd<sup>i − topN + 1</sup>
+  </div>
+
+  <h3>1.5 5 層カスケード</h3>
+  <p>5 層を Lv1 → Lv5 と段階的に絞る:</p>
+  <table>
+    <thead><tr><th>Layer</th><th>対象</th><th>base</th><th>floor</th><th>topN</th><th>pos_decay</th><th>大会フィルタ</th></tr></thead>
+    <tbody>
+      <tr><td>Lv1</td><td>全員</td><td>1700</td><td>350</td><td>1</td><td>0.3</td><td>—</td></tr>
+      <tr><td>Lv2</td><td>top 2048 (by Lv1)</td><td>1900</td><td>700</td><td>3</td><td>0.3</td><td>—</td></tr>
+      <tr><td>Lv3</td><td>top 1024 (by Lv2)</td><td>1900</td><td>700</td><td>3</td><td>0.3</td><td>nent &gt; 24</td></tr>
+      <tr><td>Lv4</td><td>top 512 (by Lv3)</td><td>1900</td><td>700</td><td>3</td><td>0.3</td><td>nent &gt; 24 + 土日祝</td></tr>
+      <tr><td>Lv5</td><td>top 256 (by Lv4)</td><td>1900</td><td>700</td><td>3</td><td>0.3</td><td>nent &gt; 48 + 土日祝</td></tr>
+    </tbody>
+  </table>
+  <p>各プレイヤーは到達した最高 Lv のスコアでランクづけ (Lv5 まで生き残った人は Lv5 で並ぶ、Lv4 止まりの人は Lv4 で並ぶ、…)。</p>
+
+  <div class="nb">
+    <strong>正規化:</strong> 順位評価の gain 関数入力に使う Elo は OpenSkill BT を <code>×29.48</code> して max=2500 にシフト。<br>
+    つまり <code>r</code> は全プレイヤーで一貫したレートになる。
+  </div>
+
+  <div class="nb">
+    <strong>土日祝判定:</strong> 大会の開始日〜終了日 (start.gg endAt) のいずれかが土日祝なら weekend 扱い。
+    金〜土・金〜日のような開催は休日扱い、平日 1 日のみの大会は weekday 扱い。
+  </div>
+
+  <h2>2. 直対評価のベース: OpenSkill BT (Bradley-Terry)</h2>
+
+  <p>
+    OpenSkill BradleyTerryFull はベイズ的に <code>(μ, σ)</code> を試合ごとに更新する。
+    試合確率は <code>P(A wins) = sigmoid((μ<sub>A</sub> − μ<sub>B</sub>) / (β·√2))</code> (σ → 0 時)。
+  </p>
+
+  <h3>2.1 デフォルトパラメータ</h3>
+  <ul>
+    <li>初期 μ = 25, σ = 25/3 ≈ 8.33</li>
+    <li>β = 25/6 ≈ 4.167</li>
+    <li>ordinal = μ − 3·σ (新人は 0)</li>
+  </ul>
+
+  <h3>2.2 Elo 換算</h3>
+  <p>BT の "log-odds 単位" を Elo の "log-odds 単位" に変換する係数:</p>
+  <div class="formula">
+    ELO_PER_UNIT = 400 / (ln(10) · √2 · β) ≈ 29.48
+  </div>
+  <p>
+    つまり 1 ordinal 単位 ≈ 29.48 Elo。<br>
+    <code>elo = ordinal × 29.48</code><br>
+    <code>normalized_elo = elo − (max_elo − 2500)</code> で全プレイヤーの最大を 2500 にシフト。
+  </p>
+
+  <h2>3. 直対評価の gating (M=20)</h2>
+
+  <p>
+    素の BT は全大会の試合を学習するが、「強い人が練習目的で出てる平日大会」が rating を歪める懸念がある。
+    そこで <strong>per-player gating</strong> を導入:
+  </p>
+
+  <h3>3.1 ロジック</h3>
+  <pre>累計大会出場数 tour_count を時系列で running carry
+weekend match: 両プレイヤー更新 (通常通り)
+weekday match:
+  if winner.tour_count &lt;= 20: winner の rating を更新
+  else: winner の rating は固定 (相手から学ばない)
+  if loser.tour_count &lt;= 20: loser の rating を更新
+  else: loser の rating は固定</pre>
+
+  <p>
+    つまり <strong>新人 (≤20 大会) は平日でも学習対象</strong>、<strong>ベテラン (&gt;20 大会) は土日祝の試合だけで学習</strong>。
+    新人 vs ベテランの平日試合では、新人だけ rating が動き、ベテランは動かない (歪み防止)。
+  </p>
+
+  <h3>3.2 なぜ M=20?</h3>
+  <p>
+    4 年スライド評価 (N=196 大会、2023 除外) で M を sweep:
+  </p>
+  <ul>
+    <li>M=10: Top 8 τ −0.032 (劣化)</li>
+    <li>M=15: −0.024 (まだ劣化)</li>
+    <li>M=18: +0.002 (相転移点)</li>
+    <li><strong>M=20: +0.013 (最適、Top 8 改善)</strong></li>
+    <li>M=40: −0.001 (大きすぎ、Top 16 +0.023 改善あり)</li>
+  </ul>
+  <p>M=20 が「小さい M で Top 8 を守りながら Top 32 を伸ばす」スイートスポット。</p>
+
+  <h2>4. 総合評価 (rank avg)</h2>
+
+  <p>順位評価と直対評価の<strong>順位</strong>の単純平均:</p>
+  <div class="formula">
+    smash_banzuke_rank(uid) = sort_by_avg( (順位評価_rank(uid) + 直対評価_rank(uid)) / 2 )
+  </div>
+  <p>
+    スコアそのものではなくランクで平均するので、両方式のスケール差に依存しない。
+    どちらか片方しか rate されていない人 (片方に登場しない) は default = total_player_count + 1 で穴埋め。
+  </p>
+
+  <h2>5. 評価指標と検証 (ざっくり)</h2>
+  <p>4 年スライド評価 (N=196 大会、2026年 1月〜4月含む、2023 除外)、6 種類の評価指標で測定:</p>
+  <ul>
+    <li><strong>Kendall τ</strong>: rank 相関 (scope-restricted)</li>
+    <li><strong>Spearman ρ</strong>: rank 相関 (差分ベース)</li>
+    <li><strong>mean |SPR|</strong>: log<sub>2</sub>(seed/place) の絶対値平均 (= シード誤差)</li>
+    <li><strong>RMSE(SPR)</strong>: SPR の二乗平均</li>
+    <li><strong>Upset rate</strong>: 試合のうち下シード勝ち率</li>
+    <li><strong>Mean UF/match</strong>: log<sub>2</sub>(winner_seed/loser_seed) の試合平均</li>
+  </ul>
+  <p>
+    <strong>総合評価 (順位評価 + 直対評価 avg) が baseline (順位評価 + BT flat avg) と比べて</strong>:
+  </p>
+  <ul>
+    <li>Top 8 τ: +0.013 (大改善、Top 8 -0.061 問題解決)</li>
+    <li>Top 32 τ: +0.019 (大改善)</li>
+    <li>Top 16/64/256 τ: ≈ baseline</li>
+    <li>Top 8 |SPR|: 1.2038 (baseline 1.2043 超え)</li>
+  </ul>
+
+  <h2>6. パラメータまとめ</h2>
+  <table>
+    <thead><tr><th>パラメータ</th><th>値</th><th>意味</th></tr></thead>
+    <tbody>
+      <tr><td>LOOKBACK</td><td>3 年</td><td>直対評価 / 順位評価 学習対象期間</td></tr>
+      <tr><td>age_decay</td><td>0.97<sup>days/30</sup></td><td>月 3% 減衰</td></tr>
+      <tr><td>OSK_BETA</td><td>25/6 ≈ 4.167</td><td>OpenSkill BT 標準</td></tr>
+      <tr><td>ELO_PER_UNIT</td><td>≈ 29.48</td><td>BT ordinal → Elo 換算</td></tr>
+      <tr><td>M (gating)</td><td>20</td><td>累計大会数しきい値</td></tr>
+      <tr><td>default_rate</td><td>1500</td><td>未登場プレイヤーの仮 Elo</td></tr>
+      <tr><td>min_entrants</td><td>8</td><td>大会のフィルタ下限</td></tr>
+    </tbody>
+  </table>
+
+  <h2>7. ソースコード</h2>
+  <p>
+    主要ロジック: <code>ranking_eval/build_tjpr_ranking.py</code><br>
+    詳細レポート: <code>ranking_eval/REPORT_TJPR_BT_GATED.md</code> (4 年スライド評価の経緯)<br>
+    OpenSkill rater: <code>ranking_eval/raters/openskill_rater.py</code><br>
+    Banzuke DE 構造: <code>ranking_eval/smash_banzuke.py</code>
+  </p>
+
+  <div class="footer">
+    Generated by <code>build_tjpr_ranking.py</code> · データソース: start.gg
+    <br><span class="site-version" style="font-size:11px;color:#9ca3af">__SITE_VERSION__</span>
+  </div>
+</main>
+</body>
+</html>

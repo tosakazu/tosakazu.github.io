@@ -1,0 +1,257 @@
+# event_id=1587311 event_name=SP 1on1トーナメント count=256 tournament=tournament/51-10-kurobra51
+None	2541023	とよ
+None	355754	Mao
+None	1520552	シルバワ
+None	1897815	MT | MATTEKUDASAI
+None	2282540	VGBC | かがみもち
+None	1986852	こうくす
+None	868873	蔵屋敷たかじん
+None	3289344	Limit | げむ
+None	2170724	しのみん
+None	214894	Suinoko
+None	2099056	パァ
+None	1309481	黒船
+None	2133480	Shunty
+None	1735794	shinon
+None	1950518	ワニわに
+None	1002311	FENNEL | Miya
+None	927269	HG | Catan2Men
+None	134839	RC | Shuton
+None	710195	NOHOHO
+None	21068	MRG | Umeki
+None	2167149	あおさ
+None	1010984	ash
+None	2351060	れすたー
+None	3309759	ぱぴぽぴ
+None	1311004	momon
+None	1894326	式波
+None	2198793	くるぶし
+None	1816900	てんてん
+None	1408842	MikolRising
+None	2103833	chawa
+None	1447017	ゴリオカ
+None	884622	セラ
+None	2023282	戻り鰹
+None	2062690	Licht/リヒト
+None	837499	おおトロ
+None	1637983	あおわい
+None	1809745	UTeS | みどりまる
+None	2166915	taroco
+None	3153137	ゴンペン
+None	2322500	夕星
+None	1982355	Negu
+None	866419	Hanadon
+None	1731166	やまりん
+None	2378573	ルルカ
+None	1625991	SF | Hawks
+None	1896031	のわーる
+None	1825776	ヨッシー
+None	2954685	スマブラ筋肉 | えす
+None	550435	Lunamado
+None	2971637	なみな
+None	540632	sanada
+None	1817819	Lattemill
+None	2585156	鳥ちゃん
+None	1893177	ともろ
+None	768362	そとこ
+None	2771616	うじゅん
+None	1794155	はらぺっこ
+None	1394034	Sean from somewhere
+None	2031730	ラテ
+None	838663	ユーノ
+None	3189054	ガイ
+None	1663798	音楽の道に進んだ蓮
+None	346254	ZETA | Gackt
+None	2954762	Metakun
+None	2961154	蒼衣
+None	1627732	INS | LiiMac
+None	1453158	わせスマ | しゅぞ
+None	119216	R2G | Kameme
+None	2032871	まさはる
+None	3279251	atomic
+None	2184861	Eizamu
+None	2366819	リノハ
+None	1444097	いーじす/ Ezs
+None	1827509	ゆどうふぃ
+None	1952955	よふみ
+None	2073494	ふせき
+None	3237271	オイル
+None	1454588	kaitake
+None	1881702	わしお
+None	1304178	やまゆー
+None	2660033	うっしー
+None	879667	CLX | ヤマナクション
+None	1454631	タケNOCO
+None	3290423	黒雪姫
+None	3148994	たけもと
+None	1070709	Zandomo
+None	3170729	ヴォルデモートのヒザ
+None	992678	Kometani
+None	2030170	くらわど
+None	2084463	ロトロ
+None	804405	このくるる
+None	2031001	きつかわ
+None	3164548	れもん
+None	2808546	穏(おだ)
+None	1637767	x4ta/かけした
+None	2506496	いぼっち
+None	1788277	raku
+None	838590	定峰下り
+None	1804317	78
+None	2401651	うにずき
+None	838232	ヘーチョ
+None	2164164	影龍
+None	399533	KRB | AyaLin
+None	2551939	dom(ダム)
+None	23654	FILIP
+None	2215547	マルマイン
+None	1894189	いろはすぅ
+None	2031710	とん
+None	2719089	はっせー
+None	2164159	夢幻 | あり
+None	2021205	Yto/ゆと
+None	2195998	ヴァン
+None	2962341	ベロベロマツコマン
+None	1858009	レウィウィ
+None	2701930	まるもん
+None	673064	12thMEATMEOWSF | Hidro
+None	1636751	フィサレミ
+None	1838603	マンと
+None	894226	ポーシャ
+None	217234	ふわ
+None	938479	フゥリ
+None	3355849	Kousuke0908 | こーう
+None	1711785	ResN@o
+None	3165162	カーR
+None	1799717	えも
+None	2067857	ごま
+None	1799958	イシ
+None	1559550	SUZUNE
+None	1531415	カム子の生足美脚ドリル
+None	1949130	とみさ/tomisa
+None	842566	Noi
+None	1894320	ふう
+None	2971188	ちろる
+None	2166535	みそ
+None	2166955	アクア
+None	1942891	ユッシー
+None	911877	R2G | わたる
+None	1636672	M0tsunabE
+None	1530753	おちゃ
+None	1636586	G3 | Chon
+None	1788877	どんぶり
+None	1698074	わにぱち
+None	2150341	いさお
+None	2221320	UOG | オニフヨル
+None	2266422	NIX | インクル
+None	2447470	ルカフェ
+None	1348537	Fern
+None	840764	わしー
+None	3032045	タテツクイヌ
+None	2165593	KAZ
+None	3354981	ユーリンカン
+None	2930042	いざよう
+None	3291975	しゅてぃーぶ
+None	473331	Satau
+None	1904837	ホズエル
+None	2327899	ライスヘッド
+None	381209	Neisu
+None	1820021	えび
+None	927991	BSR | haruka.
+None	2506647	きもかわいい
+None	1469149	もふもふ首輪
+None	608524	mamuu
+None	2158936	UOG | マロロン
+None	2127690	miN
+None	1792751	おんじょうじ
+None	1891924	LVN/レブン
+None	2400645	わし
+None	355792	Hozuki
+None	1855575	Asahi
+None	2406279	fan
+None	1638174	Reno
+None	1157521	アカキクス
+None	1685887	ネルク
+None	955465	ぽこぱんつ
+None	1634606	グーレン
+None	1890252	belle
+None	3177221	ガノハラ
+None	387508	akasa
+None	2965371	らねーる
+None	2168083	なかむ
+None	355765	Arika
+None	2969951	KBGねぷねぷ
+None	301691	アイクラ
+None	1343875	もつだ
+None	2099250	ミリン
+None	1830233	すみくす/SMIX
+None	2511491	さや
+None	1657650	ナエギリ
+None	1653604	れれれ
+None	1629776	なこ
+None	1348835	KR | うっちー
+None	1345723	sol | ラックス
+None	1520970	SOL | Marcos/まるこす
+None	704900	くあ
+None	383068	VARREL | Paseriman
+None	1682744	No.8
+None	398564	magiko
+None	3204717	T-GAMES4.0
+None	2151157	LemozonA
+None	2386927	トロル
+None	658059	カー坊
+None	1893284	しんだ らいおん
+None	2322521	ポピー
+None	2178279	Namu
+None	1889884	AskaMint*
+None	2850219	にじくじゃく
+None	1894917	ざわ...ざわ...
+None	2297275	れいぼん
+None	2727262	Endless (エンドレス)
+None	2158467	こげたごはん
+None	897252	Mondai
+None	3119147	ヨピ
+None	2326761	けばんが
+None	2132927	こう
+None	1701814	Te-sHi
+None	1913400	STORM| | Zacto
+None	2069932	カフェオレ
+None	2449294	いしポン
+None	2552188	なつき
+None	2067834	アドネス | マイルドなH.O/Mild na H.O
+None	863471	もちい
+None	880522	みどるん
+None	1339521	そらら
+None	1810558	Kei
+None	440651	DHC | まっすん
+None	2548203	ごりしん
+None	1681905	Tuden
+None	1638015	リム
+None	1635625	かずひと
+None	2139766	Kirize
+None	1677420	Lambda
+None	2908273	ちゃん
+None	2952960	しろくま
+None	2502040	そると
+None	1931091	ひらさと
+None	676374	kanabunsan
+None	2432471	りんね
+None	443426	A&B
+None	397556	Kuroitsu
+None	926998	ZARIQ
+None	2793309	がぴ
+None	2842031	Dig-DA
+None	1840167	LG3 | ジャイロでいきます
+None	1901141	サウザンド
+None	2031806	カヲル
+None	1815850	リザム
+None	288990	かいデデデ
+None	1660537	Celestia
+None	612598	Squall
+None	959218	mimo
+None	835240	トリガー
+None	918600	おうとつ
+None	2898020	S.S.(エスツー)
+None	2028400	tameigo#OKPG
+None	932508	ふたりのきわみアー!
+None	2167937	MYRs | てすぬー

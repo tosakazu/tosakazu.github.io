@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SPSP — 概要</title>
+<style>
+  * { box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Hiragino Sans", sans-serif;
+    margin: 0; padding: 0;
+    background: #ffffff; color: #111827;
+  }
+  .nav {
+    background: #ffffff; border-bottom: 1px solid #e5e7eb;
+    padding: 12px 24px; display: flex; gap: 24px; align-items: center;
+    position: sticky; top: 0; z-index: 10;
+  }
+  .nav a { color: #6b7280; text-decoration: none; font-size: 14px; padding: 4px 8px; border-radius: 4px; }
+  .nav a:hover { color: #111827; background: #f3f4f6; }
+  .nav a.current { color: #dc2626; background: #f3f4f6; }
+  .nav .brand { font-size: 16px; color: #111827; font-weight: 600; margin-right: 16px; }
+  main { max-width: 920px; margin: 0 auto; padding: 32px 24px; }
+  h1 { font-size: 26px; color: #111827; margin: 0 0 8px; }
+  h2 { font-size: 20px; color: #dc2626; margin: 32px 0 12px; padding-bottom: 6px; border-bottom: 1px solid #e5e7eb; }
+  h3 { font-size: 16px; color: #111827; margin: 20px 0 8px; }
+  p { line-height: 1.7; color: #374151; }
+  .lead { font-size: 16px; color: #6b7280; margin-bottom: 24px; }
+  ul, ol { line-height: 1.8; color: #374151; }
+  code { background: #ffffff; padding: 2px 6px; border-radius: 4px; font-size: 13px; color: #dc2626; }
+
+  /* Cascade pyramid */
+  .pyramid { margin: 24px 0; }
+  .layer {
+    background: #ffffff; border: 1px solid #e5e7eb; border-radius: 8px;
+    padding: 14px 20px; margin: 8px auto; position: relative;
+    transition: transform 0.1s;
+  }
+  .layer:hover { transform: translateY(-1px); border-color: #dc2626; }
+  .layer-1 { width: 100%; background: linear-gradient(135deg, #f3f4f6, #ffffff); }
+  .layer-2 { width: 84%; background: linear-gradient(135deg, #bbf7d0, #bbf7d0); border-color: #16a34a44; }
+  .layer-3 { width: 68%; background: linear-gradient(135deg, #dbeafe, #dbeafe); border-color: #3b82f644; }
+  .layer-4 { width: 52%; background: linear-gradient(135deg, #ede9fe, #ede9fe); border-color: #a78bfa44; }
+  .layer-5 { width: 36%; background: linear-gradient(135deg, #fef3c7, #fde68a); border-color: #fbbf2444; }
+  .layer-title { font-weight: 600; font-size: 15px; margin-bottom: 4px; }
+  .layer-1 .layer-title { color: #6b7280; }
+  .layer-2 .layer-title { color: #16a34a; }
+  .layer-3 .layer-title { color: #2563eb; }
+  .layer-4 .layer-title { color: #a78bfa; }
+  .layer-5 .layer-title { color: #d97706; }
+  .layer-desc { font-size: 12px; color: #6b7280; }
+  .arrow {
+    display: block; text-align: center; color: #dc2626; font-size: 14px;
+    margin: 4px 0;
+  }
+
+  /* Gating illustration */
+  .gating {
+    background: #ffffff; border: 1px solid #e5e7eb; border-radius: 8px;
+    padding: 16px; margin: 16px 0;
+  }
+  .gating-row { display: flex; gap: 16px; align-items: center; margin: 8px 0; }
+  .gating-badge {
+    display: inline-block; padding: 4px 10px; border-radius: 12px; font-size: 12px;
+    background: #fef3c7; color: #d97706; min-width: 110px; text-align: center;
+  }
+  .gating-badge.veteran { background: #dcfce7; color: #16a34a; }
+  .gating-text { font-size: 14px; color: #374151; }
+
+  /* Compute methods */
+  .method-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin: 16px 0; }
+  .method-card {
+    background: #ffffff; border: 1px solid #e5e7eb; border-radius: 8px;
+    padding: 14px 18px;
+  }
+  .method-card h3 { margin-top: 0; }
+  .method-card .pros { color: #16a34a; font-size: 12px; }
+  .method-card .cons { color: #dc2626; font-size: 12px; }
+  .footer { text-align: center; color: #9ca3af; font-size: 12px; padding: 32px 0 16px; }
+
+  @media (max-width: 720px) {
+    body { -webkit-text-size-adjust: 100%; }
+    .nav { padding: 10px 14px; gap: 12px; font-size: 12px; flex-wrap: wrap; }
+    .nav .brand { font-size: 14px; }
+    main { padding: 20px 14px; }
+    h1 { font-size: 20px; }
+    h2 { font-size: 17px; }
+    h3 { font-size: 14px; }
+    .lead { font-size: 13px; }
+    p, ul, ol { font-size: 13px; line-height: 1.6; }
+    .method-grid { grid-template-columns: 1fr; gap: 10px; }
+    .layer { width: 100% !important; padding: 10px 14px; }
+    .layer-title { font-size: 13px; }
+    .layer-desc { font-size: 11px; }
+    .gating-row { flex-direction: column; align-items: flex-start; gap: 4px; }
+    .gating-badge { min-width: 0; }
+  }
+</style>
+</head>
+<body>
+<nav class="nav">
+  <span class="brand">SPSP</span>
+  <a href="index.html">ランキング</a>
+  <a href="overview.html" class="current">概要</a>
+  <a href="details.html">詳細</a>
+  <a href="seed/">シード生成</a>
+  <a href="seed-upload/">アップロード</a>
+</nav>
+
+<main>
+  <h1>SPSP ってなに?</h1>
+  <p class="lead">
+    <strong>SPSP</strong> は <strong>Saikyo Player SPECIAL</strong> の略。
+    日本大会を対象にしたスマブラ SP プレイヤーランキングです。
+    <strong>直接対決</strong> と <strong>大会順位</strong> の二系統を組み合わせて、
+    シード予測精度を最大化することを目指してチューニングされている。
+  </p>
+
+  <h2>計算方式</h2>
+  <p>ランキングは 3 通りの方法で見られる。サイト上でタブ切替できる。</p>
+
+  <div class="method-grid">
+    <div class="method-card">
+      <h3>総合評価 (デフォルト)</h3>
+      <p>総合評価ランキング。順位評価と直対評価の<strong>順位平均</strong>。総合的にバランスが良い。</p>
+      <span class="pros">全 scope で安定</span>
+    </div>
+    <div class="method-card">
+      <h3>順位評価</h3>
+      <p>大会順位ベースのランキング。仮想ブラケットでの「勝ち上がり度合い」をポイント化。<br>直接対決レートを正規化してから入力。</p>
+      <span class="pros">大規模大会で強い</span>
+    </div>
+    <div class="method-card">
+      <h3>直対評価 (M=20)</h3>
+      <p>直接対決ベースのランキング。OpenSkill BT で勝敗を学習。経験 20 大会以下のプレイヤーには平日大会も入れる per-player gating 付き。</p>
+      <span class="pros">アップセット予測力</span>
+    </div>
+  </div>
+
+  <h2>対象大会のフィルタ条件 (順位評価のカスケード)</h2>
+  <p>
+    順位評価では <strong>5 層のカスケード</strong> で計算する。プレイヤーが到達した最高 Lv のスコアでランクづけされる。
+    上の Lv に行くほど「ガチ大会の少数精鋭」だけが残る仕組み。
+  </p>
+
+  <div class="pyramid">
+    <div class="layer layer-1">
+      <div class="layer-title">Lv1 — 全員、フィルタなし</div>
+      <div class="layer-desc">どの大会も計算対象 (3 年以内、min_entrants ≥ 8)。約 3400 大会。</div>
+    </div>
+    <div class="arrow">↓ 上位 2048 が次へ</div>
+    <div class="layer layer-2">
+      <div class="layer-title">Lv2 — top 2048、フィルタなし</div>
+      <div class="layer-desc">Lv1 で上位 2048 入りした人だけ再計算。base/floor も上に。</div>
+    </div>
+    <div class="arrow">↓ 上位 1024 が次へ</div>
+    <div class="layer layer-3">
+      <div class="layer-title">Lv3 — top 1024、nent &gt; 24</div>
+      <div class="layer-desc">中規模以上の大会だけ使う。約 2188 大会。スマパ・平日含む。</div>
+    </div>
+    <div class="arrow">↓ 上位 512 が次へ</div>
+    <div class="layer layer-4">
+      <div class="layer-title">Lv4 — top 512、nent &gt; 24 + 土日祝</div>
+      <div class="layer-desc">中規模かつ土日祝の大会のみ。約 1100 大会。「平日の練習大会」を除外。</div>
+    </div>
+    <div class="arrow">↓ 上位 256 が次へ</div>
+    <div class="layer layer-5">
+      <div class="layer-title">Lv5 — top 256、nent &gt; 48 + 土日祝</div>
+      <div class="layer-desc">本気の大規模土日大会のみ。約 640 大会。メダリスト級。</div>
+    </div>
+  </div>
+
+  <p style="font-size:13px;color:#6b7280;margin-top:8px">
+    ※ <strong>土日祝判定</strong> は大会の開始日〜終了日のいずれかが土日祝かで判定。
+    金〜土の 2 日間開催など、終了日が休日に到達する大会は「土日祝」扱いになる。
+  </p>
+
+  <h2>大会ポイントの集計 (age decay + pos_decay)</h2>
+  <p>
+    プレイヤーの<strong>大会ごとの素点</strong>は集計時に 2 種類の減衰を掛ける:
+  </p>
+  <ul>
+    <li><strong>age_decay (古い大会ほど価値が下がる)</strong>: <code>0.97<sup>days/30</sup></code> = 月 3% 減衰、半減期約 2 年。<br>
+      例: 1ヶ月前 ≈ 0.97、半年前 ≈ 0.83、1年前 ≈ 0.69、2年前 ≈ 0.48、3年前 ≈ 0.33。</li>
+    <li><strong>pos_decay (大会を多く出る人の "下位大会" の影響を抑える)</strong>:
+      プレイヤーの大会群を「素点 × age_decay」で降順ソートし、上位 <code>topN</code> 個は重み 1、それ以降は <code>pd<sup>i−topN+1</sup></code> で減衰。
+      <ul>
+        <li>Lv1: topN = 1, pd = 0.3 (1 大会フル重み、2 つ目以降は急減)</li>
+        <li>Lv2-5: topN = 3, pd = 0.3 (上位 3 大会フル重み、4 つ目以降は 0.3、0.09、0.027... と減衰)</li>
+      </ul>
+    </li>
+  </ul>
+  <div class="nb">
+    <strong>意味:</strong> 「上位 K 大会だけ採用」だと、上位 K 個目と K+1 個目の境目で gain が突然 0 になる。
+    順位評価の pos_decay は連続的に減衰するので、境界での不自然な変動を避けつつ「メジャー大会だけが本質的に重要」を表現できる。
+  </div>
+
+  <h2>直対評価 (M=20) ってなに?</h2>
+  <p>
+    直対評価 (OpenSkill BT) は試合 (winner, loser) の積み重ねで学習する。
+    でも「<strong>平日のスマコミ/スマパ</strong>」は強い選手が練習で出てるだけで本気じゃないケースがある。
+    だから上位帯では除外したい。一方で<strong>新人</strong>は平日でも出てる試合数が少ないので除外しすぎると不安定になる。
+  </p>
+  <p>解決策: <strong>累計大会出場数 (3 年で) ≤ 20 のプレイヤーだけ平日大会も学習対象に含める</strong>。それ以外 (ベテラン) は土日祝の試合のみで学習。</p>
+
+  <div class="gating">
+    <div class="gating-row">
+      <span class="gating-badge">≤ 20 大会</span>
+      <span class="gating-text">→ 平日大会の試合も<strong>学習に含む</strong> (新人保護)</span>
+    </div>
+    <div class="gating-row">
+      <span class="gating-badge veteran">&gt; 20 大会</span>
+      <span class="gating-text">→ 土日祝の試合のみで学習 (練習データを除外)</span>
+    </div>
+  </div>
+
+  <p style="font-size: 13px; color: #6b7280;">
+    平日試合に <strong>新人 vs ベテラン</strong> がある場合は、新人の rating だけ更新され、ベテランの rating は固定 (per-player gating)。
+    これで「強い人が新人をボコっただけのデータ」が rating を歪めない。
+  </p>
+
+  <h2>カスケードとは?</h2>
+  <p>
+    順位評価の <strong>5 層構造</strong> のこと。
+    全員ベースで Lv1 ランキング → 上位だけ抜き出して Lv2 で再ランキング → …と段階的に絞る。
+  </p>
+  <p>
+    各層で「対象大会の質」と「base/floor (gain 関数のしきい値)」を上げて、上位帯の解像度を上げる。
+    上位 256 まで生き残った人は Lv5 のスコアで並ぶ。
+  </p>
+  <p>
+    各境界 (top 256/512/1024/2048) まで届かなかった人は、自分が到達した最高 Lv のスコアで並ぶ。
+    こうやって <strong>「ランク帯ごとに最適な指標」</strong> を使い分けるのがカスケードの利点。
+  </p>
+
+  <h2>もっと詳しく知りたい</h2>
+  <p>
+    各公式 (gain 関数、Elo 換算、age decay) は
+    <a href="details.html" style="color: #dc2626;">詳細解説ページ</a>
+    で説明している。
+  </p>
+
+  <div class="footer">
+    Generated by <code>build_tjpr_ranking.py</code> · LOOKBACK = 3 年 · データソース: start.gg
+    <br><span class="site-version" style="font-size:11px;color:#9ca3af">__SITE_VERSION__</span>
+  </div>
+</main>
+</body>
+</html>

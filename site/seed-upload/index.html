@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SPSP — シードアップロード</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
+<style>
+  * { box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Hiragino Sans", sans-serif;
+    margin: 0; padding: 0;
+    background: #ffffff; color: #111827;
+    -webkit-text-size-adjust: 100%;
+  }
+  .nav {
+    background: #ffffff; border-bottom: 1px solid #e5e7eb;
+    padding: 12px 24px; display: flex; gap: 16px; align-items: center;
+    flex-wrap: wrap;
+    position: sticky; top: 0; z-index: 10;
+  }
+  .nav a { color: #6b7280; text-decoration: none; font-size: 14px; padding: 4px 8px; border-radius: 4px; }
+  .nav a:hover { color: #111827; background: #f3f4f6; }
+  .nav a.current { color: #dc2626; background: #f3f4f6; }
+  .nav .brand { font-size: 16px; color: #111827; font-weight: 600; margin-right: 16px; }
+
+  main { max-width: 640px; margin: 0 auto; padding: 24px 18px 80px; }
+  h1 { font-size: 22px; color: #111827; margin: 0 0 6px; }
+  .subtitle { font-size: 13px; color: #6b7280; margin: 0 0 18px; line-height: 1.6; }
+  .subtitle a { color: #dc2626; }
+
+  .note {
+    background: #f9fafb; border-left: 3px solid #d97706;
+    padding: 10px 14px; font-size: 12px; color: #374151;
+    line-height: 1.6; margin: 12px 0 20px; border-radius: 4px;
+  }
+
+  form { display: flex; flex-direction: column; gap: 14px; }
+  label { font-size: 12px; color: #6b7280; display: block; margin-bottom: 4px; }
+  input[type="text"], input[type="password"], input[type="number"], input[type="file"] {
+    width: 100%; padding: 10px 12px;
+    background: #f9fafb; color: #111827;
+    border: 1px solid #e5e7eb; border-radius: 6px;
+    font-size: 13px; font-family: inherit;
+  }
+  input:focus { outline: none; border-color: #dc2626; }
+  .row { display: flex; gap: 10px; align-items: flex-end; flex-wrap: wrap; }
+  .row > div { flex: 1; min-width: 140px; }
+  fieldset {
+    border: 1px solid #e5e7eb; border-radius: 6px; padding: 10px 14px 14px;
+    margin: 0;
+  }
+  legend { font-size: 12px; color: #6b7280; padding: 0 6px; }
+  .radio-row { display: flex; gap: 18px; margin: 8px 0; }
+  .radio-row label { color: #111827; font-size: 13px; display: flex; align-items: center; gap: 6px; margin: 0; cursor: pointer; }
+
+  button.primary {
+    background: #16a34a; color: #fff; border: none;
+    padding: 10px 18px; border-radius: 6px;
+    font-size: 14px; font-weight: 600; cursor: pointer;
+    font-family: inherit;
+  }
+  button.primary:hover { background: #15803d; }
+  button.primary:disabled { background: #d1d5db; color: #6b7280; cursor: not-allowed; }
+
+  #status {
+    font-size: 13px; padding: 10px 14px; margin-top: 10px;
+    border-radius: 6px; display: none; line-height: 1.5;
+  }
+  #status.info    { display: block; background: #eff6ff; color: #1e40af; border-left: 3px solid #2563eb; }
+  #status.success { display: block; background: #f0fdf4; color: #166534; border-left: 3px solid #16a34a; }
+  #status.error   { display: block; background: #fee2e2; color: #dc2626; border-left: 3px solid #dc2626; }
+
+  .footer { text-align: center; color: #9ca3af; font-size: 12px; padding: 32px 0 16px; }
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <span class="brand">SPSP</span>
+  <a href="../index.html">ランキング</a>
+  <a href="../overview.html">概要</a>
+  <a href="../details.html">詳細</a>
+  <a href="../seed/">シード生成</a>
+  <a href="index.html" class="current">アップロード</a>
+</nav>
+
+<main>
+  <h1>シードアップロード</h1>
+  <p class="subtitle">
+    CSV を <strong>start.gg のシード</strong>として一括反映するツール。
+    Google Sheets URL またはローカル CSV ファイルから読み込めます。
+  </p>
+
+  <div class="note">
+    🔒 入力した API トークンと Phase ID は <strong>あなたのブラウザから start.gg にのみ送信</strong>されます。
+    このページのコードは GitHub Pages 上の静的 HTML/JS のみで、トークンの保存・転送は行いません。
+    タブを閉じるとトークンは消えます (sessionStorage)。
+  </div>
+
+  <form id="form">
+    <div>
+      <label for="token">start.gg API Token</label>
+      <input type="password" id="token" placeholder="xxxxxxxxxxxxxxxxxxxxxxxxxxxx" autocomplete="off" required>
+    </div>
+
+    <div>
+      <label for="phase">Phase ID (整数。<code style="color:#dc2626;background:#ffffff;padding:1px 4px;border-radius:3px">https://www.start.gg/admin/.../brackets/<b>123456</b></code> から取得)</label>
+      <input type="text" id="phase" placeholder="例: 1234567" required>
+    </div>
+
+    <fieldset>
+      <legend>入力ソース</legend>
+      <div class="radio-row">
+        <label><input type="radio" name="src" value="sheet" checked> Google Sheets URL</label>
+        <label><input type="radio" name="src" value="file"> CSV ファイル</label>
+      </div>
+      <div id="src-sheet">
+        <label for="sheet">Google Sheets URL または ID</label>
+        <input type="text" id="sheet" placeholder="https://docs.google.com/spreadsheets/d/...">
+      </div>
+      <div id="src-file" style="display:none">
+        <label for="file">CSV ファイル (UTF-8)</label>
+        <input type="file" id="file" accept=".csv,text/csv">
+      </div>
+    </fieldset>
+
+    <fieldset>
+      <legend>列名 (デフォルトのまま OK)</legend>
+      <div class="row">
+        <div>
+          <label for="seedIdCol">seedId 列</label>
+          <input type="text" id="seedIdCol" value="seedId">
+        </div>
+        <div>
+          <label for="phaseSeedCol">phaseseed 列</label>
+          <input type="text" id="phaseSeedCol" value="phaseseed">
+        </div>
+      </div>
+    </fieldset>
+
+    <div>
+      <button type="submit" class="primary" id="submit">start.gg にアップロード</button>
+    </div>
+
+    <div id="status"></div>
+  </form>
+
+  <div class="footer">
+    SPSP · <a href="../index.html" style="color:#dc2626">ランキングに戻る</a>
+    <br><span class="site-version" style="font-size:11px;color:#9ca3af">__SITE_VERSION__</span>
+  </div>
+</main>
+
+<script src="seed_uploader.js"></script>
+<script>
+'use strict';
+(function () {
+  const tokenEl = document.getElementById('token');
+  const phaseEl = document.getElementById('phase');
+  const sheetEl = document.getElementById('sheet');
+  const fileEl  = document.getElementById('file');
+  const seedIdColEl = document.getElementById('seedIdCol');
+  const phaseSeedColEl = document.getElementById('phaseSeedCol');
+  const submitEl = document.getElementById('submit');
+  const statusEl = document.getElementById('status');
+  const srcSheet = document.getElementById('src-sheet');
+  const srcFile  = document.getElementById('src-file');
+
+  // Restore token from sessionStorage (lives only this tab)
+  try {
+    const t = sessionStorage.getItem('smash_banzuke_token');
+    if (t) tokenEl.value = t;
+  } catch (e) {}
+  tokenEl.addEventListener('change', () => {
+    try { sessionStorage.setItem('smash_banzuke_token', tokenEl.value); } catch (e) {}
+  });
+
+  function setStatus(cls, msg) {
+    statusEl.className = cls;
+    statusEl.textContent = msg;
+  }
+
+  document.querySelectorAll('input[name="src"]').forEach(r => {
+    r.addEventListener('change', () => {
+      if (r.value === 'sheet' && r.checked) {
+        srcSheet.style.display = ''; srcFile.style.display = 'none';
+      } else if (r.value === 'file' && r.checked) {
+        srcSheet.style.display = 'none'; srcFile.style.display = '';
+      }
+    });
+  });
+
+  document.getElementById('form').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const token = tokenEl.value.trim();
+    let phaseId = phaseEl.value.trim();
+    const ext = SmashSeed.extractPhaseIdFromUrl(phaseId);
+    if (ext) phaseId = ext;
+    const src = document.querySelector('input[name="src"]:checked').value;
+    const seedIdCol = (seedIdColEl.value || 'seedId').trim();
+    const phaseSeedCol = (phaseSeedColEl.value || 'phaseseed').trim();
+
+    if (!token) { setStatus('error', 'API Token を入力してください'); return; }
+    if (!phaseId) { setStatus('error', 'Phase ID を入力してください'); return; }
+
+    submitEl.disabled = true;
+    try {
+      let csvText;
+      if (src === 'sheet') {
+        const url = sheetEl.value.trim();
+        if (!url) throw new Error('Google Sheets の URL を入力してください');
+        setStatus('info', 'Google Sheets から CSV を取得中…');
+        csvText = await SmashSeed.fetchSheetsCsv(url);
+      } else {
+        const f = fileEl.files && fileEl.files[0];
+        if (!f) throw new Error('CSV ファイルを選択してください');
+        setStatus('info', 'CSV ファイルを読み込み中…');
+        csvText = await SmashSeed.readCsvFile(f);
+      }
+
+      setStatus('info', 'CSV をパース中…');
+      const parsed = SmashSeed.parseCsv(csvText);
+      const mapping = SmashSeed.buildSeedMapping(parsed.rows, seedIdCol, phaseSeedCol);
+
+      if (!confirm(`Phase ID ${phaseId} に ${mapping.length} 件のシードを送信します。よろしいですか?`)) {
+        setStatus('info', 'キャンセルしました');
+        return;
+      }
+
+      setStatus('info', `start.gg に ${mapping.length} 件送信中…`);
+      const r = await SmashSeed.uploadSeeding(phaseId, token, mapping);
+      if (r.ok) {
+        setStatus('success', `✅ アップロード成功 (${r.count} 件のシードを更新)`);
+      } else {
+        setStatus('error', '❌ ' + r.error);
+      }
+    } catch (err) {
+      setStatus('error', '❌ ' + err.message);
+    } finally {
+      submitEl.disabled = false;
+    }
+  });
+})();
+</script>
+</body>
+</html>
