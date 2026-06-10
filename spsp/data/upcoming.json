@@ -1,8 +1,8 @@
 {
-  "generated_at": 1781065980,
+  "generated_at": 1781071219,
   "country_code": "JP",
   "lookahead_days": 21,
-  "count": 39,
+  "count": 40,
   "tournaments": [
     {
       "tournament_id": 920245,
@@ -106,14 +106,14 @@
       "city": "渋谷区",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 17,
+      "num_attendees": 18,
       "url": "/tournament/shibuya-g-g-smash-weekly-66",
       "events": [
         {
           "event_id": 1640442,
           "event_slug": "tournament/shibuya-g-g-smash-weekly-66/event/singles",
           "event_name": "Singles",
-          "num_entrants": 17,
+          "num_entrants": 18,
           "type": 1,
           "start_at": 1781173800
         }
@@ -152,14 +152,14 @@
       "city": "厚木市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 20,
+      "num_attendees": 21,
       "url": "/tournament/1-294",
       "events": [
         {
           "event_id": 1630489,
           "event_slug": "tournament/1-294/event/1on1",
           "event_name": "1on1メイントーナメント",
-          "num_entrants": 19,
+          "num_entrants": 20,
           "type": 1,
           "start_at": 1781244000
         }
@@ -175,14 +175,14 @@
       "city": "台東区",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 13,
+      "num_attendees": 14,
       "url": "/tournament/12-476",
       "events": [
         {
           "event_id": 1633921,
           "event_slug": "tournament/12-476/event/on",
           "event_name": "シングルス（１on１トーナメント）",
-          "num_entrants": 13,
+          "num_entrants": 14,
           "type": 1,
           "start_at": 1781251200
         }
@@ -221,14 +221,14 @@
       "city": "大分市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 5,
+      "num_attendees": 6,
       "url": "/tournament/12-50",
       "events": [
         {
           "event_id": 1641478,
           "event_slug": "tournament/12-50/event/1on1",
           "event_name": "1on1トーナメント",
-          "num_entrants": 5,
+          "num_entrants": 6,
           "type": 1,
           "start_at": 1781260200
         }
@@ -405,14 +405,14 @@
       "city": "長崎市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 16,
+      "num_attendees": 17,
       "url": "/tournament/17-n-2",
       "events": [
         {
           "event_id": 1626578,
           "event_slug": "tournament/17-n-2/event/sp-1on1",
           "event_name": "スマブラSP 1on1トーナメント",
-          "num_entrants": 16,
+          "num_entrants": 17,
           "type": 1,
           "start_at": 1781362800
         }
@@ -566,16 +566,39 @@
       "city": "横浜市",
       "venue_name": "おださがプラザ",
       "country_code": "JP",
-      "num_attendees": 12,
+      "num_attendees": 13,
       "url": "/tournament/gg-1-kannai-gg",
       "events": [
         {
           "event_id": 1638027,
           "event_slug": "tournament/gg-1-kannai-gg/event/sp-1on1",
           "event_name": "スマブラSP 1on1",
-          "num_entrants": 12,
+          "num_entrants": 13,
           "type": 1,
           "start_at": 1781514000
+        }
+      ]
+    },
+    {
+      "tournament_id": 921349,
+      "tournament_slug": "tournament/23-15",
+      "tournament_name": "雷影杯#23",
+      "start_at": 1781686800,
+      "end_at": 1781703000,
+      "is_online": false,
+      "city": "川崎市",
+      "venue_name": "",
+      "country_code": "JP",
+      "num_attendees": 0,
+      "url": "/tournament/23-15",
+      "events": [
+        {
+          "event_id": 1644391,
+          "event_slug": "tournament/23-15/event/super-smash-bros-ultimate-singles",
+          "event_name": "雷影杯",
+          "num_entrants": 0,
+          "type": 1,
+          "start_at": 1781686800
         }
       ]
     },
@@ -819,14 +842,14 @@
       "city": "大東市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 302,
+      "num_attendees": 306,
       "url": "/tournament/70-sp-1",
       "events": [
         {
           "event_id": 1634012,
           "event_slug": "tournament/70-sp-1/event/1on1",
           "event_name": "予選あり1on1トーナメント",
-          "num_entrants": 294,
+          "num_entrants": 298,
           "type": 1,
           "start_at": 1782523800
         }
