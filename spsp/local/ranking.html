@@ -1,0 +1,864 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ローカルランキング — SPSP</title>
+<meta name="description" content="SPSP 大会シリーズ別ローカルランキング — 参加者集合の中での順位を表示。">
+<link rel="canonical" href="https://tosakazu.github.io/spsp/local/ranking.html">
+<link rel="stylesheet" href="../ranking-table.css">
+<script src="../ranking-table.js"></script>
+<script src="../player-detail.js"></script>
+<style>
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Hiragino Sans", sans-serif;
+    background: #ffffff; color: #111827; font-size: 14px;
+    -webkit-text-size-adjust: 100%;
+  }
+
+  .header { max-width: 1400px; margin: 0 auto; padding: 20px 24px 0; }
+  h1 { font-size: 22px; color: #111827; margin: 0 0 4px; }
+  .subtitle { font-size: 13px; color: #6b7280; margin-bottom: 16px; }
+
+  .meta-row {
+    display: flex; flex-wrap: wrap; gap: 8px 18px; font-size: 12px; color: #6b7280;
+    margin-bottom: 12px;
+  }
+  .meta-row b { color: #111827; font-weight: 600; margin-right: 4px; }
+
+  .method-tabs {
+    display: flex; gap: 4px; margin: 12px 0;
+    background: #ffffff; padding: 4px; border-radius: 8px;
+    border: 1px solid #e5e7eb; overflow-x: auto;
+  }
+  .method-tab {
+    padding: 8px 14px; cursor: pointer; border-radius: 6px;
+    font-size: 13px; color: #6b7280; transition: all 0.1s;
+    user-select: none; white-space: nowrap;
+  }
+  .method-tab:hover { color: #374151; background: #f3f4f6; }
+  .method-tab.active { background: #dc2626; color: #fff; }
+  .method-tab .tab-desc { display: block; font-size: 10px; opacity: 0.7; margin-top: 2px; }
+
+  .filter-row {
+    display: flex; flex-wrap: wrap; gap: 12px; align-items: center;
+    margin: 8px 0 12px; padding: 10px 14px;
+    background: #f9fafb; border: 1px solid #f3f4f6; border-radius: 6px;
+    font-size: 12px;
+  }
+  .filter-row label { color: #6b7280; }
+  .filter-row input, .filter-row select {
+    padding: 5px 8px; border: 1px solid #e5e7eb; background: #fff;
+    color: #111827; border-radius: 4px; font-size: 12px; font-family: inherit;
+  }
+  .filter-row input[type="number"] { width: 70px; }
+
+  .controls { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; margin: 12px 0; }
+  input, button, select {
+    padding: 8px 12px; border: 1px solid #e5e7eb;
+    background: #ffffff; color: #111827;
+    border-radius: 6px; font-size: 13px; font-family: inherit;
+  }
+  input[type="search"] { min-width: 280px; }
+  button { cursor: pointer; }
+  button:hover { background: #f3f4f6; border-color: #dc2626; }
+  .status { color: #6b7280; font-size: 12px; }
+
+  .table-wrap { max-width: 1400px; margin: 0 auto; padding: 0 24px 32px; }
+  /* テーブル本体スタイル (table base, col widths, lv-badge, gate-pill, top-tours,
+     player-name, rank-frac, detail-row 基底) は共有 ranking-table.css へ集約済. */
+
+  .share-icon-btn:hover { background: #fef2f2 !important; color: #dc2626 !important; border-color: #dc2626 !important; }
+
+  .detail-explain {
+    background: #f9fafb; border-left: 3px solid #dc2626;
+    padding: 10px 16px; margin-bottom: 12px;
+    font-size: 13px; color: #374151; line-height: 1.6;
+  }
+  .detail-explain strong { color: #111827; }
+  .detail-section { margin-bottom: 20px; }
+  .detail-section h4 {
+    margin: 0 0 8px; color: #dc2626; font-size: 13px; font-weight: 600;
+  }
+  .detail-section h5 {
+    margin: 0 0 6px; color: #374151; font-size: 12px; font-weight: 600;
+  }
+  /* Detail tabs (大会別 / 直接対決) */
+  .detail-tabs {
+    display: flex; gap: 4px; margin: 4px 0 10px;
+    border-bottom: 1px solid #e5e7eb;
+  }
+  .detail-tab {
+    padding: 7px 14px; cursor: pointer; user-select: none;
+    font-size: 13px; color: #6b7280; font-weight: 500;
+    border-bottom: 2px solid transparent;
+    border-radius: 4px 4px 0 0; transition: color .12s, background .12s, border-color .12s;
+  }
+  .detail-tab:hover {
+    color: #dc2626; background: #fef2f2; border-bottom-color: #fca5a5;
+  }
+  .detail-tab.active {
+    color: #dc2626; border-bottom-color: #dc2626; font-weight: 600;
+  }
+  /* H2H section (直接対決) */
+  .h2h-section { display: flex; flex-direction: column; gap: 16px; }
+  .h2h-col { min-width: 0; }
+  .h2h-list { display: flex; flex-direction: column; gap: 6px; }
+  .h2h-opp {
+    border: 1px solid #f3f4f6; border-radius: 6px;
+    padding: 8px 10px; background: #fafafa;
+  }
+  .h2h-opp.h2h-win  { border-left: 3px solid #16a34a; }
+  .h2h-opp.h2h-loss { border-left: 3px solid #2563eb; }
+  .h2h-head {
+    display: flex; align-items: baseline; gap: 8px;
+    margin-bottom: 4px;
+  }
+  .h2h-opp-name {
+    color: #dc2626; font-weight: 600; text-decoration: none; font-size: 13px;
+    word-break: break-word; min-width: 0;
+  }
+  .h2h-opp.h2h-win .h2h-opp-name { color: #16a34a; }
+  .h2h-opp.h2h-loss .h2h-opp-name { color: #2563eb; }
+  .h2h-opp-name:hover { text-decoration: underline; }
+  .h2h-rank { color: #9ca3af; font-size: 11px; font-variant-numeric: tabular-nums; }
+  .h2h-count { color: #6b7280; font-size: 11px; margin-left: auto; flex-shrink: 0; }
+  .h2h-match {
+    display: flex; gap: 8px; align-items: baseline;
+    font-size: 11px; color: #6b7280;
+    padding: 3px 0;
+  }
+  .h2h-match .h2h-date { color: #9ca3af; font-size: 10px; flex-shrink: 0; }
+  .h2h-match .h2h-tname { flex: 1 1 auto; min-width: 0; word-break: break-word; }
+  .h2h-match .h2h-tname a { color: #6b7280; text-decoration: none; }
+  .h2h-match .h2h-tname a:hover { color: #dc2626; text-decoration: underline; }
+  .h2h-match .h2h-delta {
+    font-weight: 700; font-variant-numeric: tabular-nums;
+    color: #9ca3af; font-size: 12px; flex-shrink: 0;
+  }
+  .h2h-match .h2h-delta.pos { color: #16a34a; }
+  .h2h-match .h2h-delta.neg { color: #2563eb; }
+  /* PC: 勝/負 を 2 column */
+  @media (min-width: 800px) {
+    .h2h-section { flex-direction: row; gap: 20px; }
+    .h2h-col { flex: 1 1 50%; }
+  }
+
+  .tour-table, .breakdown-table { font-size: 12px; width: 100%; border-collapse: collapse; }
+  .tour-table th, .breakdown-table th {
+    background: #f9fafb; position: static; padding: 6px 8px;
+    border-bottom: 1px solid #f3f4f6; cursor: default; font-weight: 600;
+  }
+  .tour-table th::after, .breakdown-table th::after { content: ""; }
+  .tour-table td, .breakdown-table td { padding: 4px 8px; border-bottom: 1px solid #ffffff; }
+  /* main row と opp row を視覚的に 1 つの行として連続させる (border-bottom を消す) */
+  #ranktable .tour-table tr.tour-main-row td { border-bottom: none; }
+  .tour-table tr.counted, .breakdown-table tr.counted { background: rgba(220, 38, 38, 0.04); }
+  .tour-table tr.weekday { color: #6b7280; }
+  .tour-table tr.weekend { color: #374151; }
+  /* Hover ハイライト: 大会別詳細 1 行 (main + opp 連結) を 1 グループとして強調. */
+  .tour-table tr.tour-main-row { transition: background 0.1s; }
+  .tour-table tr.tour-opp-row { transition: background 0.1s; }
+  .tour-table tr.tour-main-row:hover,
+  .tour-table tr.tour-main-row:hover + tr.tour-opp-row,
+  .tour-table tr.tour-opp-row:hover,
+  .tour-table tr.tour-main-row:has(+ tr.tour-opp-row:hover) {
+    background: #eef2f6 !important;
+  }
+  /* counted (= 赤背景) の上に hover が乗る場合は赤味を強めて区別 */
+  .tour-table tr.tour-main-row.counted:hover,
+  .tour-table tr.tour-main-row.counted:hover + tr.tour-opp-row,
+  .tour-table tr.tour-opp-row.counted:hover,
+  .tour-table tr.tour-main-row.counted:has(+ tr.tour-opp-row.counted:hover) {
+    background: rgba(220, 38, 38, 0.07) !important;
+  }
+  /* 直対 H2H 各 entry の hover (default = #fafafa) */
+  .h2h-opp { transition: background 0.1s, border-color 0.1s; }
+  .h2h-opp:hover { background: #f0f0f0; border-color: #d1d5db; }
+  /* Hidden extra rows (collapsed by default in 大会別詳細; expand button reveals). */
+  .tour-table tr.extra-row.hidden-row { display: none !important; }
+  .tag-wk { color: #dc2626; font-size: 10px; padding: 1px 5px; background: rgba(220, 38, 38, 0.08); border-radius: 8px; }
+  .tag-wd { color: #6b7280; font-size: 10px; padding: 1px 5px; background: rgba(107, 114, 128, 0.08); border-radius: 8px; }
+  .tag-sm { color: #d97706; font-size: 10px; padding: 1px 5px; background: rgba(217, 119, 6, 0.10); border-radius: 8px; margin-left: 4px; }
+  .tag-pre { color: #6b21a8; font-size: 10px; padding: 1px 5px; background: rgba(168, 85, 247, 0.12); border-radius: 8px; margin-left: 4px; }
+  .tag-res { color: #be123c; font-size: 10px; padding: 1px 5px; background: rgba(225, 29, 72, 0.10); border-radius: 8px; margin-left: 4px; }
+  .tag-lc  { color: #0369a1; font-size: 10px; padding: 1px 5px; background: rgba(2, 132, 199, 0.10); border-radius: 8px; margin-left: 4px; }
+  .num { font-variant-numeric: tabular-nums; text-align: right; }
+  .pos { color: #16a34a; }
+  .neg { color: #2563eb; }
+
+  /* top-tours / display-line / display-*-mobile / mobile card layout / detail-row 基底は
+     共有 ranking-table.css へ集約済. 以下は local 固有の補助 + detail panel 内のスタイルのみ. */
+
+  .footer { text-align: center; color: #9ca3af; font-size: 12px; padding: 32px 0 16px; }
+  .footer a { color: #dc2626; text-decoration: none; }
+
+  /* Mobile: ローカル固有部分 (header / method-tabs / filter-row / detail 内の table 表示) */
+  @media (max-width: 720px) {
+    body { font-size: 13px; }
+    .header { padding: 12px 12px 0; }
+    h1 { font-size: 18px; }
+    .subtitle { font-size: 11px; }
+    .method-tabs { padding: 2px; gap: 2px; }
+    .method-tab { padding: 6px 8px; font-size: 11px; }
+    .method-tab .tab-desc { display: none; }
+    .filter-row { padding: 8px 10px; }
+    .controls { gap: 6px; }
+    input[type="search"] { min-width: 0; flex: 1 1 100%; font-size: 14px; padding: 8px 10px; }
+    .status { width: 100%; font-size: 10px; }
+    .table-wrap { padding: 0 8px 24px; max-width: 100vw; overflow-x: hidden; }
+
+    /* Inner detail tables: TJPR breakdown keeps table layout; tour-table is converted below */
+    .detail-row .breakdown-table { display: table; table-layout: auto; width: 100%; }
+    .detail-row .breakdown-table thead { display: table-header-group; }
+    .detail-row .breakdown-table tbody { display: table-row-group; }
+    .detail-row .breakdown-table tfoot { display: table-footer-group; }
+    .detail-row .breakdown-table tr { display: table-row; }
+    .detail-row .breakdown-table td,
+    .detail-row .breakdown-table th { display: table-cell; }
+
+    .detail-explain { padding: 8px 10px; font-size: 12px; line-height: 1.55; word-wrap: break-word; }
+    .detail-section { margin-bottom: 16px; box-sizing: border-box; max-width: 100%; }
+    .detail-section h4 { font-size: 12px; }
+
+    /* tour-table: 4 行 grid layout on mobile */
+    .hscroll { overflow-x: visible; max-width: 100%; }
+    .tour-table { display: block !important; min-width: 0; font-size: 12px; }
+    .tour-table thead { display: none !important; }
+    .tour-table tbody { display: block !important; }
+    .tour-table tr {
+      display: grid !important;
+      grid-template-columns: auto auto auto 1fr auto auto;
+      column-gap: 0;
+      row-gap: 3px;
+      padding: 6px 8px;
+      margin-bottom: 4px;
+      background: #f9fafb;
+      border-radius: 6px;
+      border: 1px solid #f3f4f6;
+      align-items: baseline;
+    }
+    .tour-table td { padding: 0 !important; border: none; font-size: 11px; color: #374151; line-height: 1.3; min-width: 0; }
+    /* Row 1: 日付 + 区分 + Lv */
+    .tour-table td:nth-child(1) { grid-column: 1; grid-row: 1; color: #dc2626; font-weight: 500; font-size: 11px; margin-right: 8px; }
+    .tour-table td:nth-child(5) { grid-column: 2; grid-row: 1; margin-right: 4px; }   /* 区分 */
+    .tour-table td:nth-child(6) { grid-column: 3; grid-row: 1; }   /* Lv */
+    /* Row 2: 大会名 + 順位/人数 (横並び) */
+    .tour-table td:nth-child(2) {
+      grid-column: 1 / 5; grid-row: 2;
+      font-size: 12px; word-break: break-word; line-height: 1.35;
+    }
+    .tour-table td:nth-child(4) {
+      grid-column: 5; grid-row: 2;
+      font-size: 14px; font-weight: 700; color: #111827; text-align: right;
+    }
+    .tour-table td:nth-child(3) {
+      grid-column: 6; grid-row: 2;
+      font-size: 11px; color: #6b7280;
+    }
+    /* Row 3: 順位評価 (寄与 (ベース)) + 直対評価 (両方目立つ、横並び) */
+    .tour-table td:nth-child(7) {
+      grid-column: 1 / 4; grid-row: 3;
+      font-size: 14px; font-weight: 700; color: #dc2626; margin-top: 3px;
+      text-align: left;
+    }
+    .tour-table td:nth-child(8) {
+      grid-column: 4 / 7; grid-row: 3;
+      font-size: 14px; font-weight: 700; color: #9ca3af; margin-top: 3px;
+      text-align: right;
+    }
+    .tour-table td:nth-child(8).pos { color: #16a34a; }
+    .tour-table td:nth-child(8).neg { color: #2563eb; }
+    /* ::before ラベル */
+    .tour-table td:nth-child(3)::before { content: "/"; color: #9ca3af; }
+    .tour-table td:nth-child(4)::before { content: ""; }
+    .tour-table td:nth-child(5)::before { content: ""; }
+    .tour-table td:nth-child(6)::before { content: ""; }
+    .tour-table td:nth-child(7)::before { content: "順位評価 "; color: #9ca3af; font-size: 10px; font-weight: 400; margin-right: 2px; }
+
+    /* Opponent row (各大会の対戦相手): 同じカードに見えるよう main row と一体化 */
+    .tour-table tr.tour-main-row {
+      margin-bottom: 0 !important;
+      border-radius: 6px 6px 0 0 !important;
+      border-bottom: none !important;
+    }
+    .tour-table tr.tour-opp-row {
+      display: block !important;
+      grid-template-columns: none !important;
+      /* background は base / .counted を継承させるため指定しない */
+      border-top: none !important;
+      border-radius: 0 0 6px 6px !important;
+      padding: 0 8px 6px !important;
+      margin: 0 0 4px 0 !important;
+    }
+    .tour-table tr.tour-opp-row td {
+      display: block !important;
+      padding: 0 !important;
+      font-size: 11px;
+      color: #6b7280;
+      line-height: 1.5;
+    }
+    .tour-table tr.tour-opp-row td::before { content: none !important; }
+    .tour-table td:nth-child(8)::before { content: "直対評価 "; color: #9ca3af; font-size: 10px; font-weight: 400; margin-right: 2px; }
+
+    /* TJPR breakdown table fits viewport */
+    .breakdown-table { min-width: 0; max-width: 100% !important; width: 100%; }
+    .breakdown-table th, .breakdown-table td { white-space: normal; font-size: 11px; }
+  }
+
+  @media (max-width: 380px) {
+    h1 { font-size: 16px; }
+    /* #ranktable 関連の超狭幅オーバーライドは ranking-table.css に集約済 */
+  }
+</style>
+</head>
+<body>
+
+<div id="nav-root"></div>
+<script src="../nav.js"></script>
+<script src="../share.js"></script>
+
+<div class="header">
+  <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+    <h1 id="title-h1" style="margin:0">ローカルランキング</h1>
+    <button class="share-icon-btn" id="share-icon-btn" title="URL を共有" aria-label="URL を共有"
+      style="background:#fff;border:1px solid #e5e7eb;color:#6b7280;border-radius:8px;padding:6px 8px;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;line-height:1;transition:all 0.15s">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:16px;height:16px;display:block">
+        <circle cx="18" cy="5" r="3"></circle>
+        <circle cx="6" cy="12" r="3"></circle>
+        <circle cx="18" cy="19" r="3"></circle>
+        <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line>
+        <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line>
+      </svg>
+    </button>
+  </div>
+  <div class="meta-row" id="meta-row"></div>
+
+  <div class="filter-row">
+    <label>最小参加回数: <input type="number" id="min-n" value="1" min="1" step="1"></label>
+    <label>
+      最終参加日:
+      <select id="period-sel">
+        <option value="180">6ヶ月以内</option>
+        <option value="365" selected>1年以内</option>
+        <option value="730">2年以内</option>
+        <option value="0">全期間</option>
+      </select>
+      <span style="color:#9ca3af;font-size:11px">(シリーズ最新開催日から)</span>
+    </label>
+  </div>
+
+  <div class="method-tabs" id="method-tabs">
+    <div class="method-tab active" data-method="ensemble">総合評価<span class="tab-desc">推奨</span></div>
+    <div class="method-tab" data-method="tjpr">順位評価<span class="tab-desc">大会順位ベース</span></div>
+    <div class="method-tab" data-method="bt_gated">直対評価<span class="tab-desc">直接対決ベース</span></div>
+  </div>
+
+  <div class="controls">
+    <input type="search" id="search" placeholder="プレイヤー名 / UID で検索…" autocomplete="off">
+    <span class="status" id="status">読み込み中…</span>
+  </div>
+</div>
+
+<div class="table-wrap">
+  <table id="ranktable">
+    <!-- thead は SPSPRankingTable コンポーネントが自動生成 -->
+    <tbody id="tbody">
+      <tr><td colspan="11" class="empty-msg">読み込み中…</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<div class="footer" id="footer-info"></div>
+
+<script>
+'use strict';
+
+const STATE = {
+  series: null,           // series object from series.json
+  participants: [],       // [{uid, n, first, last}]
+  masterMap: new Map(),   // uid → master record
+  masterMeta: null,
+  data: [],               // current displayed records (after re-rank)
+  method: 'ensemble',
+  sortKey: 'rank',
+  sortDir: 'asc',
+  searchText: '',
+  minN: 1,
+  periodDays: 365,
+};
+
+function escapeHtml(s) {
+  return String(s).replace(/[&<>"']/g, c => (
+    { '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;' }[c]
+  ));
+}
+
+function getQueryParam(name) {
+  const url = new URL(location.href);
+  return url.searchParams.get(name);
+}
+
+function getRank(rec, method) {
+  if (rec.unranked) return Infinity;
+  return rec.ranks[method] || Infinity;
+}
+function getScore(rec, method) {
+  if (rec.unranked) return -Infinity;
+  switch (method) {
+    case 'tjpr': return rec.scores.tjpr_elo;
+    case 'bt_gated': return rec.scores.bt_gated_elo;
+    case 'ensemble':
+    default:
+      return rec.scores.ensemble_avg_score != null
+        ? rec.scores.ensemble_avg_score
+        : (rec.scores.tjpr_elo + rec.scores.bt_gated_elo) / 2;
+  }
+}
+function formatScore(rec, method) {
+  if (rec.unranked) return '–';
+  return getScore(rec, method).toFixed(1);
+}
+function formatAvgRank(rec, method) {
+  if (rec.unranked) return '–';
+  const ar = rec.scores.ensemble_avg_rank;
+  return ar != null ? `#${ar.toFixed(1)}` : '–';
+}
+
+function filterParticipants() {
+  if (!STATE.series) return [];
+  let parts = STATE.series.participants.slice();
+  parts = parts.filter(p => p.n >= STATE.minN);
+  if (STATE.periodDays > 0) {
+    const lastDate = new Date(STATE.series.last_date + 'T00:00:00Z');
+    const cutoff = new Date(lastDate.getTime() - STATE.periodDays * 86400 * 1000);
+    const cutoffStr = cutoff.toISOString().slice(0, 10);
+    parts = parts.filter(p => p.last >= cutoffStr);
+  }
+  return parts;
+}
+
+function filterAndRerank(parts) {
+  // Build records from MASTER_MAP filtered by participant uid set
+  const ranked = [];
+  const missing = [];
+  const partMap = new Map(parts.map(p => [p.uid, p]));
+  for (const p of parts) {
+    if (STATE.masterMap.has(p.uid)) {
+      const rec = JSON.parse(JSON.stringify(STATE.masterMap.get(p.uid)));
+      rec.ranks = rec.ranks || {};
+      rec.ranks.global_ensemble = rec.ranks.ensemble;
+      rec.ranks.global_tjpr = rec.ranks.tjpr;
+      rec.ranks.global_bt_gated = rec.ranks.bt_gated;
+      rec.localN = p.n;
+      rec.localLast = p.last;
+      rec.localFirst = p.first;
+      ranked.push(rec);
+    } else {
+      missing.push(p);
+    }
+  }
+  // Ensemble は global ensemble の昇順で 1..N に再付番
+  ranked.sort((a, b) => (a.ranks.global_ensemble || 1e9) - (b.ranks.global_ensemble || 1e9));
+  ranked.forEach((r, i) => { r.ranks.ensemble = i + 1; });
+  // 順位/直対は全体ランキングのまま (= global rank を表示)
+  // global rank を local rank に投影する必要はない (seed と同じポリシー).
+  // → tjpr, bt_gated は global rank をそのまま使う.
+  let next = ranked.length + 1;
+  missing.sort((a, b) => (b.n - a.n) || (a.uid - b.uid));
+  for (const p of missing) {
+    ranked.push({
+      user_id: p.uid,
+      display: `(uid: ${p.uid})`,
+      unranked: true,
+      localN: p.n, localLast: p.last, localFirst: p.first,
+      ranks: { ensemble: next, tjpr: null, bt_gated: null,
+               global_ensemble: null, global_tjpr: null, global_bt_gated: null },
+      scores: { tjpr_score: 0, tjpr_elo: 0, tjpr_level: 0,
+                bt_gated_ordinal: 0, bt_gated_elo: 0,
+                ensemble_avg_rank: null, ensemble_avg_score: null },
+      metadata: { tour_count_3y: 0, bt_weekday_included: true, provisional: true, matches_count_3y: 0 },
+    });
+    next += 1;
+  }
+  return ranked;
+}
+
+function applyFilters() {
+  const parts = filterParticipants();
+  STATE.data = filterAndRerank(parts);
+  // メイン rank 列 (ensemble) のみ jp-counter 化. tjpr/bt_gated は GLOBAL 順位を保持しているので
+  // ローカルプール内でのカウンター化は意味を持たない → ['ensemble'] 限定.
+  if (STATE.overseasUids && window.SPSPRankingTable && window.SPSPRankingTable.computeDisplayRanks) {
+    window.SPSPRankingTable.computeDisplayRanks(STATE.data, STATE.overseasUids, ['ensemble']);
+  }
+  if (STATE.charIdx && window.SPSPRankingTable && window.SPSPRankingTable.attachZenichi) {
+    window.SPSPRankingTable.attachZenichi(STATE.data, STATE.charIdx, STATE.overseasUids);
+  }
+}
+
+// ローカル固有の追加列 (= 参加 / 最終参加).
+const LOCAL_EXTRA_COLUMNS = [
+  { id: 'n', label: '参加', sortable: true, sortKey: 'n', css: 'col-n',
+    value: (rec) => -(rec.localN || 0),
+    cell: (rec) => rec.localN || '' },
+  { id: 'last', label: '最終参加', sortable: true, sortKey: 'last', css: 'col-last',
+    value: (rec) => rec.localLast || '',
+    cell: (rec) => rec.localLast || '' },
+];
+
+// V4 用 (= site/index.html の _columnsForMeta と同形): 平均順位 / 平均スコアの
+// 代わりに 直対評 / 順位評 を小さい灰色で表示する.
+const _smallGray = (v, decimals = 1) =>
+  v != null ? `<span style="color:#9ca3af;font-size:11px">${v.toFixed(decimals)}</span>` : '–';
+const TJPR_SCORE_COL = {
+  id: 'tjpr_score_cell', label: '順位評', sortable: true, sortKey: 'tjpr_score',
+  css: 'col-score',
+  value: (rec) => -((rec.scores && rec.scores.tjpr_elo) || -Infinity),
+  cell: (rec) => _smallGray(rec.scores && rec.scores.tjpr_elo, 2),
+};
+const BT_SCORE_COL = {
+  id: 'bt_score_cell', label: '直対評', sortable: true, sortKey: 'bt_score',
+  css: 'col-avg-rank',
+  value: (rec) => -((rec.scores && rec.scores.bt_gated_elo) || -Infinity),
+  cell: (rec) => _smallGray(rec.scores && rec.scores.bt_gated_elo, 2),
+};
+
+let TABLE = null;
+function ensureTable() {
+  if (TABLE) return TABLE;
+  TABLE = new window.SPSPRankingTable.RankingTable({
+    table: document.getElementById('ranktable'),
+    rows: STATE.data,
+    method: STATE.method,
+    sort: { key: STATE.sortKey, dir: STATE.sortDir },
+    pageSize: 200,
+    infiniteScroll: true,
+    totalForRankFrac: 'rows',
+    playerHrefPrefix: '../',
+    showTopTours: true,
+    showDisplayBadges: true,
+    showGlobalRank: true,            // ローカル: 全国 #N バッジ
+    showLocalExtras: true,           // ローカル: 参加回数 / 最終参加日 を mobile に出す
+    btWeekdayStyle: 'pill',
+    columns: [
+      'rank', 'display', BT_SCORE_COL, TJPR_SCORE_COL,
+      'tjpr_lv', 'tour_count', 'bt_weekday',
+      'rank_tjpr', 'rank_bt_gated',
+      ...LOCAL_EXTRA_COLUMNS,
+    ],
+    rowClick: (rec, tr, ev) => localRowClickHandler(rec, tr, ev),
+  });
+  TABLE.on('rendered', ({ filtered }) => {
+    document.getElementById('status').textContent =
+      `${filtered.length} / ${STATE.data.length} 表示中`;
+  });
+  return TABLE;
+}
+
+function render() {
+  const tbl = ensureTable();
+  tbl.setRows(STATE.data);
+  tbl.setMethod(STATE.method);
+  tbl.setFilterText(STATE.searchText);
+  tbl.setSort(STATE.sortKey, STATE.sortDir);
+}
+
+function setupEvents() {
+  document.getElementById('search').addEventListener('input', e => {
+    STATE.searchText = e.target.value;
+    const tbl = TABLE; if (tbl) tbl.setFilterText(STATE.searchText);
+  });
+  document.querySelectorAll('.method-tab').forEach(tab => {
+    tab.addEventListener('click', () => {
+      document.querySelectorAll('.method-tab').forEach(t => t.classList.remove('active'));
+      tab.classList.add('active');
+      STATE.method = tab.dataset.method;
+      syncUrl();
+      const tbl = TABLE; if (tbl) tbl.setMethod(STATE.method);
+    });
+  });
+  // sortable / 無限スクロール / 行クリック はコンポーネント側に統合済.
+  // STATE.sortKey / sortDir は filter 操作の URL ハンドリングで参照される可能性があるので残す.
+
+  // フィルタ変更時に自動適用 + URL を更新.
+  const minNEl = document.getElementById('min-n');
+  const periodEl = document.getElementById('period-sel');
+  const onFilterChange = () => {
+    STATE.minN = Math.max(1, parseInt(minNEl.value, 10) || 1);
+    STATE.periodDays = parseInt(periodEl.value, 10) || 0;
+    syncUrl();
+    applyFilters();
+    render();
+  };
+  minNEl.addEventListener('input', onFilterChange);
+  minNEl.addEventListener('change', onFilterChange);
+  periodEl.addEventListener('change', onFilterChange);
+  // 共有ボタン.
+  setupShareBtn();
+}
+
+function syncUrl() {
+  // 現在の STATE.minN / periodDays / method を URL クエリに反映 (履歴を増やさず replaceState).
+  const url = new URL(location.href);
+  url.searchParams.set('minN', String(STATE.minN));
+  url.searchParams.set('period', String(STATE.periodDays));
+  url.searchParams.set('method', STATE.method);
+  history.replaceState(null, '', url.toString());
+}
+
+function setupShareBtn() {
+  SPSPShare.setup(document.getElementById('share-icon-btn'), () => {
+    const name = STATE.series ? STATE.series.name : 'ローカルランキング';
+    return {
+      title: `${name} ローカルランキング`,
+      text:  `${name} のローカルランキング`,
+      url:   location.href,
+    };
+  });
+}
+
+function readUrlFilters() {
+  // URL から minN / period / method を初期値として読む.
+  const url = new URL(location.href);
+  const minNRaw = url.searchParams.get('minN');
+  if (minNRaw != null) {
+    const v = parseInt(minNRaw, 10);
+    if (Number.isFinite(v) && v >= 1) STATE.minN = v;
+  }
+  const periodRaw = url.searchParams.get('period');
+  if (periodRaw != null) {
+    const v = parseInt(periodRaw, 10);
+    if (Number.isFinite(v) && v >= 0) STATE.periodDays = v;
+  }
+  const methodRaw = url.searchParams.get('method');
+  if (methodRaw && ['ensemble', 'tjpr', 'bt_gated'].includes(methodRaw)) {
+    STATE.method = methodRaw;
+  }
+  // UI に反映.
+  document.getElementById('min-n').value = STATE.minN;
+  const periodSel = document.getElementById('period-sel');
+  if ([...periodSel.options].some(o => o.value === String(STATE.periodDays))) {
+    periodSel.value = String(STATE.periodDays);
+  }
+  document.querySelectorAll('.method-tab').forEach(t => {
+    t.classList.toggle('active', t.dataset.method === STATE.method);
+  });
+}
+
+async function init() {
+  readUrlFilters();
+  setupEvents();
+  const seriesName = getQueryParam('series');
+  if (!seriesName) {
+    document.getElementById('title-h1').textContent = 'シリーズが指定されていません';
+    document.getElementById('tbody').innerHTML =
+      '<tr><td colspan="11" class="empty-msg"><a href="./" style="color:#dc2626">シリーズ一覧に戻る</a></td></tr>';
+    return;
+  }
+  try {
+    const t0 = performance.now();
+    const [seriesRes, metaRes, jsonlRes, overseasRes, charIdxRes] = await Promise.all([
+      fetch('../data/series.json'),
+      fetch('../meta.json'),
+      fetch('../latest_tjpr_full.jsonl'),
+      fetch('../data/overseas.json').catch(() => null),
+      fetch('../data/character_index.json').catch(() => null),
+    ]);
+    if (!seriesRes.ok) throw new Error('series.json 取得失敗');
+    if (!metaRes.ok) throw new Error('meta.json 取得失敗');
+    if (!jsonlRes.ok) throw new Error('latest_tjpr_full.jsonl 取得失敗');
+    if (overseasRes && overseasRes.ok) {
+      try {
+        const j = await overseasRes.json();
+        STATE.overseasUids = new Set(j.uids || []);
+      } catch (e) {}
+    }
+    if (charIdxRes && charIdxRes.ok) {
+      try { STATE.charIdx = await charIdxRes.json(); } catch (e) {}
+    }
+    const seriesJson = await seriesRes.json();
+    STATE.masterMeta = await metaRes.json();
+    STATE.series = (seriesJson.series || []).find(s => s.name === seriesName) || null;
+    if (!STATE.series) {
+      document.getElementById('title-h1').textContent = `シリーズ「${seriesName}」が見つかりません`;
+      document.getElementById('tbody').innerHTML =
+        '<tr><td colspan="11" class="empty-msg"><a href="./" style="color:#dc2626">シリーズ一覧に戻る</a></td></tr>';
+      return;
+    }
+    const txt = await jsonlRes.text();
+    const lines = txt.split('\n').filter(l => l.length);
+    for (const line of lines) {
+      try {
+        const rec = JSON.parse(line);
+        STATE.masterMap.set(rec.user_id, rec);
+      } catch (e) {}
+    }
+
+    // Update header
+    document.title = `${seriesName} ローカルランキング — SPSP`;
+    document.getElementById('title-h1').textContent = `${seriesName} ローカルランキング`;
+    if (window.SPSPTrackPage) {
+      window.SPSPTrackPage(document.title, `/local/${encodeURIComponent(seriesName)}`);
+    }
+    const s = STATE.series;
+    const tags = [];
+    if (s.is_uchi) tags.push('<span style="color:#6b21a8;background:rgba(168,85,247,0.12);padding:1px 6px;border-radius:8px;font-size:11px">身内</span>');
+    if (s.is_special_rules) tags.push('<span style="color:#be185d;background:rgba(236,72,153,0.10);padding:1px 6px;border-radius:8px;font-size:11px">特殊ルール</span>');
+    if (s.restricted) tags.push('<span style="color:#d97706;background:rgba(217,119,6,0.10);padding:1px 6px;border-radius:8px;font-size:11px">制限</span>');
+    if (s.is_all_small) tags.push('<span title="全大会が小規模 (参加者8人未満)。ランキング計算対象外" style="color:#4b5563;background:rgba(107,114,128,0.12);padding:1px 6px;border-radius:8px;font-size:11px">小規模</span>');
+    document.getElementById('meta-row').innerHTML =
+      `<span><b>累計</b>${s.tour_count} 回</span>` +
+      `<span><b>最新</b>${s.last_date}</span>` +
+      `<span><b>初回</b>${s.first_date}</span>` +
+      `<span><b>平均参加者</b>${s.avg_entrants.toFixed(0)} 人</span>` +
+      `<span><b>累計参加者</b>${s.participant_count} 人</span>` +
+      tags.join(' ');
+    document.getElementById('footer-info').innerHTML =
+      `master generated ${escapeHtml(STATE.masterMeta.eval_date || '')} · ${STATE.masterMeta.n_players}名 · ` +
+      `<a href="./">← シリーズ一覧</a> · <a href="../index.html">全体ランキング</a>`;
+
+    applyFilters();
+    render();
+    document.getElementById('status').textContent =
+      `${STATE.data.length} 人 (${(performance.now() - t0).toFixed(0)}ms)`;
+  } catch (e) {
+    console.error(e);
+    document.getElementById('tbody').innerHTML =
+      `<tr><td colspan="11" class="empty-msg" style="color:#dc2626">${escapeHtml(e.message)}</td></tr>`;
+  }
+}
+
+// ─────────────────────────────────────────────────────────────────────
+// 詳細パネル (大会別の詳細 / 直接対決) は ../player-detail.js (= canonical
+// site/index.html の inline 実装を移植した SPSPDetail) に集約.
+// 本ファイルは SPSPDetail.buildDetailContent / fetchPlayerDetail を呼び出すだけ.
+// ─────────────────────────────────────────────────────────────────────
+function getDetailCfg() {
+  return {
+    getMeta: () => STATE.masterMeta || {},
+    getDataArray: () => STATE.data,
+    getMasterMap: () => STATE.masterMap,  // STATE.data に居ない uid の opp は master から解決
+    pathPrefix: '../',
+  };
+}
+
+// sortTournaments / uidToEnsembleRank / buildTournamentTable / buildH2HSection /
+// buildDetailContent / DETAIL_CACHE / fetchPlayerDetail はすべて SPSPDetail
+// (= ../player-detail.js) に集約済. cfg.getMasterMap で STATE.masterMap を渡すことで,
+// STATE.data に居ない opp も全国 master から rank/name を解決する.
+
+// Detail パネル (大会別 / 直接対決) は SPSPDetail.buildDetailContent に委譲.
+// Open 中の tour-table 再描画 (= tour-sort-toggle 押下時).
+function refreshOpenTournamentTables() {
+  document.querySelectorAll('.tour-sort-toggle').forEach(el => {
+    const uid = el.dataset.uid;
+    const rec = STATE.data.find(r => String(r.user_id) === String(uid));
+    if (!rec) return;
+    const tabContent = el.closest('.tab-tour');
+    if (!tabContent) return;
+    tabContent.innerHTML = window.SPSPDetail.buildTournamentTable(rec, getDetailCfg());
+  });
+}
+
+// Detail-row 内部のクリック処理 (tab 切替 / H2H expand / 並べ替え) は tbody-level で継続.
+document.getElementById('tbody').addEventListener('click', e => {
+  // Detail tab switch (大会別 / 直接対決)
+  const tabBtn = e.target.closest('.detail-tab');
+  if (tabBtn) {
+    e.stopPropagation();
+    const section = tabBtn.closest('.detail-section');
+    if (!section) return;
+    const key = tabBtn.dataset.tab;
+    section.querySelectorAll('.detail-tab').forEach(t => t.classList.toggle('active', t.dataset.tab === key));
+    section.querySelectorAll('.detail-tab-content').forEach(c => {
+      c.style.display = c.classList.contains('tab-' + key) ? '' : 'none';
+    });
+    return;
+  }
+  // H2H 共通「もっと見る」 → 勝/負 両方の hidden を表示
+  const h2hBtn = e.target.closest('.h2h-expand-btn');
+  if (h2hBtn) {
+    e.stopPropagation();
+    const wrap = h2hBtn.closest('.tab-h2h');
+    if (!wrap) return;
+    wrap.querySelectorAll('.h2h-extra').forEach(x => x.style.display = '');
+    const expandDiv = h2hBtn.closest('.h2h-expand');
+    if (expandDiv) expandDiv.remove();
+    return;
+  }
+  // Tournament sort toggle (page-level, applies to all open detail rows)
+  const toggle = e.target.closest('.tour-sort-toggle');
+  if (toggle) {
+    e.stopPropagation();
+    window.SPSPDetail.toggleSortMode();
+    refreshOpenTournamentTables();
+    return;
+  }
+  // Expand hidden rows in tour-table
+  const expand = e.target.closest('.expand-rows');
+  if (expand) {
+    e.stopPropagation();
+    const section = expand.parentElement;
+    section.querySelectorAll('tr.extra-row').forEach(r => r.classList.remove('hidden-row'));
+    expand.remove();
+    return;
+  }
+});
+
+// main-row クリック → detail-row 展開 (大会別 / 直接対決 タブ含む). RankingTable の rowClick callback.
+function localRowClickHandler(rec, tr, _ev) {
+  if (!rec) return;
+  const next = tr.nextElementSibling;
+  if (next && next.classList && next.classList.contains('detail-row')) {
+    next.remove();
+    tr.classList.remove('expanded');
+    return;
+  }
+  // 既に開いてる行は閉じる
+  const table = tr.closest('table');
+  const open = table.querySelector('tr.detail-row');
+  if (open) {
+    const prev = open.previousElementSibling;
+    if (prev) prev.classList.remove('expanded');
+    open.remove();
+  }
+  // Insert placeholder
+  const detail = document.createElement('tr');
+  detail.className = 'detail-row';
+  if (rec.unranked) {
+    detail.innerHTML = `<td colspan="11"><div class="detail-inner" style="padding:14px;font-size:12px;color:#6b7280">
+      このプレイヤーは SPSP の DB に履歴がありません。<br>
+      最下位扱いで CSV / アップロードには含まれます。
+    </div></td>`;
+    tr.classList.add('expanded');
+    tr.after(detail);
+    return;
+  }
+  detail.innerHTML = `<td colspan="11"><div class="detail-inner">
+    <div class="loading-msg" style="padding:14px;color:#6b7280;font-size:12px">詳細情報を取得中…</div>
+  </div></td>`;
+  tr.classList.add('expanded');
+  tr.after(detail);
+  // Fetch per-player detail JSON via SPSPDetail (内部キャッシュ付き)
+  const cfg = getDetailCfg();
+  window.SPSPDetail.fetchPlayerDetail(rec.user_id, cfg).then(detailData => {
+    if (!detailData) return;
+    rec.tournaments = detailData.tournaments || [];
+    rec.history = detailData.history || [];
+    rec.recent_matches = detailData.recent_matches || [];
+    if (rec.scores) rec.scores.tjpr_lv_breakdown = detailData.tjpr_lv_breakdown || {};
+    const inner = detail.querySelector('.detail-inner');
+    if (inner) inner.innerHTML = window.SPSPDetail.buildDetailContent(rec, cfg);
+  }).catch(err => {
+    const inner = detail.querySelector('.loading-msg');
+    if (inner) inner.textContent = '詳細情報の取得に失敗: ' + err.message;
+  });
+}
+
+init();
+</script>
+</body>
+</html>

@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>理論編 2: 評価とチューニング — SPSP</title>
+<meta name="description" content="SPSP の精度評価方法 (PairAcc / |SPR|) と他ランキング (JJPR / UltRank) との比較。採用根拠とハイパーパラメータの決定経緯。">
+<link rel="canonical" href="https://tosakazu.github.io/spsp/eval.html">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="SPSP">
+<meta property="og:title" content="SPSP 理論編 2: 評価とチューニング">
+<meta property="og:description" content="SPSP の精度評価方法と他ランキングとの比較、ハイパラ決定経緯。">
+<meta property="og:url" content="https://tosakazu.github.io/spsp/eval.html">
+<meta property="og:locale" content="ja_JP">
+<script>
+MathJax = {
+  tex: { inlineMath: [['$', '$']], displayMath: [['$$', '$$']] },
+  svg: { fontCache: 'global' }
+};
+</script>
+<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" async></script>
+<style>
+  * { box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Hiragino Sans", sans-serif;
+    margin: 0; padding: 0;
+    background: #ffffff; color: #111827;
+  }
+  .nav {
+    background: #ffffff; border-bottom: 1px solid #e5e7eb;
+    padding: 12px 24px; display: flex; gap: 24px; align-items: center;
+    position: sticky; top: 0; z-index: 10;
+  }
+  .nav a { color: #6b7280; text-decoration: none; font-size: 14px; padding: 4px 8px; border-radius: 4px; }
+  .nav a:hover { color: #111827; background: #f3f4f6; }
+  .nav a.current { color: #dc2626; background: #f3f4f6; }
+  .nav .brand { font-size: 16px; color: #111827; font-weight: 600; margin-right: 16px; }
+  .nav .brand a { color: #111827; font-size: 16px; padding: 0; }
+  .nav .brand a:hover { background: transparent; }
+  .nav .meta { margin-left: auto; color: #9ca3af; font-size: 12px; }
+
+  main { max-width: 920px; margin: 0 auto; padding: 32px 24px; }
+  h1 { font-size: 26px; color: #111827; margin: 0 0 8px; }
+  h2 { font-size: 20px; color: #dc2626; margin: 32px 0 12px; padding-bottom: 6px; border-bottom: 1px solid #e5e7eb; }
+  h3 { font-size: 16px; color: #111827; margin: 20px 0 8px; }
+  p { line-height: 1.7; color: #374151; }
+  ul, ol { line-height: 1.8; color: #374151; }
+  li { margin: 4px 0; }
+  code {
+    background: #ffffff; padding: 2px 6px; border-radius: 4px;
+    font-size: 13px; color: #dc2626; font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  }
+  pre {
+    background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 6px;
+    padding: 12px 16px; overflow-x: auto; font-size: 13px;
+    color: #111827; font-family: ui-monospace, "SF Mono", Menlo, monospace;
+    line-height: 1.5;
+  }
+  .formula {
+    background: #ffffff; border-left: 3px solid #dc2626;
+    padding: 12px 16px; margin: 12px 0;
+    font-family: ui-monospace, "SF Mono", Menlo, monospace;
+    font-size: 14px; color: #dc2626;
+  }
+  .lead { font-size: 16px; color: #6b7280; margin-bottom: 24px; line-height: 1.7; }
+  .nb {
+    background: #dcfce7; border-left: 3px solid #16a34a;
+    padding: 8px 14px; margin: 12px 0; color: #374151; font-size: 13px;
+  }
+  .warn {
+    background: #fee2e2; border-left: 3px solid #dc2626;
+    padding: 8px 14px; margin: 12px 0; color: #374151; font-size: 13px;
+  }
+  table { border-collapse: collapse; margin: 12px 0; font-size: 13px; }
+  th, td { padding: 6px 12px; border-bottom: 1px solid #e5e7eb; text-align: left; }
+  th { background: #ffffff; color: #374151; }
+  table.num td:not(:first-child),
+  table.num th:not(:first-child) { text-align: right; font-variant-numeric: tabular-nums; }
+  table.num tr.highlight td { background: #fef3c7; font-weight: 600; color: #92400e; }
+  .footer { text-align: center; color: #9ca3af; font-size: 12px; padding: 32px 0 16px; }
+
+  /* Page navigation (prev/next) */
+  .pagenav {
+    display: flex; justify-content: space-between; gap: 12px;
+    margin: 32px 0 8px;
+  }
+  .pagenav a {
+    flex: 1; text-align: center;
+    background: #dc2626; color: #ffffff; text-decoration: none;
+    padding: 10px 18px; border-radius: 8px; font-size: 14px; font-weight: 600;
+  }
+  .pagenav a:hover { background: #b91c1c; }
+  .pagenav a.prev { background: #6b7280; }
+  .pagenav a.prev:hover { background: #4b5563; }
+
+  @media (max-width: 720px) {
+    body { -webkit-text-size-adjust: 100%; }
+    .nav { padding: 10px 14px; gap: 12px; font-size: 12px; flex-wrap: wrap; }
+    .nav .brand { font-size: 14px; }
+    main { padding: 20px 14px; }
+    h1 { font-size: 20px; }
+    h2 { font-size: 17px; }
+    h3 { font-size: 14px; }
+    .lead { font-size: 13px; }
+    p, ul, ol { font-size: 13px; line-height: 1.6; }
+    pre { font-size: 11px; padding: 8px 10px; }
+    .formula { font-size: 12px; padding: 8px 10px; }
+    table { font-size: 11px; display: block; overflow-x: auto; -webkit-overflow-scrolling: touch; white-space: nowrap; }
+    th, td { padding: 4px 8px; }
+    .pagenav { flex-direction: column; }
+    .pagenav a { font-size: 13px; padding: 8px 14px; }
+  }
+</style>
+</head>
+<body>
+<div id="nav-root"></div>
+<script src="nav.js"></script>
+
+<main>
+  <h1>SPSP 理論編 2: 評価</h1>
+  <p class="lead">
+    SPSP は精度をデータで確認しながら設計している。
+    本ページでは精度の測り方、パラメータ調整、既存ランキングとの比較を扱う。
+  </p>
+
+  <h2>1. ランキング精度とは</h2>
+  <p>
+    ランキングの仕事は「大会の参加者がどの順位になるかを開催前に当てる」こと。
+    精度評価は、対象大会の出場者をランキング順に並べたものと実際の最終順位のズレの大きさを数える。
+    ズレが小さいほど精度が高い。
+  </p>
+  <p>
+    ただしトーナメント結果には毎回それなりの運の要素が乗っかる。
+    1 回のミス、当日の調子、対戦カードのめぐり合わせなどが揺らぎを生む。
+    1 大会の結果で「当たった/外れた」と判断すると、揺らぎに振り回される。
+    そのため精度評価は <strong>必ず複数の大会で測って平均を見る</strong>。
+  </p>
+
+  <h3>1.1 評価に使う対象大会 (期間を 2 つに分ける)</h3>
+  <p>対象大会は <strong>調整用</strong> と <strong>最終評価用</strong> の 2 つの期間に分ける:</p>
+  <ul>
+    <li><strong>調整用</strong>: 篝火#11 (2023-10-07) 〜 篝火#13 (2025-05-04)。§4 / §5 / §8 の検証はこの期間で行う。</li>
+    <li><strong>最終評価用</strong>: 篝火#14 (2025-11-02) 〜 篝火#15 (2026-05-03)、N=37。§6 の既存ランキング比較はこの期間でしか行わない。</li>
+  </ul>
+  <p>共通条件:</p>
+  <ul>
+    <li>区切り: 国内で最も規模の大きい篝火を両端に置く。</li>
+    <li>参加者下限: 既存ランキング比較は 100 名以上、多数大会が必要なパラメータ調整は 48 名以上。</li>
+    <li>除外: <strong>制限大会</strong> (西武撃 Rising / LIMIT BREAK / RAISE / ビギナー杯 等)、
+      <strong>下位クラス</strong> (B〜E クラス、スマパカジュアル 等)、
+      <strong>身内大会</strong> (合宿 / 帝国 / 内輪 等)。</li>
+  </ul>
+
+  <h3>1.2 なぜ期間を分けるのか (オーバーフィット対策)</h3>
+  <p>
+    期間を分けるのは <strong>オーバーフィット (= 過適合)</strong> 対策。
+    特定のデータでパラメータを調整するとそのデータでは精度が高く出るが、他のデータでは精度が落ちる現象。
+  </p>
+  <p>
+    たとえば「篝火#14〜#15 の精度が最大になるようパラメータを決めた」とすると、
+    その期間に活躍した特定プレイヤーや時期特有のメタに過剰に合わせ込まれている可能性がある。
+    その上で「#14〜#15 で精度が高かった」と言っても、未来の大会の予測精度は保証しない。
+  </p>
+  <p>SPSP の手順:</p>
+  <ol>
+    <li>調整用期間 (#11〜#13) でパラメータを決める。最終評価用は触らない。</li>
+    <li>パラメータを固定したあと、初めて最終評価用期間 (#14〜#15) で精度を測る。</li>
+  </ol>
+  <p>
+    最終評価用期間を調整中に覗くと、無意識でもパラメータの判断にバイアスが入る。
+  </p>
+
+  <h2>2. 学習リークを防ぐ時系列順評価</h2>
+  <p>
+    最も気をつけるのは「未来の情報を使った予測になっていないか」。
+    たとえば 2025-12 月の大会 T を予測するのに 2026 年の結果を含むランキングを使うと、
+    「この人が優勝した」と知った上でシードを並べているのと同じになる。これが <strong>学習リーク</strong>。
+  </p>
+  <p>SPSP は大会を時系列順に処理してリークを排除する:</p>
+  <ol>
+    <li>大会 T の開始日時を取得。</li>
+    <li>T 開始より前のデータだけで全プレイヤーのレートを再計算。</li>
+    <li>そのレートから T 参加者の予測順位を作る。</li>
+    <li>T の実際の最終順位と比較して精度を測る。</li>
+    <li>次の大会 T+1 へ。</li>
+  </ol>
+
+  <h2>3. 評価指標</h2>
+  <p>順位予測のズレを 3 系統で測る:</p>
+  <ul>
+    <li><strong>PairAcc</strong>: 全ペアについて「予測順位の前後 = 実順位の前後」が一致した割合。0.5 = ランダム、1.0 = 完全一致。</li>
+    <li><strong>|SPR| mean</strong>: SPR = W2W(シード) − W2W(実順位)。
+      <strong>W2W</strong> は「ダブルイリミでその順位に到達するために必要な勝ち数」 (例: 1 位 = 全勝、最下位 = 0 勝)。
+      |SPR| はシードと最終順位を勝ち数換算で比べた絶対誤差。
+      厳密な定義は <a href="math.html#w2w" style="color:#dc2626;">理論編・数式 §3.1</a> 参照。</li>
+    <li><strong>Spearman ρ</strong>: 順位相関 (順位差を二乗して合算)。PairAcc に加えて順位の隔たりも加味する。</li>
+  </ul>
+
+  <h3>3.1 上位 K 件に限定した指標 (top-K)</h3>
+  <p>
+    上の 3 指標を「全参加者」だけでなく <strong>上位 K 件に限定したバージョン</strong> でも観察する。
+    実順位が上位 K 位以内のプレイヤーだけで同じ計算をすることで、どの帯で精度が出ているかが分かる。
+  </p>
+  <p>
+    K は <code>8, 16, 32, 64, 128, 256, 512, 1024</code> を一通り並べて見る。
+    K = 8 は「強い人同士の試合の質」、K = 256 は「どの帯にいるか」、K = 1024 は「全体の並び」と、K ごとに見ている情報が違う。
+    パラメータを変えた時にどこかの K だけ良くなって別の K で悪化することがよく起きるので、全 K を並べないと副作用に気づけない。
+  </p>
+
+  <h2>4. パラメータ調整の方法</h2>
+  <p>
+    調整は §1.1 の調整用期間 (篝火#11〜#13) でのみ行う (§1.2 のオーバーフィット対策)。
+    パラメータを 1 つ取り上げて値を振り、各値の精度を測る。
+    影響の大きいパラメータから順に、他は固定したまま変化させる。
+  </p>
+  <p>採用判断:</p>
+  <ul>
+    <li><strong>全 K で動きを確認</strong>: PairAcc・|SPR| を K = 8 から 1024 まで並べ、一貫して良くなる値は強い採用候補。間の K = 32〜128 も含めて極端な悪化がないか確認する。</li>
+    <li><strong>差が誤差レベルなら単純な値を採用</strong>: 0.5 と 0.6 でほぼ変わらないなら、ハイパラを減らせる 0.5 を選ぶ。</li>
+    <li><strong>|SPR| と PairAcc の動きが一致するか</strong>: 一致すれば採用しやすい。片方だけ改善する値は副作用を疑って深掘りする。</li>
+  </ul>
+
+  <h2>5. パラメータ調整の例</h2>
+
+  <p>代表例として総合評価の重み比を取り上げる。それ以外の調整は付録 §8 にまとめる。</p>
+
+  <p>調整用期間で順位評価と直対評価の重み比を変えて PairAcc を K 別に測った結果:</p>
+  <table class="num">
+    <thead>
+      <tr>
+        <th>重み比 (順位 : 直対)</th>
+        <th>K=8</th><th>K=16</th><th>K=32</th><th>K=64</th>
+        <th>K=128</th><th>K=256</th><th>K=512</th><th>K=1024</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td>1.0 : 0.0 (順位のみ)</td><td>.6781</td><td>.6907</td><td>.7358</td><td>.8040</td><td>.8279</td><td>.8386</td><td>.8418</td><td>.8422</td></tr>
+      <tr class="highlight"><td>0.5 : 0.5 (採用)</td><td>.6639</td><td>.7073</td><td>.7470</td><td>.8139</td><td>.8374</td><td>.8480</td><td>.8510</td><td>.8514</td></tr>
+      <tr><td>0.4 : 0.6</td><td>.6673</td><td>.7064</td><td>.7458</td><td>.8144</td><td>.8378</td><td>.8483</td><td>.8514</td><td>.8518</td></tr>
+      <tr><td>0.2 : 0.8</td><td>.6765</td><td>.7071</td><td>.7463</td><td>.8150</td><td>.8379</td><td>.8483</td><td>.8513</td><td>.8517</td></tr>
+      <tr><td>0.0 : 1.0 (直対のみ)</td><td>.6762</td><td>.7065</td><td>.7462</td><td>.8152</td><td>.8371</td><td>.8473</td><td>.8503</td><td>.8506</td></tr>
+    </tbody>
+  </table>
+  <ul>
+    <li>K = 8 では直対評価単体がやや強い (PairAcc +0.013 vs 0.5 : 0.5)。最上位帯は試合の質で決まる。</li>
+    <li>K = 16〜1024 ではバランス側が良い (= 0.4 : 0.6 か 0.5 : 0.5 で天井)。</li>
+    <li>シンプルさ優先で <strong>0.5 : 0.5</strong> を採用 (0.4 : 0.6 との差は誤差レベル)。</li>
+  </ul>
+
+  <h2>6. 既存ランキングとの比較</h2>
+
+  <p>
+    パラメータをすべて固定したあと、最終評価用期間 (篝火#14〜#15、N=37) で
+    SPSP を既存ランキングおよび代表的なレーティング手法と比較した。
+    各大会の<em>開始直前</em>のランキングを予測順位とし、実際の最終順位と照合する。
+    未ランクのプレイヤーは予測順位の末尾に置く。
+  </p>
+  <table class="num">
+    <thead>
+      <tr>
+        <th>手法</th>
+        <th>PairAcc ↑</th><th>Spearman ρ ↑</th>
+        <th>|SPR| ↓</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr class="highlight"><td>SPSP (順位評価 + 直対評価の総合評価)</td><td>.8787</td><td>.8471</td><td>0.9757</td></tr>
+      <tr><td>SPSP 直対評価 単体 (Glicko2 + LVゲート学習)</td><td>.8777</td><td>.8457</td><td>0.9785</td></tr>
+      <tr><td>Glicko2 単体 (素のレート)</td><td>.8755</td><td>.8425</td><td>0.9970</td></tr>
+      <tr><td>OpenSkill BT 単体 (素のレート)</td><td>.8739</td><td>.8392</td><td>1.0037</td></tr>
+      <tr><td>SPSP 順位評価 単体 (5 層カスケード)</td><td>.8700</td><td>.8339</td><td>1.0138</td></tr>
+      <tr><td>Elo 単体 (素のレート)</td><td>.8686</td><td>.8320</td><td>1.0269</td></tr>
+      <tr><td>JJPR v3</td><td>.8406</td><td>.7824</td><td>1.1311</td></tr>
+    </tbody>
+  </table>
+  <details style="margin:8px 0">
+    <summary style="font-size:12px;color:#6b7280;cursor:pointer;user-select:none">対象 37 大会の一覧</summary>
+    <p style="font-size:11px;color:#9ca3af;line-height:1.5;margin-top:8px">
+      篝火#14 (1520名, 11/02), 極冠#11 (101名, 11/15), 煌竜祭#1 (148名, 11/22),
+      FlyHigh!!#20 (192名, 11/24), 第64回スマバトSP (223名, 11/24),
+      IMPACT MAJOR#2 (192名, 11/29), 第2回 錦祭 (122名, 11/29), ユニブラ#6 (127名, 11/30),
+      りぷぶらSP12 (104名, 12/06), 極冠#12 (110名, 12/13), Vertex Style (128名, 12/20),
+      桜梅桃李 第参幕 (240名, 12/21), FlyHigh!!#21 (191名, 12/27),
+      第18回グランドスラム (284名, 12/28), 第50回クロブラ (142名, 12/28),
+      第2回スマフェス (128名, 01/04), しずトナ#12 (110名, 01/10), 第65回スマバトSP (242名, 01/11),
+      兵庫大対戦会#5 (106名, 01/18), マエスマ'TOP#2 (572名, 01/31),
+      第66回スマバトSP (307名, 02/07), IMPACT MAJOR#2.5 (128名, 02/11),
+      スマパ #220[拡大版] (128名, 02/15), 第5回あのあのブラザーズ (254名, 02/22),
+      りぷぶらSP13 (105名, 02/28), 第67回スマバトSP (373名, 03/14),
+      銀工杯#2 (196名, 03/21), カリスマSP23 (192名, 03/22), 極冠#13 (112名, 03/28),
+      桜梅桃李 第肆幕 (208名, 04/04), LEADD+3 (115名, 04/04), Vertex Style #2 (128名, 04/05),
+      第68回スマバトSP (316名, 04/12), DELTA×西武撃 Open (545名, 04/18),
+      Gen 4.0 (192名, 04/25), 池スマ#4 (256名, 04/29), 篝火#15 (2814名, 05/03)。
+    </p>
+  </details>
+
+  <h3>6.1 何が分かるか</h3>
+  <ul>
+    <li><strong>SPSP は JJPR v3 を PairAcc +0.038、|SPR| −0.155 改善</strong>。</li>
+    <li>素のレート系統 (Glicko2 / OpenSkill BT / Elo) はいずれも JJPR v3 を上回る。
+      これに LVゲート学習を加えた SPSP 直対評価単体で素の Glicko2 から PairAcc +0.002、|SPR| −0.019。
+      さらに 5 層カスケードの順位評価をランク平均で組み合わせて <strong>|SPR| を 0.003 改善</strong>。</li>
+    <li>順位評価単体は直対系より精度が劣るが、直対系と独立な情報を持つので組み合わせると |SPR| が縮まる。</li>
+  </ul>
+
+  <h3>6.2 UltRank との比較</h3>
+  <p>
+    UltRank は日本のカバー人数が約 200 名と限定的なので、100 人規模以上の大会では大部分が未ランクになる。
+    そこで <strong>UltRank がランクしている 200 名どうしのペアだけ</strong>に絞り、UltRank に有利な条件で各手法を比較した
+    (§6 と同じ 37 大会、各大会で UltRank ランカーが 2 名以上参加):
+  </p>
+  <table class="num">
+    <thead>
+      <tr>
+        <th>手法</th>
+        <th>PairAcc ↑</th><th>Spearman ρ ↑</th>
+        <th>|SPR| ↓</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr class="highlight"><td>SPSP (総合評価)</td><td>.7464</td><td>.6167</td><td>1.9329</td></tr>
+      <tr><td>JJPR v3</td><td>.7460</td><td>.6013</td><td>1.9424</td></tr>
+      <tr><td>SPSP 順位評価 単体 (5 層カスケード)</td><td>.7440</td><td>.6027</td><td>1.9728</td></tr>
+      <tr><td>SPSP 直対評価 単体 (Glicko2 + LVゲート学習)</td><td>.7429</td><td>.6135</td><td>1.8943</td></tr>
+      <tr><td>Glicko2 単体 (素のレート)</td><td>.7416</td><td>.6065</td><td>1.8906</td></tr>
+      <tr><td>OpenSkill BT 単体 (素のレート)</td><td>.7405</td><td>.6095</td><td>1.9176</td></tr>
+      <tr><td>Elo 単体 (素のレート)</td><td>.7348</td><td>.5978</td><td>1.9378</td></tr>
+      <tr><td>UltRank 2025 Japan</td><td>.7292</td><td>.5718</td><td>2.1215</td></tr>
+    </tbody>
+  </table>
+  <p>
+    UltRank に有利な条件下でも <strong>SPSP が PairAcc で +0.017、|SPR| で −0.189 良い結果</strong>。
+    JJPR v3 / Glicko2 単体も UltRank を上回っており、UltRank の年 1 回更新ペースでは
+    直近半年のメタや勢いを反映しきれていない。
+  </p>
+
+  <h2>7. (付録) 採用パラメータ一覧</h2>
+
+  <p>本番運用で採用している主要パラメータを再現性のために列挙する。</p>
+
+  <h3>7.1 直対評価 (Glicko2)</h3>
+  <table>
+    <thead><tr><th>パラメータ</th><th>値</th><th>意味</th></tr></thead>
+    <tbody>
+      <tr><td>初期レート $\rho_0$</td><td>1500</td><td>新規プレイヤーのレート初期値</td></tr>
+      <tr><td>初期不確実性 $\text{RD}_0$</td><td>350</td><td>新規プレイヤーの不確実性初期値 (Glicko2 既定)</td></tr>
+      <tr><td>初期変動性 $\nu_0$</td><td>0.06</td><td>レート変動の初期値 (Glicko2 既定)</td></tr>
+      <tr><td>$\tau$ (系統定数)</td><td>0.5</td><td>変動性の制約パラメータ (Glicko2 既定)</td></tr>
+      <tr><td>復帰加算の上限 $\text{RD}_{\text{infl}}$</td><td>128</td><td>不参加期間で膨らませる不確実性の上限</td></tr>
+      <tr><td>$D_{\text{mid}}$ (sigmoid 中央)</td><td>540 日</td><td>復帰加算カーブの中央点 (1.5 年)</td></tr>
+      <tr><td>$D_{\text{scale}}$ (sigmoid 幅)</td><td>180 日</td><td>復帰加算カーブの幅</td></tr>
+      <tr><td>$D_{\text{grace}}$</td><td>30 日</td><td>復帰加算の猶予日数</td></tr>
+      <tr><td>LVゲート学習</td><td>LV1: 5 名以上 / LV2: 9 名以上 / LV3: 25 名以上 + 休日 / LV4: 33 名以上 + 休日 / LV5: 49 名以上 + 休日</td><td>プレイヤー LV と大会属性で学習対象を切替</td></tr>
+      <tr><td>表示 Elo</td><td>$\rho$</td><td>Glicko2 内部レートをそのまま表示 (= Elo 空間、1500 が新規プレイヤーの基準値)</td></tr>
+    </tbody>
+  </table>
+
+  <h3>7.2 順位評価</h3>
+  <table>
+    <thead><tr><th>パラメータ</th><th>値</th><th>意味</th></tr></thead>
+    <tbody>
+      <tr><td>最少参加人数 (Lv1)</td><td>5</td><td>集計対象とする大会の最少参加人数</td></tr>
+      <tr><td>最少参加人数 (Lv2)</td><td>9</td><td>Lv2 母集団は参加者 9 名以上の大会のみ</td></tr>
+      <tr><td>休日必須 (Lv3, Lv4, Lv5)</td><td>有効</td><td>平日大会は LV3 以上の母集団候補から外す (プレ大会も平日扱い)</td></tr>
+      <tr><td>最少参加人数 (Lv3)</td><td>25</td><td>参加者 25 名以上の休日大会のみ LV3 の母集団候補</td></tr>
+      <tr><td>最少参加人数 (Lv4)</td><td>33</td><td>参加者 33 名以上の休日大会のみ LV4 の母集団候補</td></tr>
+      <tr><td>最少参加人数 (Lv5)</td><td>49</td><td>参加者 49 名以上の休日大会のみ LV5 の母集団候補</td></tr>
+      <tr><td>母集団上位 N 名 (Lv2)</td><td>2048</td><td>Lv1 で上位 2048 名に絞ったうえで再計算</td></tr>
+      <tr><td>母集団上位 N 名 (Lv3)</td><td>1024</td><td>Lv2 で上位 1024 名 → Lv3</td></tr>
+      <tr><td>母集団上位 N 名 (Lv4)</td><td>512</td><td>Lv3 で上位 512 名 → Lv4</td></tr>
+      <tr><td>母集団上位 N 名 (Lv5)</td><td>256</td><td>Lv4 で上位 256 名 → Lv5</td></tr>
+      <tr><td>Lv1 (基準値, 下限, フル上位件数, 位置減衰)</td><td>(1700, 350, 1, 0.3)</td><td>gain 関数の基準値 / 下限、フル評価上位件数、それ以降の減衰率</td></tr>
+      <tr><td>Lv2-5 (基準値, 下限, フル上位件数, 位置減衰)</td><td>(1900, 700, 3, 0.3)</td><td>Lv2 以降は基準値・下限を上げ、フル評価件数も 3 に拡張</td></tr>
+      <tr><td>時間減衰</td><td>0.96<sup>d/30</sup></td><td>大会開催日からの経過日数 d による減衰 (= 毎月 4% 減衰)</td></tr>
+      <tr><td>ε (零回避項)</td><td>0.01</td><td>ラウンドポイントの零回避項</td></tr>
+      <tr><td>表示 Elo (順位評価)</td><td>$S \times 17.5$</td><td>順位評価スコアを線形変換した表示用数値 (順位に影響しない)</td></tr>
+    </tbody>
+  </table>
+
+  <h3>7.3 総合評価</h3>
+  <table>
+    <thead><tr><th>パラメータ</th><th>値</th><th>意味</th></tr></thead>
+    <tbody>
+      <tr><td>方式</td><td>ランク平均</td><td>順位評価ランクと直対評価ランクの単純平均</td></tr>
+      <tr><td>重み</td><td>1 : 1</td><td>順位評価:直対評価 = 1:1 (= §5 で決定)</td></tr>
+      <tr><td>片側未ランク補完</td><td>全プレイヤー数 + 1</td><td>片方の評価にしか出てこない人は、欠けている側を「全プレイヤー数+1」で穴埋め</td></tr>
+      <tr><td>同順位タイブレーク</td><td>直対評価ランク優先</td><td>平均順位が並んだ場合は直対評価ランクの低い (= 上位の) 方を優先</td></tr>
+    </tbody>
+  </table>
+
+  <h2>8. (付録) その他の検証</h2>
+
+  <p>§5 で取り上げなかった調整・比較もここで一覧にしておく (すべて調整用期間で検証)。</p>
+
+  <table>
+    <thead><tr><th>試したこと</th><th>結果</th><th>採否</th></tr></thead>
+    <tbody>
+      <tr>
+        <td>序盤補強モード (累計大会数 20 以下のプレイヤーを全大会で学習)</td>
+        <td>素の LVゲート学習のほうが上位帯で精度が高い</td>
+        <td>不採用</td>
+      </tr>
+      <tr>
+        <td>ハイブリッドゲート (累計大会数ゲートと LV ゲートの和集合)</td>
+        <td>素の LVゲート学習と同水準だが、設計の純度が下がる</td>
+        <td>不採用</td>
+      </tr>
+      <tr>
+        <td>LV4 の参加者数しきい値を 24 / 32 / 48 で比較</td>
+        <td>33 名以上がバランス良し。24 名以上だと中規模大会の揺らぎが乗る</td>
+        <td>33 名以上を採用</td>
+      </tr>
+      <tr>
+        <td>LV3 で休日必須にする / しない</td>
+        <td>休日必須のほうが上位帯の安定性が高い</td>
+        <td>休日必須を採用</td>
+      </tr>
+      <tr>
+        <td>Glicko2 復帰加算あり / なし</td>
+        <td>ありのほうが全 K で PairAcc がわずかに改善</td>
+        <td>採用</td>
+      </tr>
+      <tr>
+        <td>時間減衰の比率を月 3%/4%/5% で sweep</td>
+        <td>月 4% (0.96) が反復46 の 4 シーズン検証で平均 τ 最良。月 3% / 5% は劣る</td>
+        <td>月 4% を採用</td>
+      </tr>
+      <tr>
+        <td>JJPR を加えた 3 ランキングのランク平均</td>
+        <td>精度向上なし、複雑性だけ増える</td>
+        <td>不採用</td>
+      </tr>
+      <tr>
+        <td>RRF (Reciprocal Rank Fusion) でランク統合</td>
+        <td>単純ランク平均と差が出ず</td>
+        <td>不採用</td>
+      </tr>
+      <tr>
+        <td>順位評価の位置減衰を 0.1〜1.0 で振る</td>
+        <td>0.1〜0.6 でほぼ同水準。1.0 のみ大幅劣化</td>
+        <td>0.3 採用</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <p>
+    各パラメータを動かしたときの精度はおおむね飽和域にあり、これ以上削る/足すとどこかが崩れる位置に落ち着いた。
+  </p>
+
+  <h2>もっと知りたい人へ</h2>
+  <p>
+    正式な数式は次の「理論編・数式」で。<br>
+    概念から復習したい場合は前の「理論編・概念」で。
+  </p>
+  <div class="pagenav">
+    <a class="prev" href="details.html">← 理論編・概念</a>
+    <a href="math.html">理論編・数式 →</a>
+  </div>
+
+  <div class="footer">
+    SPSP (Saikyo Player SPECIAL) · データソース: start.gg
+    <br><span class="site-version" style="font-size:11px;color:#9ca3af">v b2e3c33 · 2026-06-10 13:51 UTC</span>
+  </div>
+</main>
+</body>
+</html>

@@ -1,0 +1,1536 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SPSP シード生成 — スマブラSP 大会シーディングツール</title>
+<meta name="description" content="SPSP のランキングを使ってスマブラSP大会の参加者リストからシードを自動生成。startgg user_id リストを貼り付けるだけ、SPR を最小化する seed 順を即時提案。">
+<link rel="canonical" href="https://tosakazu.github.io/spsp/seed/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="SPSP">
+<meta property="og:title" content="SPSP シード生成 — スマブラSP 大会シーディングツール">
+<meta property="og:description" content="SPSP ランキングでスマブラSP大会のシードを自動生成。">
+<meta property="og:url" content="https://tosakazu.github.io/spsp/seed/">
+<meta property="og:locale" content="ja_JP">
+<link rel="stylesheet" href="../ranking-table.css">
+<script src="../seed-upload/seed_uploader.js"></script>
+<script src="../ranking-table.js"></script>
+<script src="../player-detail.js"></script>
+<style>
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Hiragino Sans", sans-serif;
+    background: #ffffff; color: #111827; font-size: 14px;
+    -webkit-text-size-adjust: 100%;
+  }
+  .nav {
+    background: #ffffff; border-bottom: 1px solid #e5e7eb;
+    padding: 12px 24px; display: flex; gap: 24px; align-items: center;
+    position: sticky; top: 0; z-index: 10;
+  }
+  .nav a { color: #6b7280; text-decoration: none; font-size: 14px; padding: 4px 8px; border-radius: 4px; }
+  .nav a:hover { color: #111827; background: #f3f4f6; }
+  .nav a.current { color: #dc2626; background: #f3f4f6; }
+  .nav .brand { font-size: 16px; color: #111827; font-weight: 600; margin-right: 16px; }
+  .nav .brand a { color: #111827; font-size: 16px; padding: 0; }
+  .nav .brand a:hover { background: transparent; }
+  .nav .meta { margin-left: auto; color: #9ca3af; font-size: 12px; }
+
+  .header { max-width: 1400px; margin: 0 auto; padding: 20px 24px 0; }
+  h1 { font-size: 22px; color: #111827; margin: 0 0 4px; }
+  .subtitle { font-size: 13px; color: #6b7280; margin-bottom: 16px; }
+
+  .method-tabs {
+    display: flex; gap: 4px; margin: 12px 0;
+    background: #ffffff; padding: 4px; border-radius: 8px;
+    border: 1px solid #e5e7eb; overflow-x: auto;
+  }
+  .method-tab {
+    padding: 8px 14px; cursor: pointer; border-radius: 6px;
+    font-size: 13px; color: #6b7280; transition: all 0.1s;
+    user-select: none; white-space: nowrap;
+  }
+  .method-tab:hover { color: #374151; background: #f3f4f6; }
+  .method-tab.active { background: #dc2626; color: #fff; }
+  .method-tab .tab-desc { display: block; font-size: 10px; opacity: 0.7; margin-top: 2px; }
+
+  .controls {
+    display: flex; gap: 12px; align-items: center; flex-wrap: wrap; margin: 12px 0;
+  }
+  input, button, select {
+    padding: 8px 12px; border: 1px solid #e5e7eb;
+    background: #ffffff; color: #111827;
+    border-radius: 6px; font-size: 13px; font-family: inherit;
+  }
+  input[type="search"] { min-width: 280px; }
+  button { cursor: pointer; }
+  button:hover { background: #f3f4f6; border-color: #dc2626; }
+  /* disabled は inline の background 色を override (= 全 button 共通の灰色化) */
+  button:disabled, button[disabled] {
+    background: #e5e7eb !important; color: #9ca3af !important;
+    cursor: not-allowed; opacity: 0.7;
+  }
+  button:disabled:hover, button[disabled]:hover {
+    background: #e5e7eb !important; border-color: #e5e7eb !important;
+  }
+  button.jump { font-size: 11px; padding: 4px 10px; }
+  .status { color: #6b7280; font-size: 12px; }
+
+  .table-wrap { max-width: 1400px; margin: 0 auto; padding: 0 24px 32px; }
+  /* Table base, column widths, lv-badge / gate-pill / player-name / mobile card layout は
+     共有 ranking-table.css へ移行済。ここではシード固有のオーバーライドのみ. */
+
+  .detail-explain {
+    background: #f9fafb; border-left: 3px solid #dc2626;
+    padding: 10px 16px; margin-bottom: 12px;
+    font-size: 13px; color: #374151; line-height: 1.6;
+  }
+  .detail-explain strong { color: #111827; }
+  .detail-section { margin-bottom: 20px; }
+  .detail-section h4 {
+    margin: 0 0 8px; color: #dc2626; font-size: 13px; font-weight: 600;
+  }
+  .detail-section h5 {
+    margin: 0 0 6px; color: #374151; font-size: 12px; font-weight: 600;
+  }
+  /* Detail tabs (大会別 / 直接対決) */
+  .detail-tabs {
+    display: flex; gap: 4px; margin: 4px 0 10px;
+    border-bottom: 1px solid #e5e7eb;
+  }
+  .detail-tab {
+    padding: 7px 14px; cursor: pointer; user-select: none;
+    font-size: 13px; color: #6b7280; font-weight: 500;
+    border-bottom: 2px solid transparent;
+    border-radius: 4px 4px 0 0; transition: color .12s, background .12s, border-color .12s;
+  }
+  .detail-tab:hover {
+    color: #dc2626; background: #fef2f2; border-bottom-color: #fca5a5;
+  }
+  .detail-tab.active {
+    color: #dc2626; border-bottom-color: #dc2626; font-weight: 600;
+  }
+  /* H2H section (直接対決) */
+  .h2h-section { display: flex; flex-direction: column; gap: 16px; }
+  .h2h-col { min-width: 0; }
+  .h2h-list { display: flex; flex-direction: column; gap: 6px; }
+  .h2h-opp {
+    border: 1px solid #f3f4f6; border-radius: 6px;
+    padding: 8px 10px; background: #fafafa;
+    transition: background 0.1s, border-color 0.1s;
+  }
+  .h2h-opp:hover { background: #f0f0f0; border-color: #d1d5db; }
+  .h2h-opp.h2h-win  { border-left: 3px solid #16a34a; }
+  .h2h-opp.h2h-loss { border-left: 3px solid #2563eb; }
+  .h2h-head { display: flex; align-items: baseline; gap: 8px; margin-bottom: 4px; }
+  .h2h-opp-name {
+    color: #dc2626; font-weight: 600; text-decoration: none; font-size: 13px;
+    word-break: break-word; min-width: 0;
+  }
+  .h2h-opp.h2h-win .h2h-opp-name { color: #16a34a; }
+  .h2h-opp.h2h-loss .h2h-opp-name { color: #2563eb; }
+  .h2h-opp-name:hover { text-decoration: underline; }
+  .h2h-rank { color: #9ca3af; font-size: 11px; font-variant-numeric: tabular-nums; }
+  .h2h-count { color: #6b7280; font-size: 11px; margin-left: auto; flex-shrink: 0; }
+  .h2h-match {
+    display: flex; gap: 8px; align-items: baseline;
+    font-size: 11px; color: #6b7280; padding: 3px 0;
+  }
+  .h2h-match .h2h-date { color: #9ca3af; font-size: 10px; flex-shrink: 0; }
+  .h2h-match .h2h-tname { flex: 1 1 auto; min-width: 0; word-break: break-word; }
+  .h2h-match .h2h-tname a { color: #6b7280; text-decoration: none; }
+  .h2h-match .h2h-tname a:hover { color: #dc2626; text-decoration: underline; }
+  .h2h-match .h2h-delta {
+    font-weight: 700; font-variant-numeric: tabular-nums;
+    color: #9ca3af; font-size: 12px; flex-shrink: 0;
+  }
+  .h2h-match .h2h-delta.pos { color: #16a34a; }
+  .h2h-match .h2h-delta.neg { color: #2563eb; }
+  @media (min-width: 800px) {
+    .h2h-section { flex-direction: row; gap: 20px; }
+    .h2h-col { flex: 1 1 50%; }
+  }
+  /* tour-main-row / tour-opp-row: 1 行を main + opp の 2 つの <tr> として表現する canonical 形 */
+  /* #ranktable prefix を付けて ranking-table.css の #ranktable td 上書き */
+  #ranktable .tour-table tr.tour-main-row td { border-bottom: none; }
+  .tour-table tr.tour-main-row { transition: background 0.1s; }
+  .tour-table tr.tour-opp-row { transition: background 0.1s; }
+  .tour-table tr.tour-main-row:hover,
+  .tour-table tr.tour-main-row:hover + tr.tour-opp-row,
+  .tour-table tr.tour-opp-row:hover,
+  .tour-table tr.tour-main-row:has(+ tr.tour-opp-row:hover) {
+    background: #eef2f6 !important;
+  }
+  .tour-table tr.tour-main-row.counted:hover,
+  .tour-table tr.tour-main-row.counted:hover + tr.tour-opp-row,
+  .tour-table tr.tour-opp-row.counted:hover,
+  .tour-table tr.tour-main-row.counted:has(+ tr.tour-opp-row.counted:hover) {
+    background: rgba(220, 38, 38, 0.07) !important;
+  }
+  .tour-table tr.extra-row.hidden-row { display: none !important; }
+  /* タグ chip (= 制限大会 / 下位クラス) */
+  .tag-res { color: #be123c; font-size: 10px; padding: 1px 5px; background: rgba(225, 29, 72, 0.10); border-radius: 8px; margin-left: 4px; }
+  .tag-lc  { color: #0369a1; font-size: 10px; padding: 1px 5px; background: rgba(2, 132, 199, 0.10); border-radius: 8px; margin-left: 4px; }
+
+  /* Chart container */
+  .chart-wrap {
+    background: #f9fafb; border: 1px solid #f3f4f6; border-radius: 6px;
+    padding: 12px; margin: 8px 0;
+  }
+  .chart-tabs {
+    display: flex; gap: 4px; margin-bottom: 8px;
+  }
+  .chart-tab {
+    padding: 4px 10px; font-size: 11px; cursor: pointer; user-select: none;
+    background: #ffffff; border-radius: 4px; color: #6b7280;
+  }
+  .chart-tab.active { background: #dc2626; color: #fff; }
+  .chart-area { height: 220px; position: relative; }
+  .chart-status { font-size: 11px; color: #9ca3af; }
+
+  .tour-table, .breakdown-table { font-size: 12px; width: 100%; border-collapse: collapse; }
+  .tour-table th, .breakdown-table th {
+    background: #f9fafb; position: static; padding: 6px 8px;
+    border-bottom: 1px solid #f3f4f6; cursor: default; font-weight: 600;
+  }
+  .tour-table th::after, .breakdown-table th::after { content: ""; }
+  .tour-table td, .breakdown-table td { padding: 4px 8px; border-bottom: 1px solid #ffffff; }
+  .tour-table tr.counted, .breakdown-table tr.counted { background: rgba(220, 38, 38, 0.04); }
+  .tour-table tr.weekday { color: #6b7280; }
+  .tour-table tr.weekend { color: #374151; }
+  /* Hover ハイライト (paired main + opp) は canonical block (上方) に集約済.
+     旧 .tour-table tbody tr:hover は tour-main-row / tour-opp-row のペア hover と
+     specificity が同じで cascade ties により壊すため、削除する (= main / local と整合). */
+  .tag-wk { color: #dc2626; font-size: 10px; padding: 1px 5px; background: rgba(220, 38, 38, 0.08); border-radius: 8px; }
+  .tag-wd { color: #6b7280; font-size: 10px; padding: 1px 5px; background: rgba(107, 114, 128, 0.08); border-radius: 8px; }
+  .tag-sm { color: #d97706; font-size: 10px; padding: 1px 5px; background: rgba(217, 119, 6, 0.10); border-radius: 8px; margin-left: 4px; }
+  .tag-pre { color: #6b21a8; font-size: 10px; padding: 1px 5px; background: rgba(168, 85, 247, 0.12); border-radius: 8px; margin-left: 4px; }
+  .num { font-variant-numeric: tabular-nums; text-align: right; }
+  .pos { color: #16a34a; }
+  .neg { color: #2563eb; }
+
+  .footer { text-align: center; color: #9ca3af; font-size: 12px; padding: 32px 0 16px; }
+  .empty-msg { padding: 24px; text-align: center; color: #6b7280; }
+
+  /* ── 今後の大会ピッカー ── */
+  .upcoming-box { background: #ffffff; border: 1px solid #e5e7eb; border-radius: 6px; margin: 10px 0 14px; }
+  .upcoming-toggle {
+    display: flex; align-items: center; gap: 8px; padding: 9px 12px;
+    cursor: pointer; user-select: none; font-size: 13px; color: #374151; font-weight: 600;
+  }
+  .upcoming-toggle:hover { background: #f9fafb; }
+  .upcoming-toggle .chev { transition: transform 0.15s; color: #9ca3af; }
+  .upcoming-box.open .upcoming-toggle .chev { transform: rotate(90deg); }
+  .upcoming-toggle .badge {
+    background: #dc2626; color: #fff; font-size: 10px; padding: 1px 7px;
+    border-radius: 9px; font-weight: 600;
+  }
+  .upcoming-body { display: none; border-top: 1px solid #e5e7eb; padding: 8px 4px; }
+  .upcoming-box.open .upcoming-body { display: block; }
+  .upcoming-loading { padding: 14px; text-align: center; color: #9ca3af; font-size: 12px; }
+  .upcoming-list { display: flex; flex-direction: column; gap: 4px; }
+  .upcoming-item {
+    border: 1px solid #f3f4f6; border-radius: 6px; padding: 8px 10px;
+    cursor: pointer; transition: border-color 0.1s, background 0.1s;
+    display: flex; flex-direction: column; gap: 4px;
+  }
+  .upcoming-item:hover { border-color: #dc2626; background: #fef2f2; }
+  .upcoming-item .row-1 { display: flex; align-items: baseline; gap: 8px; flex-wrap: wrap; }
+  .upcoming-item .ev-date { color: #dc2626; font-weight: 600; font-size: 11px; white-space: nowrap; }
+  .upcoming-item .ev-name { font-size: 13px; color: #111827; font-weight: 500; flex: 1; min-width: 0; }
+  .upcoming-item .ev-link {
+    color: #9ca3af; text-decoration: none; font-size: 12px;
+    padding: 1px 6px; border: 1px solid #e5e7eb; border-radius: 4px;
+    line-height: 1.2; white-space: nowrap;
+  }
+  .upcoming-item .ev-link:hover { color: #dc2626; border-color: #dc2626; background: #fef2f2; }
+  .upcoming-item .row-2 { display: flex; gap: 10px; font-size: 11px; color: #6b7280; flex-wrap: wrap; }
+  .upcoming-item .row-2 .att-num { color: #111827; font-weight: 600; }
+  .upcoming-item .row-2 .city { background: #f3f4f6; padding: 1px 6px; border-radius: 8px; }
+  .upcoming-events {
+    display: none; margin-top: 6px; padding-top: 6px; border-top: 1px dashed #e5e7eb;
+    flex-direction: column; gap: 4px;
+  }
+  .upcoming-item.expanded .upcoming-events { display: flex; }
+  .upcoming-event-row {
+    display: flex; align-items: center; gap: 8px; padding: 6px 8px;
+    background: #f9fafb; border-radius: 4px; cursor: pointer;
+    transition: background 0.1s;
+  }
+  .upcoming-event-row:hover { background: #fef2f2; border: 1px solid #dc2626; padding: 5px 7px; }
+  .upcoming-event-row .ev-event-name { flex: 1; font-size: 12px; color: #374151; }
+  .upcoming-event-row .ev-event-entrants { font-size: 11px; color: #6b7280; white-space: nowrap; }
+  .upcoming-pager {
+    display: flex; justify-content: center; align-items: center; gap: 10px;
+    padding: 10px 8px 6px; font-size: 12px; color: #6b7280;
+  }
+  .upcoming-pager button {
+    padding: 4px 10px; font-size: 12px; background: #ffffff; color: #374151;
+    border: 1px solid #e5e7eb; border-radius: 4px; cursor: pointer;
+  }
+  .upcoming-pager button:hover:not(:disabled) { background: #f3f4f6; border-color: #dc2626; color: #dc2626; }
+  .upcoming-pager button:disabled { opacity: 0.4; cursor: not-allowed; }
+  /* event-picker (= handleFetch 複数 event 警告の inline UI) */
+  #event-picker { display: none; margin: 6px 0 10px; }
+  #event-picker .label {
+    font-size: 12px; color: #374151; font-weight: 600; margin-bottom: 6px;
+  }
+  #event-picker .pe-list { display: flex; flex-direction: column; gap: 4px; }
+
+  .summary-row {
+    display: flex; flex-wrap: wrap; gap: 8px 24px; margin-bottom: 12px; font-size: 12px;
+    background: #f9fafb; padding: 10px 14px; border-radius: 6px; border: 1px solid #f3f4f6;
+  }
+  .summary-row b { color: #111827; font-weight: 600; margin-right: 4px; }
+  .summary-row span { color: #6b7280; }
+
+  /* ── Mobile responsive (card layout) ── */
+  @media (max-width: 720px) {
+    body { font-size: 13px; }
+    .nav { padding: 8px 12px; gap: 8px; font-size: 12px; flex-wrap: wrap; }
+    .nav .brand { font-size: 14px; margin-right: 8px; }
+    .nav a { padding: 3px 6px; font-size: 12px; }
+    .nav .meta { width: 100%; margin-left: 0; font-size: 10px; }
+
+    .header { padding: 12px 12px 0; }
+    h1 { font-size: 18px; }
+    .subtitle { font-size: 11px; margin-bottom: 10px; }
+
+    .method-tabs { padding: 2px; gap: 2px; -webkit-overflow-scrolling: touch; }
+    .method-tab { padding: 6px 8px; font-size: 11px; }
+    .method-tab .tab-desc { display: none; }
+
+    .controls { gap: 6px; }
+    input[type="search"] { min-width: 0; flex: 1 1 100%; font-size: 14px; padding: 8px 10px; }
+    button.jump { font-size: 10px; padding: 4px 8px; }
+    .status { width: 100%; font-size: 10px; }
+
+    .table-wrap { padding: 0 8px 24px; max-width: 100vw; overflow-x: hidden; }
+
+    /* Mobile card layout, detail-row base は ranking-table.css に集約済 */
+
+    /* Inner detail tables: TJPR breakdown keeps table layout; tour-table is converted below */
+    .detail-row .breakdown-table { display: table; table-layout: auto; width: 100%; }
+    .detail-row .breakdown-table thead { display: table-header-group; }
+    .detail-row .breakdown-table tbody { display: table-row-group; }
+    .detail-row .breakdown-table tfoot { display: table-footer-group; }
+    .detail-row .breakdown-table tr { display: table-row; }
+    .detail-row .breakdown-table td,
+    .detail-row .breakdown-table th { display: table-cell; }
+
+    .detail-explain { padding: 8px 10px; font-size: 12px; line-height: 1.55; word-wrap: break-word; }
+    .detail-section { margin-bottom: 16px; box-sizing: border-box; max-width: 100%; }
+    .detail-section h4 { font-size: 12px; }
+
+    /* tour-table: 4 行 grid layout on mobile */
+    .hscroll { overflow-x: visible; max-width: 100%; }
+    .tour-table { display: block !important; min-width: 0; font-size: 12px; }
+    .tour-table thead { display: none !important; }
+    .tour-table tbody { display: block !important; }
+    .tour-table tr {
+      display: grid !important;
+      grid-template-columns: auto auto auto 1fr auto auto;
+      column-gap: 0;
+      row-gap: 3px;
+      padding: 6px 8px;
+      margin-bottom: 4px;
+      background: #f9fafb;
+      border-radius: 6px;
+      border: 1px solid #f3f4f6;
+      align-items: baseline;
+    }
+    .tour-table td { padding: 0 !important; border: none; font-size: 11px; color: #374151; line-height: 1.3; min-width: 0; }
+    /* Row 1: 日付 + 区分 + Lv */
+    .tour-table td:nth-child(1) { grid-column: 1; grid-row: 1; color: #dc2626; font-weight: 500; font-size: 11px; margin-right: 8px; }
+    .tour-table td:nth-child(5) { grid-column: 2; grid-row: 1; margin-right: 4px; }   /* 区分 */
+    .tour-table td:nth-child(6) { grid-column: 3; grid-row: 1; }   /* Lv */
+    /* Row 2: 大会名 + 順位/人数 (横並び) */
+    .tour-table td:nth-child(2) {
+      grid-column: 1 / 5; grid-row: 2;
+      font-size: 12px; word-break: break-word; line-height: 1.35;
+    }
+    .tour-table td:nth-child(4) {
+      grid-column: 5; grid-row: 2;
+      font-size: 14px; font-weight: 700; color: #111827; text-align: right;
+    }
+    .tour-table td:nth-child(3) {
+      grid-column: 6; grid-row: 2;
+      font-size: 11px; color: #6b7280;
+    }
+    /* Row 3: 順位評価 (寄与 (ベース)) + 直対評価 (両方目立つ、横並び) */
+    .tour-table td:nth-child(7) {
+      grid-column: 1 / 4; grid-row: 3;
+      font-size: 14px; font-weight: 700; color: #dc2626; margin-top: 3px;
+      text-align: left;
+    }
+    .tour-table td:nth-child(8) {
+      grid-column: 4 / 7; grid-row: 3;
+      font-size: 14px; font-weight: 700; color: #9ca3af; margin-top: 3px;
+      text-align: right;
+    }
+    .tour-table td:nth-child(8).pos { color: #16a34a; }
+    .tour-table td:nth-child(8).neg { color: #2563eb; }
+    /* ::before ラベル */
+    .tour-table td:nth-child(3)::before { content: "/"; color: #9ca3af; }
+    .tour-table td:nth-child(4)::before { content: ""; }
+    .tour-table td:nth-child(5)::before { content: ""; }
+    .tour-table td:nth-child(6)::before { content: ""; }
+    .tour-table td:nth-child(7)::before { content: "順位評価 "; color: #9ca3af; font-size: 10px; font-weight: 400; margin-right: 2px; }
+
+    /* Opponent row (各大会の対戦相手): 同じカードに見えるよう main row と一体化 */
+    .tour-table tr.tour-main-row {
+      margin-bottom: 0 !important;
+      border-radius: 6px 6px 0 0 !important;
+      border-bottom: none !important;
+    }
+    .tour-table tr.tour-opp-row {
+      display: block !important;
+      grid-template-columns: none !important;
+      /* background は base / .counted を継承させるため指定しない */
+      border-top: none !important;
+      border-radius: 0 0 6px 6px !important;
+      padding: 0 8px 6px !important;
+      margin: 0 0 4px 0 !important;
+    }
+    .tour-table tr.tour-opp-row td {
+      display: block !important;
+      padding: 0 !important;
+      font-size: 11px;
+      color: #6b7280;
+      line-height: 1.5;
+    }
+    .tour-table tr.tour-opp-row td::before { content: none !important; }
+    .tour-table td:nth-child(8)::before { content: "直対評価 "; color: #9ca3af; font-size: 10px; font-weight: 400; margin-right: 2px; }
+
+    /* TJPR breakdown table fits viewport */
+    .breakdown-table { min-width: 0; max-width: 100% !important; width: 100%; }
+    .breakdown-table th, .breakdown-table td { white-space: normal; font-size: 11px; }
+
+    .chart-area { height: 220px; }
+    .chart-tab { padding: 4px 8px; font-size: 10px; }
+  }
+
+  @media (max-width: 380px) {
+    h1 { font-size: 16px; }
+    .nav .brand { font-size: 13px; }
+    .nav a { font-size: 11px; }
+    .method-tab { padding: 5px 6px; font-size: 10px; }
+    /* #ranktable 関連の超狭幅オーバーライドは ranking-table.css に集約済 */
+  }
+</style>
+</head>
+<body>
+
+<div id="nav-root"></div>
+<script src="../nav.js"></script>
+
+<div class="header">
+  <h1>シード生成</h1>
+  <p class="subtitle">start.gg 大会の参加者を SPSP の総合評価順に並べ替え。CSV ダウンロード or 直接 start.gg に反映。</p>
+
+  <div class="upcoming-box open" id="upcoming-box">
+    <div class="upcoming-toggle" id="upcoming-toggle">
+      <span class="chev">▶</span>
+      <span>直近の大会から選ぶ</span>
+      <span class="badge" id="upcoming-count" style="display:none">0</span>
+      <span style="color:#9ca3af;font-weight:400;font-size:11px;margin-left:auto">日本 / 3週間以内</span>
+    </div>
+    <div class="upcoming-body" id="upcoming-body">
+      <div class="upcoming-loading" id="upcoming-loading">読み込み中…</div>
+      <div class="upcoming-pager" id="upcoming-pager" style="display:none">
+        <button type="button" id="upcoming-prev">‹ 前へ</button>
+        <span id="upcoming-pageinfo">1 / 1</span>
+        <button type="button" id="upcoming-next">次へ ›</button>
+      </div>
+      <div class="upcoming-list" id="upcoming-list" style="display:none"></div>
+    </div>
+  </div>
+
+  <form id="seed-form" style="display:flex;flex-direction:column;gap:10px;margin-bottom:14px">
+    <div style="display:flex;gap:10px;flex-wrap:wrap">
+      <div style="flex:1;min-width:240px">
+        <label for="token" style="font-size:11px;color:#6b7280;display:block;margin-bottom:2px">
+          start.gg API Token
+          <a href="https://start.gg/admin/profile/developer" target="_blank" rel="noopener" style="color:#dc2626;margin-left:6px;font-size:10px;text-decoration:underline">API キー取得→</a>
+        </label>
+        <div style="display:flex;gap:4px;align-items:stretch">
+          <input type="password" id="token" placeholder="xxxxxxxxxxxxxxxxxxxx" autocomplete="off"
+            style="flex:1;min-width:0;padding:8px 12px;background:#f9fafb;color:#111827;border:1px solid #e5e7eb;border-radius:6px;font-size:13px;font-family:inherit">
+          <button type="button" id="token-reveal" title="表示/隠す"
+            style="background:#f3f4f6;color:#374151;border:1px solid #e5e7eb;border-radius:6px;padding:0 10px;font-size:14px;cursor:pointer;font-family:inherit">👁</button>
+          <button type="button" id="token-save" title="ブラウザに保存"
+            style="background:#dc2626;color:#fff;border:none;border-radius:6px;padding:0 12px;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit">💾 保存</button>
+        </div>
+        <div id="token-hint" style="font-size:10px;color:#9ca3af;margin-top:3px;height:14px"></div>
+      </div>
+      <div style="flex:2;min-width:280px">
+        <label for="event-url" style="font-size:11px;color:#6b7280;display:block;margin-bottom:2px">大会イベント URL</label>
+        <input type="text" id="event-url" placeholder="https://www.start.gg/tournament/15-kagaribi-15/event/singles"
+          style="width:100%;padding:8px 12px;background:#f9fafb;color:#111827;border:1px solid #e5e7eb;border-radius:6px;font-size:13px;font-family:inherit">
+        <div style="font-size:10px;color:#9ca3af;margin-top:3px">URL に <code>/event/...</code> が含まれていることを確認</div>
+      </div>
+      <div style="display:flex;align-items:flex-end;padding-bottom:14px">
+        <button type="submit" id="fetch-btn" style="background:#dc2626;color:#fff;border:none;padding:9px 18px;border-radius:6px;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit">参加者を取得</button>
+      </div>
+    </div>
+    <div id="phase-row" style="display:none">
+      <label for="phase-select" style="font-size:11px;color:#6b7280;display:block;margin-bottom:2px">フェーズ</label>
+      <select id="phase-select" style="width:100%;padding:8px 12px;background:#f9fafb;color:#111827;border:1px solid #e5e7eb;border-radius:6px;font-size:13px;font-family:inherit"></select>
+    </div>
+  </form>
+
+  <div id="event-picker">
+    <div class="label">この大会には SSBU シングルス event が複数あります。どれを使いますか?</div>
+    <div class="pe-list" id="event-picker-list"></div>
+  </div>
+
+  <div class="method-tabs" id="method-tabs" style="display:none">
+    <div class="method-tab active" data-method="ensemble">
+      総合評価<span class="tab-desc">推奨</span>
+    </div>
+    <div class="method-tab" data-method="tjpr">
+      順位評価<span class="tab-desc">大会順位ベースのランキング</span>
+    </div>
+    <div class="method-tab" data-method="bt_gated">
+      直対評価<span class="tab-desc">直接対決ベースのランキング</span>
+    </div>
+  </div>
+
+  <div class="controls">
+    <input type="search" id="search" placeholder="プレイヤー名 / UID で検索…" autocomplete="off" style="display:none">
+    <button id="csv-btn" disabled style="background:#16a34a;color:#fff;border:none;padding:8px 14px;border-radius:6px;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;display:none">CSV ダウンロード</button>
+    <button id="upload-btn" disabled style="background:#b91c1c;color:#fff;border:none;padding:8px 14px;border-radius:6px;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;display:none">start.gg にシード適用</button>
+    <span class="status" id="status">大会 URL を入力して「参加者を取得」を押してください</span>
+  </div>
+  <div id="error-help" style="display:none;margin-top:8px"></div>
+</div>
+
+<div class="table-wrap">
+  <table id="ranktable">
+    <!-- thead は SPSPRankingTable コンポーネントが自動生成 -->
+    <tbody id="tbody">
+      <tr><td colspan="9" class="empty-msg">大会 URL を入力して「参加者を取得」を押すとここにランキングが表示されます</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<div style="max-width:1400px;margin:24px auto 0;padding:0 24px;font-size:11px;color:#9ca3af;line-height:1.6">
+  🔒 入力した API トークンはこのブラウザから start.gg にのみ送信されます。GitHub Pages 側には何も保存・転送されません。
+  「💾 保存」を押した場合のみ localStorage に永続保存します (タップで取り消し可能)。
+</div>
+
+<div class="footer" id="footer-info"></div>
+<div class="footer" style="margin-top:-12px"><span class="site-version" style="font-size:11px;color:#9ca3af">v b2e3c33 · 2026-06-10 13:51 UTC</span></div>
+
+<!-- Chart.js (lazy load on first graph use) -->
+<script>
+let CHART_LOADED = false;
+function loadScript(src) {
+  return new Promise((resolve, reject) => {
+    const s = document.createElement('script');
+    s.src = src;
+    s.onload = resolve;
+    s.onerror = reject;
+    document.head.appendChild(s);
+  });
+}
+async function ensureChartJs() {
+  if (CHART_LOADED) return;
+  await loadScript('https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js');
+  await loadScript('https://cdn.jsdelivr.net/npm/luxon@3.4.4/build/global/luxon.min.js');
+  await loadScript('https://cdn.jsdelivr.net/npm/chartjs-adapter-luxon@1.3.1/dist/chartjs-adapter-luxon.umd.min.js');
+  CHART_LOADED = true;
+}
+</script>
+
+<script>
+'use strict';
+
+const DATA = [];
+let META = null;
+let currentMethod = 'ensemble';
+let filterText = '';
+
+// MASTER は (uid → record) Map にキャッシュ
+let MASTER_MAP = null;
+let MASTER_META = null;
+// 直近フェッチした event 情報 (phaseId, eventName, entrant list, etc.)
+let EVENT_CONTEXT = null;
+
+// V4 用 (= site/index.html の _columnsForMeta と同形): 平均順位 / 平均スコアの
+// 代わりに 直対評 / 順位評 を小さい灰色で表示する.
+const _smallGray = (v, decimals = 1) =>
+  v != null ? `<span style="color:#9ca3af;font-size:11px">${v.toFixed(decimals)}</span>` : '–';
+const TJPR_SCORE_COL = {
+  id: 'tjpr_score_cell', label: '順位評', sortable: true, sortKey: 'tjpr_score',
+  css: 'col-score',
+  value: (rec) => -((rec.scores && rec.scores.tjpr_elo) || -Infinity),
+  cell: (rec) => _smallGray(rec.scores && rec.scores.tjpr_elo, 2),
+};
+const BT_SCORE_COL = {
+  id: 'bt_score_cell', label: '直対評', sortable: true, sortKey: 'bt_score',
+  css: 'col-avg-rank',
+  value: (rec) => -((rec.scores && rec.scores.bt_gated_elo) || -Infinity),
+  cell: (rec) => _smallGray(rec.scores && rec.scores.bt_gated_elo, 2),
+};
+
+// 共有 ranking table コンポーネント (= 初期化は DOMContentLoaded 後).
+let TABLE = null;
+function ensureTable() {
+  if (TABLE) return TABLE;
+  TABLE = new window.SPSPRankingTable.RankingTable({
+    table: document.getElementById('ranktable'),
+    rows: DATA,
+    method: currentMethod,
+    sort: { key: 'rank', dir: 'asc' },
+    pageSize: 512,
+    infiniteScroll: true,
+    totalForRankFrac: 'rows',           // seed: event 参加者数を分母にする
+    playerHrefPrefix: '../',
+    showTopTours: true,                 // ローカル / メインと同じ最近の出場履歴
+    showDisplayBadges: true,            // ローカル / メインと同じ mobile badges
+    showGlobalRank: true,               // 参加者内ランキングに「全国 #N」badge を出す
+    btWeekdayStyle: 'pill',             // ローカル / メインと同じ 常連 / レア
+    columns: [
+      'rank', 'display', BT_SCORE_COL, TJPR_SCORE_COL,
+      'tjpr_lv', 'tour_count', 'bt_weekday',
+      'rank_tjpr', 'rank_bt_gated',
+    ],
+    rowClick: (rec, tr, ev) => seedRowClickHandler(rec, tr, ev),
+  });
+  return TABLE;
+}
+
+async function loadMasterData() {
+  if (MASTER_MAP) return MASTER_MAP;
+  const status = document.getElementById('status');
+  status.textContent = 'SPSP マスターランキングを取得中…';
+  const t0 = performance.now();
+  const [metaRes, jsonlRes] = await Promise.all([
+    fetch('../meta.json'),
+    fetch('../latest_tjpr_full.jsonl'),
+  ]);
+  if (!metaRes.ok) throw new Error('meta.json 取得失敗');
+  if (!jsonlRes.ok) throw new Error('latest_tjpr_full.jsonl 取得失敗');
+  MASTER_META = await metaRes.json();
+  META = MASTER_META;  // alias for downstream code
+  document.getElementById('footer-info').innerHTML =
+    `master generated ${META.eval_date} · ${META.n_players}名 · LOOKBACK ${META.lookback_days}日 · ` +
+    `<a href="../overview.html" style="color:#dc2626">概要</a> · ` +
+    `<a href="../details.html" style="color:#dc2626">詳細</a>`;
+  const txt = await jsonlRes.text();
+  const lines = txt.split('\n').filter(l => l.length);
+  status.textContent = `${lines.length}行パース中…`;
+  MASTER_MAP = new Map();
+  for (const line of lines) {
+    try {
+      const rec = JSON.parse(line);
+      MASTER_MAP.set(rec.user_id, rec);
+    } catch (e) {}
+  }
+  status.textContent = `マスター取得完了 (${MASTER_MAP.size} 名、${(performance.now()-t0).toFixed(0)}ms)`;
+  return MASTER_MAP;
+}
+
+// ── start.gg API helpers ──
+async function startggQuery(token, query, variables) {
+  const res = await fetch('https://api.start.gg/gql/alpha', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
+    body: JSON.stringify({ query, variables }),
+  });
+  if (!res.ok) {
+    let body = '';
+    try { body = await res.text(); } catch (e) {}
+    const err = new Error(`start.gg HTTP ${res.status}`);
+    err.rawError = `HTTP ${res.status}: ${body.substring(0, 1000)}`;
+    throw err;
+  }
+  const body = await res.json();
+  if (body.errors && body.errors.length) {
+    const errMsgs = body.errors.map(e => e.message).join(' | ');
+    const err = new Error('start.gg API エラー: ' + errMsgs);
+    err.rawError = JSON.stringify(body.errors, null, 2);
+    throw err;
+  }
+  return body.data;
+}
+
+// ── start.gg エラーメッセージのトラブルシューティング辞書 ──
+const TROUBLESHOOTING = [
+  { match: /401|unauthorized|invalid (api )?token|bad token/i,
+    hint: '🔑 API トークンが無効/期限切れ。<a href="https://start.gg/admin/profile/developer" target="_blank" rel="noopener">start.gg で再発行</a> してください。' },
+  { match: /403|forbidden|not (allowed|authorized)/i,
+    hint: '🚫 権限不足。大会の管理者 (admin) でないとシード適用はできません。' },
+  { match: /404|not found|event.*(not exist|does not exist)/i,
+    hint: '🔍 URL のスペルや大会の公開状態 (publish) を確認してください。' },
+  { match: /429|too many|rate.?limit/i,
+    hint: '⏱ レート制限です。1〜2 分待ってから再試行してください。' },
+  { match: /5\d\d|gateway|timeout|server error/i,
+    hint: '🛠 start.gg 側の障害の可能性。少し時間を置いて再試行してください。' },
+  { match: /invalid phase|phase.*(not found|invalid)|seeding.*not.*allowed/i,
+    hint: '⚙ Phase ID/URL を再確認。シード設定可能な phase (大会のシード期間中) かどうか確認してください。' },
+  { match: /network|fetch|failed to fetch/i,
+    hint: '🌐 通信エラー。インターネット接続を確認、または広告ブロッカーが api.start.gg を妨害していないか確認してください。' },
+];
+function findTroubleshooting(msg) {
+  const s = String(msg || '');
+  const hits = TROUBLESHOOTING.filter(t => t.match.test(s));
+  return hits.map(t => t.hint);
+}
+// showError(msg, rawError):
+//   msg     = ユーザ向けの分かりやすい説明 (status に表示)
+//   rawError = (optional) 生の API/system エラーメッセージ (debug 用 details に表示)
+//             msg と異なる場合のみ <details> を出す. 省略時 OR 同じ場合は出さない.
+function showError(msg, rawError) {
+  const status = document.getElementById('status');
+  status.textContent = '❌ ' + msg;
+  const help = document.getElementById('error-help');
+  if (!help) return;
+  // hints は raw を優先 (= 英語 API error と matching する). 無ければ msg.
+  const hints = findTroubleshooting(rawError || msg);
+  const hasRawDetail = rawError && rawError !== msg;
+  const detailsHtml = hasRawDetail
+    ? `<details style="margin-top:8px"><summary style="cursor:pointer;color:#9ca3af;font-size:11px">エラーメッセージ全文 (デバッグ用)</summary><pre style="white-space:pre-wrap;margin:6px 0 0;font-family:inherit;font-size:11px;color:#6b7280">${escapeHtml(rawError)}</pre></details>`
+    : '';
+  if (hints.length === 0) {
+    if (hasRawDetail) {
+      help.innerHTML = `<div style="font-size:12px;background:#fef2f2;border:1px solid #fecaca;border-radius:6px;padding:10px 12px">${detailsHtml}</div>`;
+    } else {
+      help.innerHTML = '';
+    }
+  } else {
+    help.innerHTML = `<div style="font-size:12px;background:#fef2f2;border:1px solid #fecaca;border-radius:6px;padding:10px 12px">
+      <div style="color:#dc2626;font-weight:600;margin-bottom:4px">💡 対処法</div>
+      <ul style="margin:0;padding-left:1.4em;color:#374151">${hints.map(h => `<li>${h}</li>`).join('')}</ul>
+      ${detailsHtml}
+    </div>`;
+  }
+  help.style.display = (help.innerHTML ? '' : 'none');
+}
+function clearError() {
+  const help = document.getElementById('error-help');
+  if (help) { help.style.display = 'none'; help.innerHTML = ''; }
+}
+function escapeHtml(s) {
+  return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+
+function parseEventUrl(input) {
+  if (!input) return null;
+  const s = String(input).trim();
+  // Full URL or slug. Accept things like "tournament/X/event/Y" or "https://www.start.gg/tournament/X/event/Y[/...]"
+  const m = s.match(/tournament\/([^\/\s?#]+)\/event\/([^\/\s?#]+)/);
+  if (m) {
+    return { slug: 'tournament/' + m[1] + '/event/' + m[2], tournamentSlug: m[1], eventSlug: m[2] };
+  }
+  // tournament-only URL (= event slug 無し). 末尾の /details, /events, /, "" などすべて吸収.
+  // event slug を含まないように、tournament slug の直後が / + 非 "event" or 終端であることを要求.
+  const t = s.match(/tournament\/([^\/\s?#]+)(?:\/(?!event\/)[^\s?#]*)?(?:[?#].*)?$/);
+  if (t) {
+    return { slug: null, tournamentSlug: t[1], eventSlug: null };
+  }
+  return null;
+}
+
+const EVENT_QUERY = `
+  query EventDetail($slug: String!) {
+    event(slug: $slug) {
+      id name slug numEntrants
+      tournament { id name slug startAt }
+      phases { id name phaseOrder bracketType state }
+    }
+  }
+`;
+
+const SEEDS_QUERY = `
+  query PhaseSeeds($phaseId: ID!, $page: Int!, $perPage: Int!) {
+    phase(id: $phaseId) {
+      seeds(query: { page: $page, perPage: $perPage }) {
+        pageInfo { totalPages total }
+        nodes {
+          id seedNum
+          entrant {
+            id name
+            participants {
+              user { id }
+              player { id gamerTag prefix }
+            }
+          }
+        }
+      }
+    }
+  }
+`;
+
+async function fetchEvent(token, slug) {
+  const data = await startggQuery(token, EVENT_QUERY, { slug });
+  if (!data.event) throw new Error('event が見つかりません: ' + slug);
+  return data.event;
+}
+
+const TOURNAMENT_EVENTS_QUERY = `
+  query TournamentEvents($slug: String!) {
+    tournament(slug: $slug) {
+      id name slug
+      events {
+        id slug name numEntrants
+        videogame { id name }
+        type
+      }
+    }
+  }
+`;
+
+// SSBU videogame id, 1on1 event type
+const SSBU_VIDEOGAME_ID = 1386;
+const SINGLES_EVENT_TYPE = 1;
+
+async function fetchTournament(token, tournamentSlug) {
+  const data = await startggQuery(token, TOURNAMENT_EVENTS_QUERY, { slug: tournamentSlug });
+  if (!data.tournament) throw new Error('tournament が見つかりません: ' + tournamentSlug);
+  return data.tournament;
+}
+
+async function fetchAllSeeds(token, phaseId, progressFn) {
+  const all = [];
+  let page = 1;
+  const perPage = 64;
+  while (true) {
+    const data = await startggQuery(token, SEEDS_QUERY, { phaseId: String(phaseId), page, perPage });
+    if (!data.phase) throw new Error('phase が取得できません');
+    const seeds = data.phase.seeds || { nodes: [], pageInfo: { totalPages: 1 } };
+    const nodes = seeds.nodes || [];
+    all.push(...nodes);
+    if (progressFn) progressFn(all.length, seeds.pageInfo.total || all.length);
+    const tot = seeds.pageInfo.totalPages || 1;
+    if (page >= tot || nodes.length === 0) break;
+    page += 1;
+    // small delay to avoid 429
+    await new Promise(r => setTimeout(r, 500));
+  }
+  return all;
+}
+
+function seedNodeToInfo(seedNode) {
+  const sid = seedNode.id;
+  const sn = seedNode.seedNum;
+  const ent = seedNode.entrant || {};
+  const parts = ent.participants || [];
+  let uid = null, gamerTag = ent.name || '', prefix = '';
+  if (parts.length) {
+    const p0 = parts[0];
+    if (p0.user && p0.user.id != null) uid = Number(p0.user.id);
+    if (p0.player) {
+      gamerTag = p0.player.gamerTag || gamerTag;
+      prefix = p0.player.prefix || '';
+    }
+  }
+  const display = prefix ? (prefix + ' | ' + gamerTag) : gamerTag;
+  return { seedId: sid, originalSeed: sn, userId: uid, display };
+}
+
+function filterAndRerank(seedInfos) {
+  // seedInfos = [{seedId, originalSeed, userId, display}]
+  const ranked = [];
+  const missing = [];
+  for (const si of seedInfos) {
+    if (si.userId != null && MASTER_MAP.has(si.userId)) {
+      // Deep clone the master record so we don't pollute the shared map
+      const rec = JSON.parse(JSON.stringify(MASTER_MAP.get(si.userId)));
+      rec.ranks = rec.ranks || {};
+      rec.ranks.global_ensemble = rec.ranks.ensemble;
+      rec.ranks.global_tjpr = rec.ranks.tjpr;
+      rec.ranks.global_bt_gated = rec.ranks.bt_gated;
+      rec.seedId = si.seedId;
+      rec.original_seed = si.originalSeed;
+      ranked.push(rec);
+    } else {
+      missing.push(si);
+    }
+  }
+  const n = ranked.length;
+  // Ensemble は event-local で 1..N に再付番 (= シード順そのもの)
+  ranked.sort((a, b) => (a.ranks.global_ensemble || 1e9) - (b.ranks.global_ensemble || 1e9));
+  ranked.forEach((r, i) => { r.ranks.ensemble = i + 1; });
+  // 順位評価 / 直対評価 は全体ランキングのまま保持 (re-rank しない)
+  // 既存の rec.ranks.tjpr / rec.ranks.bt_gated は global 順位なのでそのまま使う
+  // ensemble_avg_rank も既に global tjpr+bt の平均なのでそのまま
+  // Append DB-missing players at the bottom (in start.gg seed order)
+  missing.sort((a, b) => (a.originalSeed || 1e9) - (b.originalSeed || 1e9));
+  let next = n + 1;
+  for (const si of missing) {
+    ranked.push({
+      user_id: si.userId,
+      display: si.display,
+      unranked: true,
+      seedId: si.seedId,
+      original_seed: si.originalSeed,
+      ranks: {
+        // ensemble は event-local の連番 (最下位扱い)。tjpr/bt_gated は global 不明なので null
+        ensemble: next, tjpr: null, bt_gated: null,
+        global_ensemble: null, global_tjpr: null, global_bt_gated: null,
+      },
+      scores: {
+        tjpr_score: 0.0, tjpr_elo: 0.0, tjpr_level: 0,
+        bt_gated_ordinal: 0.0, bt_gated_elo: 0.0,
+        ensemble_avg_rank: null, ensemble_avg_score: null,
+      },
+      metadata: { tour_count_3y: 0, bt_weekday_included: true, provisional: true, matches_count_3y: 0 },
+    });
+    next += 1;
+  }
+  return { records: ranked, rankedCount: n, missingCount: missing.length };
+}
+
+function downloadCsv() {
+  if (!DATA.length) return;
+  if (!EVENT_CONTEXT) return;
+  const methodLabel = {
+    ensemble: '総合評価', tjpr: '順位評価', bt_gated: '直対評価',
+  }[currentMethod] || '総合評価';
+  // Sort by current method's rank, then assign phaseseed 1..N
+  const recs = DATA.slice().sort((a, b) => (a.ranks[currentMethod] || 1e9) - (b.ranks[currentMethod] || 1e9));
+  const lines = ['phaseseed,seedId,player,user_id,method,banzuke_rank,avg_rank,score,original_seed'];
+  recs.forEach((r, i) => {
+    const phaseseed = i + 1;
+    const sid = r.seedId != null ? r.seedId : '';
+    const player = (r.display || '').replace(/"/g, '""');
+    const uid = r.user_id != null ? r.user_id : '';
+    let bRank = '', avgR = '', score = '';
+    if (!r.unranked) {
+      bRank = r.ranks[currentMethod];
+      const ar = r.scores.ensemble_avg_rank;
+      avgR = ar != null ? ar.toFixed(2) : '';
+      const sc = (currentMethod === 'tjpr') ? r.scores.tjpr_elo
+                : (currentMethod === 'bt_gated') ? r.scores.bt_gated_elo
+                : (r.scores.ensemble_avg_score != null ? r.scores.ensemble_avg_score
+                  : (r.scores.tjpr_elo + r.scores.bt_gated_elo) / 2);
+      score = typeof sc === 'number' ? sc.toFixed(2) : '';
+    }
+    const origSeed = r.original_seed != null ? r.original_seed : '';
+    lines.push([phaseseed, sid, `"${player}"`, uid, methodLabel, bRank, avgR, score, origSeed].join(','));
+  });
+  const csv = '\uFEFF' + lines.join('\r\n') + '\r\n';
+  const blob = new Blob([csv], { type: 'text/csv;charset=utf-8' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  const tName = (EVENT_CONTEXT.eventName || 'seed').replace(/[^\w\-]/g, '_');
+  a.href = url;
+  a.download = `smash_banzuke_seed_${tName}_${currentMethod}.csv`;
+  document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
+}
+
+async function uploadToStartgg() {
+  if (!DATA.length || !EVENT_CONTEXT) return;
+  const token = getToken();
+  if (!token) { alert('トークンを入力してください'); return; }
+  const methodLabel = {
+    ensemble: '総合評価', tjpr: '順位評価', bt_gated: '直対評価',
+  }[currentMethod] || '総合評価';
+  const recs = DATA.slice().sort((a, b) => (a.ranks[currentMethod] || 1e9) - (b.ranks[currentMethod] || 1e9));
+  const mapping = [];
+  for (let i = 0; i < recs.length; i++) {
+    const r = recs[i];
+    if (r.seedId == null) continue;
+    mapping.push({ seedId: r.seedId, seedNum: i + 1 });
+  }
+  if (!mapping.length) { alert('seedId 付きの行がありません'); return; }
+  const msg = `${EVENT_CONTEXT.eventName} (phase ${EVENT_CONTEXT.phaseId}) に\n${methodLabel} の順 で ${mapping.length} 件のシードを上書きします。\n\n実行してよろしいですか?`;
+  if (!confirm(msg)) return;
+  const status = document.getElementById('status');
+  clearError();
+  status.textContent = `start.gg に ${mapping.length} 件送信中…`;
+  const r = await SmashSeed.uploadSeeding(EVENT_CONTEXT.phaseId, token, mapping);
+  if (r.ok) {
+    status.textContent = `✅ シード適用成功 (${r.count} 件)`;
+  } else {
+    showError(r.error || 'unknown error');
+  }
+}
+
+function getToken() {
+  const t = document.getElementById('token').value.trim();
+  if (t) { try { sessionStorage.setItem('smash_banzuke_token', t); } catch (e) {} }
+  return t;
+}
+
+// method-tabs / 検索 / CSV / upload ボタンを参加者取得後だけ表示する.
+function setParticipantsUiVisible(visible) {
+  const disp = visible ? '' : 'none';
+  const mt = document.getElementById('method-tabs');
+  const sr = document.getElementById('search');
+  const cb = document.getElementById('csv-btn');
+  const ub = document.getElementById('upload-btn');
+  if (mt) mt.style.display = visible ? 'flex' : 'none';
+  if (sr) sr.style.display = disp;
+  if (cb) cb.style.display = disp;
+  if (ub) ub.style.display = disp;
+}
+
+async function handleFetch() {
+  const status = document.getElementById('status');
+  clearError();
+  // Hide stale event-picker from previous failed run
+  const epPrev = document.getElementById('event-picker');
+  if (epPrev) epPrev.style.display = 'none';
+  const token = getToken();
+  const urlVal = document.getElementById('event-url').value.trim();
+  const parsed = parseEventUrl(urlVal);
+  if (!token) { status.textContent = 'API トークンを入力してください'; return; }
+  if (!parsed) { status.textContent = '大会 URL の形式が不正です'; return; }
+
+  // 取得開始: ボタン無効 + 旧データクリア + 関連 UI 非表示
+  // (= 新規 fetch がエラーで終わっても古い参加者ランキングや検索 UI が残らないように)
+  document.getElementById('fetch-btn').disabled = true;
+  document.getElementById('csv-btn').disabled = true;
+  document.getElementById('upload-btn').disabled = true;
+  setParticipantsUiVisible(false);
+  DATA.length = 0;
+  EVENT_CONTEXT = null;
+  if (TABLE) render();
+  try {
+    await loadMasterData();
+    // event 取得を試行. tournament-only URL or event slug が不正で見つからない場合は
+    // tournament の events 一覧から SSBU 1on1 単独 event を自動選択する.
+    let ev = null;
+    if (parsed.eventSlug != null) {
+      status.textContent = 'start.gg から event 情報を取得中…';
+      try {
+        ev = await fetchEvent(token, parsed.slug);
+      } catch (e) {
+        // event slug 不正 → tournament-only fallback に切替
+        console.warn('event 取得失敗、tournament events から自動選択にフォールバック:', e.message);
+        parsed.eventSlug = null;
+        parsed.slug = null;
+      }
+    }
+    if (ev == null) {
+      status.textContent = 'tournament の event 一覧を取得中…';
+      const tour = await fetchTournament(token, parsed.tournamentSlug);
+      const ssbuEvents = (tour.events || []).filter(e =>
+        e.videogame && Number(e.videogame.id) === SSBU_VIDEOGAME_ID && Number(e.type) === SINGLES_EVENT_TYPE
+      );
+      if (ssbuEvents.length === 0) {
+        throw new Error('この大会には SSBU シングルス event がありません');
+      }
+      if (ssbuEvents.length > 1) {
+        // 複数 SSBU 1on1 → inline picker で選択させて再 dispatch.
+        // (error 文字列ではなく UI を出す)
+        showEventPickerInline(parsed.tournamentSlug, ssbuEvents);
+        status.textContent = 'SSBU シングルス event が複数あります。下のリストから選択してください';
+        return;
+      }
+      // 単独イベント自動選択
+      const tail = String(ssbuEvents[0].slug || '').split('/').pop();
+      parsed.eventSlug = tail;
+      parsed.slug = 'tournament/' + parsed.tournamentSlug + '/event/' + tail;
+      status.textContent = `event 自動選択: ${ssbuEvents[0].name} → 取得中…`;
+      ev = await fetchEvent(token, parsed.slug);
+    }
+    const phases = (ev.phases || []).slice().sort((a, b) => (a.phaseOrder || 0) - (b.phaseOrder || 0));
+    if (!phases.length) throw new Error('この event にはまだ phase (= ブラケット構造) が作成されていません。シーディングを行う前に、start.gg の管理画面で event の Bracket Setup を開き、phase (Singles Bracket 等) を 1 つ以上追加して保存してください。phase 作成後に再度この画面で取得すると、シードが反映できるようになります。');
+    let phaseId;
+    if (phases.length > 1) {
+      const sel = document.getElementById('phase-select');
+      sel.innerHTML = '';
+      for (const p of phases) {
+        const opt = document.createElement('option');
+        opt.value = p.id;
+        opt.textContent = `${p.name} (phase ${p.id})`;
+        sel.appendChild(opt);
+      }
+      document.getElementById('phase-row').style.display = '';
+      phaseId = phases[0].id;
+      sel.value = phaseId;
+      // re-fetch on phase change
+      sel.onchange = () => { phaseId = sel.value; performSeedFetch(token, ev, phaseId); };
+    } else {
+      phaseId = phases[0].id;
+    }
+    await performSeedFetch(token, ev, phaseId);
+  } catch (e) {
+    showError(e.message, e.rawError);
+  } finally {
+    document.getElementById('fetch-btn').disabled = false;
+  }
+}
+
+async function performSeedFetch(token, ev, phaseId) {
+  const status = document.getElementById('status');
+  status.textContent = `seeds 取得中 (phase ${phaseId}) …`;
+  const seedNodes = await fetchAllSeeds(token, phaseId, (got, tot) => {
+    status.textContent = `seeds 取得中 ${got}/${tot} …`;
+  });
+  const seedInfos = seedNodes.map(seedNodeToInfo);
+  status.textContent = `${seedInfos.length} 名取得。フィルター中…`;
+  const { records, rankedCount, missingCount } = filterAndRerank(seedInfos);
+  EVENT_CONTEXT = {
+    phaseId, eventName: ev.name,
+    eventId: ev.id, tournamentName: ev.tournament ? ev.tournament.name : '',
+  };
+  // Repopulate DATA in place (preserve reference)
+  DATA.length = 0;
+  for (const r of records) DATA.push(r);
+  document.getElementById('meta-info').textContent = `${ev.name} (phase ${phaseId})`;
+  status.textContent = `${ev.name}: ${rankedCount} 名ランク + ${missingCount} 名 DB 不在 = ${records.length} 名`;
+  document.getElementById('csv-btn').disabled = false;
+  document.getElementById('upload-btn').disabled = false;
+  setParticipantsUiVisible(true);
+  const tbl = ensureTable();
+  tbl.setSort('rank', 'asc');
+  render();
+}
+
+// Backwards-compat aliases (= 内部の detail builder で使われている).
+const getRank = window.SPSPRankingTable.getRank;
+const getScore = window.SPSPRankingTable.getScore;
+const formatScore = window.SPSPRankingTable.formatScore;
+function formatAvgRank(rec, _method) {
+  return window.SPSPRankingTable.formatAvgRank(rec);
+}
+
+function render() {
+  const tbl = ensureTable();
+  tbl.setRows(DATA);
+  tbl.setMethod(currentMethod);
+  tbl.setFilterText(filterText);
+}
+
+
+// ── Events ──
+document.getElementById('search').addEventListener('input', e => {
+  filterText = e.target.value;
+  const tbl = TABLE; if (tbl) tbl.setFilterText(filterText);
+});
+
+document.getElementById('method-tabs').addEventListener('click', e => {
+  const tab = e.target.closest('.method-tab');
+  if (!tab) return;
+  document.querySelectorAll('.method-tab').forEach(t => t.classList.remove('active'));
+  tab.classList.add('active');
+  currentMethod = tab.dataset.method;
+  const tbl = TABLE; if (tbl) tbl.setMethod(currentMethod);
+});
+
+// 注: sortable / 無限スクロール / クリック handler は SPSPRankingTable コンポーネントが
+// 内部で扱う. main-row クリック時は rowClick callback (= seedRowClickHandler) が呼ばれる.
+
+// ── Detail パネル (大会別 / 直接対決) ──
+// 詳細パネル本体は SPSPDetail.buildDetailContent (= ../player-detail.js) に集約.
+// canonical = site/index.html の inline 実装. 大会内ランクや Lv 内訳 / charts は
+// 表示しない (= main canonical との一致を優先).
+function getDetailCfg() {
+  return {
+    getMeta: () => META || {},
+    getDataArray: () => DATA,
+    getMasterMap: () => MASTER_MAP,
+    pathPrefix: '../',
+  };
+}
+
+// Open 中の tour-table 再描画 (= tour-sort-toggle 押下時).
+function refreshOpenTournamentTables() {
+  document.querySelectorAll('.tour-sort-toggle').forEach(el => {
+    const uid = el.dataset.uid;
+    const rec = DATA.find(r => String(r.user_id) === String(uid));
+    if (!rec) return;
+    const tabContent = el.closest('.tab-tour');
+    if (!tabContent) return;
+    tabContent.innerHTML = window.SPSPDetail.buildTournamentTable(rec, getDetailCfg());
+  });
+}
+
+// ── Detail-row 内部のクリック処理 (tab 切替 / H2H expand / 並べ替え / 行展開) ──
+document.getElementById('tbody').addEventListener('click', e => {
+  // Detail tab switch (大会別 / 直接対決)
+  const tabBtn = e.target.closest('.detail-tab');
+  if (tabBtn) {
+    e.stopPropagation();
+    const section = tabBtn.closest('.detail-section');
+    if (!section) return;
+    const key = tabBtn.dataset.tab;
+    section.querySelectorAll('.detail-tab').forEach(t => t.classList.toggle('active', t.dataset.tab === key));
+    section.querySelectorAll('.detail-tab-content').forEach(c => {
+      c.style.display = c.classList.contains('tab-' + key) ? '' : 'none';
+    });
+    return;
+  }
+  // H2H 共通「もっと見る」 → 勝/負 両方の hidden を表示
+  const h2hBtn = e.target.closest('.h2h-expand-btn');
+  if (h2hBtn) {
+    e.stopPropagation();
+    const wrap = h2hBtn.closest('.tab-h2h');
+    if (!wrap) return;
+    wrap.querySelectorAll('.h2h-extra').forEach(x => x.style.display = '');
+    const expandDiv = h2hBtn.closest('.h2h-expand');
+    if (expandDiv) expandDiv.remove();
+    return;
+  }
+  // Tournament sort toggle (page-level, applies to all open detail rows)
+  const toggle = e.target.closest('.tour-sort-toggle');
+  if (toggle) {
+    e.stopPropagation();
+    window.SPSPDetail.toggleSortMode();
+    refreshOpenTournamentTables();
+    return;
+  }
+  // Expand hidden rows in tour-table
+  const expand = e.target.closest('.expand-rows');
+  if (expand) {
+    e.stopPropagation();
+    const section = expand.parentElement;
+    section.querySelectorAll('tr.extra-row').forEach(r => r.classList.remove('hidden-row'));
+    expand.remove();
+    return;
+  }
+});
+
+// main-row クリック → detail-row 展開 (大会別 / 直接対決 タブ含む).
+// RankingTable の rowClick callback として呼ばれる.
+function seedRowClickHandler(rec, tr, _ev) {
+  if (!rec) return;
+  const next = tr.nextElementSibling;
+  if (next && next.classList && next.classList.contains('detail-row')) {
+    next.remove();
+    tr.classList.remove('expanded');
+    return;
+  }
+  // 既に他の行が展開中ならそれを閉じる
+  const table = tr.closest('table');
+  const open = table.querySelector('tr.detail-row');
+  if (open) {
+    const prev = open.previousElementSibling;
+    if (prev) prev.classList.remove('expanded');
+    open.remove();
+  }
+  const detail = document.createElement('tr');
+  detail.className = 'detail-row';
+  if (rec.unranked) {
+    detail.innerHTML = `<td colspan="9"><div class="detail-inner" style="padding:14px;font-size:12px;color:#6b7280">
+      このプレイヤーは SPSP DB に履歴がないため、詳細情報は表示できません。<br>
+      最下位扱いで CSV / アップロードには含まれます。
+    </div></td>`;
+    tr.classList.add('expanded');
+    tr.after(detail);
+    return;
+  }
+  detail.innerHTML = `<td colspan="9"><div class="detail-inner">
+    <div class="loading-msg" style="padding:14px;color:#6b7280;font-size:12px">詳細情報を取得中…</div>
+  </div></td>`;
+  tr.classList.add('expanded');
+  tr.after(detail);
+  const cfg = getDetailCfg();
+  window.SPSPDetail.fetchPlayerDetail(rec.user_id, cfg).then(detailData => {
+    if (!detailData) return;
+    rec.tournaments = detailData.tournaments || [];
+    rec.history = detailData.history || [];
+    rec.recent_matches = detailData.recent_matches || [];
+    if (rec.scores) rec.scores.tjpr_lv_breakdown = detailData.tjpr_lv_breakdown || {};
+    const inner = detail.querySelector('.detail-inner');
+    if (inner) inner.innerHTML = window.SPSPDetail.buildDetailContent(rec, cfg);
+  }).catch(err => {
+    const inner = detail.querySelector('.loading-msg');
+    if (inner) inner.textContent = '詳細情報の取得に失敗: ' + err.message;
+  });
+}
+
+// ── 今後の大会ピッカー ─────────────────────────
+// data/upcoming.json を lazy fetch して 5件/ページで表示.
+// 単独 SSBU event の大会 → クリックで URL 入力 + handleFetch 自動起動.
+// 複数 SSBU event の大会 → inline で event 選択肢を展開.
+const UPCOMING_PAGE_SIZE = 5;
+let UPCOMING_DATA = null;       // { tournaments: [...] } or null while loading
+let UPCOMING_LOAD_PROMISE = null;
+let UPCOMING_PAGE = 0;          // 0-indexed
+
+function formatUpcomingDate(unixTs) {
+  if (!unixTs) return '?';
+  const d = new Date(unixTs * 1000);
+  const m = d.getMonth() + 1;
+  const day = d.getDate();
+  const wk = ['日','月','火','水','木','金','土'][d.getDay()];
+  return `${m}/${day}(${wk})`;
+}
+
+async function loadUpcomingData() {
+  if (UPCOMING_DATA) return UPCOMING_DATA;
+  if (UPCOMING_LOAD_PROMISE) return UPCOMING_LOAD_PROMISE;
+  UPCOMING_LOAD_PROMISE = (async () => {
+    const res = await fetch('../data/upcoming.json', { cache: 'no-cache' });
+    if (!res.ok) throw new Error('upcoming.json HTTP ' + res.status);
+    UPCOMING_DATA = await res.json();
+    return UPCOMING_DATA;
+  })();
+  return UPCOMING_LOAD_PROMISE;
+}
+
+function buildEventUrl(tournamentSlug, eventSlug) {
+  const tail = String(eventSlug || '').split('/').pop();
+  // tournament_slug は "tournament/xxx" or "xxx"。後者なら prefix を付ける.
+  const tslug = tournamentSlug.startsWith('tournament/')
+    ? tournamentSlug : ('tournament/' + tournamentSlug);
+  return 'https://www.start.gg/' + tslug + '/event/' + tail;
+}
+
+function renderUpcomingPage() {
+  const list = document.getElementById('upcoming-list');
+  const pager = document.getElementById('upcoming-pager');
+  if (!list || !pager) return;
+  if (!UPCOMING_DATA || !UPCOMING_DATA.tournaments) return;
+  // 現在 epoch 秒より startAt が前の大会は表示しない (= 既に過去になった大会).
+  // upcoming.json は download 時点で過去除外済だが、build と閲覧の時間差で過ぎたものも除外.
+  const nowSec = Math.floor(Date.now() / 1000);
+  const tours = (UPCOMING_DATA.tournaments || []).filter(t => {
+    const st = Number(t.start_at);
+    return Number.isFinite(st) && st >= nowSec;
+  });
+  const total = tours.length;
+  const totalPages = Math.max(1, Math.ceil(total / UPCOMING_PAGE_SIZE));
+  if (UPCOMING_PAGE >= totalPages) UPCOMING_PAGE = totalPages - 1;
+  if (UPCOMING_PAGE < 0) UPCOMING_PAGE = 0;
+  const start = UPCOMING_PAGE * UPCOMING_PAGE_SIZE;
+  const slice = tours.slice(start, start + UPCOMING_PAGE_SIZE);
+  list.innerHTML = '';
+  for (const t of slice) {
+    const row = document.createElement('div');
+    row.className = 'upcoming-item';
+    row.dataset.tslug = t.tournament_slug;
+    const tslugBare = String(t.tournament_slug || '').replace(/^tournament\//, '');
+    const ttoUrl = `https://www.start.gg/${t.tournament_slug || ('tournament/' + tslugBare)}`;
+    const cityHtml = t.city ? `<span class="city">${escapeHtml(t.city)}</span>` : '';
+    const onlineHtml = t.is_online ? '<span class="city">🌐 オンライン</span>' : '';
+    row.innerHTML = `
+      <div class="row-1">
+        <span class="ev-date">${formatUpcomingDate(t.start_at)}</span>
+        <span class="ev-name">${escapeHtml(t.tournament_name)}</span>
+        <a class="ev-link" href="${ttoUrl}" target="_blank" rel="noopener" title="start.gg で開く" aria-label="start.gg で開く">↗</a>
+      </div>
+      <div class="row-2">
+        ${cityHtml}${onlineHtml}
+        <span>${(t.events || []).length} event</span>
+      </div>
+      <div class="upcoming-events"></div>
+    `;
+    row.addEventListener('click', (ev) => {
+      // start.gg リンクアイコンは通常リンク動作 (= 新規タブで開く)
+      if (ev.target.closest('.ev-link')) return;
+      // event 行クリックは個別 handler が処理 (stopPropagation)
+      handleUpcomingItemClick(t, row);
+    });
+    list.appendChild(row);
+  }
+  list.style.display = '';
+  pager.style.display = totalPages > 1 ? '' : 'none';
+  document.getElementById('upcoming-pageinfo').textContent = `${UPCOMING_PAGE + 1} / ${totalPages}`;
+  document.getElementById('upcoming-prev').disabled = UPCOMING_PAGE === 0;
+  document.getElementById('upcoming-next').disabled = UPCOMING_PAGE >= totalPages - 1;
+}
+
+function handleUpcomingItemClick(tournament, rowEl) {
+  const events = tournament.events || [];
+  if (events.length === 0) return;
+  if (events.length === 1) {
+    // 単独 event → URL 入力 + 自動取得
+    const url = buildEventUrl(tournament.tournament_slug, events[0].event_slug);
+    fillEventUrlAndFetch(url);
+    return;
+  }
+  // 複数 event → inline 展開 (= toggle)
+  const wrap = rowEl.querySelector('.upcoming-events');
+  if (rowEl.classList.contains('expanded')) {
+    rowEl.classList.remove('expanded');
+    return;
+  }
+  // ほかの展開を閉じる
+  document.querySelectorAll('.upcoming-item.expanded').forEach(it => {
+    if (it !== rowEl) it.classList.remove('expanded');
+  });
+  wrap.innerHTML = renderEventChoicesHtml(events);
+  // bind clicks
+  wrap.querySelectorAll('.upcoming-event-row').forEach((er, idx) => {
+    er.addEventListener('click', (ev) => {
+      ev.stopPropagation();
+      const e = events[idx];
+      const url = buildEventUrl(tournament.tournament_slug, e.event_slug);
+      fillEventUrlAndFetch(url);
+    });
+  });
+  rowEl.classList.add('expanded');
+}
+
+function renderEventChoicesHtml(events) {
+  return events.map(e => {
+    const name = escapeHtml(e.event_name || e.name || '');
+    const entrants = e.num_entrants != null ? e.num_entrants : (e.numEntrants || 0);
+    return `<div class="upcoming-event-row">
+      <span class="ev-event-name">${name}</span>
+      <span class="ev-event-entrants">${entrants} 名</span>
+    </div>`;
+  }).join('');
+}
+
+function fillEventUrlAndFetch(url) {
+  const inp = document.getElementById('event-url');
+  if (!inp) return;
+  inp.value = url;
+  // Hide any prior event-picker
+  const ep = document.getElementById('event-picker');
+  if (ep) ep.style.display = 'none';
+  // Trigger fetch
+  handleFetch();
+  // Scroll user to the table for feedback
+  const status = document.getElementById('status');
+  if (status) status.scrollIntoView({ behavior: 'smooth', block: 'center' });
+}
+
+// 現在時刻以降の大会だけカウント (= 過去大会を除外).
+function countUpcomingFuture() {
+  const nowSec = Math.floor(Date.now() / 1000);
+  return ((UPCOMING_DATA || {}).tournaments || []).filter(t => {
+    const st = Number(t.start_at);
+    return Number.isFinite(st) && st >= nowSec;
+  }).length;
+}
+
+async function openUpcomingBox() {
+  const box = document.getElementById('upcoming-box');
+  box.classList.add('open');
+  const loading = document.getElementById('upcoming-loading');
+  const list = document.getElementById('upcoming-list');
+  const countBadge = document.getElementById('upcoming-count');
+  if (UPCOMING_DATA) {
+    loading.style.display = 'none';
+    renderUpcomingPage();
+    countBadge.textContent = countUpcomingFuture();
+    countBadge.style.display = '';
+    return;
+  }
+  loading.style.display = '';
+  list.style.display = 'none';
+  try {
+    await loadUpcomingData();
+    loading.style.display = 'none';
+    const n = countUpcomingFuture();
+    countBadge.textContent = n;
+    countBadge.style.display = '';
+    if (n === 0) {
+      loading.textContent = '直近 3 週間の SSBU 大会は見つかりませんでした';
+      loading.style.display = '';
+      return;
+    }
+    renderUpcomingPage();
+  } catch (e) {
+    loading.innerHTML = '<span style="color:#dc2626">upcoming.json の取得に失敗: ' + escapeHtml(e.message) + '</span>';
+  }
+}
+
+function toggleUpcomingBox() {
+  const box = document.getElementById('upcoming-box');
+  if (box.classList.contains('open')) {
+    box.classList.remove('open');
+  } else {
+    openUpcomingBox();
+  }
+}
+
+// ── event-picker (= handleFetch 複数 event 警告の inline UI) ─────
+// 上記 renderEventChoicesHtml を再利用.
+function showEventPickerInline(tournamentSlug, events) {
+  const ep = document.getElementById('event-picker');
+  const listEl = document.getElementById('event-picker-list');
+  if (!ep || !listEl) return;
+  listEl.innerHTML = renderEventChoicesHtml(events.map(e => ({
+    event_name: e.name, num_entrants: e.numEntrants, event_slug: e.slug,
+  })));
+  // CSS は #event-picker { display: none } なので '' (= unset) だと CSS が効いて非表示のまま.
+  // 'block' で override する.
+  ep.style.display = 'block';
+  // bind clicks
+  Array.from(listEl.querySelectorAll('.upcoming-event-row')).forEach((er, idx) => {
+    er.addEventListener('click', () => {
+      const e = events[idx];
+      const url = buildEventUrl(tournamentSlug, e.slug);
+      fillEventUrlAndFetch(url);
+    });
+  });
+  ep.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+
+// ── Seed page bootstrap ──
+(function () {
+  const tokenEl = document.getElementById('token');
+  const hintEl = document.getElementById('token-hint');
+  const revealBtn = document.getElementById('token-reveal');
+  const saveBtn = document.getElementById('token-save');
+  const TOKEN_KEY = 'spsp_startgg_token';
+
+  function updateHint() {
+    const v = tokenEl.value.trim();
+    if (!v) { hintEl.textContent = ''; return; }
+    const tail = v.slice(-4);
+    hintEl.textContent = `末尾: ${tail} (${v.length} 文字)`;
+  }
+  // Restore token: localStorage 優先 (永続化)、なければ sessionStorage (タブ単位)
+  try {
+    const t = localStorage.getItem(TOKEN_KEY) || sessionStorage.getItem('smash_banzuke_token');
+    if (t) { tokenEl.value = t; updateHint(); }
+  } catch (e) {}
+  tokenEl.addEventListener('input', () => {
+    updateHint();
+    try { sessionStorage.setItem('smash_banzuke_token', tokenEl.value); } catch (e) {}
+  });
+  revealBtn.addEventListener('click', () => {
+    const isPwd = tokenEl.type === 'password';
+    tokenEl.type = isPwd ? 'text' : 'password';
+    revealBtn.textContent = isPwd ? '🙈' : '👁';
+  });
+  saveBtn.addEventListener('click', () => {
+    const v = tokenEl.value.trim();
+    if (!v) { hintEl.textContent = 'トークン未入力'; return; }
+    try {
+      localStorage.setItem(TOKEN_KEY, v);
+      const orig = saveBtn.textContent;
+      saveBtn.textContent = '✅ 保存済み';
+      saveBtn.disabled = true;
+      setTimeout(() => { saveBtn.textContent = orig; saveBtn.disabled = false; }, 1500);
+    } catch (e) { hintEl.textContent = '保存失敗: ' + e.message; }
+  });
+
+  document.getElementById('seed-form').addEventListener('submit', (e) => {
+    e.preventDefault();
+    handleFetch();
+  });
+  document.getElementById('csv-btn').addEventListener('click', downloadCsv);
+  document.getElementById('upload-btn').addEventListener('click', uploadToStartgg);
+
+  // ── 直近の大会ピッカー: イベント binding ──
+  const upToggle = document.getElementById('upcoming-toggle');
+  if (upToggle) upToggle.addEventListener('click', toggleUpcomingBox);
+  const upPrev = document.getElementById('upcoming-prev');
+  if (upPrev) upPrev.addEventListener('click', () => {
+    if (UPCOMING_PAGE > 0) { UPCOMING_PAGE -= 1; renderUpcomingPage(); }
+  });
+  const upNext = document.getElementById('upcoming-next');
+  if (upNext) upNext.addEventListener('click', () => {
+    const total = (UPCOMING_DATA && UPCOMING_DATA.tournaments) ? UPCOMING_DATA.tournaments.length : 0;
+    const totalPages = Math.max(1, Math.ceil(total / UPCOMING_PAGE_SIZE));
+    if (UPCOMING_PAGE < totalPages - 1) { UPCOMING_PAGE += 1; renderUpcomingPage(); }
+  });
+  // 開いた状態で起動するので初期 load を即実行
+  if (document.getElementById('upcoming-box').classList.contains('open')) {
+    openUpcomingBox();
+  }
+})();
+</script>
+
+<!-- Optional: load chartjs-adapter-date-fns for time scale -->
+<script>
+window.addEventListener('load', () => {
+  // Defer load until first chart needed
+});
+</script>
+</body>
+</html>

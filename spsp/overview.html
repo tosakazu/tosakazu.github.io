@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>基本編 — SPSP</title>
+<meta name="description" content="SPSP v4 の基本概念解説: 順位評価 + 直対評価の共通 5 層レベルでスマブラSPプレイヤーをランクづけする仕組みを数式なしで説明。">
+<link rel="canonical" href="https://tosakazu.github.io/spsp/overview.html">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="SPSP">
+<meta property="og:title" content="SPSP 基本編 | スマブラSP プレイヤーランキングの仕組み">
+<meta property="og:description" content="順位評価 + 直対評価でスマブラSPプレイヤーをランクづけする仕組みを数式なしで説明。">
+<meta property="og:url" content="https://tosakazu.github.io/spsp/overview.html">
+<meta property="og:locale" content="ja_JP">
+<style>
+  * { box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Hiragino Sans", sans-serif;
+    margin: 0; padding: 0;
+    background: #ffffff; color: #111827;
+  }
+  .nav {
+    background: #ffffff; border-bottom: 1px solid #e5e7eb;
+    padding: 12px 24px; display: flex; gap: 24px; align-items: center;
+    position: sticky; top: 0; z-index: 10;
+  }
+  .nav a { color: #6b7280; text-decoration: none; font-size: 14px; padding: 4px 8px; border-radius: 4px; }
+  .nav a:hover { color: #111827; background: #f3f4f6; }
+  .nav a.current { color: #dc2626; background: #f3f4f6; }
+  .nav .brand { font-size: 16px; color: #111827; font-weight: 600; margin-right: 16px; }
+  .nav .brand a { color: #111827; font-size: 16px; padding: 0; }
+  .nav .brand a:hover { background: transparent; }
+  .nav .meta { margin-left: auto; color: #9ca3af; font-size: 12px; }
+  main { max-width: 920px; margin: 0 auto; padding: 32px 24px; }
+  h1 { font-size: 26px; color: #111827; margin: 0 0 8px; }
+  h2 { font-size: 20px; color: #dc2626; margin: 32px 0 12px; padding-bottom: 6px; border-bottom: 1px solid #e5e7eb; }
+  h3 { font-size: 16px; color: #111827; margin: 20px 0 8px; }
+  p { line-height: 1.7; color: #374151; }
+  .lead { font-size: 16px; color: #6b7280; margin-bottom: 24px; }
+  ul, ol { line-height: 1.8; color: #374151; }
+  code { background: #ffffff; padding: 2px 6px; border-radius: 4px; font-size: 13px; color: #dc2626; }
+
+  /* Cascade pyramid */
+  .pyramid { margin: 24px 0; display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 6px 20px; align-items: center; }
+  .layer {
+    background: #ffffff; border: 1px solid #e5e7eb; border-radius: 8px;
+    padding: 8px 14px; text-align: center; margin: 0 auto;
+    transition: transform 0.1s;
+  }
+  .layer:hover { transform: translateY(-1px); border-color: #dc2626; }
+  .layer-1 { width: 100%; background: linear-gradient(135deg, #f3f4f6, #ffffff); }
+  .layer-2 { width: 84%; background: linear-gradient(135deg, #bbf7d0, #bbf7d0); border-color: #16a34a44; }
+  .layer-3 { width: 68%; background: linear-gradient(135deg, #dbeafe, #dbeafe); border-color: #3b82f644; }
+  .layer-4 { width: 52%; background: linear-gradient(135deg, #ede9fe, #ede9fe); border-color: #a78bfa44; }
+  .layer-5 { width: 36%; background: linear-gradient(135deg, #fef3c7, #fde68a); border-color: #fbbf2444; }
+  .layer-title { font-weight: 600; font-size: 14px; }
+  .layer-1 .layer-title { color: #6b7280; }
+  .layer-2 .layer-title { color: #16a34a; }
+  .layer-3 .layer-title { color: #2563eb; }
+  .layer-4 .layer-title { color: #a78bfa; }
+  .layer-5 .layer-title { color: #d97706; }
+  .conds { list-style: none; padding: 0; margin: 0; font-size: 12px; line-height: 1.6; color: #374151; display: flex; flex-wrap: wrap; gap: 0 12px; }
+  .conds li { white-space: nowrap; }
+  .conds .ok { color: #16a34a; font-weight: 600; }
+  .conds .ng { color: #dc2626; font-weight: 600; }
+
+  /* Gating illustration */
+  .gating {
+    background: #ffffff; border: 1px solid #e5e7eb; border-radius: 8px;
+    padding: 16px; margin: 16px 0;
+  }
+  .gating-row { display: flex; gap: 16px; align-items: center; margin: 8px 0; }
+  .gating-badge {
+    display: inline-block; padding: 4px 10px; border-radius: 12px; font-size: 12px;
+    background: #fef3c7; color: #d97706; min-width: 110px; text-align: center;
+  }
+  .gating-badge.veteran { background: #dcfce7; color: #16a34a; }
+  .gating-text { font-size: 14px; color: #374151; }
+
+  /* Ensemble flow: 順位 + 直対 → 総合 */
+  .ensemble-flow {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr auto 1.1fr;
+    gap: 10px;
+    align-items: stretch;
+    margin: 20px 0;
+  }
+  .ensemble-card {
+    background: #ffffff; border: 1px solid #e5e7eb; border-radius: 8px;
+    padding: 14px 16px;
+    display: flex; flex-direction: column;
+  }
+  .ensemble-card h3 { margin-top: 0; }
+  .ensemble-card p { margin: 4px 0 0; font-size: 13px; }
+  .ensemble-result {
+    background: linear-gradient(135deg, #fef3c7, #fde68a);
+    border-color: #fbbf24;
+  }
+  .ensemble-result h3 { color: #b45309; }
+  .ensemble-plus, .ensemble-arrow {
+    display: flex; align-items: center; justify-content: center;
+    font-size: 24px; font-weight: 700; color: #dc2626;
+    padding: 0 4px;
+  }
+
+  /* Warn box (red, for 直対評価 caveat) */
+  .warn {
+    background: #fef2f2; border: 1px solid #fecaca; border-radius: 8px;
+    padding: 12px 16px; margin: 14px 0;
+    color: #991b1b; font-size: 14px; line-height: 1.7;
+  }
+  .warn strong { color: #b91c1c; }
+
+  /* Note box (neutral) */
+  .nb {
+    background: #f9fafb; border-left: 3px solid #9ca3af; border-radius: 0 6px 6px 0;
+    padding: 10px 14px; margin: 14px 0; color: #4b5563; font-size: 13px; line-height: 1.7;
+  }
+
+  /* Example table */
+  table.ex {
+    width: 100%; border-collapse: collapse; margin: 14px 0; font-size: 14px;
+  }
+  table.ex th, table.ex td {
+    border: 1px solid #e5e7eb; padding: 8px 10px; text-align: center;
+  }
+  table.ex th { background: #f3f4f6; color: #374151; font-weight: 600; }
+  table.ex td { color: #374151; }
+  table.ex tr.highlight td { background: #fef3c7; color: #92400e; font-weight: 600; }
+
+  /* Page navigation (prev/next, unified across method docs) */
+  .pagenav {
+    display: flex; justify-content: space-between; gap: 12px;
+    margin: 32px 0 8px;
+  }
+  .pagenav a {
+    flex: 1; text-align: center;
+    background: #dc2626; color: #ffffff; text-decoration: none;
+    padding: 10px 18px; border-radius: 8px; font-size: 14px; font-weight: 600;
+  }
+  .pagenav a:hover { background: #b91c1c; }
+  .pagenav a.prev { background: #6b7280; }
+  .pagenav a.prev:hover { background: #4b5563; }
+
+  .footer { text-align: center; color: #9ca3af; font-size: 12px; padding: 32px 0 16px; }
+
+  @media (max-width: 720px) {
+    body { -webkit-text-size-adjust: 100%; }
+    .nav { padding: 10px 14px; gap: 12px; font-size: 12px; flex-wrap: wrap; }
+    .nav .brand { font-size: 14px; }
+    main { padding: 20px 14px; }
+    h1 { font-size: 20px; }
+    h2 { font-size: 17px; }
+    h3 { font-size: 14px; }
+    .lead { font-size: 13px; }
+    p, ul, ol { font-size: 13px; line-height: 1.6; }
+    .ensemble-flow { grid-template-columns: 1fr; gap: 6px; }
+    .ensemble-plus, .ensemble-arrow { font-size: 18px; padding: 2px 0; }
+    .ensemble-arrow { transform: rotate(90deg); }
+    .pyramid { grid-template-columns: 1fr; gap: 2px; }
+    .layer { padding: 6px 10px; }
+    .layer-title { font-size: 12px; }
+    .conds { font-size: 11px; justify-content: center; margin: 4px 0 10px; gap: 0 10px; }
+    .layer-1 { width: 100%; }
+    .layer-2 { width: 90%; }
+    .layer-3 { width: 75%; }
+    .layer-4 { width: 60%; }
+    .layer-5 { width: 45%; }
+    .gating-row { flex-direction: column; align-items: flex-start; gap: 4px; }
+    .gating-badge { min-width: 0; }
+    table.ex { font-size: 12px; }
+    table.ex th, table.ex td { padding: 6px 4px; }
+    .pagenav { flex-direction: column; }
+    .pagenav a { font-size: 13px; padding: 8px 14px; }
+  }
+</style>
+</head>
+<body>
+<div id="nav-root"></div>
+<script src="nav.js"></script>
+
+<main>
+  <h1>SPSP 基本編</h1>
+
+  <h2>SPSP ってなに?</h2>
+  <ul>
+    <li>日本大会を対象にしたスマブラ SP のプレイヤーランキング</li>
+    <li>大会主催者がそのままシーディングに使えるよう設計されている</li>
+    <li>既存ランキングより、<strong>プレイヤーの強さを正確に予測する</strong>ように設計されている</li>
+    <li>プレイヤーの実力レベルに応じて <strong>集計対象の大会が変わる</strong></li>
+  </ul>
+
+  <h2>3 つのランキング</h2>
+  <p>
+    サイトで表示されるのは <strong>総合評価</strong> 1 本のランキングだが、
+    内部的には <strong>順位評価</strong> と <strong>直対評価</strong> という 2 つの評価を別々に計算し、
+    それらを合わせて総合評価を作っている。
+  </p>
+
+  <div class="ensemble-flow">
+    <div class="ensemble-card">
+      <h3>順位評価</h3>
+      <p>大会の<strong>規模</strong>、<strong>参加者層の厚さ</strong>、獲得した<strong>最終順位</strong>から決まる評価。</p>
+    </div>
+    <div class="ensemble-plus">+</div>
+    <div class="ensemble-card">
+      <h3>直対評価</h3>
+      <p><strong>直接対決</strong>の勝敗をベースにした評価。スマメイトのような直接対決レーティング。</p>
+    </div>
+    <div class="ensemble-arrow">→</div>
+    <div class="ensemble-card ensemble-result">
+      <h3>総合評価</h3>
+      <p>順位評価と直対評価の<strong>順位を平均</strong>したもの。これが SPSP の公式順位。</p>
+    </div>
+  </div>
+
+  <h2>レベルと対象大会</h2>
+  <p>
+    プレイヤーは実力に応じて <strong>Lv1〜Lv5</strong> のいずれかに割り振られる。
+    Lv が上がるほど、順位評価と直対評価の <strong>対象大会が共通して絞り込まれる</strong>。
+    強い人ほど小規模大会・平日大会の結果がノイズになりやすいため、上位帯では含まない。
+  </p>
+
+  <div class="pyramid">
+    <div class="layer layer-5">
+      <div class="layer-title">Lv5: 上位 256 人</div>
+    </div>
+    <ul class="conds">
+      <li><span class="ok">◯</span> 49 名以上</li>
+      <li><span class="ok">◯</span> 休日</li>
+      <li><span class="ng">✕</span> 平日</li>
+      <li><span class="ng">✕</span> 制限</li>
+      <li><span class="ng">✕</span> 下位クラス</li>
+    </ul>
+    <div class="layer layer-4">
+      <div class="layer-title">Lv4: 上位 512 人</div>
+    </div>
+    <ul class="conds">
+      <li><span class="ok">◯</span> 33 名以上</li>
+      <li><span class="ok">◯</span> 休日</li>
+      <li><span class="ng">✕</span> 平日</li>
+      <li><span class="ng">✕</span> 制限</li>
+      <li><span class="ng">✕</span> 下位クラス</li>
+    </ul>
+    <div class="layer layer-3">
+      <div class="layer-title">Lv3: 上位 1024 人</div>
+    </div>
+    <ul class="conds">
+      <li><span class="ok">◯</span> 25 名以上</li>
+      <li><span class="ok">◯</span> 休日</li>
+      <li><span class="ng">✕</span> 平日</li>
+      <li><span class="ng">✕</span> 制限</li>
+      <li><span class="ng">✕</span> 下位クラス</li>
+    </ul>
+    <div class="layer layer-2">
+      <div class="layer-title">Lv2: 上位 2048 人</div>
+    </div>
+    <ul class="conds">
+      <li><span class="ok">◯</span> 9 名以上</li>
+      <li><span class="ok">◯</span> 休日</li>
+      <li><span class="ok">◯</span> 平日</li>
+      <li><span class="ok">◯</span> 制限</li>
+      <li><span class="ok">◯</span> 下位クラス</li>
+    </ul>
+    <div class="layer layer-1">
+      <div class="layer-title">Lv1: 全員</div>
+    </div>
+    <ul class="conds">
+      <li><span class="ok">◯</span> 5 名以上</li>
+      <li><span class="ok">◯</span> 休日</li>
+      <li><span class="ok">◯</span> 平日</li>
+      <li><span class="ok">◯</span> 制限</li>
+      <li><span class="ok">◯</span> 下位クラス</li>
+    </ul>
+  </div>
+
+  <p style="font-size:13px;color:#6b7280;margin-top:8px">
+    ※ <strong>休日判定</strong> は開始日〜終了日のいずれかが土日祝かで判定。ただし <strong>大会名に「プレ大会」「プレオフ」等を含む大会</strong> は土日でも平日扱い。
+  </p>
+
+  <h2>順位評価</h2>
+  <p>
+    順位評価は、大会の <strong>規模</strong>・<strong>参加者層の厚さ</strong>・自分の <strong>最終順位</strong> から決まる。
+    トーナメント中に誰と当たったかは <strong>一切見ない</strong>。
+  </p>
+  <h3>順位評価の 3 つの特性</h3>
+  <ul>
+    <li><strong>特性 1: 出れば出るほど上がりやすい</strong>
+      たくさん大会に参加して結果を積めば、その分ポイントが入る。
+      「出るだけリスクがある」直対評価とは対照的。</li>
+    <li><strong>特性 2: 古い大会の影響は弱まる</strong>
+      もらったポイントは毎月だいたい 4% ずつ目減りしていく。
+      1 年前の大会は約 61%、2 年前は約 38%、3 年前は約 23% まで小さくなる。</li>
+    <li><strong>特性 3: 上位の大会ほど大きく効く</strong>
+      集計の上位の大会まではポイントがそのまま加算される (Lv1 は <strong>上位 1 大会</strong>、Lv2 以上は <strong>上位 3 大会</strong>)。
+      それ以降は急に小さく加算されるようになる。</li>
+  </ul>
+
+  <p>順位評価スコアは次の流れで決まる:</p>
+  <ol style="margin:8px 0;line-height:1.7">
+    <li>大会ごとに、規模・参加者層・自分の最終順位から <strong>素点</strong> が決まる。</li>
+    <li>大会開催からの経過時間で <strong>時間減衰</strong> をかける (毎月 0.96 倍、1 年前 ≈ 61%、2 年前 ≈ 38%)。</li>
+    <li>全大会を時間減衰後のポイントが多い順に並べ、<strong>位置減衰</strong> をかける (上位 3 件はそのまま、4 件目以降は × 0.3, × 0.09, × 0.027, …)。</li>
+    <li>全部の <strong>影響ポイント</strong> を足したものが順位評価スコア。</li>
+  </ol>
+
+  <p>あるLv2プレイヤーの 5 大会分のポイントを、時間減衰した後で多い順に並べると次のようになる:</p>
+  <table class="ex">
+    <thead>
+      <tr>
+        <th>素点</th>
+        <th>時間減衰</th>
+        <th>位置減衰</th>
+        <th>影響ポイント</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td>1820</td><td>× 0.78</td><td>× 1.00</td><td>1420</td></tr>
+      <tr><td>1450</td><td>× 0.96</td><td>× 1.00</td><td>1392</td></tr>
+      <tr><td>1280</td><td>× 0.61</td><td>× 1.00</td><td>781</td></tr>
+      <tr><td>1100</td><td>× 0.38</td><td>× 0.30</td><td>125</td></tr>
+      <tr><td>850</td><td>× 0.23</td><td>× 0.09</td><td>18</td></tr>
+      <tr class="highlight"><td colspan="3" style="text-align:right">順位評価ポイント 合計</td><td>3736</td></tr>
+    </tbody>
+  </table>
+  <p style="font-size:13px;color:#6b7280">
+    4 件目以降は影響が小さくなるが、<strong>わずかでも確実に上がる</strong>。
+    出場が必ずプラスになるのが順位評価の特徴。
+  </p>
+
+  <h2>直対評価</h2>
+  <p>
+    直対評価は <strong>スマメイトのような直接対決レーティング</strong>。
+    試合を一つひとつ学習して、勝てば上がる、負ければ下がる。
+    強い相手に勝つと大きく上がり、格下に勝っても小幅しか上がらない。
+    学習対象になる試合は上のレベルシステムで定義された対象大会のみ。
+  </p>
+  <p style="font-size:13px;color:#6b7280">
+    厳密には Elo レーティングではなく、Elo よりも精度の高い <strong>Glicko2</strong> を使っている (詳細は理論編で)。
+    Glicko2 は不確実性 (RD) の概念を持ち、試合数が少ないプレイヤーのレートも少ない試合で適切な位置に収束する。
+  </p>
+
+  <h3>順位は「過去 180 日間の最高レート」</h3>
+  <p>
+    直対評価の<strong>順位は、内部レート (= 直接対決の結果で日々動くレート) の過去 180 日間の最高値</strong>でつける。
+    一度高いレートに到達すると、その後 180 日間はそのレートが順位に反映される。
+  </p>
+  <p style="font-size:13px;color:#6b7280">
+    内部レートはプレイヤーページの直対評価セクションで別途確認できる。
+    時系列グラフでも「直対評価スコア」と「内部レート」を並べて見られるようにしている。
+  </p>
+
+  <h3>直対評価の特性</h3>
+  <div class="warn">
+    <strong>順位評価との大きな違い:</strong>
+    強い相手に負けると <strong>内部レートが下がる</strong>。
+    順位評価は出れば出るほど積み上がるが、直対評価は出場リスクがある仕組み。
+    <br><br>
+    ただし順位付けに使う直対評価スコアは <strong>過去 180 日間の最高値</strong>なので、
+    内部レートがいったん下がっても <strong>180 日以内に元の高さまで戻せば直対評価スコア自体は下がらない</strong>。
+    他のプレイヤーが伸びれば順位そのものは前後しうるが、自分のスコアは保たれる.
+  </div>
+
+  <h2>総合評価 (= SPSP 順位)</h2>
+  <p>
+    総合評価は <strong>順位評価の順位</strong> と <strong>直対評価の順位</strong> を平均する。
+  </p>
+  <p>
+    たとえばあるプレイヤーが順位評価で 100 位、直対評価で 80 位だったら、
+    総合評価は (100 + 80) ÷ 2 = 90 位になる。
+  </p>
+  <p>
+    平均順位が並んだ場合は <strong>直対評価の順位が上の方を優先</strong> する。
+  </p>
+
+  <h2>具体例</h2>
+  <p>架空の 4 人 (A・B・C・D) で総合評価の出方を見てみる:</p>
+
+  <table class="ex">
+    <thead>
+      <tr>
+        <th>プレイヤー</th>
+        <th>順位評価<br>順位</th>
+        <th>直対評価<br>順位</th>
+        <th>順位の平均</th>
+        <th>総合評価<br>順位</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr class="highlight">
+        <td>B</td>
+        <td>3 位</td>
+        <td>1 位</td>
+        <td>2.0</td>
+        <td>1 位</td>
+      </tr>
+      <tr>
+        <td>C</td>
+        <td>2 位</td>
+        <td>3 位</td>
+        <td>2.5</td>
+        <td>2 位</td>
+      </tr>
+      <tr>
+        <td>A</td>
+        <td>1 位</td>
+        <td>4 位</td>
+        <td>2.5</td>
+        <td>3 位</td>
+      </tr>
+      <tr>
+        <td>D</td>
+        <td>4 位</td>
+        <td>2 位</td>
+        <td>3.0</td>
+        <td>4 位</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <p style="font-size:13px;color:#6b7280">
+    B は両方バランス良く高いので総合 1 位。
+    C と A は順位の平均がどちらも 2.5 で同率だが、<strong>直対評価の順位が C のほうが上 (3 位 &lt; 4 位)</strong> なので C が 2 位、A が 3 位。
+    こうして <strong>順位評価だけ、直対評価だけ、では見えない総合力</strong> を測れる。
+  </p>
+
+  <h2>もっと知りたい人へ</h2>
+  <p>
+    SPSP の仕組みをもっと深く知りたい場合は、理論編へ進んでください。
+  </p>
+  <ul>
+    <li><a href="details.html" style="color:#dc2626">理論編・概念</a>: カスケード、LVゲート学習、位置減衰の考え方</li>
+    <li><a href="eval.html" style="color:#dc2626">理論編・評価</a>: 評価指標、パラメータ調整、既存ランキングとの比較</li>
+    <li><a href="math.html" style="color:#dc2626">理論編・数式</a>: gain 関数、Elo 換算、時間減衰の正式定義</li>
+  </ul>
+
+  <div class="pagenav">
+    <a class="prev" href="index.html">← ランキングに戻る</a>
+    <a href="details.html">理論編・概念 →</a>
+  </div>
+
+  <div class="footer">
+    SPSP (Saikyo Player SPECIAL) · データソース: start.gg
+    <br><span class="site-version" style="font-size:11px;color:#9ca3af">v b2e3c33 · 2026-06-10 13:51 UTC</span>
+  </div>
+</main>
+</body>
+</html>

@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SPSP — シードアップロード</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
+<style>
+  * { box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Hiragino Sans", sans-serif;
+    margin: 0; padding: 0;
+    background: #ffffff; color: #111827;
+    -webkit-text-size-adjust: 100%;
+  }
+  .nav {
+    background: #ffffff; border-bottom: 1px solid #e5e7eb;
+    padding: 12px 24px; display: flex; gap: 24px; align-items: center;
+    position: sticky; top: 0; z-index: 10;
+  }
+  .nav a { color: #6b7280; text-decoration: none; font-size: 14px; padding: 4px 8px; border-radius: 4px; }
+  .nav a:hover { color: #111827; background: #f3f4f6; }
+  .nav a.current { color: #dc2626; background: #f3f4f6; }
+  .nav .brand { font-size: 16px; color: #111827; font-weight: 600; margin-right: 16px; }
+  .nav .brand a { color: #111827; font-size: 16px; padding: 0; }
+  .nav .brand a:hover { background: transparent; }
+  .nav .meta { margin-left: auto; color: #9ca3af; font-size: 12px; }
+  @media (max-width: 720px) {
+    .nav { padding: 8px 12px; gap: 8px; font-size: 12px; flex-wrap: wrap; }
+    .nav .brand { font-size: 14px; margin-right: 8px; }
+    .nav .brand a { font-size: 14px; }
+    .nav a { padding: 3px 6px; font-size: 12px; }
+    .nav .meta { width: 100%; margin-left: 0; font-size: 10px; }
+  }
+  @media (max-width: 380px) {
+    .nav .brand { font-size: 13px; }
+    .nav .brand a { font-size: 13px; }
+    .nav a { font-size: 11px; }
+  }
+
+  main { max-width: 640px; margin: 0 auto; padding: 24px 18px 80px; }
+  h1 { font-size: 22px; color: #111827; margin: 0 0 6px; }
+  .subtitle { font-size: 13px; color: #6b7280; margin: 0 0 18px; line-height: 1.6; }
+  .subtitle a { color: #dc2626; }
+
+  .note {
+    background: #f9fafb; border-left: 3px solid #d97706;
+    padding: 10px 14px; font-size: 12px; color: #374151;
+    line-height: 1.6; margin: 12px 0 20px; border-radius: 4px;
+  }
+
+  form { display: flex; flex-direction: column; gap: 14px; }
+  label { font-size: 12px; color: #6b7280; display: block; margin-bottom: 4px; }
+  input[type="text"], input[type="password"], input[type="number"], input[type="file"] {
+    width: 100%; padding: 10px 12px;
+    background: #f9fafb; color: #111827;
+    border: 1px solid #e5e7eb; border-radius: 6px;
+    font-size: 13px; font-family: inherit;
+  }
+  input:focus { outline: none; border-color: #dc2626; }
+  .row { display: flex; gap: 10px; align-items: flex-end; flex-wrap: wrap; }
+  .row > div { flex: 1; min-width: 140px; }
+  fieldset {
+    border: 1px solid #e5e7eb; border-radius: 6px; padding: 10px 14px 14px;
+    margin: 0;
+  }
+  legend { font-size: 12px; color: #6b7280; padding: 0 6px; }
+  .radio-row { display: flex; gap: 18px; margin: 8px 0; }
+  .radio-row label { color: #111827; font-size: 13px; display: flex; align-items: center; gap: 6px; margin: 0; cursor: pointer; }
+
+  button.primary {
+    background: #16a34a; color: #fff; border: none;
+    padding: 10px 18px; border-radius: 6px;
+    font-size: 14px; font-weight: 600; cursor: pointer;
+    font-family: inherit;
+  }
+  button.primary:hover { background: #15803d; }
+  button.primary:disabled { background: #d1d5db; color: #6b7280; cursor: not-allowed; }
+
+  #status {
+    font-size: 13px; padding: 10px 14px; margin-top: 10px;
+    border-radius: 6px; display: none; line-height: 1.5;
+  }
+  #status.info    { display: block; background: #eff6ff; color: #1e40af; border-left: 3px solid #2563eb; }
+  #status.success { display: block; background: #f0fdf4; color: #166534; border-left: 3px solid #16a34a; }
+  #status.error   { display: block; background: #fee2e2; color: #dc2626; border-left: 3px solid #dc2626; }
+
+  .footer { text-align: center; color: #9ca3af; font-size: 12px; padding: 32px 0 16px; }
+</style>
+</head>
+<body>
+
+<div id="nav-root"></div>
+<script src="../nav.js"></script>
+
+<main>
+  <h1>シードアップロード</h1>
+  <p class="subtitle">
+    CSV を <strong>start.gg のシード</strong>として一括反映するツール。
+    Google Sheets URL またはローカル CSV ファイルから読み込めます。
+  </p>
+
+  <div class="usage-box" style="background:#f9fafb;border-left:3px solid #2563eb;padding:10px 14px;font-size:12px;color:#374151;line-height:1.65;margin:10px 0 16px;border-radius:4px">
+    <strong style="color:#111827">使い方</strong>
+    <ol style="margin:6px 0 0;padding-left:1.4em">
+      <li><a href="https://start.gg/admin/profile/developer" target="_blank" rel="noopener" style="color:#dc2626">start.gg API キーを取得</a> (初回のみ)</li>
+      <li>API トークンを入力 → 「💾 保存」でブラウザに記憶 (任意)</li>
+      <li>大会 <strong>イベント URL</strong> または <strong>Phase ID</strong> を入力 (URL なら自動で Phase 取得)</li>
+      <li>シードデータを指定 (Google Sheets URL / CSV URL / ローカル CSV ファイル)</li>
+      <li>「start.gg にシード適用」を押す</li>
+    </ol>
+  </div>
+
+  <form id="form">
+    <div>
+      <label for="token">
+        start.gg API Token
+        <a href="https://start.gg/admin/profile/developer" target="_blank" rel="noopener" style="color:#dc2626;margin-left:6px;font-size:11px;text-decoration:underline">API キー取得→</a>
+      </label>
+      <div style="display:flex;gap:4px;align-items:stretch">
+        <input type="password" id="token" placeholder="xxxxxxxxxxxxxxxxxxxxxxxxxxxx" autocomplete="off" required style="flex:1;min-width:0">
+        <button type="button" id="token-reveal" title="表示/隠す"
+          style="background:#f3f4f6;color:#374151;border:1px solid #e5e7eb;border-radius:6px;padding:0 10px;font-size:14px;cursor:pointer;font-family:inherit">👁</button>
+        <button type="button" id="token-save" title="ブラウザに保存"
+          style="background:#dc2626;color:#fff;border:none;border-radius:6px;padding:0 12px;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit">💾 保存</button>
+      </div>
+      <div id="token-hint" style="font-size:10px;color:#9ca3af;margin-top:3px;height:14px"></div>
+    </div>
+
+    <div>
+      <label for="phase">大会 Event URL または Phase ID</label>
+      <input type="text" id="phase" placeholder="https://www.start.gg/tournament/15-kagaribi-15/event/singles" required>
+      <div style="font-size:10px;color:#9ca3af;margin-top:3px;line-height:1.55">
+        Event URL を入れると自動で Phase ID を取得します。Phase ID 直接指定の場合、
+        <code style="color:#dc2626;background:#fff;padding:1px 4px;border-radius:3px">.../seeding/<b style="color:#15803d">1503940</b>/<b style="color:#1d4ed8">2132353</b></code>
+        の <b style="color:#1d4ed8">2 つ目の数字</b> (phase ID) を入力。
+      </div>
+    </div>
+
+    <fieldset>
+      <legend>入力ソース</legend>
+      <div class="radio-row">
+        <label><input type="radio" name="src" value="sheet" checked> Google Sheets URL または CSV URL</label>
+        <label><input type="radio" name="src" value="file"> CSV ファイル</label>
+      </div>
+      <div id="src-sheet">
+        <label for="sheet">Google Sheets URL / CSV URL / Sheets ID</label>
+        <input type="text" id="sheet" placeholder="https://docs.google.com/spreadsheets/... or https://example.com/seeds.csv">
+        <div style="font-size:10px;color:#9ca3af;margin-top:3px">CSV URL の場合、その URL が CORS で外部アクセス許可されている必要があります。</div>
+      </div>
+      <div id="src-file" style="display:none">
+        <label for="file">CSV ファイル (UTF-8)</label>
+        <input type="file" id="file" accept=".csv,text/csv">
+      </div>
+    </fieldset>
+
+    <fieldset>
+      <legend>列名 (基本このままで OK)</legend>
+      <div class="row">
+        <div>
+          <label for="seedIdCol">seedId 列</label>
+          <input type="text" id="seedIdCol" value="seedId">
+        </div>
+        <div>
+          <label for="phaseSeedCol">phaseseed 列</label>
+          <input type="text" id="phaseSeedCol" value="phaseseed">
+        </div>
+      </div>
+    </fieldset>
+
+    <div>
+      <button type="submit" class="primary" id="submit">start.gg にシード適用</button>
+    </div>
+
+    <div id="status"></div>
+    <div id="error-help" style="display:none;margin-top:8px"></div>
+  </form>
+
+  <div style="margin-top:24px;font-size:11px;color:#9ca3af;line-height:1.6">
+    🔒 入力した API トークンと Phase ID/Event URL はこのブラウザから start.gg にのみ送信されます。
+    GitHub Pages 側には何も保存・転送されません。「💾 保存」を押した場合のみ localStorage に永続保存します。
+  </div>
+
+  <div class="footer">
+    SPSP · <a href="../index.html" style="color:#dc2626">ランキングに戻る</a>
+    <br><span class="site-version" style="font-size:11px;color:#9ca3af">v b2e3c33 · 2026-06-10 13:51 UTC</span>
+  </div>
+</main>
+
+<script src="seed_uploader.js"></script>
+<script>
+'use strict';
+(function () {
+  const tokenEl = document.getElementById('token');
+  const phaseEl = document.getElementById('phase');
+  const sheetEl = document.getElementById('sheet');
+  const fileEl  = document.getElementById('file');
+  const seedIdColEl = document.getElementById('seedIdCol');
+  const phaseSeedColEl = document.getElementById('phaseSeedCol');
+  const submitEl = document.getElementById('submit');
+  const statusEl = document.getElementById('status');
+  const srcSheet = document.getElementById('src-sheet');
+  const srcFile  = document.getElementById('src-file');
+
+  // Token storage: localStorage 優先 (永続化、保存ボタン押下)、sessionStorage はタブ単位フォールバック
+  const TOKEN_KEY = 'spsp_startgg_token';
+  const hintEl = document.getElementById('token-hint');
+  const revealBtn = document.getElementById('token-reveal');
+  const saveBtn = document.getElementById('token-save');
+  function updateHint() {
+    const v = tokenEl.value.trim();
+    if (!v) { hintEl.textContent = ''; return; }
+    hintEl.textContent = `末尾: ${v.slice(-4)} (${v.length} 文字)`;
+  }
+  try {
+    const t = localStorage.getItem(TOKEN_KEY) || sessionStorage.getItem('smash_banzuke_token');
+    if (t) { tokenEl.value = t; updateHint(); }
+  } catch (e) {}
+  tokenEl.addEventListener('input', () => {
+    updateHint();
+    try { sessionStorage.setItem('smash_banzuke_token', tokenEl.value); } catch (e) {}
+  });
+  revealBtn.addEventListener('click', () => {
+    const isPwd = tokenEl.type === 'password';
+    tokenEl.type = isPwd ? 'text' : 'password';
+    revealBtn.textContent = isPwd ? '🙈' : '👁';
+  });
+  saveBtn.addEventListener('click', () => {
+    const v = tokenEl.value.trim();
+    if (!v) { hintEl.textContent = 'トークン未入力'; return; }
+    try {
+      localStorage.setItem(TOKEN_KEY, v);
+      const orig = saveBtn.textContent;
+      saveBtn.textContent = '✅ 保存済み';
+      saveBtn.disabled = true;
+      setTimeout(() => { saveBtn.textContent = orig; saveBtn.disabled = false; }, 1500);
+    } catch (e) { hintEl.textContent = '保存失敗: ' + e.message; }
+  });
+
+  const errorHelpEl = document.getElementById('error-help');
+  function setStatus(cls, msg) {
+    statusEl.className = cls;
+    statusEl.textContent = msg;
+  }
+  function escapeHtml(s) {
+    return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  }
+  const TROUBLESHOOTING = [
+    { match: /401|unauthorized|invalid (api )?token|bad token/i,
+      hint: '🔑 API トークンが無効/期限切れ。<a href="https://start.gg/admin/profile/developer" target="_blank" rel="noopener">start.gg で再発行</a> してください。' },
+    { match: /403|forbidden|not (allowed|authorized)/i,
+      hint: '🚫 権限不足。大会の管理者 (admin) でないとシード適用はできません。' },
+    { match: /404|not found|event.*(not exist|does not exist)/i,
+      hint: '🔍 URL のスペル / 大会の公開状態を確認してください。' },
+    { match: /429|too many|rate.?limit/i,
+      hint: '⏱ レート制限です。1〜2 分待ってから再試行してください。' },
+    { match: /5\d\d|gateway|timeout|server error/i,
+      hint: '🛠 start.gg 側の障害の可能性。少し時間を置いて再試行してください。' },
+    { match: /invalid phase|phase.*(not found|invalid)|seeding.*not.*allowed/i,
+      hint: '⚙ Phase ID/URL を再確認。シード設定可能な phase (大会のシード期間中) かどうか確認してください。' },
+    { match: /CORS|cross.?origin/i,
+      hint: '🌐 CSV URL が CORS で外部アクセス許可されていません。Google Sheets に貼り直すか、CORS 対応のホストに置いてください。' },
+    { match: /network|fetch|failed to fetch/i,
+      hint: '🌐 通信エラー。インターネット接続を確認してください。' },
+  ];
+  function showError(msg) {
+    setStatus('error', '❌ ' + msg);
+    if (!errorHelpEl) return;
+    const hints = TROUBLESHOOTING.filter(t => t.match.test(String(msg || ''))).map(t => t.hint);
+    if (hints.length === 0) {
+      errorHelpEl.innerHTML = `<details style="font-size:12px;color:#6b7280;background:#fef2f2;border:1px solid #fecaca;border-radius:6px;padding:8px 12px"><summary style="cursor:pointer;color:#dc2626;font-weight:600">エラーメッセージ全文</summary><pre style="white-space:pre-wrap;margin:6px 0 0;font-family:inherit">${escapeHtml(msg)}</pre></details>`;
+    } else {
+      errorHelpEl.innerHTML = `<div style="font-size:12px;background:#fef2f2;border:1px solid #fecaca;border-radius:6px;padding:10px 12px">
+        <div style="color:#dc2626;font-weight:600;margin-bottom:4px">💡 対処法</div>
+        <ul style="margin:0;padding-left:1.4em;color:#374151">${hints.map(h => `<li>${h}</li>`).join('')}</ul>
+        <details style="margin-top:8px"><summary style="cursor:pointer;color:#9ca3af;font-size:11px">エラーメッセージ全文</summary><pre style="white-space:pre-wrap;margin:6px 0 0;font-family:inherit;font-size:11px;color:#6b7280">${escapeHtml(msg)}</pre></details>
+      </div>`;
+    }
+    errorHelpEl.style.display = '';
+  }
+  function clearError() {
+    if (errorHelpEl) { errorHelpEl.style.display = 'none'; errorHelpEl.innerHTML = ''; }
+  }
+
+  document.querySelectorAll('input[name="src"]').forEach(r => {
+    r.addEventListener('change', () => {
+      if (r.value === 'sheet' && r.checked) {
+        srcSheet.style.display = ''; srcFile.style.display = 'none';
+      } else if (r.value === 'file' && r.checked) {
+        srcSheet.style.display = 'none'; srcFile.style.display = '';
+      }
+    });
+  });
+
+  document.getElementById('form').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    clearError();
+    const token = tokenEl.value.trim();
+    let phaseId = phaseEl.value.trim();
+    const phaseInput = phaseId;
+    const src = document.querySelector('input[name="src"]:checked').value;
+    const seedIdCol = (seedIdColEl.value || 'seedId').trim();
+    const phaseSeedCol = (phaseSeedColEl.value || 'phaseseed').trim();
+
+    if (!token) { showError('API Token を入力してください'); return; }
+    if (!phaseId) { showError('Event URL または Phase ID を入力してください'); return; }
+
+    submitEl.disabled = true;
+    try {
+      // Resolve phase ID. Try direct extraction first; if input is an event URL, call API.
+      const extracted = SmashSeed.extractPhaseIdFromUrl(phaseInput);
+      if (extracted) {
+        phaseId = extracted;
+      } else if (SmashSeed.isEventUrl(phaseInput)) {
+        setStatus('info', 'Event URL から Phase ID を取得中…');
+        const res = await SmashSeed.resolveEventPhase(phaseInput, token);
+        phaseId = res.phaseId;
+      } else {
+        throw new Error('Event URL または数値の Phase ID を入力してください');
+      }
+
+      let csvText;
+      if (src === 'sheet') {
+        const url = sheetEl.value.trim();
+        if (!url) throw new Error('Google Sheets URL / CSV URL を入力してください');
+        setStatus('info', 'CSV を取得中…');
+        csvText = await SmashSeed.fetchSheetsCsv(url);
+      } else {
+        const f = fileEl.files && fileEl.files[0];
+        if (!f) throw new Error('CSV ファイルを選択してください');
+        setStatus('info', 'CSV ファイルを読み込み中…');
+        csvText = await SmashSeed.readCsvFile(f);
+      }
+
+      setStatus('info', 'CSV をパース中…');
+      const parsed = SmashSeed.parseCsv(csvText);
+      const mapping = SmashSeed.buildSeedMapping(parsed.rows, seedIdCol, phaseSeedCol);
+
+      if (!confirm(`Phase ID ${phaseId} に ${mapping.length} 件のシードを送信します。よろしいですか?`)) {
+        setStatus('info', 'キャンセルしました');
+        return;
+      }
+
+      setStatus('info', `start.gg に ${mapping.length} 件送信中…`);
+      const r = await SmashSeed.uploadSeeding(phaseId, token, mapping);
+      if (r.ok) {
+        setStatus('success', `✅ シード適用成功 (${r.count} 件のシードを更新)`);
+      } else {
+        showError(r.error);
+      }
+    } catch (err) {
+      showError(err.message);
+    } finally {
+      submitEl.disabled = false;
+    }
+  });
+})();
+</script>
+</body>
+</html>

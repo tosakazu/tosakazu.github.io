@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>理論編 1: 概念 — SPSP</title>
+<meta name="description" content="SPSP のアルゴリズム概念解説。直対評価 (Glicko2 + LVゲート学習) と順位評価 (5層カスケード) の動作原理を数式なしで段階的に説明。">
+<link rel="canonical" href="https://tosakazu.github.io/spsp/details.html">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="SPSP">
+<meta property="og:title" content="SPSP 理論編 1: 概念">
+<meta property="og:description" content="SPSP のアルゴリズム概念解説 (数式なし、段階的)。">
+<meta property="og:url" content="https://tosakazu.github.io/spsp/details.html">
+<meta property="og:locale" content="ja_JP">
+<script>
+MathJax = {
+  tex: { inlineMath: [['$', '$']], displayMath: [['$$', '$$']] },
+  svg: { fontCache: 'global' }
+};
+</script>
+<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" async></script>
+<style>
+  * { box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Hiragino Sans", sans-serif;
+    margin: 0; padding: 0;
+    background: #ffffff; color: #111827;
+  }
+  .nav {
+    background: #ffffff; border-bottom: 1px solid #e5e7eb;
+    padding: 12px 24px; display: flex; gap: 24px; align-items: center;
+    position: sticky; top: 0; z-index: 10;
+  }
+  .nav a { color: #6b7280; text-decoration: none; font-size: 14px; padding: 4px 8px; border-radius: 4px; }
+  .nav a:hover { color: #111827; background: #f3f4f6; }
+  .nav a.current { color: #dc2626; background: #f3f4f6; }
+  .nav .brand { font-size: 16px; color: #111827; font-weight: 600; margin-right: 16px; }
+  .nav .brand a { color: #111827; font-size: 16px; padding: 0; }
+  .nav .brand a:hover { background: transparent; }
+  .nav .meta { margin-left: auto; color: #9ca3af; font-size: 12px; }
+
+  main { max-width: 920px; margin: 0 auto; padding: 32px 24px; }
+  h1 { font-size: 26px; color: #111827; margin: 0 0 8px; }
+  h2 { font-size: 20px; color: #dc2626; margin: 32px 0 12px; padding-bottom: 6px; border-bottom: 1px solid #e5e7eb; }
+  h3 { font-size: 16px; color: #111827; margin: 20px 0 8px; }
+  p { line-height: 1.7; color: #374151; }
+  ul, ol { line-height: 1.8; color: #374151; }
+  li { margin: 4px 0; }
+  code {
+    background: #ffffff; padding: 2px 6px; border-radius: 4px;
+    font-size: 13px; color: #dc2626; font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  }
+  .formula {
+    background: #ffffff; border-left: 3px solid #dc2626;
+    padding: 12px 16px; margin: 12px 0;
+    font-size: 14px; color: #374151;
+  }
+  .formula strong { color: #dc2626; }
+  .nb {
+    background: #dcfce7; border-left: 3px solid #16a34a;
+    padding: 8px 14px; margin: 12px 0; color: #374151; font-size: 13px;
+  }
+  .warn {
+    background: #fee2e2; border-left: 3px solid #dc2626;
+    padding: 8px 14px; margin: 12px 0; color: #374151; font-size: 13px;
+  }
+  table { border-collapse: collapse; margin: 12px 0; font-size: 13px; }
+  th, td { padding: 6px 12px; border-bottom: 1px solid #e5e7eb; text-align: left; }
+  th { background: #ffffff; color: #374151; }
+  .lead {
+    color: #374151; font-size: 15px; line-height: 1.8;
+    background: #f9fafb; border-radius: 6px; padding: 14px 18px; margin: 12px 0 24px;
+  }
+  /* Page navigation (prev/next, unified across method docs) */
+  .pagenav {
+    display: flex; justify-content: space-between; gap: 12px;
+    margin: 32px 0 8px;
+  }
+  .pagenav a {
+    flex: 1; text-align: center;
+    background: #dc2626; color: #ffffff; text-decoration: none;
+    padding: 10px 18px; border-radius: 8px; font-size: 14px; font-weight: 600;
+  }
+  .pagenav a:hover { background: #b91c1c; }
+  .pagenav a.prev { background: #6b7280; }
+  .pagenav a.prev:hover { background: #4b5563; }
+  .footer { text-align: center; color: #9ca3af; font-size: 12px; padding: 24px 0 16px; }
+
+  @media (max-width: 720px) {
+    body { -webkit-text-size-adjust: 100%; }
+    .nav { padding: 10px 14px; gap: 12px; font-size: 12px; flex-wrap: wrap; }
+    .nav .brand { font-size: 14px; }
+    main { padding: 20px 14px; }
+    h1 { font-size: 20px; }
+    h2 { font-size: 17px; }
+    h3 { font-size: 14px; }
+    p, ul, ol { font-size: 13px; line-height: 1.6; }
+    .formula { font-size: 12px; padding: 8px 10px; }
+    .lead { font-size: 13px; padding: 10px 12px; }
+    table { font-size: 11px; display: block; overflow-x: auto; -webkit-overflow-scrolling: touch; white-space: nowrap; }
+    th, td { padding: 4px 8px; }
+    .pagenav { flex-direction: column; }
+    .pagenav a { font-size: 13px; padding: 8px 14px; }
+  }
+</style>
+</head>
+<body>
+<div id="nav-root"></div>
+<script src="nav.js"></script>
+
+<main>
+  <h1>SPSP 理論編 1: 概念</h1>
+
+  <p class="lead">
+    順位評価・直対評価・総合評価のアルゴリズムを言葉で説明する。
+    厳密な検証は <a href="eval.html" style="color:#dc2626;">評価</a>、数式は <a href="math.html" style="color:#dc2626;">数式</a> を参照。
+  </p>
+
+  <h2>1. 直対評価の仕組み</h2>
+
+  <p>
+    直対評価はスマメイトのようなレーティングと同じ系統で、
+    試合の勝敗ごとに両プレイヤーのレートを更新する。
+  </p>
+
+  <h3>1.1 「期待勝率」と「実結果」のズレを反映</h3>
+  <p>
+    両者のレートから <strong>期待勝率</strong> を算出し、実結果とのズレを見て、ズレた分だけレートを動かす。
+  </p>
+  <ul>
+    <li>期待通りに格上が勝った → 格上は少しだけ上がる、格下は少しだけ下がる</li>
+    <li>格上が負けた (アップセット) → 格上は<strong>多めに</strong>下がる、勝った格下は<strong>多めに</strong>上がる</li>
+    <li>差が小さいカードで格上が勝った → 両者の動きは中くらい</li>
+  </ul>
+  <p>
+    つまり「<strong>強い相手に勝てば大きく上がる、格下に勝っても小幅、格下に負けると痛い</strong>」。
+    総当たりしなくてもランダムな試合を積み重ねるだけで正しい序列に収束していく。
+  </p>
+  <p>
+    SPSP は <strong>Glicko2</strong> を採用。Elo に「不確実性 (RD)」と「変動性 (volatility)」を加えたモデルで、
+    Elo より収束が速く覚醒選手の追従が良い。
+  </p>
+
+  <h3>1.2 不確実性 (RD)</h3>
+  <p>
+    Glicko2 はレートに加えて <strong>RD (Rating Deviation、不確実性)</strong> をプレイヤーごとに持つ。
+    RD が大きいほど 1 試合の結果でレートが大きく動く。
+  </p>
+  <ul>
+    <li><strong>新規プレイヤー</strong>: RD 大 → 1 試合で大きく動き、本来の位置に駆け上がる/下がる</li>
+    <li><strong>ベテラン</strong>: RD 小 → 1 試合では少ししか動かない</li>
+    <li><strong>新規 vs ベテラン</strong>: 新規側は大きく動き、ベテラン側はあまり動かない</li>
+  </ul>
+  <div class="nb">
+    さらに Glicko2 は <strong>変動性 (volatility)</strong> という 3 つ目の状態量を持ち、
+    実力変化が激しい時期には RD の縮みが抑えられて覚醒の追従性が上がる。
+  </div>
+
+  <h3>1.3 復帰加算 (長期離脱者の RD を膨らませる)</h3>
+  <p>
+    長期間試合をしていないプレイヤーは復帰時の本当の実力が分からない。
+    そこで一定期間出ていないプレイヤーは RD を膨らませて、復帰戦の結果がより柔軟にレートへ反映されるようにする。
+  </p>
+  <ul>
+    <li><strong>30 日以内</strong>: 何もしない</li>
+    <li><strong>1.5 年経過頃</strong>: RD が現状値と上限 128 のちょうど中間まで上昇</li>
+    <li><strong>2 年以上</strong>: RD が上限 128 付近に漸近</li>
+  </ul>
+  <p>
+    増加カーブは sigmoid で滑らか。RD を下げる方向には作用しない。
+  </p>
+
+  <h2>2. レベルシステム</h2>
+
+  <p>
+    SPSP は <strong>LV1〜LV5 の 5 段階のレベル</strong>を持ち、順位評価と直対評価がこの同じレベルシステムを共有する。
+    プレイヤーは自分が到達した最高 Lv のスコアでランクづけされる。
+    Lv が上がるにつれて対象大会が厳しくなり、上位帯では本気度の高い大会だけで評価される。
+  </p>
+
+  <h3>2.1 LV ごとの対象大会</h3>
+  <p>プレイヤーの現 LV により、直対評価の学習対象 (と順位評価の集計対象) が変わる:</p>
+  <ul>
+    <li><strong>LV1 (全プレイヤー)</strong>: 参加者 5 名以上</li>
+    <li><strong>LV2 (Top 2048)</strong>: 参加者 9 名以上</li>
+    <li><strong>LV3 (Top 1024)</strong>: 参加者 25 名以上 + 休日</li>
+    <li><strong>LV4 (Top 512)</strong>: 参加者 33 名以上 + 休日</li>
+    <li><strong>LV5 (Top 256)</strong>: 参加者 49 名以上 + 休日</li>
+  </ul>
+
+  <h3>2.2 なぜ上位帯ほど制限を厳しく?</h3>
+  <p>
+    上位プレイヤーは平日のスマコミ・スマパなどで「ガチ大会前の練習」「キャラ調整」目的で参加することが多く、
+    本来の実力どおりの結果が出ないことが多い。こうした試合を上位プレイヤーのレートに反映すると、本気の試合のレートが歪む。
+    休日大会は参加者がスケジュールを空けて本気で出ているので、実力差が結果に出やすい。
+  </p>
+  <p>
+    また小規模大会は母集団が偏りやすくノイズが大きいので、上位帯ほど参加者数しきい値を厳しくする。
+  </p>
+  <div class="nb">
+    <strong>プレ大会:</strong> 大会名に「プレ大会」「プレオフ」等を含む大会は土日でも平日扱い。
+  </div>
+  <div class="nb">
+    <strong>下位クラス (Bクラスなど) と 制限大会:</strong>
+    LV1 / LV2 では学習対象、LV3 以降では直対評価・順位評価ともに除外。
+  </div>
+
+  <h3>2.3 カスケードの流れ</h3>
+  <p>
+    LV は順位評価の <strong>5 段階の絞り込み計算 (= カスケード)</strong> で決まる。
+    各段で順位評価のスコアを計算し、上位 N 名だけを次の Lv の母集団に残す:
+  </p>
+  <ul>
+    <li><strong>Lv1</strong>: 全プレイヤー、参加者 5 名以上 → 上位 2048 名を抽出</li>
+    <li><strong>Lv2</strong>: 上位 2048 名、参加者 9 名以上 → 上位 1024 名を抽出</li>
+    <li><strong>Lv3</strong>: 上位 1024 名、参加者 25 名以上 + 休日 → 上位 512 名を抽出</li>
+    <li><strong>Lv4</strong>: 上位 512 名、参加者 33 名以上 + 休日 → 上位 256 名を抽出</li>
+    <li><strong>Lv5</strong>: 上位 256 名、参加者 49 名以上 + 休日</li>
+  </ul>
+  <p>
+    各段の昇格判定は、順位評価のランクと直対評価のランクを平均したもので行う (= ランク平均カスケード)。
+    片方だけ突出するプレイヤーよりも、両方バランス良く高いプレイヤーが昇格しやすい。
+  </p>
+
+  <h3>2.4 「混在」する試合の扱い</h3>
+  <p>
+    LV が違うプレイヤー同士で「片方は学習対象、もう片方は対象外」の大会で当たった場合は、
+    学習対象側だけがレートを更新する。
+    たとえば LV1 と LV4 のプレイヤーが平日大会で当たれば、LV1 側だけ動き、LV4 側は据え置き。
+  </p>
+
+  <h3>2.5 DQ (棄権) の扱い</h3>
+  <p>
+    DQ となったプレイヤーの試合・順位はスコア計算から除外する。プレイヤーページの大会履歴では SPR の代わりに <span style="color:#9ca3af;font-weight:600">DQ</span> と表示される。
+  </p>
+  <p style="font-size:12px;color:#9ca3af;line-height:1.6">
+    実装上、DQ 判定は 2 種類。
+    <strong>(1) 途中 DQ</strong>: start.gg の試合データで <code>dq=True</code> が立っている試合。
+    その試合は直対評価の学習や順位評価の計算から取り除かれ、敗者がその大会で DQ 認定される。
+    <strong>(2) no-show DQ</strong>: 大会の試合データはあるのに、参加者一覧に名前があるプレイヤーが 1 試合も記録されていない場合 (wins = 0 かつ losses = 0、placement &gt; 2 が条件)。
+    データ欠損による誤判定を避けるための保守的な判定。
+    メイン + クラスブラケット構成の大会では、メイン側と class 側の DQ をそれぞれ別に記録する。
+  </p>
+
+  <h2>3. 順位評価の核心アイデア</h2>
+
+  <p>
+    順位評価は、各大会の最終順位をベースにポイントを配るが、固定の配点テーブルは使わない。
+    その大会の参加者の強さに応じて配点を動的に決める。
+  </p>
+
+  <div class="warn">
+    <strong>順位評価の性質:</strong>
+    <ul style="margin:6px 0 0;padding-left:20px;">
+      <li>見るのは <strong>大会の規模</strong>・<strong>参加者層の厚さ</strong>・<strong>自分の最終順位</strong> だけ。対戦相手は見ない。</li>
+      <li>各順位の配点は <strong>大会開始前に決まる</strong>。実際の勝ち上がり方とは独立。</li>
+      <li>同じ大会で同じ最終順位なら、誰でも同じポイント。</li>
+    </ul>
+  </div>
+
+  <h3>3.1 順位 = 敗者復活で何ラウンド勝ち上がったか</h3>
+  <p>
+    SPSP は大会の順位を <strong>敗者復活ブラケット</strong>の構造に当てはめて解釈する。
+    優勝者は全ラウンド勝ち抜け、最下位はラウンドゼロで終わり。
+  </p>
+  <ul>
+    <li>1 位 = 全ラウンドを勝ち抜けた</li>
+    <li>3 位 = 残り 2 ラウンドで負けた</li>
+    <li>最下位 = ラウンド 1 で即敗退</li>
+  </ul>
+  <p>
+    最終順位を聞けば「どのラウンドまで勝ち上がったか」が機械的に決まる。
+    実際にダブルエリミでなくても、シングルエリミ・スイス・リーグでも最終順位を敗者復活ブラケットに換算できる。
+  </p>
+
+  <h3>3.2 ラウンドの難しさ = そのラウンドの場の強さ</h3>
+  <p>
+    各ラウンドの難しさは、仮想ダブルイリミの敗者ブラケットに参加者をシード順に並べて、
+    そのラウンドに居る <strong>相手 1 人ずつに勝つことの価値を平均</strong>したもので測る。
+    強い相手で構成されるラウンドほど難しさが大きい。
+    実際の大会の進行は見ない。シードどおりに進めば居るはずの参加者だけで、大会開始前にラウンドの難しさを確定させる。
+  </p>
+
+  <p style="font-size:13px;color:#6b7280;margin:14px 0 4px">
+    8 人ダブルイリミの敗者ブラケットを模式化すると下のようになる (5 ラウンド構造):
+  </p>
+  <svg viewBox="0 0 720 280" xmlns="http://www.w3.org/2000/svg" style="max-width:100%;height:auto;display:block;margin:0 0 16px">
+    <style>
+      .rndlabel { font-size:11px; font-family:-apple-system,sans-serif; font-weight:600; fill:#dc2626; }
+      .desc { font-size:10px; font-family:-apple-system,sans-serif; fill:#6b7280; }
+      .pl { font-size:11px; font-family:-apple-system,sans-serif; fill:#b45309; font-weight:600; }
+      .src { font-size:10px; font-family:-apple-system,sans-serif; fill:#374151; }
+      .box { fill:#bbf7d0; stroke:#16a34a; stroke-width:1; }
+      .arrowln { stroke:#9ca3af; stroke-width:1.5; fill:none; }
+      .dropln { stroke:#dc2626; stroke-width:1; fill:none; stroke-dasharray:3,2; }
+      .joinln { stroke:#3b82f6; stroke-width:1; fill:none; stroke-dasharray:2,2; }
+    </style>
+
+    <!-- WB sources (top) -->
+    <text class="src"     x="80"  y="20" text-anchor="middle">WB R1 敗者 4 人</text>
+    <text class="src"     x="220" y="20" text-anchor="middle">WB R2 敗者 2 人</text>
+    <text class="src"     x="500" y="20" text-anchor="middle">WB 決勝敗者 1 人</text>
+    <text class="src"     x="640" y="20" text-anchor="middle">WB 優勝者 1 人</text>
+
+    <!-- Join arrows top→box -->
+    <line class="joinln" x1="80"  y1="28" x2="80"  y2="100"/>
+    <line class="joinln" x1="220" y1="28" x2="220" y2="100"/>
+    <line class="joinln" x1="500" y1="28" x2="500" y2="100"/>
+    <line class="joinln" x1="640" y1="28" x2="640" y2="100"/>
+
+    <!-- Round boxes -->
+    <rect class="box" x="40"  y="100" width="80" height="40" rx="4"/>
+    <text class="rndlabel" x="80"  y="116" text-anchor="middle">Round 1</text>
+    <text class="desc"     x="80"  y="132" text-anchor="middle">4 人</text>
+
+    <rect class="box" x="180" y="100" width="80" height="40" rx="4"/>
+    <text class="rndlabel" x="220" y="116" text-anchor="middle">Round 2</text>
+    <text class="desc"     x="220" y="132" text-anchor="middle">4 人</text>
+
+    <rect class="box" x="320" y="100" width="80" height="40" rx="4"/>
+    <text class="rndlabel" x="360" y="116" text-anchor="middle">Round 3</text>
+    <text class="desc"     x="360" y="132" text-anchor="middle">2 人</text>
+
+    <rect class="box" x="460" y="100" width="80" height="40" rx="4"/>
+    <text class="rndlabel" x="500" y="116" text-anchor="middle">Round 4</text>
+    <text class="desc"     x="500" y="132" text-anchor="middle">LB 決勝 · 2 人</text>
+
+    <rect class="box" x="600" y="100" width="80" height="40" rx="4"/>
+    <text class="rndlabel" x="640" y="116" text-anchor="middle">Round 5</text>
+    <text class="desc"     x="640" y="132" text-anchor="middle">Grand Final · 2 人</text>
+
+    <!-- Horizontal arrows between rounds -->
+    <line class="arrowln" x1="120" y1="120" x2="178" y2="120"/>
+    <line class="arrowln" x1="260" y1="120" x2="318" y2="120"/>
+    <line class="arrowln" x1="400" y1="120" x2="458" y2="120"/>
+    <line class="arrowln" x1="540" y1="120" x2="598" y2="120"/>
+    <polygon points="178,116 178,124 184,120" fill="#9ca3af"/>
+    <polygon points="318,116 318,124 324,120" fill="#9ca3af"/>
+    <polygon points="458,116 458,124 464,120" fill="#9ca3af"/>
+    <polygon points="598,116 598,124 604,120" fill="#9ca3af"/>
+
+    <!-- Drop arrows down to placements -->
+    <line class="dropln" x1="80"  y1="140" x2="80"  y2="200"/>
+    <line class="dropln" x1="220" y1="140" x2="220" y2="200"/>
+    <line class="dropln" x1="360" y1="140" x2="360" y2="200"/>
+    <line class="dropln" x1="500" y1="140" x2="500" y2="200"/>
+    <line class="dropln" x1="640" y1="140" x2="640" y2="200"/>
+
+    <!-- Dropped placement labels -->
+    <text class="pl" x="80"  y="218" text-anchor="middle">7位 / 8位</text>
+    <text class="pl" x="220" y="218" text-anchor="middle">5位 / 6位</text>
+    <text class="pl" x="360" y="218" text-anchor="middle">4位</text>
+    <text class="pl" x="500" y="218" text-anchor="middle">3位</text>
+    <text class="pl" x="640" y="218" text-anchor="middle">2位</text>
+
+    <text class="desc" x="80"  y="234" text-anchor="middle">が敗退</text>
+    <text class="desc" x="220" y="234" text-anchor="middle">が敗退</text>
+    <text class="desc" x="360" y="234" text-anchor="middle">が敗退</text>
+    <text class="desc" x="500" y="234" text-anchor="middle">が敗退</text>
+    <text class="desc" x="640" y="234" text-anchor="middle">が敗退</text>
+
+    <!-- Final winner annotation -->
+    <text class="pl" x="700" y="120" text-anchor="start">→ 1位</text>
+
+    <!-- Legend -->
+    <text class="desc" x="40"  y="265">青破線 = 勝者ブラケット側からの落下 · 赤破線 = そのラウンドで敗退する順位 · 矢印 = 勝者の進行</text>
+  </svg>
+
+  <p>
+    各ラウンドの「場」には、そのラウンドで敗退する人とそこを勝ち抜けて次のラウンドへ進む人の両方が含まれる。
+    場にいる相手それぞれに勝つことの価値を平均することで、そのラウンドの難しさを表現する。
+  </p>
+
+  <ul>
+    <li>序盤: 下位シード中心 → 各相手に勝つ価値が低い → 難しさ低め</li>
+    <li>中盤: 中堅シードが集まる → 価値が中くらい</li>
+    <li>終盤: 上位シードだけ残る → 各相手に勝つ価値が高い → 難しさ高め</li>
+  </ul>
+
+  <p>
+    「強い相手だらけのラウンドを勝ち抜けた = 1 試合あたりの価値が高い」がポイントに反映される。
+  </p>
+  <div class="nb">
+    勝つことの価値は、Lv ごとに決められた <strong>固定の基準レート</strong> から見た相手のレートで決まる (Lv1 は控えめ、Lv2 以降は高め)。
+    これにより、レートが高い人と低い人で不公平な差が出ないようにする。
+  </div>
+  <p style="font-size:12px;color:#9ca3af;line-height:1.6">
+    厳密には、各相手に勝つことの情報量 ($-\log_2(1-g)$、g = Elo の勝率) の平均をラウンドの難しさとして使う。
+    厳密な定義は <a href="math.html" style="color:#dc2626;">数式編 §3</a>。
+  </p>
+
+  <h3>3.3 大会のポイント = 勝ち上がったラウンドの難しさの合計</h3>
+  <p>
+    ラウンド k まで勝ち上がったプレイヤーが大会で稼ぐポイントは、ラウンド 1 から k までの難しさポイントの合計。
+    上位入賞ほど合計が大きい。強豪が集まる大会のほうがラウンドの難しさが大きくなる。
+  </p>
+  <p>
+    さらに <strong>大会規模が大きいほどポイントがスケール</strong> される。
+    具体的には、参加者数 $n$ のとき $\sqrt{\log_2 n}$ 倍 (= 8 人で約 ×1.7、32 人で約 ×2.2、128 人で約 ×2.6、512 人で約 ×3.0、2000 人で約 ×3.3)。
+    たとえば 30 人規模の大会と 2000 人規模の大会では、同じラウンドぶん勝ち抜いても約 1.5 倍のポイント差がつく。
+  </p>
+
+  <h3>3.4 具体例 (8 人の大会)</h3>
+  <p>
+    架空の 8 人大会で順位評価のポイントがどう決まるかを見てみる。各ラウンドに居る相手 1 人ずつに勝つことの価値を平均したものが、場の強さ (= ラウンドの難しさ):
+  </p>
+  <table class="ex">
+    <thead>
+      <tr><th>ラウンド</th><th>場にいるシード</th><th>場の強さ (= ラウンドの難しさ)</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>Round 1</td><td>5・6・7・8 位シード</td><td>低 (0.2)</td></tr>
+      <tr><td>Round 2</td><td>3〜6 位シード</td><td>中 (0.6)</td></tr>
+      <tr><td>Round 3</td><td>3・4 位シード</td><td>高め (0.8)</td></tr>
+      <tr><td>Round 4 (LB Final)</td><td>2・3 位シード</td><td>高 (0.9)</td></tr>
+      <tr><td>Round 5 (Grand Final)</td><td>1・2 位シード</td><td>高 (1.0)</td></tr>
+    </tbody>
+  </table>
+  <p>
+    プレイヤーは <strong>自分が勝ち上がったラウンドぶんの難しさを足し合わせる</strong>:
+  </p>
+  <table class="ex">
+    <thead>
+      <tr><th>最終順位</th><th>稼ぐラウンド</th><th>合計ポイント</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>1 位</td><td>R1 + R2 + R3 + R4 + R5</td><td>0.2 + 0.6 + 0.8 + 0.9 + 1.0 = <strong>3.5</strong></td></tr>
+      <tr><td>2 位</td><td>R1 + R2 + R3 + R4</td><td>0.2 + 0.6 + 0.8 + 0.9 = <strong>2.5</strong></td></tr>
+      <tr><td>3 位</td><td>R1 + R2 + R3</td><td>0.2 + 0.6 + 0.8 = <strong>1.6</strong></td></tr>
+      <tr><td>4 位</td><td>R1 + R2</td><td>0.2 + 0.6 = <strong>0.8</strong></td></tr>
+      <tr><td>5・6 位</td><td>R1 のみ</td><td><strong>0.2</strong></td></tr>
+      <tr><td>7・8 位</td><td>なし</td><td><strong>0</strong></td></tr>
+    </tbody>
+  </table>
+  <p style="font-size:13px;color:#6b7280">
+    上位ほど大きく稼ぐ階段ができ、その段差は <strong>大会の参加者層の厚さ</strong> で決まる。
+    強豪が集まる大会では各ラウンドの難しさが上がり、上位ほど大きく稼げる。
+  </p>
+
+  <h3>3.5 Lv ごとに基準値を変える</h3>
+  <p>
+    Elo 系の「勝った時のレート増加量」は、両者のレートが大きく離れると差が飽和して見えなくなる。
+    上位帯にとって格下相手はほぼ 0、格上相手はほぼ満額に張り付く。
+  </p>
+  <p>
+    SPSP は自分側のレートを Lv ごとの固定値で評価するが、固定値を一通りにすると中堅層と上位層のどちらかの解像度が潰れる:
+  </p>
+  <ul>
+    <li>低めに置くと、中堅層は見えるが上位帯の細かい違いが見えない。</li>
+    <li>高めに置くと、上位帯は見えるが中堅層の差が出ない。</li>
+  </ul>
+  <p>
+    そこで Lv ごとに基準値を変える。Lv1 は広い層向けの中庸設定 (基準 1700)、Lv2 以降は上位帯向けに上げる (基準 1900)。
+    これにより、ピラミッドのどの段にいるプレイヤーも自分の帯に合った解像度で評価される。
+  </p>
+  <p>
+    あわせて Lv ごとに <strong>勝利ポイントの最低保証</strong> も変える (Lv1: 350、Lv2 以降: 700)。
+    どんなにレートの低い相手でも、この値のレートを持つ相手に勝った場合と同じ最低限の勝利ポイントは保証される。
+    極端にレートの低い相手が場の難しさを過剰に下げないための仕組み。
+  </p>
+
+  <h3 id="section-4-4">3.6 自己強化を防ぐ</h3>
+  <p>
+    放っておくと、各大会の最強プレイヤーが他より高い点数を稼ぎやすい偏りが出る。
+    場の難しさを参加者の平均レートで計算しているため、自分の高いレートが場の難しさを引き上げて自分のポイントも持ち上げる自己強化が起きる。
+    実際に 1 位を取った人ほど影響を受けやすい。
+  </p>
+  <p>
+    たとえばあcola選手が優勝する大会では、ラウンドの難しさにあcola選手自身のレートが含まれて、
+    「あcola選手があcola選手に勝った」かのようにポイントが膨らんでしまう。
+  </p>
+  <p>
+    そこで場の難しさを計算するとき、<strong>出場者の中で一番レートが高い人を場にいなかったものとして扱う</strong>。
+    あcola選手の大会では、あcola選手を除いた残りの参加者層で難しさが決まる。
+    全プレイヤーが同じ「最強除外後」の場で計算されるので、「同じ大会の同じ順位なら同じポイント」は保たれる。
+  </p>
+  <p style="font-size:12px;color:#9ca3af;line-height:1.6">
+    別案として「各プレイヤーが計算するとき自分自身を場から外す」方式も検証したが、精度はほぼ同じで、
+    同じ大会の同じ順位でも人によってポイントが変わってしまうため採用しなかった。
+  </p>
+
+  <h2>4. 集計の重みづけ</h2>
+
+  <p>
+    プレイヤーの最終スコアは、出場した全大会のポイントを 2 種類の重みを掛けて足したもの。
+  </p>
+
+  <h3>4.1 時間減衰</h3>
+  <p>
+    毎月およそ 4% 減衰する。半年前のポイントは約 78%、1 年前は約 61%、2 年前は約 38%。
+  </p>
+
+  <h3>4.2 位置減衰 (上位 3 件はそのまま、4 件目以降は減衰)</h3>
+  <p>
+    プレイヤーの大会ポイントを時間減衰後の値で多い順にソートし、上位 3 件 (Lv1 は上位 1 件) はそのまま、4 件目以降は 0.3, 0.09, 0.027, ... と急激に減衰させてから足す。
+  </p>
+  <p>
+    たとえば 100 pt の大会も 4 件目なら 30 pt、5 件目なら 9 pt、6 件目なら 3 pt になる。
+    短期間に強い結果を集中させた人のほうが、薄い結果を長期間続けた人より評価される。
+  </p>
+
+  <h2>5. 総合評価 (順位評価 + 直対評価)</h2>
+
+  <p>
+    総合評価は順位評価のランクと直対評価のランクの単純平均。
+    スコアではなくランクを平均することで、両方式のスコアのスケール差に依存しない。
+  </p>
+  <p>
+    たとえば順位評価 15 位・直対評価 9 位なら、暫定値は (15 + 9) / 2 = 12。これでソートし直したものが SPSP 順位。
+  </p>
+  <p>
+    平均順位が並んだ場合のタイブレークは、直対評価の順位が上の方を優先する。
+  </p>
+
+  <h2>もっと知りたい人へ</h2>
+  <ul>
+    <li><strong>各パラメータの値はどう決めた?</strong> → <a href="eval.html" style="color:#dc2626;">理論編 2: 評価</a></li>
+    <li><strong>厳密な式が見たい</strong> → <a href="math.html" style="color:#dc2626;">理論編 3: 数式</a></li>
+    <li><strong>そもそも何の指標?</strong> → <a href="overview.html" style="color:#dc2626;">基本編</a></li>
+  </ul>
+
+  <div class="pagenav">
+    <a class="prev" href="overview.html">← 基本編</a>
+    <a href="eval.html">理論編・評価 →</a>
+  </div>
+
+  <div class="footer">
+    SPSP (Saikyo Player SPECIAL) · データソース: start.gg
+    <br><span class="site-version" style="font-size:11px;color:#9ca3af">v b2e3c33 · 2026-06-10 13:51 UTC</span>
+  </div>
+</main>
+</body>
+</html>

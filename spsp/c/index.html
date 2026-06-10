@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>使い手ランキング — SPSP</title>
+<meta name="description" content="SPSP: スマブラSP メインキャラ別のプレイヤーランキング一覧。">
+<link rel="canonical" href="https://tosakazu.github.io/spsp/c/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="SPSP">
+<meta property="og:title" content="SPSP 使い手ランキング">
+<meta property="og:description" content="メインキャラ別のプレイヤーランキング">
+<style>
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Hiragino Sans", sans-serif;
+    background: #ffffff; color: #111827; font-size: 14px;
+    -webkit-text-size-adjust: 100%;
+  }
+  .header { max-width: 1400px; margin: 0 auto; padding: 20px 24px 0; }
+  h1 { font-size: 22px; color: #111827; margin: 0 0 4px; }
+  .subtitle { font-size: 13px; color: #6b7280; margin-bottom: 16px; }
+
+  .controls { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; margin: 12px 0; }
+  input, button {
+    padding: 8px 12px; border: 1px solid #e5e7eb;
+    background: #ffffff; color: #111827;
+    border-radius: 6px; font-size: 13px; font-family: inherit;
+  }
+  input[type="search"] { min-width: 280px; flex: 1; }
+  .status { color: #6b7280; font-size: 12px; }
+
+  .table-wrap { max-width: 1400px; margin: 0 auto; padding: 0 24px 32px; }
+  table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  th {
+    text-align: left; background: #ffffff; color: #374151;
+    padding: 10px 8px; border-bottom: 2px solid #e5e7eb;
+    user-select: none; cursor: pointer; font-weight: 600;
+    position: sticky; top: var(--nav-height, 56px); z-index: 2;
+  }
+  th:hover { color: #dc2626; }
+  th.sortable::after { content: "↕"; opacity: 0.3; margin-left: 4px; font-size: 10px; }
+  th.sorted-asc::after { content: "↑"; opacity: 1; }
+  th.sorted-desc::after { content: "↓"; opacity: 1; }
+  td { padding: 10px 8px; border-bottom: 1px solid #f3f4f6; }
+  tr.char-row { cursor: pointer; transition: background 0.1s; }
+  tr.char-row:hover { background: #f9fafb; }
+  tr.char-row td.col-name a { color: #dc2626; font-weight: 500; text-decoration: none; }
+  tr.char-row:hover td.col-name a { text-decoration: underline; }
+
+  th.col-idx, td.col-idx {
+    width: 32px; text-align: right; color: #9ca3af; font-size: 11px;
+    font-variant-numeric: tabular-nums; padding-right: 4px;
+  }
+  th.col-name, td.col-name { width: auto; min-width: 200px; }
+  th.col-num, td.col-num {
+    text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap;
+    width: 110px;
+  }
+  th.col-top, td.col-top { width: auto; min-width: 200px; color: #374151; }
+  td.col-top a { color: #111827; text-decoration: none; }
+  td.col-top a:hover { color: #dc2626; text-decoration: underline; }
+  td.col-top .top-rank { color: #9ca3af; font-size: 11px; margin-left: 4px; }
+
+  .empty-msg { padding: 24px; text-align: center; color: #6b7280; }
+  .footer { text-align: center; color: #9ca3af; font-size: 12px; padding: 32px 0 16px; }
+  .footer a { color: #dc2626; text-decoration: none; }
+
+  .share-icon-btn:hover { background: #fef2f2 !important; color: #dc2626 !important; border-color: #dc2626 !important; }
+
+  @media (max-width: 720px) {
+    body { font-size: 13px; }
+    .header { padding: 12px 12px 0; }
+    h1 { font-size: 18px; }
+    .subtitle { font-size: 11px; }
+    .controls { gap: 6px; }
+    input[type="search"] { min-width: 0; width: 100%; flex: 1 1 100%; font-size: 14px; padding: 8px 10px; }
+    .table-wrap { padding: 0 8px 24px; max-width: 100vw; overflow-x: hidden; }
+    th, td { padding: 8px 6px; font-size: 12px; }
+    th.col-name, td.col-name { min-width: 0; width: auto; max-width: 40vw; word-break: break-word; }
+    th.col-num, td.col-num { width: 56px; }
+    th.col-top, td.col-top { min-width: 100px; }
+    /* モバイル: sticky thead を解除 (= 動的測定+nav 2-row wrap で位置ズレが起きるため,
+       カラムヘッダは普通の table row として表示). */
+    th { position: static; }
+  }
+</style>
+</head>
+<body>
+
+<div id="nav-root"></div>
+<script src="../nav.js"></script>
+<script src="../share.js"></script>
+
+<div class="header">
+  <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+    <h1 style="margin:0">使い手ランキング</h1>
+    <button class="share-icon-btn" id="share-icon-btn" title="URL を共有" aria-label="URL を共有"
+      style="background:#fff;border:1px solid #e5e7eb;color:#6b7280;border-radius:8px;padding:6px 8px;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;line-height:1;transition:all 0.15s">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:16px;height:16px;display:block">
+        <circle cx="18" cy="5" r="3"></circle>
+        <circle cx="6" cy="12" r="3"></circle>
+        <circle cx="18" cy="19" r="3"></circle>
+        <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line>
+        <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line>
+      </svg>
+    </button>
+  </div>
+  <p class="subtitle">メインキャラ別のプレイヤーランキング</p>
+
+  <div class="controls">
+    <input type="search" id="search" placeholder="キャラ名で検索…" autocomplete="off">
+    <span class="status" id="status">読み込み中…</span>
+  </div>
+</div>
+
+<div class="table-wrap">
+  <table id="chartable">
+    <thead>
+      <tr>
+        <th class="col-idx"></th>
+        <th class="col-name sortable" data-sort="name">キャラ</th>
+        <th class="col-num sortable" data-sort="n_main">使い手数</th>
+        <th class="col-top sortable sorted-asc" data-sort="top_rank">全一</th>
+      </tr>
+    </thead>
+    <tbody id="tbody">
+      <tr><td colspan="4" class="empty-msg">読み込み中…</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<div class="footer" id="footer-info"></div>
+
+<script>
+'use strict';
+
+// 公式 SSBU ファイター番号 (= マリオ #1 から). echo は親番号+0.5.
+// start.gg char_id → ファイター番号.
+const FIGHTER_NUMBER = {
+  1302:1,    1280:2,    1296:3,    1328:4,    1338:5,    1295:6,    1286:7,
+  1319:8,    1301:9,    1313:10,   1274:11,   1293:12,   1317:13,   1273:14,
+  1290:15,   1329:16,   1340:17,   1282:18,   1318:19,   1285:20,   1304:21,
+  1300:21.5, 1339:22,   1287:23,   1310:24,   1326:25,   1409:25.5, 1405:26,
+  1307:27,   1320:28,   1341:29,   1335:30,   1331:31,   1291:32,   1321:33,
+  1279:34,   1299:35,   1332:36,   1294:37,   1314:38,   1298:39,   1323:40,
+  1333:41,   1337:42,   1334:43,   1305:44,   1336:45,   1325:46,   1297:47,
+  1289:48,   1316:49,   1315:50,   1324:51,   1330:52,   1272:53,   1283:54,
+  1327:55,   1410:55.5, 1275:56,   1276:57,   1271:58,   1311:59,   1414:60,
+  1415:61,   1292:62,   1322:63,   1411:64,   1407:65,   1413:66,   1406:67,
+  1441:68,   1453:69,   1526:70,   1530:71,   1532:72,   1539:73,   1747:74,
+  1766:75,   1777:76,   1795:77,   1846:78,   1897:79,
+};
+
+const STATE = {
+  characters: [],
+  uid_to_display: new Map(),     // uid -> display name (from jsonl rank=1..few)
+  uid_to_ens_rank: new Map(),    // uid -> ens rank (for top player display)
+  filtered: [],
+  sortKey: 'top_rank',
+  sortDir: 'asc',
+  searchText: '',
+  index: null,                   // raw character_index data
+};
+
+function escapeHtml(s) {
+  return String(s ?? '').replace(/[&<>"']/g, c => (
+    { '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;' }[c]
+  ));
+}
+
+// 各 sort key の canonical direction での 1..N 順位を各キャラに割り当てる.
+// 表示用の番号: sort key を切替えるとそのキー基準で再計算. asc/desc 切替時は
+// 行が逆順表示になるので、結果として番号も上から N..1 / 1..N と入れ替わる.
+// canonical direction:
+//   top_rank → asc (= 全一 #1 が上で番号 1)
+//   n_main   → desc (= 使い手数多い順が番号 1)
+//   name     → asc by FIGHTER_NUMBER (= マリオ=#1)
+function assignFixedRanks() {
+  const chars = STATE.characters;
+  const byTop = chars.slice().sort((a, b) => {
+    const av = a.top_rank == null ? Infinity : a.top_rank;
+    const bv = b.top_rank == null ? Infinity : b.top_rank;
+    return av - bv;
+  });
+  byTop.forEach((c, i) => { c.rank_top = i + 1; });
+  const byN = chars.slice().sort((a, b) => (b.n_main || 0) - (a.n_main || 0));
+  byN.forEach((c, i) => { c.rank_n = i + 1; });
+  const byName = chars.slice().sort((a, b) => {
+    const af = FIGHTER_NUMBER[a.id] ?? Infinity;
+    const bf = FIGHTER_NUMBER[b.id] ?? Infinity;
+    if (af !== bf) return af - bf;
+    return a.name.localeCompare(b.name, 'ja');  // 未登録 (Infinity 同点) は名前 fallback
+  });
+  byName.forEach((c, i) => { c.rank_name = i + 1; });
+}
+
+function currentRankOf(c) {
+  if (STATE.sortKey === 'name') return c.rank_name;
+  if (STATE.sortKey === 'n_main') return c.rank_n;
+  return c.rank_top;
+}
+
+function applyFilters() {
+  const ft = STATE.searchText.toLowerCase();
+  STATE.filtered = STATE.characters.filter(c => {
+    if (ft && !c.name.toLowerCase().includes(ft)) return false;
+    return true;
+  });
+  const sign = STATE.sortDir === 'asc' ? 1 : -1;
+  const key = STATE.sortKey;
+  STATE.filtered.sort((a, b) => {
+    if (key === 'name') {
+      const af = FIGHTER_NUMBER[a.id] ?? Infinity;
+      const bf = FIGHTER_NUMBER[b.id] ?? Infinity;
+      if (af !== bf) return sign * (af - bf);
+      return sign * a.name.localeCompare(b.name, 'ja');
+    }
+    if (key === 'top_rank') {
+      const av = a.top_rank == null ? Infinity : a.top_rank;
+      const bv = b.top_rank == null ? Infinity : b.top_rank;
+      return sign * (av - bv);
+    }
+    return sign * ((a[key] || 0) - (b[key] || 0));
+  });
+}
+
+function render() {
+  const tbody = document.getElementById('tbody');
+  const rows = STATE.filtered;
+  if (rows.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="4" class="empty-msg">該当キャラなし</td></tr>';
+  } else {
+    const html = rows.map((c, i) => {
+      const url = `ranking.html?char=${c.id}`;
+      // top uid (= 1 番上位の使い手). 海外上位勢を除外した結果は init() で c._top_uid に格納済み.
+      let topHtml = '<span style="color:#9ca3af">—</span>';
+      const topUid = c._top_uid;
+      if (topUid != null) {
+        const disp = STATE.uid_to_display.get(topUid) || `uid:${topUid}`;
+        const ensRank = STATE.uid_to_ens_rank.get(topUid);
+        const rankFrag = ensRank ? `<span class="top-rank">#${ensRank}</span>` : '';
+        topHtml = `<a href="../p/?uid=${topUid}">${escapeHtml(disp)}</a>${rankFrag}`;
+      }
+      return `
+        <tr class="char-row" data-id="${c.id}">
+          <td class="col-idx">${currentRankOf(c)}</td>
+          <td class="col-name"><a href="${url}">${escapeHtml(c.name)}</a></td>
+          <td class="col-num">${c.n_main}</td>
+          <td class="col-top">${topHtml}</td>
+        </tr>
+      `;
+    }).join('');
+    tbody.innerHTML = html;
+  }
+
+  document.querySelectorAll('th.sortable').forEach(th => {
+    th.classList.remove('sorted-asc', 'sorted-desc');
+    if (th.dataset.sort === STATE.sortKey) {
+      th.classList.add(STATE.sortDir === 'asc' ? 'sorted-asc' : 'sorted-desc');
+    }
+  });
+
+  document.getElementById('status').textContent = `${rows.length} / ${STATE.characters.length} キャラ`;
+}
+
+function setupEvents() {
+  document.getElementById('search').addEventListener('input', e => {
+    STATE.searchText = e.target.value;
+    applyFilters();
+    render();
+    syncUrl();
+  });
+  document.querySelectorAll('th.sortable').forEach(th => {
+    th.addEventListener('click', () => {
+      const key = th.dataset.sort;
+      if (STATE.sortKey === key) {
+        STATE.sortDir = STATE.sortDir === 'asc' ? 'desc' : 'asc';
+      } else {
+        STATE.sortKey = key;
+        STATE.sortDir = (key === 'name' || key === 'top_rank') ? 'asc' : 'desc';
+      }
+      applyFilters();
+      render();
+      syncUrl();
+    });
+  });
+}
+
+// URL ↔ STATE 同期. sort=top_rank|name|n_main, dir=asc|desc, q=<search>.
+// デフォルト値 (sort=top_rank, dir=asc, q='') の場合は URL から除外.
+const DEFAULT_SORT = { key: 'top_rank', dir: 'asc' };
+function syncUrl() {
+  const url = new URL(location.href);
+  if (STATE.sortKey !== DEFAULT_SORT.key) url.searchParams.set('sort', STATE.sortKey);
+  else url.searchParams.delete('sort');
+  if (STATE.sortDir !== DEFAULT_SORT.dir) url.searchParams.set('dir', STATE.sortDir);
+  else url.searchParams.delete('dir');
+  if (STATE.searchText) url.searchParams.set('q', STATE.searchText);
+  else url.searchParams.delete('q');
+  history.replaceState(null, '', url.toString());
+}
+
+function readUrl() {
+  const url = new URL(location.href);
+  const sort = url.searchParams.get('sort');
+  const dir = url.searchParams.get('dir');
+  const q = url.searchParams.get('q');
+  if (sort && ['top_rank', 'name', 'n_main'].includes(sort)) STATE.sortKey = sort;
+  if (dir === 'asc' || dir === 'desc') STATE.sortDir = dir;
+  if (q != null) {
+    STATE.searchText = q;
+    const el = document.getElementById('search');
+    if (el) el.value = q;
+  }
+  // thead の sorted-asc/desc クラスを STATE に合わせて付け直す.
+  document.querySelectorAll('th.sortable').forEach(th => {
+    th.classList.remove('sorted-asc', 'sorted-desc');
+    if (th.dataset.sort === STATE.sortKey) {
+      th.classList.add(STATE.sortDir === 'asc' ? 'sorted-asc' : 'sorted-desc');
+    }
+  });
+}
+
+SPSPShare.setup(document.getElementById('share-icon-btn'), () => ({
+  title: '使い手ランキング — SPSP',
+  text:  'SPSP メインキャラ別の使い手ランキング',
+  url:   location.href,
+}));
+
+async function init() {
+  setupEvents();
+  readUrl();
+  try {
+    const [idxRes, jsonlRes, overseasRes] = await Promise.all([
+      fetch('../data/character_index.json'),
+      fetch('../latest_tjpr_full.jsonl'),
+      fetch('../data/overseas.json').catch(() => null),
+    ]);
+    if (!idxRes.ok) throw new Error('character_index.json 取得失敗');
+    if (!jsonlRes.ok) throw new Error('latest_tjpr_full.jsonl 取得失敗');
+    STATE.index = await idxRes.json();
+    STATE.characters = STATE.index.characters.slice();
+    // 海外上位勢 (= site/data/overseas.json) は「全1」表示の対象から除外する.
+    let overseasUids = null;
+    if (overseasRes && overseasRes.ok) {
+      try {
+        const j = await overseasRes.json();
+        overseasUids = new Set(j.uids || []);
+      } catch (e) {}
+    }
+    // 各キャラの top uid = main_by_char[id] の先頭から海外勢をスキップした最初の uid.
+    const charTopUid = new Map();
+    for (const c of STATE.characters) {
+      const uids = STATE.index.main_by_char[String(c.id)] || [];
+      const top = uids.find(u => !overseasUids || !overseasUids.has(u));
+      if (top != null) charTopUid.set(c.id, top);
+    }
+
+    // Map uid -> display for top player display.
+    // 全 jsonl line 読まず、必要な uid set を組み立てて一気に scan する.
+    const neededUids = new Set(charTopUid.values());
+    const text = await jsonlRes.text();
+    const lines = text.split('\n');
+    for (const ln of lines) {
+      if (!ln.trim()) continue;
+      try {
+        const rec = JSON.parse(ln);
+        if (neededUids.has(rec.user_id)) {
+          STATE.uid_to_display.set(rec.user_id, rec.display);
+          STATE.uid_to_ens_rank.set(rec.user_id, (rec.ranks && rec.ranks.ensemble) || null);
+          if (STATE.uid_to_display.size === neededUids.size) break;
+        }
+      } catch { /* skip */ }
+    }
+
+    // top_rank: sort 用に各キャラに top プレイヤーの ens rank を貼る.
+    // top uid は海外勢を除外した先頭 (= charTopUid).
+    for (const c of STATE.characters) {
+      const topUid = charTopUid.get(c.id);
+      c.top_rank = topUid != null ? (STATE.uid_to_ens_rank.get(topUid) || null) : null;
+      c._top_uid = topUid != null ? topUid : null;
+    }
+    assignFixedRanks();
+
+    applyFilters();
+    render();
+    document.getElementById('footer-info').innerHTML =
+      `<p>${STATE.characters.length} キャラ — メインキャラ判定された使い手数の合計 ${STATE.characters.reduce((s, c) => s + c.n_main, 0)} 名。<br>
+       <a href="../">全国ランキングに戻る</a></p>`;
+  } catch (e) {
+    document.getElementById('tbody').innerHTML = `<tr><td colspan="4" class="empty-msg">読み込みエラー: ${e.message}</td></tr>`;
+    document.getElementById('status').textContent = '';
+  }
+}
+init();
+</script>
+</body>
+</html>

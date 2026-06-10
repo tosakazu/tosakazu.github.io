@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ローカルランキング — SPSP</title>
+<meta name="description" content="SPSP のローカルランキング: スマブラSP の大会シリーズごとに参加者集合内での順位を確認できる。">
+<link rel="canonical" href="https://tosakazu.github.io/spsp/local/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="SPSP">
+<meta property="og:title" content="SPSP ローカルランキング">
+<meta property="og:description" content="大会シリーズごとの参加者ローカルランキング">
+<meta property="og:url" content="https://tosakazu.github.io/spsp/local/">
+<style>
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Hiragino Sans", sans-serif;
+    background: #ffffff; color: #111827; font-size: 14px;
+    -webkit-text-size-adjust: 100%;
+  }
+
+  .header { max-width: 1400px; margin: 0 auto; padding: 20px 24px 0; }
+  h1 { font-size: 22px; color: #111827; margin: 0 0 4px; }
+  .subtitle { font-size: 13px; color: #6b7280; margin-bottom: 16px; }
+
+  .controls {
+    display: flex; gap: 12px; align-items: center; flex-wrap: wrap; margin: 12px 0;
+  }
+  input, button, select {
+    padding: 8px 12px; border: 1px solid #e5e7eb;
+    background: #ffffff; color: #111827;
+    border-radius: 6px; font-size: 13px; font-family: inherit;
+  }
+  input[type="search"] { min-width: 280px; flex: 1; }
+  button { cursor: pointer; }
+  button:hover { background: #f3f4f6; border-color: #dc2626; }
+  .status { color: #6b7280; font-size: 12px; }
+
+  .filter-chips {
+    display: flex; gap: 6px; flex-wrap: wrap; margin: 0 0 10px;
+  }
+  .chip {
+    padding: 4px 10px; border-radius: 14px; font-size: 11px;
+    background: #f3f4f6; color: #6b7280; cursor: pointer; user-select: none;
+    border: 1px solid transparent;
+  }
+  .chip:hover { background: #e5e7eb; color: #111827; }
+  .chip.active { background: #dc2626; color: #fff; border-color: #dc2626; }
+
+  .table-wrap { max-width: 1400px; margin: 0 auto; padding: 0 24px 32px; }
+  table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  th {
+    text-align: left; background: #ffffff; color: #374151;
+    padding: 10px 8px; border-bottom: 2px solid #e5e7eb;
+    user-select: none; cursor: pointer; font-weight: 600;
+    position: sticky; top: 56px; z-index: 2;
+  }
+  th:hover { color: #dc2626; }
+  th.sortable::after { content: "↕"; opacity: 0.3; margin-left: 4px; font-size: 10px; }
+  th.sorted-asc::after { content: "↑"; opacity: 1; }
+  th.sorted-desc::after { content: "↓"; opacity: 1; }
+  td { padding: 10px 8px; border-bottom: 1px solid #f3f4f6; }
+
+  tr.series-row { cursor: pointer; transition: background 0.1s; }
+  tr.series-row:hover { background: #f9fafb; }
+  tr.series-row td.col-name a { color: #dc2626; font-weight: 500; text-decoration: none; }
+  tr.series-row:hover td.col-name a { text-decoration: underline; }
+
+  th.col-name, td.col-name { width: auto; min-width: 240px; }
+  th.col-num, td.col-num {
+    text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap;
+    width: 90px;
+  }
+  th.col-date, td.col-date { width: 110px; font-variant-numeric: tabular-nums; }
+  th.col-tags, td.col-tags { width: 140px; }
+
+  .tag {
+    display: inline-block; font-size: 10px; padding: 2px 6px; border-radius: 8px;
+    margin-right: 4px;
+  }
+  .tag-uchi { background: rgba(168, 85, 247, 0.12); color: #6b21a8; }
+  .tag-special { background: rgba(236, 72, 153, 0.10); color: #be185d; }
+  .tag-restr { background: rgba(217, 119, 6, 0.10); color: #d97706; }
+  .tag-allsmall { background: rgba(107, 114, 128, 0.12); color: #4b5563; }
+
+  .empty-msg { padding: 24px; text-align: center; color: #6b7280; }
+  .footer { text-align: center; color: #9ca3af; font-size: 12px; padding: 32px 0 16px; }
+  .footer a { color: #dc2626; text-decoration: none; }
+
+  /* Mobile */
+  @media (max-width: 720px) {
+    body { font-size: 13px; }
+    .header { padding: 12px 12px 0; }
+    h1 { font-size: 18px; }
+    .subtitle { font-size: 11px; }
+    .controls { gap: 6px; }
+    input[type="search"] { min-width: 0; width: 100%; flex: 1 1 100%; font-size: 14px; padding: 8px 10px; }
+    .table-wrap { padding: 0 8px 24px; max-width: 100vw; overflow-x: hidden; }
+    table, thead, tbody, tr, td { display: block; }
+    thead { display: none; }
+    tr.series-row {
+      display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 12px;
+      padding: 10px 8px; border-bottom: 1px solid #f3f4f6;
+    }
+    tr.series-row td { padding: 0; border: none; min-width: 0; text-align: left; }
+    tr.series-row td.col-name {
+      flex: 1 1 100%; font-size: 14px; font-weight: 500; word-break: break-all;
+    }
+    tr.series-row td.col-tags {
+      flex: 0 0 auto; order: 2; margin-left: auto; text-align: right;
+    }
+    tr.series-row td.col-date,
+    tr.series-row td.col-num {
+      flex: 0 0 auto; font-size: 11px; color: #6b7280; white-space: nowrap;
+    }
+    tr.series-row td.col-date::before { content: "最新: "; color: #9ca3af; }
+    tr.series-row td.col-num:nth-child(3)::before { content: "回数: "; color: #9ca3af; }
+    tr.series-row td.col-num:nth-child(4)::before { content: "平均: "; color: #9ca3af; }
+    tr.series-row td.col-num:nth-child(5)::before { content: "参加: "; color: #9ca3af; }
+  }
+</style>
+</head>
+<body>
+
+<div id="nav-root"></div>
+<script src="../nav.js"></script>
+
+<div class="header">
+  <h1>ローカルランキング</h1>
+  <p class="subtitle">大会シリーズ別のローカルランキング</p>
+
+  <div class="filter-chips" id="filter-chips">
+    <span class="chip active" data-filter="all">すべて</span>
+    <span class="chip" data-filter="big">大型 (avg≥80)</span>
+    <span class="chip" data-filter="mid">中型 (30-79)</span>
+    <span class="chip" data-filter="small">小規模 (10-29)</span>
+    <span class="chip" data-filter="mini">ミニ (avg&lt;10)</span>
+    <span class="chip" data-filter="uchi">身内</span>
+    <span class="chip" data-filter="special">特殊ルール</span>
+  </div>
+
+  <div class="controls">
+    <input type="search" id="search" placeholder="シリーズ名で検索…" autocomplete="off">
+    <span class="status" id="status">読み込み中…</span>
+  </div>
+</div>
+
+<div class="table-wrap">
+  <table id="seriestable">
+    <thead>
+      <tr>
+        <th class="col-name sortable" data-sort="name">シリーズ名</th>
+        <th class="col-date sortable sorted-desc" data-sort="last_date">最新開催</th>
+        <th class="col-num sortable" data-sort="tour_count">累計回数</th>
+        <th class="col-num sortable" data-sort="avg_entrants">平均参加</th>
+        <th class="col-num sortable" data-sort="participant_count">参加者数</th>
+        <th class="col-tags">タグ</th>
+      </tr>
+    </thead>
+    <tbody id="tbody">
+      <tr><td colspan="6" class="empty-msg">読み込み中…</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<div class="footer" id="footer-info"></div>
+
+<script>
+'use strict';
+
+const STATE = {
+  series: [],
+  filtered: [],
+  sortKey: 'last_date',
+  sortDir: 'desc',
+  searchText: '',
+  bucket: 'all',
+};
+
+function bucketOf(avg) {
+  if (avg >= 80) return 'big';
+  if (avg >= 30) return 'mid';
+  if (avg >= 10) return 'small';
+  return 'mini';
+}
+
+function escapeHtml(s) {
+  return String(s).replace(/[&<>"']/g, c => (
+    { '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;' }[c]
+  ));
+}
+
+function applyFilters() {
+  const ft = STATE.searchText.toLowerCase();
+  STATE.filtered = STATE.series.filter(s => {
+    if (ft && !s.name.toLowerCase().includes(ft)) return false;
+    if (STATE.bucket === 'uchi') {
+      return s.is_uchi;
+    }
+    if (STATE.bucket === 'special') {
+      return s.is_special_rules;
+    }
+    if (STATE.bucket !== 'all') {
+      if (bucketOf(s.avg_entrants) !== STATE.bucket) return false;
+    }
+    return true;
+  });
+  const sign = STATE.sortDir === 'asc' ? 1 : -1;
+  const key = STATE.sortKey;
+  STATE.filtered.sort((a, b) => {
+    if (key === 'name') return sign * a.name.localeCompare(b.name, 'ja');
+    if (key === 'last_date') return sign * (a.last_date < b.last_date ? -1 : (a.last_date > b.last_date ? 1 : 0));
+    const va = a[key] || 0;
+    const vb = b[key] || 0;
+    return sign * (va - vb);
+  });
+}
+
+function render() {
+  const tbody = document.getElementById('tbody');
+  const rows = STATE.filtered;
+  if (rows.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="6" class="empty-msg">該当シリーズなし</td></tr>';
+  } else {
+    const html = rows.map(s => {
+      const tags = [];
+      if (s.is_uchi) tags.push('<span class="tag tag-uchi">身内</span>');
+      if (s.is_special_rules) tags.push('<span class="tag tag-special">特殊ルール</span>');
+      if (s.restricted) tags.push('<span class="tag tag-restr">制限</span>');
+      if (s.is_all_small) tags.push('<span class="tag tag-allsmall" title="全大会が小規模 (参加者8人未満)。ランキング計算対象外">小規模</span>');
+      const url = `ranking.html?series=${encodeURIComponent(s.name)}`;
+      return `
+        <tr class="series-row" data-name="${escapeHtml(s.name)}">
+          <td class="col-name"><a href="${url}">${escapeHtml(s.name)}</a></td>
+          <td class="col-date">${s.last_date}</td>
+          <td class="col-num">${s.tour_count}</td>
+          <td class="col-num">${s.avg_entrants.toFixed(0)}</td>
+          <td class="col-num">${s.participant_count}</td>
+          <td class="col-tags">${tags.join('')}</td>
+        </tr>
+      `;
+    }).join('');
+    tbody.innerHTML = html;
+  }
+
+  // sort indicator
+  document.querySelectorAll('th.sortable').forEach(th => {
+    th.classList.remove('sorted-asc', 'sorted-desc');
+    if (th.dataset.sort === STATE.sortKey) {
+      th.classList.add(STATE.sortDir === 'asc' ? 'sorted-asc' : 'sorted-desc');
+    }
+  });
+
+  document.getElementById('status').textContent = `${rows.length} / ${STATE.series.length} シリーズ`;
+}
+
+function setupEvents() {
+  document.getElementById('search').addEventListener('input', e => {
+    STATE.searchText = e.target.value;
+    applyFilters();
+    render();
+  });
+  document.querySelectorAll('#filter-chips .chip').forEach(chip => {
+    chip.addEventListener('click', () => {
+      document.querySelectorAll('#filter-chips .chip').forEach(c => c.classList.remove('active'));
+      chip.classList.add('active');
+      STATE.bucket = chip.dataset.filter;
+      applyFilters();
+      render();
+    });
+  });
+  document.querySelectorAll('th.sortable').forEach(th => {
+    th.addEventListener('click', () => {
+      const k = th.dataset.sort;
+      if (STATE.sortKey === k) {
+        STATE.sortDir = STATE.sortDir === 'asc' ? 'desc' : 'asc';
+      } else {
+        STATE.sortKey = k;
+        STATE.sortDir = (k === 'name') ? 'asc' : 'desc';
+      }
+      applyFilters();
+      render();
+    });
+  });
+  // Row click → navigate
+  document.getElementById('tbody').addEventListener('click', (e) => {
+    const tr = e.target.closest('tr.series-row');
+    if (!tr) return;
+    if (e.target.closest('a')) return; // let link handle
+    const name = tr.dataset.name;
+    if (name) location.href = `ranking.html?series=${encodeURIComponent(name)}`;
+  });
+}
+
+async function init() {
+  setupEvents();
+  try {
+    const t0 = performance.now();
+    const res = await fetch('../data/series.json');
+    if (!res.ok) throw new Error('series.json 取得失敗');
+    const j = await res.json();
+    STATE.series = j.series || [];
+    document.getElementById('footer-info').innerHTML =
+      `series.json generated ${escapeHtml(j.generated_at || '')} · ${STATE.series.length} シリーズ · ` +
+      `<a href="../index.html">全体ランキング</a>`;
+    applyFilters();
+    render();
+    document.getElementById('status').textContent =
+      `${STATE.filtered.length} / ${STATE.series.length} シリーズ (${(performance.now()-t0).toFixed(0)}ms)`;
+  } catch (e) {
+    document.getElementById('tbody').innerHTML =
+      `<tr><td colspan="6" class="empty-msg" style="color:#dc2626">${escapeHtml(e.message)}</td></tr>`;
+  }
+}
+
+init();
+</script>
+</body>
+</html>

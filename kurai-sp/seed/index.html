@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<title>移動しました — SPSP</title>
+<script>
+// Preserve full path, query, hash. /banzuke/* → /spsp/*
+(function () {
+  var dest = location.pathname.replace(/^\/kurai-sp\//, '/spsp/');
+  if (dest === location.pathname) dest = '/spsp/';
+  location.replace(dest + location.search + location.hash);
+})();
+</script>
+<meta http-equiv="refresh" content="0; url=https://tosakazu.github.io/spsp/">
+<style>
+body { background:#ffffff; color:#111827; font-family:-apple-system,sans-serif; text-align:center; padding:60px 20px; }
+a { color:#dc2626; }
+</style>
+</head>
+<body>
+<h1>移動しました</h1>
+<p>このサイトは <a href="https://tosakazu.github.io/spsp/">SPSP</a> に名前を変更しました。</p>
+<p>自動的に移動しない場合は上のリンクをクリックしてください。</p>
+</body>
+</html>

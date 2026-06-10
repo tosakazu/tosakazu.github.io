@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>お知らせ — SPSP</title>
+<meta name="description" content="SPSP の速報 (エンタメ自動通知) と運営からの通知一覧。">
+<style>
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Hiragino Sans", sans-serif;
+    background: #ffffff; color: #111827; font-size: 14px;
+  }
+  .container { max-width: 900px; margin: 0 auto; padding: 24px; }
+  h1 { font-size: 22px; color: #111827; margin: 0 0 4px; }
+  .subtitle { font-size: 13px; color: #6b7280; margin-bottom: 24px; }
+  .filter-tabs {
+    display: flex; gap: 4px; margin: 12px 0 24px;
+    background: #ffffff; padding: 4px; border-radius: 8px;
+    border: 1px solid #e5e7eb; width: max-content; max-width: 100%;
+    overflow-x: auto;
+  }
+  .filter-tab {
+    padding: 6px 14px; cursor: pointer; border-radius: 6px;
+    font-size: 13px; color: #6b7280; transition: all 0.1s;
+    user-select: none; white-space: nowrap;
+  }
+  .filter-tab:hover { color: #374151; background: #f3f4f6; }
+  .filter-tab.active { background: #dc2626; color: #fff; }
+  .news-list { display: flex; flex-direction: column; gap: 12px; }
+  .news-card {
+    border: 1px solid #e5e7eb; border-radius: 8px;
+    padding: 16px; background: #ffffff;
+    transition: border-color .15s, box-shadow .15s;
+  }
+  .news-card:hover { border-color: #d1d5db; box-shadow: 0 1px 3px rgba(0,0,0,.04); }
+  .news-card .meta-row {
+    display: flex; gap: 10px; align-items: center; margin-bottom: 6px;
+    flex-wrap: wrap;
+  }
+  .news-card .date {
+    font-size: 12px; color: #6b7280; font-family: ui-monospace, monospace;
+  }
+  .news-card .type-badge {
+    font-size: 10px; padding: 2px 8px; border-radius: 4px;
+    font-weight: 500; text-transform: uppercase; letter-spacing: 0.05em;
+  }
+  .news-card .type-badge.auto {
+    background: #dbeafe; color: #1e40af;
+  }
+  .news-card .type-badge.announcement {
+    background: #fef3c7; color: #92400e;
+  }
+  .news-card .title {
+    font-size: 15px; font-weight: 600; color: #111827; margin: 0 0 6px;
+    line-height: 1.4;
+  }
+  .news-card .body {
+    font-size: 13px; color: #4b5563; line-height: 1.6; margin: 0;
+    white-space: pre-wrap;  /* \n を改行として表示 */
+  }
+  .news-card .signature {
+    text-align: right; font-size: 12px; color: #6b7280;
+    margin-top: 14px; line-height: 1.6; white-space: pre-wrap;
+  }
+  .empty-msg {
+    color: #9ca3af; font-size: 13px; padding: 24px; text-align: center;
+  }
+  @media (max-width: 720px) {
+    .container { padding: 16px; }
+    h1 { font-size: 18px; }
+    .news-card { padding: 12px; }
+  }
+</style>
+</head>
+<body>
+
+<div id="nav-root"></div>
+<script src="../nav.js"></script>
+
+<div class="container">
+  <h1>お知らせ</h1>
+
+  <div class="filter-tabs" id="filter-tabs">
+    <div class="filter-tab active" data-filter="all">すべて</div>
+    <div class="filter-tab" data-filter="auto">📢 速報</div>
+    <div class="filter-tab" data-filter="announcement">📌 通知</div>
+  </div>
+
+  <div class="news-list" id="news-list">
+    <div class="empty-msg">読み込み中…</div>
+  </div>
+</div>
+
+<script>
+const TYPE_LABEL = { auto: '速報', announcement: '通知' };
+let ALL_ENTRIES = [];
+// Initial filter from URL ?filter=auto|announcement|all
+const _urlFilter = new URLSearchParams(location.search).get('filter');
+let CURRENT_FILTER = (_urlFilter === 'auto' || _urlFilter === 'announcement') ? _urlFilter : 'all';
+
+function escapeHtml(s) {
+  return String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+// markdown-like bold: **text** → <strong>text</strong>. escapeHtml の後に適用.
+function renderMD(s) {
+  return escapeHtml(s).replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
+}
+
+function render() {
+  const list = document.getElementById('news-list');
+  const filtered = CURRENT_FILTER === 'all'
+    ? ALL_ENTRIES
+    : ALL_ENTRIES.filter(e => e.type === CURRENT_FILTER);
+  if (!filtered.length) {
+    list.innerHTML = '<div class="empty-msg">該当するニュースがありません</div>';
+    return;
+  }
+  list.innerHTML = filtered.map(e => `
+    <div class="news-card">
+      <div class="meta-row">
+        <span class="date">${escapeHtml(e.date || '')}</span>
+        <span class="type-badge ${e.type}">${TYPE_LABEL[e.type] || e.type}</span>
+      </div>
+      <div class="title">${escapeHtml(e.title || '')}</div>
+      ${e.body ? `<p class="body">${renderMD(e.body)}</p>` : ''}
+      ${e.signature ? `<div class="signature">${renderMD(e.signature)}</div>` : ''}
+    </div>
+  `).join('');
+}
+
+// Apply URL-based initial tab state
+document.querySelectorAll('.filter-tab').forEach(t => {
+  t.classList.toggle('active', t.dataset.filter === CURRENT_FILTER);
+});
+
+fetch('../news.json').then(r => r.json()).then(data => {
+  const entries = [];
+  (data.announcements || []).forEach(e => entries.push({...e, type: 'announcement'}));
+  (data.auto_news || []).forEach(e => entries.push({...e, type: 'auto'}));
+  // Sort by date desc (newer on top)
+  entries.sort((a, b) => (b.date || '').localeCompare(a.date || ''));
+  ALL_ENTRIES = entries;
+  render();
+}).catch(err => {
+  document.getElementById('news-list').innerHTML =
+    `<div class="empty-msg">ニュース読み込みに失敗: ${escapeHtml(err.message)}</div>`;
+});
+
+document.getElementById('filter-tabs').addEventListener('click', (e) => {
+  const tab = e.target.closest('.filter-tab');
+  if (!tab) return;
+  document.querySelectorAll('.filter-tab').forEach(t => t.classList.remove('active'));
+  tab.classList.add('active');
+  CURRENT_FILTER = tab.dataset.filter;
+  // Sync URL ?filter=
+  const u = new URL(location.href);
+  if (CURRENT_FILTER === 'all') u.searchParams.delete('filter');
+  else u.searchParams.set('filter', CURRENT_FILTER);
+  history.replaceState({}, '', u);
+  render();
+});
+</script>
+</body>
+</html>
