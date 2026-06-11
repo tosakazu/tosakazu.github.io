@@ -48,7 +48,8 @@
         return (b.date || '').localeCompare(a.date || '');
       });
     } else {
-      arr.sort((a, b) => (b.date || '').localeCompare(a.date || ''));
+      // date 同日は ts (開始時刻) でタイブレーク (= 下位クラスは本戦より後 = 上に表示)
+      arr.sort((a, b) => (b.date || '').localeCompare(a.date || '') || ((b.ts || 0) - (a.ts || 0)));
     }
     return arr;
   }
