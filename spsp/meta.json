@@ -1,11 +1,11 @@
 {
   "eval_date": "2026-06-11",
-  "generated_at": "2026-06-11T00:39:19.340522",
-  "computation_time_s": 45.0,
+  "generated_at": "2026-06-11T11:35:01.003804",
+  "computation_time_s": 48.7,
   "n_tournaments_total": 4028,
   "n_tournaments_small": 63,
   "min_entrants_for_ranking": 5,
-  "n_players": 21759,
+  "n_players": 21758,
   "lookback_days": 2920,
   "jjpr_lookback_days": 730,
   "snapshot_days": [
@@ -78,7 +78,7 @@
     "bt_gated_elo_floor": 250.0,
     "tjpr_n_ranked": 15880,
     "tjpr_radar_alpha": 8.0,
-    "bt_n_ranked": 21711,
+    "bt_n_ranked": 21710,
     "spr_upper_max": 2.5,
     "spr_neg_max": 1.0,
     "uf_upper_max": 1.0,
