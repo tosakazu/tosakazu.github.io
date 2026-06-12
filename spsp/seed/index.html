@@ -478,6 +478,22 @@
       <label for="phase-select" style="font-size:11px;color:#6b7280;display:block;margin-bottom:2px">フェーズ</label>
       <select id="phase-select" style="width:100%;padding:8px 12px;background:#f9fafb;color:#111827;border:1px solid #e5e7eb;border-radius:6px;font-size:13px;font-family:inherit"></select>
     </div>
+    <!-- phase 未作成 event 用: シード適用時に自動作成する phase の設定 -->
+    <div id="phase-create-row" style="display:none;background:#fffbeb;border:1px solid #fde68a;border-radius:6px;padding:10px 12px">
+      <div style="font-size:11px;color:#92400e;font-weight:600;margin-bottom:6px">⚠ ブラケット未作成 — シード適用時に Double Elimination の phase を自動作成します</div>
+      <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end">
+        <div>
+          <label for="pc-group-count" style="font-size:11px;color:#6b7280;display:block;margin-bottom:2px">プール数</label>
+          <input type="number" id="pc-group-count" value="1" min="1" max="128" step="1"
+            style="width:72px;padding:7px 10px;background:#f9fafb;color:#111827;border:1px solid #e5e7eb;border-radius:6px;font-size:13px;font-family:inherit">
+        </div>
+        <div>
+          <label for="pc-phase-name" style="font-size:11px;color:#6b7280;display:block;margin-bottom:2px">phase 名</label>
+          <input type="text" id="pc-phase-name" value="Bracket" maxlength="80"
+            style="width:140px;padding:7px 10px;background:#f9fafb;color:#111827;border:1px solid #e5e7eb;border-radius:6px;font-size:13px;font-family:inherit">
+        </div>
+      </div>
+    </div>
   </form>
 
   <div id="event-picker">
@@ -521,7 +537,7 @@
 </div>
 
 <div class="footer" id="footer-info"></div>
-<div class="footer" style="margin-top:-12px"><span class="site-version" style="font-size:11px;color:#9ca3af">v f70f0a3 · 2026-06-12 03:58 UTC</span></div>
+<div class="footer" style="margin-top:-12px"><span class="site-version" style="font-size:11px;color:#9ca3af">v 6859f95 · 2026-06-12 05:07 UTC</span></div>
 
 <!-- Chart.js (lazy load on first graph use) -->
 <script>
@@ -1029,16 +1045,21 @@ async function createPhaseThenUpload(token) {
   const methodLabel = {
     ensemble: '総合評価', tjpr: '順位評価', bt_gated: '直対評価',
   }[currentMethod] || '総合評価';
+  // UI からプール数 / phase 名を取得 (= phase-create-row)
+  let groupCount = parseInt(document.getElementById('pc-group-count').value, 10);
+  if (!Number.isFinite(groupCount) || groupCount < 1) groupCount = 1;
+  if (groupCount > 128) groupCount = 128;
+  const phaseName = (document.getElementById('pc-phase-name').value || '').trim() || 'Bracket';
   const msg = `${EVENT_CONTEXT.eventName} にはまだブラケット (phase) がありません。\n\n` +
-    `Double Elimination の phase を新規作成し、続けて ${methodLabel} の順で ` +
-    `${DATA.length} 名のシードを適用します。\n` +
+    `Double Elimination の phase「${phaseName}」(プール数 ${groupCount}) を新規作成し、` +
+    `続けて ${methodLabel} の順で ${DATA.length} 名のシードを適用します。\n` +
     `(bracket 形式や pool 分割は作成後に start.gg の Bracket Setup で変更できます)\n\n実行してよろしいですか?`;
   if (!confirm(msg)) return;
   clearError();
-  status.textContent = 'phase (Double Elimination) を作成中…';
+  status.textContent = `phase「${phaseName}」(Double Elimination, ${groupCount} pool) を作成中…`;
   const data = await startggQuery(token, UPSERT_PHASE_MUTATION, {
     eventId: String(EVENT_CONTEXT.eventId),
-    payload: { name: 'Bracket', bracketType: 'DOUBLE_ELIMINATION', groupCount: 1 },
+    payload: { name: phaseName, bracketType: 'DOUBLE_ELIMINATION', groupCount: groupCount },
   });
   const phase = data.upsertPhase;
   if (!phase || phase.id == null) throw new Error('phase の作成に失敗しました (= upsertPhase が null。大会の admin 権限があるか確認してください)');
@@ -1083,6 +1104,8 @@ async function createPhaseThenUpload(token) {
   if (r.ok) {
     status.textContent = `✅ phase 作成 + シード適用成功 (${r.count} 件)`;
     document.getElementById('meta-info').textContent = `${EVENT_CONTEXT.eventName} (phase ${phase.id})`;
+    // phase はもう存在するので自動作成の設定 UI は閉じる
+    document.getElementById('phase-create-row').style.display = 'none';
   } else {
     showError(r.error || 'unknown error');
   }
@@ -1117,6 +1140,8 @@ async function handleFetch() {
   // (= 別 event に切り替えたとき古い phase 一覧が残らないように)
   const prPrev = document.getElementById('phase-row');
   if (prPrev) prPrev.style.display = 'none';
+  const pcPrev = document.getElementById('phase-create-row');
+  if (pcPrev) pcPrev.style.display = 'none';
   const token = getToken();
   const urlVal = document.getElementById('event-url').value.trim();
   const parsed = parseEventUrl(urlVal);
@@ -1255,6 +1280,8 @@ async function performEntrantsFetch(token, ev) {
   status.textContent = `${ev.name}: ${rankedCount} 名ランク + ${missingCount} 名 DB 不在 = ${records.length} 名 ⚠ ブラケット未作成 (シード適用時に phase を自動作成します)`;
   document.getElementById('csv-btn').disabled = false;
   document.getElementById('upload-btn').disabled = false;
+  // phase 自動作成の設定 UI (プール数 / phase 名) を表示
+  document.getElementById('phase-create-row').style.display = '';
   setParticipantsUiVisible(true);
   const tbl = ensureTable();
   tbl.setSort('rank', 'asc');
