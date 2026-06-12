@@ -521,7 +521,7 @@
 </div>
 
 <div class="footer" id="footer-info"></div>
-<div class="footer" style="margin-top:-12px"><span class="site-version" style="font-size:11px;color:#9ca3af">v 69fabdb · 2026-06-11 15:04 UTC</span></div>
+<div class="footer" style="margin-top:-12px"><span class="site-version" style="font-size:11px;color:#9ca3af">v f70f0a3 · 2026-06-12 03:58 UTC</span></div>
 
 <!-- Chart.js (lazy load on first graph use) -->
 <script>
@@ -764,6 +764,25 @@ const SEEDS_QUERY = `
   }
 `;
 
+// phase (ブラケット) 未作成の event 用フォールバック: 参加登録済み entrants を直接取得.
+// seeds と違い phase 不要で、参加登録が始まっていれば取れる.
+const ENTRANTS_QUERY = `
+  query EventEntrants($slug: String!, $page: Int!, $perPage: Int!) {
+    event(slug: $slug) {
+      entrants(query: { page: $page, perPage: $perPage }) {
+        pageInfo { totalPages total }
+        nodes {
+          id name
+          participants {
+            user { id }
+            player { id gamerTag prefix }
+          }
+        }
+      }
+    }
+  }
+`;
+
 async function fetchEvent(token, slug) {
   const data = await startggQuery(token, EVENT_QUERY, { slug });
   if (!data.event) throw new Error('event が見つかりません: ' + slug);
@@ -813,6 +832,44 @@ async function fetchAllSeeds(token, phaseId, progressFn) {
   return all;
 }
 
+async function fetchAllEntrants(token, eventSlug, progressFn) {
+  const all = [];
+  let page = 1;
+  const perPage = 64;
+  while (true) {
+    const data = await startggQuery(token, ENTRANTS_QUERY, { slug: eventSlug, page, perPage });
+    if (!data.event) throw new Error('event が取得できません');
+    const entrants = data.event.entrants || { nodes: [], pageInfo: { totalPages: 1 } };
+    const nodes = entrants.nodes || [];
+    all.push(...nodes);
+    if (progressFn) progressFn(all.length, entrants.pageInfo.total || all.length);
+    const tot = entrants.pageInfo.totalPages || 1;
+    if (page >= tot || nodes.length === 0) break;
+    page += 1;
+    // small delay to avoid 429
+    await new Promise(r => setTimeout(r, 500));
+  }
+  return all;
+}
+
+// entrant node → seedNodeToInfo と同じ shape. phase が無いので seedId / originalSeed は null
+// (= シード適用は不可、閲覧 / CSV のみ).
+function entrantNodeToInfo(node) {
+  const ent = node || {};
+  const parts = ent.participants || [];
+  let uid = null, gamerTag = ent.name || '', prefix = '';
+  if (parts.length) {
+    const p0 = parts[0];
+    if (p0.user && p0.user.id != null) uid = Number(p0.user.id);
+    if (p0.player) {
+      gamerTag = p0.player.gamerTag || gamerTag;
+      prefix = p0.player.prefix || '';
+    }
+  }
+  const display = prefix ? (prefix + ' | ' + gamerTag) : gamerTag;
+  return { seedId: null, originalSeed: null, userId: uid, display, entrantId: ent.id != null ? Number(ent.id) : null };
+}
+
 function seedNodeToInfo(seedNode) {
   const sid = seedNode.id;
   const sn = seedNode.seedNum;
@@ -828,7 +885,7 @@ function seedNodeToInfo(seedNode) {
     }
   }
   const display = prefix ? (prefix + ' | ' + gamerTag) : gamerTag;
-  return { seedId: sid, originalSeed: sn, userId: uid, display };
+  return { seedId: sid, originalSeed: sn, userId: uid, display, entrantId: ent.id != null ? Number(ent.id) : null };
 }
 
 function filterAndRerank(seedInfos) {
@@ -845,6 +902,7 @@ function filterAndRerank(seedInfos) {
       rec.ranks.global_bt_gated = rec.ranks.bt_gated;
       rec.seedId = si.seedId;
       rec.original_seed = si.originalSeed;
+      rec.entrantId = si.entrantId;
       ranked.push(rec);
     } else {
       missing.push(si);
@@ -867,6 +925,7 @@ function filterAndRerank(seedInfos) {
       unranked: true,
       seedId: si.seedId,
       original_seed: si.originalSeed,
+      entrantId: si.entrantId,
       ranks: {
         // ensemble は event-local の連番 (最下位扱い)。tjpr/bt_gated は global 不明なので null
         ensemble: next, tjpr: null, bt_gated: null,
@@ -927,6 +986,12 @@ async function uploadToStartgg() {
   if (!DATA.length || !EVENT_CONTEXT) return;
   const token = getToken();
   if (!token) { alert('トークンを入力してください'); return; }
+  if (EVENT_CONTEXT.phaseId == null) {
+    // entrants フォールバックで取得した event (= phase 未作成)。
+    // phase を作成してからシード適用する.
+    await createPhaseThenUpload(token);
+    return;
+  }
   const methodLabel = {
     ensemble: '総合評価', tjpr: '順位評価', bt_gated: '直対評価',
   }[currentMethod] || '総合評価';
@@ -946,6 +1011,78 @@ async function uploadToStartgg() {
   const r = await SmashSeed.uploadSeeding(EVENT_CONTEXT.phaseId, token, mapping);
   if (r.ok) {
     status.textContent = `✅ シード適用成功 (${r.count} 件)`;
+  } else {
+    showError(r.error || 'unknown error');
+  }
+}
+
+const UPSERT_PHASE_MUTATION = `
+  mutation CreatePhase($eventId: ID!, $payload: PhaseUpsertInput!) {
+    upsertPhase(eventId: $eventId, payload: $payload) { id name }
+  }
+`;
+
+// phase 未作成 event へのシード適用: phase (Double Elimination) を作成 → seeds 生成を待って
+// entrantId → seedId を対応付け → updatePhaseSeeding。admin 権限が必要 (= 通常の適用と同じ).
+async function createPhaseThenUpload(token) {
+  const status = document.getElementById('status');
+  const methodLabel = {
+    ensemble: '総合評価', tjpr: '順位評価', bt_gated: '直対評価',
+  }[currentMethod] || '総合評価';
+  const msg = `${EVENT_CONTEXT.eventName} にはまだブラケット (phase) がありません。\n\n` +
+    `Double Elimination の phase を新規作成し、続けて ${methodLabel} の順で ` +
+    `${DATA.length} 名のシードを適用します。\n` +
+    `(bracket 形式や pool 分割は作成後に start.gg の Bracket Setup で変更できます)\n\n実行してよろしいですか?`;
+  if (!confirm(msg)) return;
+  clearError();
+  status.textContent = 'phase (Double Elimination) を作成中…';
+  const data = await startggQuery(token, UPSERT_PHASE_MUTATION, {
+    eventId: String(EVENT_CONTEXT.eventId),
+    payload: { name: 'Bracket', bracketType: 'DOUBLE_ELIMINATION', groupCount: 1 },
+  });
+  const phase = data.upsertPhase;
+  if (!phase || phase.id == null) throw new Error('phase の作成に失敗しました (= upsertPhase が null。大会の admin 権限があるか確認してください)');
+  EVENT_CONTEXT.phaseId = phase.id;
+  // seeds は phase 作成後に start.gg 側で生成される。生成完了まで少し待ちつつ polling.
+  let seedNodes = [];
+  for (let attempt = 1; attempt <= 5; attempt++) {
+    status.textContent = `phase 作成完了。seeds 生成待ち (${attempt}/5) …`;
+    await new Promise(r => setTimeout(r, attempt === 1 ? 1000 : 2000));
+    seedNodes = await fetchAllSeeds(token, phase.id);
+    if (seedNodes.length) break;
+  }
+  if (!seedNodes.length) {
+    showError('phase は作成できましたが seeds がまだ生成されていません。少し待ってから「取得」をやり直し、再度シード適用してください。');
+    return;
+  }
+  // 作成された seeds を entrantId で参加者行に対応付け
+  const seedByEntrant = new Map();
+  for (const n of seedNodes) {
+    if (n.entrant && n.entrant.id != null) seedByEntrant.set(Number(n.entrant.id), n.id);
+  }
+  let matched = 0;
+  for (const r of DATA) {
+    if (r.entrantId != null && seedByEntrant.has(Number(r.entrantId))) {
+      r.seedId = seedByEntrant.get(Number(r.entrantId));
+      matched += 1;
+    }
+  }
+  if (!matched) {
+    showError('作成した phase の seeds と参加者の対応付けに失敗しました。「取得」をやり直してから再度シード適用してください。');
+    return;
+  }
+  // 通常 path と同じ mapping 構築 + 送信 (= confirm は冒頭で済んでいる)
+  const recs = DATA.slice().sort((a, b) => (a.ranks[currentMethod] || 1e9) - (b.ranks[currentMethod] || 1e9));
+  const mapping = [];
+  for (let i = 0; i < recs.length; i++) {
+    if (recs[i].seedId == null) continue;
+    mapping.push({ seedId: recs[i].seedId, seedNum: i + 1 });
+  }
+  status.textContent = `start.gg に ${mapping.length} 件送信中…`;
+  const r = await SmashSeed.uploadSeeding(phase.id, token, mapping);
+  if (r.ok) {
+    status.textContent = `✅ phase 作成 + シード適用成功 (${r.count} 件)`;
+    document.getElementById('meta-info').textContent = `${EVENT_CONTEXT.eventName} (phase ${phase.id})`;
   } else {
     showError(r.error || 'unknown error');
   }
@@ -976,6 +1113,10 @@ async function handleFetch() {
   // Hide stale event-picker from previous failed run
   const epPrev = document.getElementById('event-picker');
   if (epPrev) epPrev.style.display = 'none';
+  // Hide stale phase-select from previous multi-phase fetch
+  // (= 別 event に切り替えたとき古い phase 一覧が残らないように)
+  const prPrev = document.getElementById('phase-row');
+  if (prPrev) prPrev.style.display = 'none';
   const token = getToken();
   const urlVal = document.getElementById('event-url').value.trim();
   const parsed = parseEventUrl(urlVal);
@@ -1031,7 +1172,12 @@ async function handleFetch() {
       ev = await fetchEvent(token, parsed.slug);
     }
     const phases = (ev.phases || []).slice().sort((a, b) => (a.phaseOrder || 0) - (b.phaseOrder || 0));
-    if (!phases.length) throw new Error('この event にはまだ phase (= ブラケット構造) が作成されていません。シーディングを行う前に、start.gg の管理画面で event の Bracket Setup を開き、phase (Singles Bracket 等) を 1 つ以上追加して保存してください。phase 作成後に再度この画面で取得すると、シードが反映できるようになります。');
+    if (!phases.length) {
+      // phase (ブラケット) 未作成 → entrants フォールバック (= 閲覧 / CSV のみ可、シード適用は不可).
+      // 日本のウィークリーは当日までブラケットを組まない運用が多く、phase 無しは普通に起きる.
+      await performEntrantsFetch(token, ev);
+      return;
+    }
     let phaseId;
     if (phases.length > 1) {
       const sel = document.getElementById('phase-select');
@@ -1076,6 +1222,37 @@ async function performSeedFetch(token, ev, phaseId) {
   for (const r of records) DATA.push(r);
   document.getElementById('meta-info').textContent = `${ev.name} (phase ${phaseId})`;
   status.textContent = `${ev.name}: ${rankedCount} 名ランク + ${missingCount} 名 DB 不在 = ${records.length} 名`;
+  document.getElementById('csv-btn').disabled = false;
+  document.getElementById('upload-btn').disabled = false;
+  setParticipantsUiVisible(true);
+  const tbl = ensureTable();
+  tbl.setSort('rank', 'asc');
+  render();
+}
+
+// phase 未作成 event 用: entrants から参加者一覧を表示する.
+// シード適用 (= upload) は phase が無いと不可能なので disabled のまま、閲覧と CSV だけ有効化.
+async function performEntrantsFetch(token, ev) {
+  const status = document.getElementById('status');
+  status.textContent = 'ブラケット未作成のため参加者 (entrants) から取得中…';
+  const slug = ev.slug || (document.getElementById('event-url').value.trim().match(/tournament\/[^\/\s?#]+\/event\/[^\/\s?#]+/) || [''])[0];
+  const nodes = await fetchAllEntrants(token, slug, (got, tot) => {
+    status.textContent = `参加者取得中 ${got}/${tot} …`;
+  });
+  if (!nodes.length) {
+    throw new Error('この event にはまだブラケット (phase) も参加登録者もありません。参加登録が始まってから、または start.gg の Bracket Setup で phase を作成してから再度取得してください。');
+  }
+  const seedInfos = nodes.map(entrantNodeToInfo);
+  status.textContent = `${seedInfos.length} 名取得。フィルター中…`;
+  const { records, rankedCount, missingCount } = filterAndRerank(seedInfos);
+  EVENT_CONTEXT = {
+    phaseId: null, eventName: ev.name,
+    eventId: ev.id, tournamentName: ev.tournament ? ev.tournament.name : '',
+  };
+  DATA.length = 0;
+  for (const r of records) DATA.push(r);
+  document.getElementById('meta-info').textContent = `${ev.name} (参加者一覧 / ブラケット未作成)`;
+  status.textContent = `${ev.name}: ${rankedCount} 名ランク + ${missingCount} 名 DB 不在 = ${records.length} 名 ⚠ ブラケット未作成 (シード適用時に phase を自動作成します)`;
   document.getElementById('csv-btn').disabled = false;
   document.getElementById('upload-btn').disabled = false;
   setParticipantsUiVisible(true);
@@ -1504,7 +1681,10 @@ function showEventPickerInline(tournamentSlug, events) {
     handleFetch();
   });
   document.getElementById('csv-btn').addEventListener('click', downloadCsv);
-  document.getElementById('upload-btn').addEventListener('click', uploadToStartgg);
+  // createPhaseThenUpload 等の throw を握りつぶさず status に出す
+  document.getElementById('upload-btn').addEventListener('click', () => {
+    uploadToStartgg().catch(e => showError(e.message, e.rawError));
+  });
 
   // ── 直近の大会ピッカー: イベント binding ──
   const upToggle = document.getElementById('upcoming-toggle');
