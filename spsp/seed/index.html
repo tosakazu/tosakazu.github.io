@@ -537,7 +537,7 @@
 </div>
 
 <div class="footer" id="footer-info"></div>
-<div class="footer" style="margin-top:-12px"><span class="site-version" style="font-size:11px;color:#9ca3af">v 6859f95 · 2026-06-12 05:07 UTC</span></div>
+<div class="footer" style="margin-top:-12px"><span class="site-version" style="font-size:11px;color:#9ca3af">v 9358f2b · 2026-06-12 05:11 UTC</span></div>
 
 <!-- Chart.js (lazy load on first graph use) -->
 <script>
@@ -1038,6 +1038,13 @@ const UPSERT_PHASE_MUTATION = `
   }
 `;
 
+// phase 作成直前の再確認用 (= event id で phase 有無だけ取る)
+const PHASES_RECHECK_QUERY = `
+  query PhasesRecheck($eventId: ID!) {
+    event(id: $eventId) { phases { id } }
+  }
+`;
+
 // phase 未作成 event へのシード適用: phase (Double Elimination) を作成 → seeds 生成を待って
 // entrantId → seedId を対応付け → updatePhaseSeeding。admin 権限が必要 (= 通常の適用と同じ).
 async function createPhaseThenUpload(token) {
@@ -1056,6 +1063,15 @@ async function createPhaseThenUpload(token) {
     `(bracket 形式や pool 分割は作成後に start.gg の Bracket Setup で変更できます)\n\n実行してよろしいですか?`;
   if (!confirm(msg)) return;
   clearError();
+  // 直前ガード: 取得後に start.gg 側で phase が作られていたら新規作成しない
+  // (= 既存 phase に重複追加したり設定を上書きしたりしないため)。
+  status.textContent = 'phase の有無を再確認中…';
+  const recheck = await startggQuery(token, PHASES_RECHECK_QUERY, { eventId: String(EVENT_CONTEXT.eventId) });
+  const existing = (recheck.event && recheck.event.phases) || [];
+  if (existing.length) {
+    showError('この event には既に phase が作成されています (取得後に start.gg 側で作成された可能性)。phase の新規作成は行いません。「参加者を取得」をやり直して、通常のシード適用をしてください。');
+    return;
+  }
   status.textContent = `phase「${phaseName}」(Double Elimination, ${groupCount} pool) を作成中…`;
   const data = await startggQuery(token, UPSERT_PHASE_MUTATION, {
     eventId: String(EVENT_CONTEXT.eventId),
