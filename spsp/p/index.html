@@ -611,7 +611,7 @@
   </div>
 
   <div class="footer" id="footer-info">
-    <span class="site-version" style="font-size:11px;color:#9ca3af">v 9358f2b · 2026-06-14 15:08 UTC</span>
+    <span class="site-version" style="font-size:11px;color:#9ca3af">v 9b3d7ea · 2026-06-14 18:55 UTC</span>
   </div>
 </main>
 
@@ -1897,20 +1897,19 @@ function renderScoreChart(which) {
       }
       if (lastOrd == null) continue;
       const isTour = tEntryByDate[date] != null;
-      // peak180 = max ord in [ts - 180d, ts]. レートは step function (次の更新まで持続)
-      // なので window 開始時点の ord (= 直前の tl entry の ord) も carry-forward する.
+      // peak180 = max ord in [ts - 180d, ts].
+      // build の Peak180Tracker は window 外 (ts < cutoff) の entry を prune してから max を取る。
+      // よってグラフ側も window 開始前の古いレートを carry-forward してはいけない
+      // (carry-forward すると長期不参加→格下げ後も過去ピークが窓内に居座り、
+      //  実際の bt_gated スコアと不一致になる = 表示バグの原因だった)。
       const tStart = ts - WINDOW_MS;
       let maxOrd = -Infinity;
-      let carryFwd = null;
       for (const tp of tlPairs) {
         if (tp.ts > ts) break;
-        if (tp.ts < tStart) {
-          carryFwd = tp.ord;   // 最後に window 開始前まで保持
-        } else if (tp.ord > maxOrd) {
-          maxOrd = tp.ord;
-        }
+        if (tp.ts >= tStart && tp.ord > maxOrd) maxOrd = tp.ord;
       }
-      if (carryFwd != null && carryFwd > maxOrd) maxOrd = carryFwd;
+      // window 内に更新が無い (= 180日以上不参加) 場合は build と同様 current ord にフォールバック。
+      if (maxOrd === -Infinity) maxOrd = lastOrd;
       // Glicko2 は rating 自体が Elo-space なので transform skip; OpenSkill は ord*ELO+OFFSET.
       const peakY = maxOrd === -Infinity ? null : (useG2 ? maxOrd : maxOrd * ELO + OFFSET);
       const intY = useG2 ? lastOrd : lastOrd * ELO + OFFSET;
