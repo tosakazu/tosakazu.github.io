@@ -1,8 +1,8 @@
 {
-  "generated_at": 1781417083,
+  "generated_at": 1781438493,
   "country_code": "JP",
   "lookahead_days": 21,
-  "count": 42,
+  "count": 43,
   "tournaments": [
     {
       "tournament_id": 916202,
@@ -37,14 +37,14 @@
       "city": "横浜市",
       "venue_name": "おださがプラザ",
       "country_code": "JP",
-      "num_attendees": 13,
+      "num_attendees": 14,
       "url": "/tournament/gg-1-kannai-gg",
       "events": [
         {
           "event_id": 1638027,
           "event_slug": "tournament/gg-1-kannai-gg/event/sp-1on1",
           "event_name": "スマブラSP 1on1",
-          "num_entrants": 13,
+          "num_entrants": 14,
           "type": 1,
           "start_at": 1781514000
         }
@@ -60,14 +60,14 @@
       "city": "大阪市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 11,
+      "num_attendees": 12,
       "url": "/tournament/hit-174-maesuma-hit-174",
       "events": [
         {
           "event_id": 1636388,
           "event_slug": "tournament/hit-174-maesuma-hit-174/event/singles-tournament",
           "event_name": "Singles Tournament",
-          "num_entrants": 11,
+          "num_entrants": 12,
           "type": 1,
           "start_at": 1781517600
         }
@@ -129,7 +129,7 @@
       "city": "中野区",
       "venue_name": "Red Bull Gaming Sphere Tokyo",
       "country_code": "JP",
-      "num_attendees": 58,
+      "num_attendees": 61,
       "url": "/tournament/weekly-smash-party-234",
       "events": [
         {
@@ -551,14 +551,14 @@
       "city": "渋谷区",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 28,
+      "num_attendees": 32,
       "url": "/tournament/to-win-10",
       "events": [
         {
           "event_id": 1645515,
           "event_slug": "tournament/to-win-10/event/singles",
           "event_name": "Singles",
-          "num_entrants": 28,
+          "num_entrants": 32,
           "type": 1,
           "start_at": 1782003600
         }
@@ -597,14 +597,14 @@
       "city": "京都市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 4,
+      "num_attendees": 5,
       "url": "/tournament/2-193",
       "events": [
         {
           "event_id": 1645922,
           "event_slug": "tournament/2-193/event/ultimate-singles",
           "event_name": "Ultimate Singles",
-          "num_entrants": 4,
+          "num_entrants": 5,
           "type": 1,
           "start_at": 1782018000
         }
@@ -712,14 +712,14 @@
       "city": "大東市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 323,
+      "num_attendees": 325,
       "url": "/tournament/70-sp-1",
       "events": [
         {
           "event_id": 1634012,
           "event_slug": "tournament/70-sp-1/event/1on1",
           "event_name": "予選あり1on1トーナメント",
-          "num_entrants": 312,
+          "num_entrants": 314,
           "type": 1,
           "start_at": 1782523800
         }
@@ -850,14 +850,14 @@
       "city": "宇部市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 4,
+      "num_attendees": 5,
       "url": "/tournament/34-10",
       "events": [
         {
           "event_id": 1647081,
           "event_slug": "tournament/34-10/event/sp-1on1",
           "event_name": "スマブラSP 1on1",
-          "num_entrants": 4,
+          "num_entrants": 5,
           "type": 1,
           "start_at": 1782615600
         }
@@ -919,14 +919,14 @@
       "city": "岐阜市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 75,
+      "num_attendees": 76,
       "url": "/tournament/21-16",
       "events": [
         {
           "event_id": 1636233,
           "event_slug": "tournament/21-16/event/gifusma21",
           "event_name": "gifusma21",
-          "num_entrants": 75,
+          "num_entrants": 76,
           "type": 1,
           "start_at": 1783126800
         }
@@ -942,14 +942,14 @@
       "city": "日光市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 6,
+      "num_attendees": 8,
       "url": "/tournament/1-nikko",
       "events": [
         {
           "event_id": 1637615,
           "event_slug": "tournament/1-nikko/event/sp",
           "event_name": "スマブラSPトーナメント",
-          "num_entrants": 6,
+          "num_entrants": 8,
           "type": 1,
           "start_at": 1780239600
         }
@@ -975,6 +975,29 @@
           "num_entrants": 3,
           "type": 1,
           "start_at": 1783126800
+        }
+      ]
+    },
+    {
+      "tournament_id": 909652,
+      "tournament_slug": "tournament/badawi-5",
+      "tournament_name": "Badawi#5",
+      "start_at": 1783213200,
+      "end_at": 1783249200,
+      "is_online": false,
+      "city": "奈良市",
+      "venue_name": "",
+      "country_code": "JP",
+      "num_attendees": 24,
+      "url": "/tournament/badawi-5",
+      "events": [
+        {
+          "event_id": 1620892,
+          "event_slug": "tournament/badawi-5/event/badawi",
+          "event_name": "Badawi",
+          "num_entrants": 24,
+          "type": 1,
+          "start_at": 1783213200
         }
       ]
     }
