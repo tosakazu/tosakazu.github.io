@@ -1,5 +1,5 @@
 {
-  "generated_at": 1781492443,
+  "generated_at": 1781503670,
   "country_code": "JP",
   "lookahead_days": 21,
   "count": 46,
@@ -183,14 +183,14 @@
       "city": "台東区",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 3,
+      "num_attendees": 5,
       "url": "/tournament/18-482-2",
       "events": [
         {
           "event_id": 1646983,
           "event_slug": "tournament/18-482-2/event/on",
           "event_name": "シングルス（１on１トーナメント）",
-          "num_entrants": 3,
+          "num_entrants": 5,
           "type": 1,
           "start_at": 1781769600
         }
@@ -252,14 +252,14 @@
       "city": "台東区",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 1,
+      "num_attendees": 2,
       "url": "/tournament/19-483-6",
       "events": [
         {
           "event_id": 1646987,
           "event_slug": "tournament/19-483-6/event/on",
           "event_name": "シングルス（１on１トーナメント）",
-          "num_entrants": 1,
+          "num_entrants": 2,
           "type": 1,
           "start_at": 1781856000
         }
@@ -275,14 +275,14 @@
       "city": "川崎市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 1,
+      "num_attendees": 2,
       "url": "/tournament/5-98",
       "events": [
         {
           "event_id": 1645431,
           "event_slug": "tournament/5-98/event/super-smash-bros-ultimate-singles",
           "event_name": "シングルス",
-          "num_entrants": 1,
+          "num_entrants": 2,
           "type": 1,
           "start_at": 1781859600
         }
@@ -298,14 +298,14 @@
       "city": "福岡市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 1,
+      "num_attendees": 2,
       "url": "/tournament/smash-141-1",
       "events": [
         {
           "event_id": 1636150,
           "event_slug": "tournament/smash-141-1/event/1on1",
           "event_name": "1on1トーナメント",
-          "num_entrants": 1,
+          "num_entrants": 2,
           "type": 1,
           "start_at": 1781865000
         }
@@ -344,14 +344,14 @@
       "city": "大阪市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 1,
+      "num_attendees": 2,
       "url": "/tournament/338-act",
       "events": [
         {
           "event_id": 1647676,
           "event_slug": "tournament/338-act/event/ultimate-singles",
           "event_name": "Ultimate singles",
-          "num_entrants": 1,
+          "num_entrants": 2,
           "type": 1,
           "start_at": 1781865600
         }
@@ -505,14 +505,14 @@
       "city": "さいたま市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 38,
+      "num_attendees": 37,
       "url": "/tournament/aya-8",
       "events": [
         {
           "event_id": 1625204,
           "event_slug": "tournament/aya-8/event/ultimate-singles",
           "event_name": "Ultimate Singles",
-          "num_entrants": 38,
+          "num_entrants": 37,
           "type": 1,
           "start_at": 1781928000
         }
@@ -528,14 +528,14 @@
       "city": "四日市市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 19,
+      "num_attendees": 22,
       "url": "/tournament/quattro-2",
       "events": [
         {
           "event_id": 1640556,
           "event_slug": "tournament/quattro-2/event/quattro",
           "event_name": "四闘-Quattro-",
-          "num_entrants": 19,
+          "num_entrants": 23,
           "type": 1,
           "start_at": 1781928000
         }
@@ -712,14 +712,14 @@
       "city": "台東区",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 2,
+      "num_attendees": 3,
       "url": "/tournament/26-488",
       "events": [
         {
           "event_id": 1646990,
           "event_slug": "tournament/26-488/event/on",
           "event_name": "シングルス（１on１トーナメント）",
-          "num_entrants": 2,
+          "num_entrants": 3,
           "type": 1,
           "start_at": 1782460800
         }
@@ -781,14 +781,14 @@
       "city": "台東区",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 1,
+      "num_attendees": 2,
       "url": "/tournament/27-489-1",
       "events": [
         {
           "event_id": 1646992,
           "event_slug": "tournament/27-489-1/event/on",
           "event_name": "シングルス（１on１トーナメント）",
-          "num_entrants": 1,
+          "num_entrants": 2,
           "type": 1,
           "start_at": 1782529200
         }
@@ -965,14 +965,14 @@
       "city": "岐阜市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 86,
+      "num_attendees": 88,
       "url": "/tournament/21-16",
       "events": [
         {
           "event_id": 1636233,
           "event_slug": "tournament/21-16/event/gifusma21",
           "event_name": "gifusma21",
-          "num_entrants": 86,
+          "num_entrants": 88,
           "type": 1,
           "start_at": 1783126800
         }
@@ -1057,14 +1057,14 @@
       "city": "奈良市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 24,
+      "num_attendees": 25,
       "url": "/tournament/badawi-5",
       "events": [
         {
           "event_id": 1620892,
           "event_slug": "tournament/badawi-5/event/badawi",
           "event_name": "Badawi",
-          "num_entrants": 24,
+          "num_entrants": 25,
           "type": 1,
           "start_at": 1783213200
         }
