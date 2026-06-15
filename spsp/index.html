@@ -516,7 +516,7 @@
 </div>
 
 <div class="footer" id="footer-info"></div>
-<div class="footer" style="margin-top:-12px"><span class="site-version" style="font-size:11px;color:#9ca3af">v 906bd60 · 2026-06-15 06:44 UTC</span></div>
+<div class="footer" style="margin-top:-12px"><span class="site-version" style="font-size:11px;color:#9ca3af">v bcf58af · 2026-06-15 06:47 UTC</span></div>
 
 <button id="scroll-top" aria-label="ページの一番上へ戻る" title="一番上へ" hidden>↑</button>
 
@@ -577,7 +577,7 @@ async function loadData() {
     }
     // ヘッダ (nav bar) に「最終更新時刻 · バージョン」を表示
     const genTime = (META.generated_at || META.eval_date || '').split('.')[0].replace('T', ' ');
-    const SITE_VERSION_FULL = 'v 906bd60 · 2026-06-15 06:44 UTC';
+    const SITE_VERSION_FULL = 'v bcf58af · 2026-06-15 06:47 UTC';
     const versionShort = SITE_VERSION_FULL.split(' · ')[0] || SITE_VERSION_FULL;
     const navMeta = document.getElementById('meta-info');
     if (navMeta) navMeta.textContent = `最終更新 ${genTime} · ${versionShort}`;
@@ -658,8 +658,10 @@ const BT_SCORE_COL = {
 function _columnsForMeta(meta) {
   const method = meta && meta.ranking_method;
   if (method && (method === 'BT_LV_shared_cascade' || method.startsWith('V4'))) {
-    return ['rank', 'display', BT_SCORE_COL, TJPR_SCORE_COL, 'tjpr_lv',
-            'tour_count', 'bt_weekday', 'rank_tjpr', 'rank_bt_gated'];
+    // Lv (tjpr_lv) と 計測中 (bt_weekday) は専用列を出さず、名前の横のタグ
+    // (display-lv-mobile / display-gate-mobile) で PC/mobile 共通表示する。
+    return ['rank', 'display', BT_SCORE_COL, TJPR_SCORE_COL,
+            'tour_count', 'rank_tjpr', 'rank_bt_gated'];
   }
   return undefined;  // builtin default
 }
