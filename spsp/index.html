@@ -524,7 +524,7 @@
 </div>
 
 <div class="footer" id="footer-info"></div>
-<div class="footer" style="margin-top:-12px"><span class="site-version" style="font-size:11px;color:#9ca3af">v 9a42542 · 2026-06-15 07:19 UTC</span></div>
+<div class="footer" style="margin-top:-12px"><span class="site-version" style="font-size:11px;color:#9ca3af">v 0e35371 · 2026-06-15 07:30 UTC</span></div>
 
 <button id="scroll-top" aria-label="ページの一番上へ戻る" title="一番上へ" hidden>↑</button>
 
@@ -585,7 +585,7 @@ async function loadData() {
     }
     // ヘッダ (nav bar) に「最終更新時刻 · バージョン」を表示
     const genTime = (META.generated_at || META.eval_date || '').split('.')[0].replace('T', ' ');
-    const SITE_VERSION_FULL = 'v 9a42542 · 2026-06-15 07:19 UTC';
+    const SITE_VERSION_FULL = 'v 0e35371 · 2026-06-15 07:30 UTC';
     const versionShort = SITE_VERSION_FULL.split(' · ')[0] || SITE_VERSION_FULL;
     const navMeta = document.getElementById('meta-info');
     if (navMeta) navMeta.textContent = `最終更新 ${genTime} · ${versionShort}`;
@@ -667,7 +667,9 @@ const BT_SCORE_COL = {
     const peak = sc.bt_gated_elo;
     if (peak == null) return '–';
     const cur = sc.bt_internal_elo;
-    const updating = (cur != null && Math.abs(peak - cur) < 0.005);
+    const lastD = sc.bt_internal_d_last;
+    // レート更新中 = peak180==現在スコア かつ 直前のレート変動が + (= 直近で上昇)。
+    const updating = (cur != null && Math.abs(peak - cur) < 0.005 && lastD != null && lastD > 0);
     return `<span class="score-cell${updating ? ' bt-updating' : ''}">${peak.toFixed(2)}</span>`;
   },
 };
