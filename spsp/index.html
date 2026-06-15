@@ -170,16 +170,6 @@
   /* テーブル本体スタイル (table base, col widths, lv-badge, gate-pill, top-tours,
      player-name, rank-frac, detail-row 基底) は共有 ranking-table.css へ集約済. */
 
-  /* レート/ポイント (順位評/直対評) の数値色: PC=黒、スマホ=デフォルト灰色。
-     直対評は peak180==現在 (レート更新中) のとき PC で緑 (.bt-updating)。 */
-  .score-cell { color: #111827; font-size: 11px; }
-  .score-cell.bt-updating { color: #16a34a; }
-  @media (max-width: 720px) {
-    /* スマホ: 非更新中はデフォルト灰色。更新中 (.bt-updating) の緑は specificity が
-       高いので上書きされず残る → PC/スマホ共通で更新中だけ緑。 */
-    .score-cell { color: #9ca3af; }
-  }
-
   .detail-explain {
     background: #f9fafb; border-left: 3px solid #dc2626;
     padding: 10px 16px; margin-bottom: 12px;
@@ -520,13 +510,13 @@
   <table id="ranktable">
     <!-- thead は SPSPRankingTable コンポーネントが自動生成 -->
     <tbody id="tbody">
-      <tr><td colspan="7" class="empty-msg">データ読み込み中…</td></tr>
+      <tr><td colspan="9" class="empty-msg">データ読み込み中…</td></tr>
     </tbody>
   </table>
 </div>
 
 <div class="footer" id="footer-info"></div>
-<div class="footer" style="margin-top:-12px"><span class="site-version" style="font-size:11px;color:#9ca3af">v 74b1f98 · 2026-06-15 10:02 UTC</span></div>
+<div class="footer" style="margin-top:-12px"><span class="site-version" style="font-size:11px;color:#9ca3af">v 25ce9c3 · 2026-06-15 12:03 UTC</span></div>
 
 <button id="scroll-top" aria-label="ページの一番上へ戻る" title="一番上へ" hidden>↑</button>
 
@@ -587,7 +577,7 @@ async function loadData() {
     }
     // ヘッダ (nav bar) に「最終更新時刻 · バージョン」を表示
     const genTime = (META.generated_at || META.eval_date || '').split('.')[0].replace('T', ' ');
-    const SITE_VERSION_FULL = 'v 74b1f98 · 2026-06-15 10:02 UTC';
+    const SITE_VERSION_FULL = 'v 25ce9c3 · 2026-06-15 12:03 UTC';
     const versionShort = SITE_VERSION_FULL.split(' · ')[0] || SITE_VERSION_FULL;
     const navMeta = document.getElementById('meta-info');
     if (navMeta) navMeta.textContent = `最終更新 ${genTime} · ${versionShort}`;
@@ -652,7 +642,7 @@ let TABLE = null;
 // 新方式 (= BT_LV_shared_cascade) 用の小灰列: 平均順位/平均スコア の代わりに
 // 順位評スコア + 直対評スコアを小さく灰色で表示.
 const _smallGray = (v, decimals = 1) =>
-  v != null ? `<span class="score-cell">${v.toFixed(decimals)}</span>` : '–';
+  v != null ? `<span style="color:#9ca3af;font-size:11px">${v.toFixed(decimals)}</span>` : '–';
 const TJPR_SCORE_COL = {
   id: 'tjpr_score_cell', label: '順位評', sortable: true, sortKey: 'tjpr_score',
   css: 'col-score',
@@ -663,25 +653,13 @@ const BT_SCORE_COL = {
   id: 'bt_score_cell', label: '直対評', sortable: true, sortKey: 'bt_score',
   css: 'col-avg-rank',
   value: (rec) => -((rec.scores && rec.scores.bt_gated_elo) || -Infinity),
-  // peak180 スコア == 現在スコア (= レート更新中) なら緑、ピークから下落していれば黒。
-  cell: (rec) => {
-    const sc = rec.scores || {};
-    const peak = sc.bt_gated_elo;
-    if (peak == null) return '–';
-    const cur = sc.bt_internal_elo;
-    const lastD = sc.bt_internal_d_last;
-    // レート更新中 = peak180==現在スコア かつ 直前のレート変動が + (= 直近で上昇)。
-    const updating = (cur != null && Math.abs(peak - cur) < 0.005 && lastD != null && lastD > 0);
-    return `<span class="score-cell${updating ? ' bt-updating' : ''}">${peak.toFixed(2)}</span>`;
-  },
+  cell: (rec) => _smallGray(rec.scores && rec.scores.bt_gated_elo, 2),
 };
 function _columnsForMeta(meta) {
   const method = meta && meta.ranking_method;
   if (method && (method === 'BT_LV_shared_cascade' || method.startsWith('V4'))) {
-    // Lv (tjpr_lv) と 計測中 (bt_weekday) は専用列を出さず、名前の横のタグ
-    // (display-lv-mobile / display-gate-mobile) で PC/mobile 共通表示する。
-    return ['rank', 'display', BT_SCORE_COL, TJPR_SCORE_COL,
-            'tour_count', 'rank_tjpr', 'rank_bt_gated'];
+    return ['rank', 'display', BT_SCORE_COL, TJPR_SCORE_COL, 'tjpr_lv',
+            'tour_count', 'bt_weekday', 'rank_tjpr', 'rank_bt_gated'];
   }
   return undefined;  // builtin default
 }
@@ -1121,6 +1099,7 @@ async function renderChart(rec, chartType, container) {
                   if (t.is_lower_class) tags.push('下位クラス');
                   lines.push(tags.join(' / '));
                 }
+                if (t.tjpr_lv) lines.push(`採用 Lv: ${t.tjpr_lv}`);
                 return lines;
               },
             },
@@ -1312,7 +1291,7 @@ function mainRowClickHandler(rec, tr, _ev) {
   const detail = document.createElement('tr');
   detail.className = 'detail-row';
   if (rec.unranked) {
-    detail.innerHTML = `<td colspan="7"><div class="detail-inner" style="padding:14px;font-size:12px;color:#6b7280">
+    detail.innerHTML = `<td colspan="9"><div class="detail-inner" style="padding:14px;font-size:12px;color:#6b7280">
       このプレイヤーは SPSP の DB に履歴がありません。<br>
       最下位扱いで CSV / アップロードには含まれます。
     </div></td>`;
@@ -1320,7 +1299,7 @@ function mainRowClickHandler(rec, tr, _ev) {
     tr.after(detail);
     return;
   }
-  detail.innerHTML = `<td colspan="7"><div class="detail-inner">
+  detail.innerHTML = `<td colspan="9"><div class="detail-inner">
     <div class="loading-msg" style="padding:14px;color:#6b7280;font-size:12px">詳細情報を取得中…</div>
   </div></td>`;
   tr.classList.add('expanded');
