@@ -1,7 +1,7 @@
 {
   "eval_date": "2026-06-15",
-  "generated_at": "2026-06-15T15:05:22.398554",
-  "computation_time_s": 47.0,
+  "generated_at": "2026-06-15T13:04:11.835977",
+  "computation_time_s": 45.5,
   "n_tournaments_total": 4755,
   "n_tournaments_small": 100,
   "min_entrants_for_ranking": 5,
