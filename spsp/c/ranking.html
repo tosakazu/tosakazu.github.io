@@ -439,11 +439,12 @@ async function init() {
   }
   try {
     const t0 = performance.now();
-    const [idxRes, metaRes, jsonlRes, overseasRes] = await Promise.all([
+    const [idxRes, metaRes, jsonlRes, overseasRes, emojiRes] = await Promise.all([
       fetch('../data/character_index.json'),
       fetch('../meta.json'),
       fetch('../latest_tjpr_full.jsonl'),
       fetch('../data/overseas.json').catch(() => null),
+      fetch('../data/char_emoji.json').catch(() => null),
     ]);
     if (!idxRes.ok) throw new Error('character_index.json 取得失敗');
     if (!metaRes.ok) throw new Error('meta.json 取得失敗');
@@ -464,6 +465,11 @@ async function init() {
       return;
     }
     STATE.charName = charInfo.name;
+    // キャラ絵文字 (見出しの左に表示)。
+    let charEmoji = '';
+    if (emojiRes && emojiRes.ok) {
+      try { const ce = await emojiRes.json(); charEmoji = (ce[String(STATE.charId)] || {}).emoji || ''; } catch (e) {}
+    }
 
     const txt = await jsonlRes.text();
     const lines = txt.split('\n').filter(l => l.length);
@@ -483,7 +489,7 @@ async function init() {
     }
 
     document.title = `${STATE.charName}使いランキング — SPSP`;
-    document.getElementById('title-h1').textContent = `${STATE.charName}使いランキング`;
+    document.getElementById('title-h1').textContent = `${charEmoji ? charEmoji + ' ' : ''}${STATE.charName}使いランキング`;
     if (window.SPSPTrackPage) {
       window.SPSPTrackPage(document.title, `/c/${encodeURIComponent(STATE.charName)}`);
     }

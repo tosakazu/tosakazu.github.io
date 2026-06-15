@@ -246,7 +246,7 @@ function render() {
       return `
         <tr class="char-row" data-id="${c.id}">
           <td class="col-idx">${currentRankOf(c)}</td>
-          <td class="col-name"><a href="${url}">${escapeHtml(c.name)}</a></td>
+          <td class="col-name"><a href="${url}">${STATE.charEmoji && STATE.charEmoji[c.id] ? STATE.charEmoji[c.id] + ' ' : ''}${escapeHtml(c.name)}</a></td>
           <td class="col-num">${c.n_main}</td>
           <td class="col-top">${topHtml}</td>
         </tr>
@@ -333,15 +333,21 @@ async function init() {
   setupEvents();
   readUrl();
   try {
-    const [idxRes, jsonlRes, overseasRes] = await Promise.all([
+    const [idxRes, jsonlRes, overseasRes, emojiRes] = await Promise.all([
       fetch('../data/character_index.json'),
       fetch('../latest_tjpr_full.jsonl'),
       fetch('../data/overseas.json').catch(() => null),
+      fetch('../data/char_emoji.json').catch(() => null),
     ]);
     if (!idxRes.ok) throw new Error('character_index.json 取得失敗');
     if (!jsonlRes.ok) throw new Error('latest_tjpr_full.jsonl 取得失敗');
     STATE.index = await idxRes.json();
     STATE.characters = STATE.index.characters.slice();
+    // キャラ id → 絵文字 (名前の左に表示)。
+    STATE.charEmoji = {};
+    if (emojiRes && emojiRes.ok) {
+      try { const ce = await emojiRes.json(); for (const k in ce) STATE.charEmoji[k] = ce[k].emoji; } catch (e) {}
+    }
     // 海外上位勢 (= site/data/overseas.json) は「全1」表示の対象から除外する.
     let overseasUids = null;
     if (overseasRes && overseasRes.ok) {
