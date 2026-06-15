@@ -1,8 +1,8 @@
 {
-  "generated_at": 1781438493,
+  "generated_at": 1781449266,
   "country_code": "JP",
   "lookahead_days": 21,
-  "count": 43,
+  "count": 44,
   "tournaments": [
     {
       "tournament_id": 916202,
@@ -129,7 +129,7 @@
       "city": "中野区",
       "venue_name": "Red Bull Gaming Sphere Tokyo",
       "country_code": "JP",
-      "num_attendees": 61,
+      "num_attendees": 62,
       "url": "/tournament/weekly-smash-party-234",
       "events": [
         {
@@ -551,14 +551,14 @@
       "city": "渋谷区",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 32,
+      "num_attendees": 33,
       "url": "/tournament/to-win-10",
       "events": [
         {
           "event_id": 1645515,
           "event_slug": "tournament/to-win-10/event/singles",
           "event_name": "Singles",
-          "num_entrants": 32,
+          "num_entrants": 33,
           "type": 1,
           "start_at": 1782003600
         }
@@ -975,6 +975,29 @@
           "num_entrants": 3,
           "type": 1,
           "start_at": 1783126800
+        }
+      ]
+    },
+    {
+      "tournament_id": 918423,
+      "tournament_slug": "tournament/pochisuma-next-patch-4",
+      "tournament_name": "ポチスマ/Pochisuma NEXT PATCH #4",
+      "start_at": 1783206000,
+      "end_at": 1783260000,
+      "is_online": false,
+      "city": "札幌市",
+      "venue_name": "",
+      "country_code": "JP",
+      "num_attendees": 35,
+      "url": "/tournament/pochisuma-next-patch-4",
+      "events": [
+        {
+          "event_id": 1638445,
+          "event_slug": "tournament/pochisuma-next-patch-4/event/ultimate-singles",
+          "event_name": "Ultimate Singles",
+          "num_entrants": 35,
+          "type": 1,
+          "start_at": 1783206000
         }
       ]
     },
