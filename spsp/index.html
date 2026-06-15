@@ -170,6 +170,14 @@
   /* テーブル本体スタイル (table base, col widths, lv-badge, gate-pill, top-tours,
      player-name, rank-frac, detail-row 基底) は共有 ranking-table.css へ集約済. */
 
+  /* レート/ポイント (順位評/直対評) の数値色: PC=黒、スマホ=デフォルト灰色。
+     直対評は peak180==現在 (レート更新中) のとき PC で緑 (.bt-updating)。 */
+  .score-cell { color: #111827; font-size: 11px; }
+  .score-cell.bt-updating { color: #16a34a; }
+  @media (max-width: 720px) {
+    .score-cell, .score-cell.bt-updating { color: #9ca3af; }
+  }
+
   .detail-explain {
     background: #f9fafb; border-left: 3px solid #dc2626;
     padding: 10px 16px; margin-bottom: 12px;
@@ -516,7 +524,7 @@
 </div>
 
 <div class="footer" id="footer-info"></div>
-<div class="footer" style="margin-top:-12px"><span class="site-version" style="font-size:11px;color:#9ca3af">v 5dc1c04 · 2026-06-15 07:14 UTC</span></div>
+<div class="footer" style="margin-top:-12px"><span class="site-version" style="font-size:11px;color:#9ca3af">v 9a42542 · 2026-06-15 07:19 UTC</span></div>
 
 <button id="scroll-top" aria-label="ページの一番上へ戻る" title="一番上へ" hidden>↑</button>
 
@@ -577,7 +585,7 @@ async function loadData() {
     }
     // ヘッダ (nav bar) に「最終更新時刻 · バージョン」を表示
     const genTime = (META.generated_at || META.eval_date || '').split('.')[0].replace('T', ' ');
-    const SITE_VERSION_FULL = 'v 5dc1c04 · 2026-06-15 07:14 UTC';
+    const SITE_VERSION_FULL = 'v 9a42542 · 2026-06-15 07:19 UTC';
     const versionShort = SITE_VERSION_FULL.split(' · ')[0] || SITE_VERSION_FULL;
     const navMeta = document.getElementById('meta-info');
     if (navMeta) navMeta.textContent = `最終更新 ${genTime} · ${versionShort}`;
@@ -642,7 +650,7 @@ let TABLE = null;
 // 新方式 (= BT_LV_shared_cascade) 用の小灰列: 平均順位/平均スコア の代わりに
 // 順位評スコア + 直対評スコアを小さく灰色で表示.
 const _smallGray = (v, decimals = 1) =>
-  v != null ? `<span style="color:#111827;font-size:11px">${v.toFixed(decimals)}</span>` : '–';
+  v != null ? `<span class="score-cell">${v.toFixed(decimals)}</span>` : '–';
 const TJPR_SCORE_COL = {
   id: 'tjpr_score_cell', label: '順位評', sortable: true, sortKey: 'tjpr_score',
   css: 'col-score',
@@ -660,8 +668,7 @@ const BT_SCORE_COL = {
     if (peak == null) return '–';
     const cur = sc.bt_internal_elo;
     const updating = (cur != null && Math.abs(peak - cur) < 0.005);
-    const color = updating ? '#16a34a' : '#111827';
-    return `<span style="color:${color};font-size:11px">${peak.toFixed(2)}</span>`;
+    return `<span class="score-cell${updating ? ' bt-updating' : ''}">${peak.toFixed(2)}</span>`;
   },
 };
 function _columnsForMeta(meta) {
