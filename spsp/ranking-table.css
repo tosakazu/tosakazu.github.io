@@ -72,9 +72,10 @@
   font-size: 10px; color: #9ca3af; margin-left: 6px;
 }
 
-/* PC: col-display 内の mobile-only badge (Lv, gate) は非表示。専用列で表示。 */
+/* Lv / 計測中 バッジは PC でも名前の横に表示 (スマホと同じ)。
+   専用列 (tjpr_lv / bt_weekday) は columns 配列から除外済みなので display:none 不要。 */
 .col-display .display-lv-mobile,
-.col-display .display-gate-mobile { display: none; }
+.col-display .display-gate-mobile { display: inline-block; }
 
 /* col-display: 名前 (display-line) を必ず単独行、その下に top-tours 1 行 (省略) */
 .col-display { min-width: 0; }
@@ -84,6 +85,8 @@
 }
 /* 名前の直後 (= 最初のバッジ) だけは少し余白を残す. */
 .col-display .display-line > .player-name + * { margin-left: 6px; }
+/* メイン使用キャラ絵文字 (= 名前の左). */
+.main-char-emoji { margin-right: 2px; }
 
 .top-tours {
   margin-top: 2px;
