@@ -175,7 +175,9 @@
   .score-cell { color: #111827; font-size: 11px; }
   .score-cell.bt-updating { color: #16a34a; }
   @media (max-width: 720px) {
-    .score-cell, .score-cell.bt-updating { color: #9ca3af; }
+    /* スマホ: 非更新中はデフォルト灰色。更新中 (.bt-updating) の緑は specificity が
+       高いので上書きされず残る → PC/スマホ共通で更新中だけ緑。 */
+    .score-cell { color: #9ca3af; }
   }
 
   .detail-explain {
@@ -518,13 +520,13 @@
   <table id="ranktable">
     <!-- thead は SPSPRankingTable コンポーネントが自動生成 -->
     <tbody id="tbody">
-      <tr><td colspan="9" class="empty-msg">データ読み込み中…</td></tr>
+      <tr><td colspan="7" class="empty-msg">データ読み込み中…</td></tr>
     </tbody>
   </table>
 </div>
 
 <div class="footer" id="footer-info"></div>
-<div class="footer" style="margin-top:-12px"><span class="site-version" style="font-size:11px;color:#9ca3af">v 0e35371 · 2026-06-15 07:30 UTC</span></div>
+<div class="footer" style="margin-top:-12px"><span class="site-version" style="font-size:11px;color:#9ca3af">v f01b1df · 2026-06-15 07:34 UTC</span></div>
 
 <button id="scroll-top" aria-label="ページの一番上へ戻る" title="一番上へ" hidden>↑</button>
 
@@ -585,7 +587,7 @@ async function loadData() {
     }
     // ヘッダ (nav bar) に「最終更新時刻 · バージョン」を表示
     const genTime = (META.generated_at || META.eval_date || '').split('.')[0].replace('T', ' ');
-    const SITE_VERSION_FULL = 'v 0e35371 · 2026-06-15 07:30 UTC';
+    const SITE_VERSION_FULL = 'v f01b1df · 2026-06-15 07:34 UTC';
     const versionShort = SITE_VERSION_FULL.split(' · ')[0] || SITE_VERSION_FULL;
     const navMeta = document.getElementById('meta-info');
     if (navMeta) navMeta.textContent = `最終更新 ${genTime} · ${versionShort}`;
@@ -1310,7 +1312,7 @@ function mainRowClickHandler(rec, tr, _ev) {
   const detail = document.createElement('tr');
   detail.className = 'detail-row';
   if (rec.unranked) {
-    detail.innerHTML = `<td colspan="9"><div class="detail-inner" style="padding:14px;font-size:12px;color:#6b7280">
+    detail.innerHTML = `<td colspan="7"><div class="detail-inner" style="padding:14px;font-size:12px;color:#6b7280">
       このプレイヤーは SPSP の DB に履歴がありません。<br>
       最下位扱いで CSV / アップロードには含まれます。
     </div></td>`;
@@ -1318,7 +1320,7 @@ function mainRowClickHandler(rec, tr, _ev) {
     tr.after(detail);
     return;
   }
-  detail.innerHTML = `<td colspan="9"><div class="detail-inner">
+  detail.innerHTML = `<td colspan="7"><div class="detail-inner">
     <div class="loading-msg" style="padding:14px;color:#6b7280;font-size:12px">詳細情報を取得中…</div>
   </div></td>`;
   tr.classList.add('expanded');
