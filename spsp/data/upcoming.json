@@ -1,55 +1,9 @@
 {
-  "generated_at": 1781503670,
+  "generated_at": 1781514127,
   "country_code": "JP",
   "lookahead_days": 21,
-  "count": 46,
+  "count": 45,
   "tournaments": [
-    {
-      "tournament_id": 916202,
-      "tournament_slug": "tournament/15-479",
-      "tournament_name": "15(月)上野スマコミ#479(オープン)",
-      "start_at": 1781510400,
-      "end_at": 1781532000,
-      "is_online": false,
-      "city": "台東区",
-      "venue_name": "",
-      "country_code": "JP",
-      "num_attendees": 9,
-      "url": "/tournament/15-479",
-      "events": [
-        {
-          "event_id": 1633922,
-          "event_slug": "tournament/15-479/event/on",
-          "event_name": "シングルス（１on１トーナメント）",
-          "num_entrants": 9,
-          "type": 1,
-          "start_at": 1781510400
-        }
-      ]
-    },
-    {
-      "tournament_id": 918215,
-      "tournament_slug": "tournament/gg-1-kannai-gg",
-      "tournament_name": "関内GG #1 / kannai-gg",
-      "start_at": 1781514000,
-      "end_at": 1781526600,
-      "is_online": false,
-      "city": "横浜市",
-      "venue_name": "おださがプラザ",
-      "country_code": "JP",
-      "num_attendees": 12,
-      "url": "/tournament/gg-1-kannai-gg",
-      "events": [
-        {
-          "event_id": 1638027,
-          "event_slug": "tournament/gg-1-kannai-gg/event/sp-1on1",
-          "event_name": "スマブラSP 1on1",
-          "num_entrants": 12,
-          "type": 1,
-          "start_at": 1781514000
-        }
-      ]
-    },
     {
       "tournament_id": 917394,
       "tournament_slug": "tournament/hit-174-maesuma-hit-174",
@@ -436,14 +390,14 @@
       "city": "札幌市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 77,
+      "num_attendees": 79,
       "url": "/tournament/14-kyokkan-14",
       "events": [
         {
           "event_id": 1625209,
           "event_slug": "tournament/14-kyokkan-14/event/kyokkan",
           "event_name": "極冠/Kyokkan",
-          "num_entrants": 77,
+          "num_entrants": 78,
           "type": 1,
           "start_at": 1781920800
         }
@@ -528,7 +482,7 @@
       "city": "四日市市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 22,
+      "num_attendees": 23,
       "url": "/tournament/quattro-2",
       "events": [
         {
@@ -676,6 +630,29 @@
           "num_entrants": 3,
           "type": 1,
           "start_at": 1782115200
+        }
+      ]
+    },
+    {
+      "tournament_id": 923054,
+      "tournament_slug": "tournament/gg-2-kannai-gg",
+      "tournament_name": "関内GG #2 / kannai-gg",
+      "start_at": 1782118800,
+      "end_at": 1782131400,
+      "is_online": false,
+      "city": "横浜市",
+      "venue_name": "おださがプラザ",
+      "country_code": "JP",
+      "num_attendees": 0,
+      "url": "/tournament/gg-2-kannai-gg",
+      "events": [
+        {
+          "event_id": 1647900,
+          "event_slug": "tournament/gg-2-kannai-gg/event/sp-1on1",
+          "event_name": "スマブラSP 1on1",
+          "num_entrants": 0,
+          "type": 1,
+          "start_at": 1782118800
         }
       ]
     },
@@ -1034,14 +1011,14 @@
       "city": "札幌市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 37,
+      "num_attendees": 38,
       "url": "/tournament/pochisuma-next-patch-4",
       "events": [
         {
           "event_id": 1638445,
           "event_slug": "tournament/pochisuma-next-patch-4/event/ultimate-singles",
           "event_name": "Ultimate Singles",
-          "num_entrants": 37,
+          "num_entrants": 38,
           "type": 1,
           "start_at": 1783206000
         }
