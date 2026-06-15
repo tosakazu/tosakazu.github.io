@@ -163,6 +163,17 @@
         // LV は共通 cascade 由来 (= shared_cascade_lv)。fallback で旧 tjpr_level
         const lv = (rec.scores && (rec.scores.shared_cascade_lv || rec.scores.tjpr_level)) || 0;
         const lvClass = lv > 0 ? `lv-${lv}` : '';
+        // レベル接尾辞: Lv5 は順位で 👑(≤8)/🥇(≤16)/🥈(≤32)/🥉(≤64)/+(≤128)、
+        // Lv1-4 は +カットオフ(384/768/1536/3072)以内なら「+」。
+        const _rk = (rec.ranks && rec.ranks.ensemble) || 0;
+        let lvSuffix = '';
+        if (lv === 5 && _rk) {
+          lvSuffix = _rk <= 8 ? '👑' : _rk <= 16 ? '🥇' : _rk <= 32 ? '🥈'
+                   : _rk <= 64 ? '🥉' : _rk <= 128 ? '+' : '';
+        } else if (lv > 0 && _rk) {
+          const _c = { 4: 384, 3: 768, 2: 1536, 1: 3072 }[lv];
+          lvSuffix = (_c && _rk <= _c) ? '+' : '';
+        }
         // 計測中 (= 2年で集計対象大会 3 未満) → "計測中" pill. それ以外は表示なし.
         // 海外上位と同居可 (= 両方付く. 処理上の灰色判定は海外上位が優先).
         const btPill = isProvisional(rec)
@@ -174,7 +185,7 @@
           : `<a class="player-name" href="${ctx.playerHrefPrefix}p/?uid=${rec.user_id}" onclick="event.stopPropagation()">${escapeHtml(rec.display)}</a>`;
 
         const lvMobile = (ctx.showDisplayBadges && lv > 0)
-          ? `<span class="display-lv-mobile"><span class="lv-badge ${lvClass}">Lv${lv}</span></span>`
+          ? `<span class="display-lv-mobile"><span class="lv-badge ${lvClass}">Lv${lv}${lvSuffix}</span></span>`
           : '';
         const gateMobile = ctx.showDisplayBadges
           ? `<span class="display-gate-mobile">${btPill}</span>`
