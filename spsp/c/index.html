@@ -78,8 +78,10 @@
     input[type="search"] { min-width: 0; width: 100%; flex: 1 1 100%; font-size: 14px; padding: 8px 10px; }
     .table-wrap { padding: 0 8px 24px; max-width: 100vw; overflow-x: hidden; }
     th, td { padding: 8px 6px; font-size: 12px; }
-    th.col-name, td.col-name { min-width: 0; width: auto; max-width: 40vw; word-break: break-word; }
-    th.col-num, td.col-num { width: 56px; }
+    /* 順位番号: モバイルでは更に詰めて左端に寄せ、キャラ名の幅を確保 */
+    th.col-idx, td.col-idx { width: 16px; padding-left: 0; padding-right: 3px; }
+    th.col-name, td.col-name { min-width: 0; width: auto; max-width: 56vw; word-break: break-word; }
+    th.col-num, td.col-num { width: 48px; }
     th.col-top, td.col-top { min-width: 100px; }
     /* モバイル: sticky thead を解除 (= 動的測定+nav 2-row wrap で位置ズレが起きるため,
        カラムヘッダは普通の table row として表示). */
