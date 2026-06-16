@@ -1,5 +1,5 @@
 {
-  "generated_at": 1781557574,
+  "generated_at": 1781568200,
   "country_code": "JP",
   "lookahead_days": 21,
   "count": 44,
@@ -14,14 +14,14 @@
       "city": "渋谷区",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 12,
+      "num_attendees": 13,
       "url": "/tournament/128-shibuya-tatsu",
       "events": [
         {
           "event_id": 1643685,
           "event_slug": "tournament/128-shibuya-tatsu/event/singles",
           "event_name": "Singles",
-          "num_entrants": 12,
+          "num_entrants": 13,
           "type": 1,
           "start_at": 1781604000
         }
@@ -60,7 +60,7 @@
       "city": "中野区",
       "venue_name": "Red Bull Gaming Sphere Tokyo",
       "country_code": "JP",
-      "num_attendees": 65,
+      "num_attendees": 66,
       "url": "/tournament/weekly-smash-party-234",
       "events": [
         {
@@ -91,14 +91,14 @@
       "city": "京都市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 11,
+      "num_attendees": 12,
       "url": "/tournament/dsw-55",
       "events": [
         {
           "event_id": 1644976,
           "event_slug": "tournament/dsw-55/event/singletournament",
           "event_name": "SingleTournament",
-          "num_entrants": 11,
+          "num_entrants": 12,
           "type": 1,
           "start_at": 1781694000
         }
@@ -121,7 +121,7 @@
           "event_id": 1646983,
           "event_slug": "tournament/18-482-2/event/on",
           "event_name": "シングルス（１on１トーナメント）",
-          "num_entrants": 5,
+          "num_entrants": 6,
           "type": 1,
           "start_at": 1781769600
         }
@@ -367,14 +367,14 @@
       "city": "札幌市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 80,
+      "num_attendees": 81,
       "url": "/tournament/14-kyokkan-14",
       "events": [
         {
           "event_id": 1625209,
           "event_slug": "tournament/14-kyokkan-14/event/kyokkan",
           "event_name": "極冠/Kyokkan",
-          "num_entrants": 78,
+          "num_entrants": 79,
           "type": 1,
           "start_at": 1781920800
         }
@@ -436,14 +436,14 @@
       "city": "さいたま市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 42,
+      "num_attendees": 43,
       "url": "/tournament/aya-8",
       "events": [
         {
           "event_id": 1625204,
           "event_slug": "tournament/aya-8/event/ultimate-singles",
           "event_name": "Ultimate Singles",
-          "num_entrants": 42,
+          "num_entrants": 43,
           "type": 1,
           "start_at": 1781928000
         }
@@ -735,14 +735,14 @@
       "city": "台東区",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 2,
+      "num_attendees": 3,
       "url": "/tournament/27-489-1",
       "events": [
         {
           "event_id": 1646992,
           "event_slug": "tournament/27-489-1/event/on",
           "event_name": "シングルス（１on１トーナメント）",
-          "num_entrants": 2,
+          "num_entrants": 3,
           "type": 1,
           "start_at": 1782529200
         }
@@ -1011,14 +1011,14 @@
       "city": "奈良市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 25,
+      "num_attendees": 24,
       "url": "/tournament/badawi-5",
       "events": [
         {
           "event_id": 1620892,
           "event_slug": "tournament/badawi-5/event/badawi",
           "event_name": "Badawi",
-          "num_entrants": 25,
+          "num_entrants": 24,
           "type": 1,
           "start_at": 1783213200
         }
