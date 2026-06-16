@@ -1,8 +1,8 @@
 {
-  "generated_at": 1781578882,
+  "generated_at": 1781590138,
   "country_code": "JP",
   "lookahead_days": 21,
-  "count": 44,
+  "count": 45,
   "tournaments": [
     {
       "tournament_id": 921013,
@@ -37,14 +37,14 @@
       "city": "川崎市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 9,
+      "num_attendees": 13,
       "url": "/tournament/23-15",
       "events": [
         {
           "event_id": 1644391,
           "event_slug": "tournament/23-15/event/super-smash-bros-ultimate-singles",
           "event_name": "雷影杯",
-          "num_entrants": 9,
+          "num_entrants": 12,
           "type": 1,
           "start_at": 1781686800
         }
@@ -137,14 +137,14 @@
       "city": "渋谷区",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 10,
+      "num_attendees": 11,
       "url": "/tournament/shibuya-g-g-smash-weekly-67",
       "events": [
         {
           "event_id": 1645131,
           "event_slug": "tournament/shibuya-g-g-smash-weekly-67/event/singles",
           "event_name": "Singles",
-          "num_entrants": 10,
+          "num_entrants": 11,
           "type": 1,
           "start_at": 1781778600
         }
@@ -160,14 +160,14 @@
       "city": "大阪市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 0,
+      "num_attendees": 4,
       "url": "/tournament/hit-175-maesuma-hit-175",
       "events": [
         {
           "event_id": 1636394,
           "event_slug": "tournament/hit-175-maesuma-hit-175/event/singles-tournament",
           "event_name": "Singles Tournament",
-          "num_entrants": 0,
+          "num_entrants": 4,
           "type": 1,
           "start_at": 1781776800
         }
@@ -390,14 +390,14 @@
       "city": "野々市市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 4,
+      "num_attendees": 5,
       "url": "/tournament/-3093",
       "events": [
         {
           "event_id": 1642055,
           "event_slug": "tournament/-3093/event/ultimate-single",
           "event_name": "ultimate single",
-          "num_entrants": 4,
+          "num_entrants": 5,
           "type": 1,
           "start_at": 1781924400
         }
@@ -459,14 +459,14 @@
       "city": "四日市市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 24,
+      "num_attendees": 25,
       "url": "/tournament/quattro-2",
       "events": [
         {
           "event_id": 1640556,
           "event_slug": "tournament/quattro-2/event/quattro",
           "event_name": "四闘-Quattro-",
-          "num_entrants": 24,
+          "num_entrants": 25,
           "type": 1,
           "start_at": 1781928000
         }
@@ -528,14 +528,14 @@
       "city": "渋谷区",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 38,
+      "num_attendees": 39,
       "url": "/tournament/to-win-10",
       "events": [
         {
           "event_id": 1645515,
           "event_slug": "tournament/to-win-10/event/singles",
           "event_name": "Singles",
-          "num_entrants": 38,
+          "num_entrants": 39,
           "type": 1,
           "start_at": 1782003600
         }
@@ -574,14 +574,14 @@
       "city": "京都市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 12,
+      "num_attendees": 13,
       "url": "/tournament/2-193",
       "events": [
         {
           "event_id": 1645922,
           "event_slug": "tournament/2-193/event/ultimate-singles",
           "event_name": "Ultimate Singles",
-          "num_entrants": 12,
+          "num_entrants": 13,
           "type": 1,
           "start_at": 1782018000
         }
@@ -630,6 +630,29 @@
           "num_entrants": 1,
           "type": 1,
           "start_at": 1782118800
+        }
+      ]
+    },
+    {
+      "tournament_id": 923480,
+      "tournament_slug": "tournament/129-shibuya-tatsu",
+      "tournament_name": "渋谷\"達\" #129 shibuya -tatsu-",
+      "start_at": 1782208800,
+      "end_at": 1782221400,
+      "is_online": false,
+      "city": "渋谷区",
+      "venue_name": "",
+      "country_code": "JP",
+      "num_attendees": 1,
+      "url": "/tournament/129-shibuya-tatsu",
+      "events": [
+        {
+          "event_id": 1648730,
+          "event_slug": "tournament/129-shibuya-tatsu/event/singles",
+          "event_name": "Singles",
+          "num_entrants": 1,
+          "type": 1,
+          "start_at": 1782208800
         }
       ]
     },
@@ -712,14 +735,14 @@
       "city": "大東市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 326,
+      "num_attendees": 327,
       "url": "/tournament/70-sp-1",
       "events": [
         {
           "event_id": 1634012,
           "event_slug": "tournament/70-sp-1/event/1on1",
           "event_name": "予選あり1on1トーナメント",
-          "num_entrants": 315,
+          "num_entrants": 316,
           "type": 1,
           "start_at": 1782523800
         }
@@ -919,14 +942,22 @@
       "city": "岐阜市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 93,
+      "num_attendees": 97,
       "url": "/tournament/21-16",
       "events": [
         {
           "event_id": 1636233,
           "event_slug": "tournament/21-16/event/gifusma21",
           "event_name": "gifusma21",
-          "num_entrants": 93,
+          "num_entrants": 96,
+          "type": 1,
+          "start_at": 1783126800
+        },
+        {
+          "event_id": 1648765,
+          "event_slug": "tournament/21-16/event/kengaku",
+          "event_name": "kengaku",
+          "num_entrants": 1,
           "type": 1,
           "start_at": 1783126800
         }
@@ -1011,14 +1042,14 @@
       "city": "奈良市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 25,
+      "num_attendees": 26,
       "url": "/tournament/badawi-5",
       "events": [
         {
           "event_id": 1620892,
           "event_slug": "tournament/badawi-5/event/badawi",
           "event_name": "Badawi",
-          "num_entrants": 25,
+          "num_entrants": 26,
           "type": 1,
           "start_at": 1783213200
         }
