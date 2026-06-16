@@ -1,5 +1,5 @@
 {
-  "generated_at": 1781524999,
+  "generated_at": 1781535802,
   "country_code": "JP",
   "lookahead_days": 21,
   "count": 44,
@@ -183,14 +183,14 @@
       "city": "台東区",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 2,
+      "num_attendees": 3,
       "url": "/tournament/19-483-6",
       "events": [
         {
           "event_id": 1646987,
           "event_slug": "tournament/19-483-6/event/on",
           "event_name": "シングルス（１on１トーナメント）",
-          "num_entrants": 2,
+          "num_entrants": 3,
           "type": 1,
           "start_at": 1781856000
         }
@@ -827,14 +827,14 @@
       "city": "京都市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 27,
+      "num_attendees": 28,
       "url": "/tournament/don-t-stop-wa-cs-1-last-chance-qualifier",
       "events": [
         {
           "event_id": 1637958,
           "event_slug": "tournament/don-t-stop-wa-cs-1-last-chance-qualifier/event/singletournament",
           "event_name": "SingleTournament",
-          "num_entrants": 27,
+          "num_entrants": 28,
           "type": 1,
           "start_at": 1782612000
         }
@@ -919,14 +919,14 @@
       "city": "岐阜市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 88,
+      "num_attendees": 91,
       "url": "/tournament/21-16",
       "events": [
         {
           "event_id": 1636233,
           "event_slug": "tournament/21-16/event/gifusma21",
           "event_name": "gifusma21",
-          "num_entrants": 88,
+          "num_entrants": 91,
           "type": 1,
           "start_at": 1783126800
         }
