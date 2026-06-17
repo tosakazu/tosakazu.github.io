@@ -434,7 +434,7 @@
   </div>
 
   <div class="footer" id="footer-info">
-    <span class="site-version" style="font-size:11px;color:#9ca3af">v 925a0cf · 2026-06-17 03:53 UTC</span>
+    <span class="site-version" style="font-size:11px;color:#9ca3af">v 7fbde92 · 2026-06-17 05:27 UTC</span>
   </div>
 </main>
 
@@ -493,6 +493,25 @@ function preRank(p, field) {
   if (p && p.pretour_ranks && p.pretour_ranks[field] != null) return p.pretour_ranks[field];
   if (p && p.global_ranks && p.global_ranks[field] != null) return p.global_ranks[field];
   return null;
+}
+
+// 全国順位 → レベル (Lv5=top256 / Lv4=512 / Lv3=1024 / Lv2=2048 / Lv1=その他).
+// 「当時のレベル」を参加前順位から導出するために使う (ranking-table.js と同じ境界).
+function lvFromRank(rank) {
+  if (rank == null || rank <= 0) return 0;
+  if (rank <= 256) return 5;
+  if (rank <= 512) return 4;
+  if (rank <= 1024) return 3;
+  if (rank <= 2048) return 2;
+  return 1;
+}
+function lvLabel(rank) {
+  const lv = lvFromRank(rank);
+  if (!lv) return '';
+  let sfx = '';
+  if (lv === 5) sfx = rank<=8?'👑':rank<=16?'🥇':rank<=32?'🥈':rank<=64?'🥉':rank<=128?'+':'';
+  else { const c = {4:384,3:768,2:1536,1:3072}[lv]; sfx = (c && rank<=c) ? '+' : ''; }
+  return `Lv${lv}${sfx}`;
 }
 
 function render() {
@@ -682,8 +701,9 @@ function renderStandings() {
     const placeStr = p.place != null ? p.place : '—';
     const placeCls = placeClass(p.place);
     const er = preRank(p, 'ensemble');
+    const lvTxt = lvLabel(er);
     const grank = er != null
-      ? `<div class="sub">全国 #${er}</div>` : '';
+      ? `<div class="sub">全国 #${er}${lvTxt ? ' · 当時' + lvTxt : ''}</div>` : '';
     // SPR chip. sub 行に seed 番号を表示 (= 他 chip と高さ揃える).
     const seedSub = p.seed != null
       ? `<span class="sub">seed ${p.seed}</span>`
@@ -696,45 +716,32 @@ function renderStandings() {
     } else {
       sprChip = `<div class="chip"><span class="lbl lbl-en">SPR</span><span class="val dim">—</span>${seedSub}</div>`;
     }
-    // 順位評価 chip
-    // bt_used を「player の LV tfilter がこの大会を通過したか」の共通シグナルとして使用:
-    //   - bt_used=true → 通過 → 0 でも "±0" 表示
-    //   - bt_used=false → 通過せず (= 対象外) → "−" 表示
-    // BT と TJPR で表示の semantics を一致させる
-    const wVal = (p.tjpr_w || 0) * TJPR_SCALE;
-    const baseVal = (p.tjpr_raw || 0) * TJPR_SCALE;
+    // 順位評価 chip: 「当時その大会で獲得した raw pt」(= tjpr_pts_at) を表示.
+    //   null = 当時の計上対象外 (制限大会×当時top1024 圏内) → "−"
+    const subBlank = `<span class="sub">&nbsp;</span>`;
+    const ptsAt = p.tjpr_pts_at;
     let tjprValHtml;
-    if (!p.bt_used) {
+    if (ptsAt == null) {
       tjprValHtml = `<span class="val dim">−</span>`;
-    } else if (wVal > 0.05) {
-      tjprValHtml = `<span class="val pos">+${wVal.toFixed(1)}</span>`;
     } else {
-      tjprValHtml = `<span class="val dim">±0</span>`;
+      const v = ptsAt * TJPR_SCALE;
+      tjprValHtml = v > 0.05 ? `<span class="val pos">+${v.toFixed(1)}</span>` : `<span class="val dim">±0</span>`;
     }
-    // 対象なら 0.0 でも (X.X) 表記、対象外は空白
-    const tjprSubHtml = p.bt_used
-      ? `<span class="sub">(${baseVal.toFixed(1)})</span>` : `<span class="sub">&nbsp;</span>`;
-    const tjprChip = `<div class="chip"><span class="lbl">順位評価</span>${tjprValHtml}${tjprSubHtml}</div>`;
-    // 直対評価 chip: peak delta 主、内部レート delta を ( ) で. bt_used=true なら 0 でも表示.
-    const peakD = (p.bt_d || 0) * ELO_PER_UNIT;
-    const intD = (p.bt_internal_d || 0) * ELO_PER_UNIT;
+    const tjprChip = `<div class="chip"><span class="lbl">順位評価</span>${tjprValHtml}${subBlank}</div>`;
+    // 直対評価 chip: 「当時の BT 内部レート増分」(= bt_delta_at) を表示.
+    const btAt = p.bt_delta_at;
     let btValHtml;
-    if (Math.abs(peakD) > 0.05) {
-      const cls = peakD > 0 ? 'pos' : 'neg';
-      const sign = peakD > 0 ? '+' : '';
-      btValHtml = `<span class="val ${cls}">${sign}${peakD.toFixed(1)}</span>`;
-    } else if (p.bt_used) {
-      btValHtml = `<span class="val dim">±0</span>`;
+    if (btAt == null) {
+      btValHtml = `<span class="val dim">−</span>`;
     } else {
-      btValHtml = `<span class="val dim">—</span>`;
+      const v = btAt * ELO_PER_UNIT;
+      if (Math.abs(v) > 0.05) {
+        btValHtml = `<span class="val ${v > 0 ? 'pos' : 'neg'}">${v > 0 ? '+' : ''}${v.toFixed(1)}</span>`;
+      } else {
+        btValHtml = `<span class="val dim">±0</span>`;
+      }
     }
-    let btSubHtml;
-    if (p.bt_used) {
-      btSubHtml = `<span class="sub">(${intD >= 0 ? '+' : ''}${intD.toFixed(1)})</span>`;
-    } else {
-      btSubHtml = `<span class="sub">&nbsp;</span>`;
-    }
-    const btChip = `<div class="chip"><span class="lbl">直対評価</span>${btValHtml}${btSubHtml}</div>`;
+    const btChip = `<div class="chip"><span class="lbl">直対評価</span>${btValHtml}${subBlank}</div>`;
     const vHtml = `<div class="v-stats">${sprChip}${tjprChip}${btChip}<span class="chevron">▶</span></div>`;
     const nentTotal = TOURNEY.nent || TOURNEY.standings.length;
     const placeFrac = nentTotal ? `<span class="frac">/${nentTotal}</span>` : '';
