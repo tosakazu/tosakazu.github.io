@@ -434,7 +434,7 @@
   </div>
 
   <div class="footer" id="footer-info">
-    <span class="site-version" style="font-size:11px;color:#9ca3af">v 036f639 · 2026-06-17 01:48 UTC</span>
+    <span class="site-version" style="font-size:11px;color:#9ca3af">v 925a0cf · 2026-06-17 03:13 UTC</span>
   </div>
 </main>
 
@@ -487,6 +487,14 @@ function placeClass(p) {
   return '';
 }
 
+// 大会ページの「全国 #」は参加前 (= 大会開催時点) の順位を表示する.
+// pretour_ranks が無い古いデータは global_ranks (= 現在) に fallback.
+function preRank(p, field) {
+  if (p && p.pretour_ranks && p.pretour_ranks[field] != null) return p.pretour_ranks[field];
+  if (p && p.global_ranks && p.global_ranks[field] != null) return p.global_ranks[field];
+  return null;
+}
+
 function render() {
   document.getElementById('loading').style.display = 'none';
   document.getElementById('share-card').style.display = '';
@@ -514,14 +522,6 @@ function render() {
   document.getElementById('meta-line').innerHTML =
     `${TOURNEY.date}${TOURNEY.end_date && TOURNEY.end_date !== TOURNEY.date ? ' 〜 ' + TOURNEY.end_date : ''} · ` +
     `<b style="color:#111827">${TOURNEY.nent || TOURNEY.standings.length}</b> 名 ${chips.join('')}`;
-
-  // 大会ページの「全国 #」は参加前 (= 大会開催時点) の順位を表示する.
-  // pretour_ranks が無い古いデータは global_ranks (= 現在) に fallback.
-  function preRank(p, field) {
-    if (p && p.pretour_ranks && p.pretour_ranks[field] != null) return p.pretour_ranks[field];
-    if (p && p.global_ranks && p.global_ranks[field] != null) return p.global_ranks[field];
-    return null;
-  }
 
   // Podium
   const top3 = TOURNEY.standings.slice(0, 3);
