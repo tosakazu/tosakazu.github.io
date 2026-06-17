@@ -1,5 +1,5 @@
 {
-  "generated_at": 1781611263,
+  "generated_at": 1781622080,
   "country_code": "JP",
   "lookahead_days": 21,
   "count": 44,
@@ -14,14 +14,14 @@
       "city": "川崎市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 13,
+      "num_attendees": 14,
       "url": "/tournament/23-15",
       "events": [
         {
           "event_id": 1644391,
           "event_slug": "tournament/23-15/event/super-smash-bros-ultimate-singles",
           "event_name": "雷影杯",
-          "num_entrants": 12,
+          "num_entrants": 13,
           "type": 1,
           "start_at": 1781686800
         }
@@ -137,14 +137,14 @@
       "city": "大阪市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 7,
+      "num_attendees": 10,
       "url": "/tournament/hit-175-maesuma-hit-175",
       "events": [
         {
           "event_id": 1636394,
           "event_slug": "tournament/hit-175-maesuma-hit-175/event/singles-tournament",
           "event_name": "Singles Tournament",
-          "num_entrants": 7,
+          "num_entrants": 10,
           "type": 1,
           "start_at": 1781776800
         }
@@ -505,14 +505,14 @@
       "city": "渋谷区",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 38,
+      "num_attendees": 39,
       "url": "/tournament/to-win-10",
       "events": [
         {
           "event_id": 1645515,
           "event_slug": "tournament/to-win-10/event/singles",
           "event_name": "Singles",
-          "num_entrants": 38,
+          "num_entrants": 39,
           "type": 1,
           "start_at": 1782003600
         }
@@ -712,14 +712,14 @@
       "city": "大東市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 327,
+      "num_attendees": 328,
       "url": "/tournament/70-sp-1",
       "events": [
         {
           "event_id": 1634012,
           "event_slug": "tournament/70-sp-1/event/1on1",
           "event_name": "予選あり1on1トーナメント",
-          "num_entrants": 316,
+          "num_entrants": 317,
           "type": 1,
           "start_at": 1782523800
         }
@@ -919,7 +919,7 @@
       "city": "岐阜市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 97,
+      "num_attendees": 98,
       "url": "/tournament/21-16",
       "events": [
         {
@@ -934,7 +934,7 @@
           "event_id": 1648765,
           "event_slug": "tournament/21-16/event/kengaku",
           "event_name": "kengaku",
-          "num_entrants": 1,
+          "num_entrants": 2,
           "type": 1,
           "start_at": 1783126800
         }
