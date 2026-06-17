@@ -434,7 +434,7 @@
   </div>
 
   <div class="footer" id="footer-info">
-    <span class="site-version" style="font-size:11px;color:#9ca3af">v 7fbde92 · 2026-06-17 06:04 UTC</span>
+    <span class="site-version" style="font-size:11px;color:#9ca3af">v 71747be · 2026-06-17 07:43 UTC</span>
   </div>
 </main>
 
@@ -495,22 +495,13 @@ function preRank(p, field) {
   return null;
 }
 
-// 全国順位 → レベル (Lv5=top256 / Lv4=512 / Lv3=1024 / Lv2=2048 / Lv1=その他).
-// 「当時のレベル」を参加前順位から導出するために使う (ranking-table.js と同じ境界).
-function lvFromRank(rank) {
-  if (rank == null || rank <= 0) return 0;
-  if (rank <= 256) return 5;
-  if (rank <= 512) return 4;
-  if (rank <= 1024) return 3;
-  if (rank <= 2048) return 2;
-  return 1;
-}
-function lvLabel(rank) {
-  const lv = lvFromRank(rank);
-  if (!lv) return '';
+// 当時のレベル表記. lv = 当時の TJPR レベル (実 cascade スナップショット由来),
+// rank = 当時の全国順位 (+/メダル接尾辞の判定用, ranking-table.js と同じ境界).
+function lvLabel(lv, rank) {
+  if (!lv || lv <= 0) return '';
   let sfx = '';
-  if (lv === 5) sfx = rank<=8?'👑':rank<=16?'🥇':rank<=32?'🥈':rank<=64?'🥉':rank<=128?'+':'';
-  else { const c = {4:384,3:768,2:1536,1:3072}[lv]; sfx = (c && rank<=c) ? '+' : ''; }
+  if (lv === 5 && rank) sfx = rank<=8?'👑':rank<=16?'🥇':rank<=32?'🥈':rank<=64?'🥉':rank<=128?'+':'';
+  else if (rank) { const c = {4:384,3:768,2:1536,1:3072}[lv]; sfx = (c && rank<=c) ? '+' : ''; }
   return `Lv${lv}${sfx}`;
 }
 
@@ -701,7 +692,7 @@ function renderStandings() {
     const placeStr = p.place != null ? p.place : '—';
     const placeCls = placeClass(p.place);
     const er = preRank(p, 'ensemble');
-    const lvTxt = lvLabel(er);
+    const lvTxt = lvLabel(p.at_lv, er);
     const grank = er != null
       ? `<div class="sub">全国 #${er}${lvTxt ? ' · 当時' + lvTxt : ''}</div>` : '';
     // SPR chip. sub 行に seed 番号を表示 (= 他 chip と高さ揃える).
@@ -728,20 +719,21 @@ function renderStandings() {
       tjprValHtml = v > 0.05 ? `<span class="val pos">+${v.toFixed(1)}</span>` : `<span class="val dim">±0</span>`;
     }
     const tjprChip = `<div class="chip"><span class="lbl">順位評価</span>${tjprValHtml}${subBlank}</div>`;
-    // 直対評価 chip: 「当時の BT 内部レート増分」(= bt_delta_at) を表示.
-    const btAt = p.bt_delta_at;
+    // 直対評価 chip: 当時の BT レート変動 (時系列の bt_d=peak180 主 / bt_internal_d を ( )).
+    // bt_used=false (= 当時その大会で BT が更新されなかった) は "−".
+    const peakD = (p.bt_d || 0) * ELO_PER_UNIT;
+    const intD = (p.bt_internal_d || 0) * ELO_PER_UNIT;
     let btValHtml;
-    if (btAt == null) {
+    if (!p.bt_used) {
       btValHtml = `<span class="val dim">−</span>`;
+    } else if (Math.abs(peakD) > 0.05) {
+      btValHtml = `<span class="val ${peakD > 0 ? 'pos' : 'neg'}">${peakD > 0 ? '+' : ''}${peakD.toFixed(1)}</span>`;
     } else {
-      const v = btAt * ELO_PER_UNIT;
-      if (Math.abs(v) > 0.05) {
-        btValHtml = `<span class="val ${v > 0 ? 'pos' : 'neg'}">${v > 0 ? '+' : ''}${v.toFixed(1)}</span>`;
-      } else {
-        btValHtml = `<span class="val dim">±0</span>`;
-      }
+      btValHtml = `<span class="val dim">±0</span>`;
     }
-    const btChip = `<div class="chip"><span class="lbl">直対評価</span>${btValHtml}${subBlank}</div>`;
+    const btSubHtml = p.bt_used
+      ? `<span class="sub">(${intD >= 0 ? '+' : ''}${intD.toFixed(1)})</span>` : subBlank;
+    const btChip = `<div class="chip"><span class="lbl">直対評価</span>${btValHtml}${btSubHtml}</div>`;
     const vHtml = `<div class="v-stats">${sprChip}${tjprChip}${btChip}<span class="chevron">▶</span></div>`;
     const nentTotal = TOURNEY.nent || TOURNEY.standings.length;
     const placeFrac = nentTotal ? `<span class="frac">/${nentTotal}</span>` : '';
