@@ -1,32 +1,9 @@
 {
-  "generated_at": 1781687097,
+  "generated_at": 1781697675,
   "country_code": "JP",
   "lookahead_days": 21,
-  "count": 47,
+  "count": 46,
   "tournaments": [
-    {
-      "tournament_id": 921637,
-      "tournament_slug": "tournament/dsw-55",
-      "tournament_name": "新京都DSW#55",
-      "start_at": 1781694000,
-      "end_at": 1781704800,
-      "is_online": false,
-      "city": "京都市",
-      "venue_name": "",
-      "country_code": "JP",
-      "num_attendees": 14,
-      "url": "/tournament/dsw-55",
-      "events": [
-        {
-          "event_id": 1644976,
-          "event_slug": "tournament/dsw-55/event/singletournament",
-          "event_name": "SingleTournament",
-          "num_entrants": 14,
-          "type": 1,
-          "start_at": 1781694000
-        }
-      ]
-    },
     {
       "tournament_id": 922596,
       "tournament_slug": "tournament/18-482-2",
@@ -83,14 +60,14 @@
       "city": "大阪市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 23,
+      "num_attendees": 24,
       "url": "/tournament/hit-175-maesuma-hit-175",
       "events": [
         {
           "event_id": 1636394,
           "event_slug": "tournament/hit-175-maesuma-hit-175/event/singles-tournament",
           "event_name": "Singles Tournament",
-          "num_entrants": 23,
+          "num_entrants": 24,
           "type": 1,
           "start_at": 1781776800
         }
@@ -166,29 +143,6 @@
       ]
     },
     {
-      "tournament_id": 917263,
-      "tournament_slug": "tournament/smash-141-1",
-      "tournament_name": "Smash薬院#141",
-      "start_at": 1781865000,
-      "end_at": 1781877600,
-      "is_online": false,
-      "city": "福岡市",
-      "venue_name": "",
-      "country_code": "JP",
-      "num_attendees": 4,
-      "url": "/tournament/smash-141-1",
-      "events": [
-        {
-          "event_id": 1636150,
-          "event_slug": "tournament/smash-141-1/event/1on1",
-          "event_name": "1on1トーナメント",
-          "num_entrants": 4,
-          "type": 1,
-          "start_at": 1781865000
-        }
-      ]
-    },
-    {
       "tournament_id": 923837,
       "tournament_slug": "tournament/pochisuma-15-1",
       "tournament_name": "ポチスマ/Pochisuma #15",
@@ -206,6 +160,29 @@
           "event_slug": "tournament/pochisuma-15-1/event/ultimate-singles",
           "event_name": "Ultimate Singles",
           "num_entrants": 1,
+          "type": 1,
+          "start_at": 1781865000
+        }
+      ]
+    },
+    {
+      "tournament_id": 917263,
+      "tournament_slug": "tournament/smash-141-1",
+      "tournament_name": "Smash薬院#141",
+      "start_at": 1781865000,
+      "end_at": 1781877600,
+      "is_online": false,
+      "city": "福岡市",
+      "venue_name": "",
+      "country_code": "JP",
+      "num_attendees": 5,
+      "url": "/tournament/smash-141-1",
+      "events": [
+        {
+          "event_id": 1636150,
+          "event_slug": "tournament/smash-141-1/event/1on1",
+          "event_name": "1on1トーナメント",
+          "num_entrants": 5,
           "type": 1,
           "start_at": 1781865000
         }
@@ -336,14 +313,14 @@
       "city": "札幌市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 81,
+      "num_attendees": 80,
       "url": "/tournament/14-kyokkan-14",
       "events": [
         {
           "event_id": 1625209,
           "event_slug": "tournament/14-kyokkan-14/event/kyokkan",
           "event_name": "極冠/Kyokkan",
-          "num_entrants": 79,
+          "num_entrants": 78,
           "type": 1,
           "start_at": 1781920800
         }
@@ -566,14 +543,14 @@
       "city": "台東区",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 6,
+      "num_attendees": 7,
       "url": "/tournament/22-485",
       "events": [
         {
           "event_id": 1646941,
           "event_slug": "tournament/22-485/event/on",
           "event_name": "シングルス（１on１トーナメント）",
-          "num_entrants": 6,
+          "num_entrants": 7,
           "type": 1,
           "start_at": 1782115200
         }
