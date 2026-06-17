@@ -1,63 +1,9 @@
 {
-  "generated_at": 1781676497,
+  "generated_at": 1781687097,
   "country_code": "JP",
   "lookahead_days": 21,
-  "count": 48,
+  "count": 47,
   "tournaments": [
-    {
-      "tournament_id": 921349,
-      "tournament_slug": "tournament/23-15",
-      "tournament_name": "雷影杯#23",
-      "start_at": 1781686800,
-      "end_at": 1781703000,
-      "is_online": false,
-      "city": "川崎市",
-      "venue_name": "",
-      "country_code": "JP",
-      "num_attendees": 15,
-      "url": "/tournament/23-15",
-      "events": [
-        {
-          "event_id": 1644391,
-          "event_slug": "tournament/23-15/event/super-smash-bros-ultimate-singles",
-          "event_name": "雷影杯",
-          "num_entrants": 14,
-          "type": 1,
-          "start_at": 1781686800
-        }
-      ]
-    },
-    {
-      "tournament_id": 921737,
-      "tournament_slug": "tournament/weekly-smash-party-234",
-      "tournament_name": "Weekly Smash Party ～スマパ～ #234",
-      "start_at": 1781686800,
-      "end_at": 1781703000,
-      "is_online": false,
-      "city": "中野区",
-      "venue_name": "Red Bull Gaming Sphere Tokyo",
-      "country_code": "JP",
-      "num_attendees": 60,
-      "url": "/tournament/weekly-smash-party-234",
-      "events": [
-        {
-          "event_id": 1645164,
-          "event_slug": "tournament/weekly-smash-party-234/event/special-1on1-ultimate-singles",
-          "event_name": "SPECIAL 1on1/ Ultimate Singles",
-          "num_entrants": 48,
-          "type": 1,
-          "start_at": 1781686800
-        },
-        {
-          "event_id": 1645165,
-          "event_slug": "tournament/weekly-smash-party-234/event/ssqm-1on1",
-          "event_name": "SSQM 1on1",
-          "num_entrants": 12,
-          "type": 1,
-          "start_at": 1781686800
-        }
-      ]
-    },
     {
       "tournament_id": 921637,
       "tournament_slug": "tournament/dsw-55",
@@ -91,14 +37,14 @@
       "city": "台東区",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 12,
+      "num_attendees": 11,
       "url": "/tournament/18-482-2",
       "events": [
         {
           "event_id": 1646983,
           "event_slug": "tournament/18-482-2/event/on",
           "event_name": "シングルス（１on１トーナメント）",
-          "num_entrants": 12,
+          "num_entrants": 11,
           "type": 1,
           "start_at": 1781769600
         }
@@ -137,14 +83,14 @@
       "city": "大阪市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 21,
+      "num_attendees": 23,
       "url": "/tournament/hit-175-maesuma-hit-175",
       "events": [
         {
           "event_id": 1636394,
           "event_slug": "tournament/hit-175-maesuma-hit-175/event/singles-tournament",
           "event_name": "Singles Tournament",
-          "num_entrants": 21,
+          "num_entrants": 23,
           "type": 1,
           "start_at": 1781776800
         }
@@ -574,14 +520,14 @@
       "city": "和泉市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 12,
+      "num_attendees": 13,
       "url": "/tournament/innosuma-25",
       "events": [
         {
           "event_id": 1629805,
           "event_slug": "tournament/innosuma-25/event/sp-1on1",
           "event_name": "スマブラSP 1on1 トーナメント",
-          "num_entrants": 12,
+          "num_entrants": 13,
           "type": 1,
           "start_at": 1782014400
         }
@@ -643,7 +589,7 @@
       "city": "横浜市",
       "venue_name": "おださがプラザ",
       "country_code": "JP",
-      "num_attendees": 1,
+      "num_attendees": 2,
       "url": "/tournament/gg-2-kannai-gg",
       "events": [
         {
@@ -689,7 +635,7 @@
       "city": "川崎市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 2,
+      "num_attendees": 3,
       "url": "/tournament/24-11",
       "events": [
         {
@@ -697,6 +643,29 @@
           "event_slug": "tournament/24-11/event/super-smash-bros-ultimate-singles",
           "event_name": "雷影杯",
           "num_entrants": 3,
+          "type": 1,
+          "start_at": 1782291600
+        }
+      ]
+    },
+    {
+      "tournament_id": 923926,
+      "tournament_slug": "tournament/weekly-smash-party-235",
+      "tournament_name": "Weekly Smash Party ～スマパ～ #235",
+      "start_at": 1782291600,
+      "end_at": 1782311400,
+      "is_online": false,
+      "city": "中野区",
+      "venue_name": "Red Bull Gaming Sphere Tokyo",
+      "country_code": "JP",
+      "num_attendees": 1,
+      "url": "/tournament/weekly-smash-party-235",
+      "events": [
+        {
+          "event_id": 1649614,
+          "event_slug": "tournament/weekly-smash-party-235/event/special-1on1-ultimate-singles",
+          "event_name": "SPECIAL 1on1/ Ultimate Singles",
+          "num_entrants": 1,
           "type": 1,
           "start_at": 1782291600
         }
@@ -758,14 +727,14 @@
       "city": "仙台市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 31,
+      "num_attendees": 30,
       "url": "/tournament/ost-15",
       "events": [
         {
           "event_id": 1643798,
           "event_slug": "tournament/ost-15/event/sp",
           "event_name": "SPシングルストーナメント",
-          "num_entrants": 31,
+          "num_entrants": 30,
           "type": 1,
           "start_at": 1782522000
         }
@@ -873,7 +842,7 @@
       "city": "柏市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 14,
+      "num_attendees": 15,
       "url": "/tournament/sen-smash-4",
       "events": [
         {
