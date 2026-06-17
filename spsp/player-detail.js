@@ -43,7 +43,8 @@
     const arr = ts.slice();
     if (tourSortMode === 'contribution') {
       arr.sort((a, b) => {
-        const aw = a.tjpr_w || 0, bw = b.tjpr_w || 0;
+        // 影響順 = 当時その大会で獲得した raw pt の大きい順.
+        const aw = a.tjpr_pts_at || 0, bw = b.tjpr_pts_at || 0;
         if (bw !== aw) return bw - aw;
         return (b.date || '').localeCompare(a.date || '');
       });
@@ -149,8 +150,15 @@
       const countedClass = t.tjpr_counted ? 'counted' : '';
       const hiddenCls = idx >= TOP_N ? 'extra-row hidden-row' : '';
       const cls = `${wkClass} ${countedClass} ${hiddenCls}`.trim();
-      const lvBadge = t.tjpr_lv > 0
-        ? `<span class="lv-badge lv-${t.tjpr_lv}">Lv${t.tjpr_lv}</span>`
+      // 当時のレベル: 実 cascade スナップショット由来の at_lv (= 当時の TJPR レベル).
+      // 接尾辞 (+/メダル) は当時の全国順位 (pretour_ranks.ensemble) で判定.
+      const _lv = t.at_lv || 0;
+      const _lvr = (t.pretour_ranks && t.pretour_ranks.ensemble) || null;
+      let _lvsfx = '';
+      if (_lv === 5 && _lvr) _lvsfx = _lvr<=8?'👑':_lvr<=16?'🥇':_lvr<=32?'🥈':_lvr<=64?'🥉':_lvr<=128?'+':'';
+      else if (_lv > 0 && _lvr) { const _c = {4:384,3:768,2:1536,1:3072}[_lv]; _lvsfx = (_c && _lvr<=_c)?'+':''; }
+      const lvBadge = _lv > 0
+        ? `<span class="lv-badge lv-${_lv}">Lv${_lv}${_lvsfx}</span>`
         : '<span style="opacity:0.4">−</span>';
       const dayTag = t.is_weekend
         ? '<span class="tag-wk">休日</span>'
@@ -159,27 +167,24 @@
       const preTag = t.is_pre ? '<span class="tag-pre">プレ大会</span>' : '';
       const resTag = t.is_restricted ? '<span class="tag-res">制限</span>' : '';
       const lcTag = t.is_lower_class ? '<span class="tag-lc">下位クラス</span>' : '';
-      // 直対評価 (peak180 delta) を主表示、内部レート (current delta) を ( ) 内に併記.
+      // 直対評価: 当時の BT レート変動 (時系列の bt_d=peak180 主 / bt_internal_d を ( ) 内).
+      // bt_used=false (= 当時その大会で BT 未更新) は "−".
       const btDelta = (t.bt_d || 0) * ELO_PER_UNIT;
       const btIntDelta = (t.bt_internal_d || 0) * ELO_PER_UNIT;
       const btDeltaCls = btDelta > 0 ? 'pos' : (btDelta < 0 ? 'neg' : '');
-      const btSign = btDelta > 0 ? '+' : '';
-      const btIntSign = btIntDelta > 0 ? '+' : '';
       const btIntStr = Math.abs(btIntDelta) > 0.01
-        ? ` <span style="color:#9ca3af;font-size:10px">(${btIntSign}${btIntDelta.toFixed(2)})</span>`
+        ? ` <span style="color:#9ca3af;font-size:10px">(${btIntDelta > 0 ? '+' : ''}${btIntDelta.toFixed(2)})</span>`
         : '';
+      const btCellStr = t.bt_used
+        ? `${btDelta > 0 ? '+' : ''}${btDelta.toFixed(2)}${btIntStr}`
+        : '<span style="opacity:0.4">−</span>';
       const oppHtml = renderMainOpponents(t.event_id);
       const oppRowCls = `tour-opp-row ${cls}`.trim();
-      // 順位寄与 + ベース を 1 セルに統合 (ベースは小さく灰色)
-      // bt_used を「LV tfilter 通過」の共通シグナルとして使用 (= BT 表示と semantics 一致):
-      //   bt_used=true → 大会対象 → 0 でも "0.00 (0.00)" 表示
-      //   bt_used=false → 対象外 → '−' 表示 (= ベースも含めて − のみ)
-      const _inPool = !!t.bt_used;
-      const wStr = _inPool ? ((t.tjpr_w || 0) * scale).toFixed(2) : '−';
-      const baseStr = _inPool ? ((t.tjpr_raw || 0) * scale).toFixed(2) : null;
-      const ptCell = baseStr !== null
-        ? `${wStr}<span style="color:#9ca3af;font-size:10px;margin-left:4px">(${baseStr})</span>`
-        : wStr;
+      // 順位評価: 当時その大会で獲得した raw pt (tjpr_pts_at). null = 当時の計上対象外.
+      const ptsAt = t.tjpr_pts_at;
+      const ptCell = ptsAt == null
+        ? '<span style="opacity:0.4">−</span>'
+        : `${(ptsAt * scale).toFixed(2)}`;
       return `
         <tr class="${cls} tour-main-row">
           <td>${t.date}</td>
@@ -189,7 +194,7 @@
           <td>${dayTag}</td>
           <td>${lvBadge}</td>
           <td class="num">${ptCell}</td>
-          <td class="num ${btDeltaCls}">${t.bt_used ? `${btSign}${btDelta.toFixed(2)}${btIntStr}` : '<span style="opacity:0.4">−</span>'}</td>
+          <td class="num ${btDeltaCls}">${btCellStr}</td>
         </tr>
         <tr class="${oppRowCls}">
           <td colspan="8" style="font-size:11px;color:#6b7280;padding:0 8px 6px">${oppHtml}</td>
@@ -216,8 +221,8 @@
           <table class="tour-table" data-uid="${rec.user_id}">
             <thead><tr>
               <th>日付</th><th>大会</th><th class="num">順位</th><th class="num">人数</th>
-              <th>区分</th><th>順位Lv</th>
-              <th class="num">順位評価pt (基本pt)</th>
+              <th>区分</th><th>当時Lv</th>
+              <th class="num">順位評価pt</th>
               <th class="num">直対評価 Δ</th>
             </tr></thead>
             <tbody>${rows}</tbody>
