@@ -1,8 +1,8 @@
 {
-  "generated_at": 1781654456,
+  "generated_at": 1781665291,
   "country_code": "JP",
   "lookahead_days": 21,
-  "count": 45,
+  "count": 47,
   "tournaments": [
     {
       "tournament_id": 921349,
@@ -52,7 +52,7 @@
           "event_id": 1645165,
           "event_slug": "tournament/weekly-smash-party-234/event/ssqm-1on1",
           "event_name": "SSQM 1on1",
-          "num_entrants": 8,
+          "num_entrants": 12,
           "type": 1,
           "start_at": 1781686800
         }
@@ -91,14 +91,14 @@
       "city": "台東区",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 9,
+      "num_attendees": 10,
       "url": "/tournament/18-482-2",
       "events": [
         {
           "event_id": 1646983,
           "event_slug": "tournament/18-482-2/event/on",
           "event_name": "シングルス（１on１トーナメント）",
-          "num_entrants": 9,
+          "num_entrants": 10,
           "type": 1,
           "start_at": 1781769600
         }
@@ -137,16 +137,39 @@
       "city": "大阪市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 16,
+      "num_attendees": 18,
       "url": "/tournament/hit-175-maesuma-hit-175",
       "events": [
         {
           "event_id": 1636394,
           "event_slug": "tournament/hit-175-maesuma-hit-175/event/singles-tournament",
           "event_name": "Singles Tournament",
-          "num_entrants": 16,
+          "num_entrants": 18,
           "type": 1,
           "start_at": 1781776800
+        }
+      ]
+    },
+    {
+      "tournament_id": 923833,
+      "tournament_slug": "tournament/16-27",
+      "tournament_name": "ポチスマ#16",
+      "start_at": 1781821800,
+      "end_at": 1781837700,
+      "is_online": false,
+      "city": "札幌市",
+      "venue_name": "",
+      "country_code": "JP",
+      "num_attendees": 0,
+      "url": "/tournament/16-27",
+      "events": [
+        {
+          "event_id": 1649426,
+          "event_slug": "tournament/16-27/event/ultimate-singles",
+          "event_name": "Ultimate Singles",
+          "num_entrants": 0,
+          "type": 1,
+          "start_at": 1781821800
         }
       ]
     },
@@ -214,6 +237,29 @@
           "event_slug": "tournament/smash-141-1/event/1on1",
           "event_name": "1on1トーナメント",
           "num_entrants": 4,
+          "type": 1,
+          "start_at": 1781865000
+        }
+      ]
+    },
+    {
+      "tournament_id": 923837,
+      "tournament_slug": "tournament/pochisuma-15-1",
+      "tournament_name": "ポチスマ/Pochisuma #15",
+      "start_at": 1781865000,
+      "end_at": 1781875800,
+      "is_online": false,
+      "city": "札幌市",
+      "venue_name": "",
+      "country_code": "JP",
+      "num_attendees": 0,
+      "url": "/tournament/pochisuma-15-1",
+      "events": [
+        {
+          "event_id": 1649432,
+          "event_slug": "tournament/pochisuma-15-1/event/ultimate-singles",
+          "event_name": "Ultimate Singles",
+          "num_entrants": 0,
           "type": 1,
           "start_at": 1781865000
         }
@@ -298,14 +344,14 @@
       "city": "名古屋市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 5,
+      "num_attendees": 6,
       "url": "/tournament/6-gamer-s",
       "events": [
         {
           "event_id": 1645902,
           "event_slug": "tournament/6-gamer-s/event/1on1",
           "event_name": "1on1 トーナメント",
-          "num_entrants": 5,
+          "num_entrants": 6,
           "type": 1,
           "start_at": 1781928000
         }
@@ -689,14 +735,14 @@
       "city": "仙台市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 30,
+      "num_attendees": 31,
       "url": "/tournament/ost-15",
       "events": [
         {
           "event_id": 1643798,
           "event_slug": "tournament/ost-15/event/sp",
           "event_name": "SPシングルストーナメント",
-          "num_entrants": 30,
+          "num_entrants": 31,
           "type": 1,
           "start_at": 1782522000
         }
@@ -712,14 +758,14 @@
       "city": "大東市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 330,
+      "num_attendees": 331,
       "url": "/tournament/70-sp-1",
       "events": [
         {
           "event_id": 1634012,
           "event_slug": "tournament/70-sp-1/event/1on1",
           "event_name": "予選あり1on1トーナメント",
-          "num_entrants": 319,
+          "num_entrants": 320,
           "type": 1,
           "start_at": 1782523800
         }
@@ -949,7 +995,7 @@
           "event_id": 1636233,
           "event_slug": "tournament/21-16/event/gifusma21",
           "event_name": "gifusma21",
-          "num_entrants": 95,
+          "num_entrants": 94,
           "type": 1,
           "start_at": 1783126800
         },
