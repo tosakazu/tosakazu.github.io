@@ -434,7 +434,7 @@
   </div>
 
   <div class="footer" id="footer-info">
-    <span class="site-version" style="font-size:11px;color:#9ca3af">v ca5962a · 2026-06-17 00:04 UTC</span>
+    <span class="site-version" style="font-size:11px;color:#9ca3af">v 036f639 · 2026-06-17 01:48 UTC</span>
   </div>
 </main>
 
@@ -515,6 +515,14 @@ function render() {
     `${TOURNEY.date}${TOURNEY.end_date && TOURNEY.end_date !== TOURNEY.date ? ' 〜 ' + TOURNEY.end_date : ''} · ` +
     `<b style="color:#111827">${TOURNEY.nent || TOURNEY.standings.length}</b> 名 ${chips.join('')}`;
 
+  // 大会ページの「全国 #」は参加前 (= 大会開催時点) の順位を表示する.
+  // pretour_ranks が無い古いデータは global_ranks (= 現在) に fallback.
+  function preRank(p, field) {
+    if (p && p.pretour_ranks && p.pretour_ranks[field] != null) return p.pretour_ranks[field];
+    if (p && p.global_ranks && p.global_ranks[field] != null) return p.global_ranks[field];
+    return null;
+  }
+
   // Podium
   const top3 = TOURNEY.standings.slice(0, 3);
   const podiumOrder = [top3[1], top3[0], top3[2]]; // silver, gold, bronze visually
@@ -522,8 +530,9 @@ function render() {
   const medals = ['🥈', '🥇', '🥉'];
   document.getElementById('podium').innerHTML = podiumOrder.map((p, i) => {
     if (!p) return '<div></div>';
-    const grank = p.global_ranks && p.global_ranks.ensemble != null
-      ? `<div class="grank">全国 #${p.global_ranks.ensemble}</div>` : '';
+    const er = preRank(p, 'ensemble');
+    const grank = er != null
+      ? `<div class="grank">全国 #${er}</div>` : '';
     return `<div class="podium-card ${cls[i]}">
       <div class="medal">${medals[i]}</div>
       <div class="place">${p.place} 位</div>
@@ -537,8 +546,9 @@ function render() {
   function renderHl(arr, valueFn, emptyMsg) {
     if (!arr || !arr.length) return `<div class="empty-msg" style="padding:12px">${emptyMsg}</div>`;
     return arr.map(p => {
-      const grank = p.global_ranks && p.global_ranks.ensemble != null
-        ? `<div class="sub">全国 #${p.global_ranks.ensemble}</div>` : '';
+      const er = preRank(p, 'ensemble');
+      const grank = er != null
+        ? `<div class="sub">全国 #${er}</div>` : '';
       return `<div class="tour-item">
         <span class="place ${placeClass(p.place)}">${p.place}</span>
         <div class="meta">${playerLink(p)}${grank}</div>
@@ -635,16 +645,16 @@ function render() {
     arr => renderHl(arr, p => `${p.losers_run}<span class="frac">連勝</span>`, 'ルーザーズランなし'),
     'ルーザーズランなし');
 
-  // 順位上昇: 「前順位 → 後順位 ↑Δ位」形式. global_ranks が現在 (= after), delta が改善幅.
-  // before = after + delta (rank が小さくなる = 改善).
+  // 順位上昇: 「前順位 → 後順位 ↑Δ位」形式. pretour_ranks が参加前 (= before), delta が改善幅.
+  // after = before - delta (rank が小さくなる = 改善).
   function rankGainValue(p, deltaField, rankField) {
     const d = p[deltaField];
     if (d == null) return '<span class="dim">—</span>';
-    const after = p.global_ranks ? p.global_ranks[rankField] : null;
-    if (after == null) {
+    const before = preRank(p, rankField);
+    if (before == null) {
       return `↑${d}<span class="frac">位</span>`;
     }
-    const before = after + d;
+    const after = before - d;
     return `<span style="font-size:11px;color:#6b7280">#${before.toLocaleString()} → #${after.toLocaleString()}</span><span class="frac" style="color:#16a34a">↑${d.toLocaleString()}位</span>`;
   }
   setupPaginated(hl.top_rank_gains_ensemble, 'top-rank-ens', 'top-rank-ens-pager',
@@ -671,8 +681,9 @@ function renderStandings() {
   list.innerHTML = rows.map(p => {
     const placeStr = p.place != null ? p.place : '—';
     const placeCls = placeClass(p.place);
-    const grank = p.global_ranks && p.global_ranks.ensemble != null
-      ? `<div class="sub">全国 #${p.global_ranks.ensemble}</div>` : '';
+    const er = preRank(p, 'ensemble');
+    const grank = er != null
+      ? `<div class="sub">全国 #${er}</div>` : '';
     // SPR chip. sub 行に seed 番号を表示 (= 他 chip と高さ揃える).
     const seedSub = p.seed != null
       ? `<span class="sub">seed ${p.seed}</span>`
