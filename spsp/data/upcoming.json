@@ -1,32 +1,9 @@
 {
-  "generated_at": 1781773262,
+  "generated_at": 1781784059,
   "country_code": "JP",
   "lookahead_days": 21,
-  "count": 45,
+  "count": 44,
   "tournaments": [
-    {
-      "tournament_id": 917397,
-      "tournament_slug": "tournament/hit-175-maesuma-hit-175",
-      "tournament_name": "マエスマ'HIT#175 / Maesuma'HIT#175",
-      "start_at": 1781776800,
-      "end_at": 1781791200,
-      "is_online": false,
-      "city": "大阪市",
-      "venue_name": "",
-      "country_code": "JP",
-      "num_attendees": 41,
-      "url": "/tournament/hit-175-maesuma-hit-175",
-      "events": [
-        {
-          "event_id": 1636394,
-          "event_slug": "tournament/hit-175-maesuma-hit-175/event/singles-tournament",
-          "event_name": "Singles Tournament",
-          "num_entrants": 41,
-          "type": 1,
-          "start_at": 1781776800
-        }
-      ]
-    },
     {
       "tournament_id": 923833,
       "tournament_slug": "tournament/16-27",
@@ -635,14 +612,14 @@
       "city": "渋谷区",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 0,
+      "num_attendees": 1,
       "url": "/tournament/shibuya-g-g-smash-weekly-68",
       "events": [
         {
           "event_id": 1650224,
           "event_slug": "tournament/shibuya-g-g-smash-weekly-68/event/singles",
           "event_name": "Singles",
-          "num_entrants": 0,
+          "num_entrants": 1,
           "type": 1,
           "start_at": 1782383400
         }
