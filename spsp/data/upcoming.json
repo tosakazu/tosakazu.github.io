@@ -1,55 +1,9 @@
 {
-  "generated_at": 1781848977,
+  "generated_at": 1781859786,
   "country_code": "JP",
   "lookahead_days": 21,
-  "count": 47,
+  "count": 45,
   "tournaments": [
-    {
-      "tournament_id": 922598,
-      "tournament_slug": "tournament/19-483-6",
-      "tournament_name": "19(金)上野スマコミ#483(オープン)",
-      "start_at": 1781856000,
-      "end_at": 1781877600,
-      "is_online": false,
-      "city": "台東区",
-      "venue_name": "",
-      "country_code": "JP",
-      "num_attendees": 22,
-      "url": "/tournament/19-483-6",
-      "events": [
-        {
-          "event_id": 1646987,
-          "event_slug": "tournament/19-483-6/event/on",
-          "event_name": "シングルス（１on１トーナメント）",
-          "num_entrants": 22,
-          "type": 1,
-          "start_at": 1781856000
-        }
-      ]
-    },
-    {
-      "tournament_id": 921864,
-      "tournament_slug": "tournament/5-98",
-      "tournament_name": "もびすまっ！#5",
-      "start_at": 1781859600,
-      "end_at": 1781877600,
-      "is_online": false,
-      "city": "川崎市",
-      "venue_name": "",
-      "country_code": "JP",
-      "num_attendees": 14,
-      "url": "/tournament/5-98",
-      "events": [
-        {
-          "event_id": 1645431,
-          "event_slug": "tournament/5-98/event/super-smash-bros-ultimate-singles",
-          "event_name": "シングルス",
-          "num_entrants": 14,
-          "type": 1,
-          "start_at": 1781859600
-        }
-      ]
-    },
     {
       "tournament_id": 917263,
       "tournament_slug": "tournament/smash-141-1",
@@ -244,14 +198,14 @@
       "city": "野々市市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 11,
+      "num_attendees": 10,
       "url": "/tournament/-3093",
       "events": [
         {
           "event_id": 1642055,
           "event_slug": "tournament/-3093/event/ultimate-single",
           "event_name": "ultimate single",
-          "num_entrants": 11,
+          "num_entrants": 10,
           "type": 1,
           "start_at": 1781924400
         }
@@ -313,14 +267,14 @@
       "city": "四日市市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 26,
+      "num_attendees": 27,
       "url": "/tournament/quattro-2",
       "events": [
         {
           "event_id": 1640556,
           "event_slug": "tournament/quattro-2/event/quattro",
           "event_name": "四闘-Quattro-",
-          "num_entrants": 26,
+          "num_entrants": 27,
           "type": 1,
           "start_at": 1781928000
         }
@@ -428,14 +382,14 @@
       "city": "和泉市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 22,
+      "num_attendees": 24,
       "url": "/tournament/innosuma-25",
       "events": [
         {
           "event_id": 1629805,
           "event_slug": "tournament/innosuma-25/event/sp-1on1",
           "event_name": "スマブラSP 1on1 トーナメント",
-          "num_entrants": 22,
+          "num_entrants": 24,
           "type": 1,
           "start_at": 1782014400
         }
@@ -796,14 +750,14 @@
       "city": "横浜市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 2,
+      "num_attendees": 4,
       "url": "/tournament/7-67",
       "events": [
         {
           "event_id": 1650948,
           "event_slug": "tournament/7-67/event/super-smash-bros-ultimate-singles",
           "event_name": "シングルス",
-          "num_entrants": 2,
+          "num_entrants": 4,
           "type": 1,
           "start_at": 1782550800
         }
@@ -911,14 +865,14 @@
       "city": "四日市市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 6,
+      "num_attendees": 7,
       "url": "/tournament/quattro-3",
       "events": [
         {
           "event_id": 1650114,
           "event_slug": "tournament/quattro-3/event/quattro",
           "event_name": "四闘-Quattro-",
-          "num_entrants": 6,
+          "num_entrants": 7,
           "type": 1,
           "start_at": 1782619200
         }
