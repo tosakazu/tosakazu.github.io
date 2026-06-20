@@ -1,5 +1,5 @@
 {
-  "generated_at": 1781892041,
+  "generated_at": 1781902904,
   "country_code": "JP",
   "lookahead_days": 21,
   "count": 42,
@@ -37,14 +37,14 @@
       "city": "名古屋市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 11,
+      "num_attendees": 12,
       "url": "/tournament/6-gamer-s",
       "events": [
         {
           "event_id": 1645902,
           "event_slug": "tournament/6-gamer-s/event/1on1",
           "event_name": "1on1 トーナメント",
-          "num_entrants": 11,
+          "num_entrants": 12,
           "type": 1,
           "start_at": 1781928000
         }
@@ -244,14 +244,14 @@
       "city": "熊谷市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 22,
+      "num_attendees": 23,
       "url": "/tournament/6-21-32",
       "events": [
         {
           "event_id": 1642158,
           "event_slug": "tournament/6-21-32/event/32",
           "event_name": "プチ大会32人規模",
-          "num_entrants": 22,
+          "num_entrants": 23,
           "type": 1,
           "start_at": 1782000000
         }
@@ -566,14 +566,14 @@
       "city": "仙台市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 33,
+      "num_attendees": 35,
       "url": "/tournament/ost-15",
       "events": [
         {
           "event_id": 1643798,
           "event_slug": "tournament/ost-15/event/sp",
           "event_name": "SPシングルストーナメント",
-          "num_entrants": 33,
+          "num_entrants": 35,
           "type": 1,
           "start_at": 1782522000
         }
@@ -727,14 +727,14 @@
       "city": "京都市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 27,
+      "num_attendees": 28,
       "url": "/tournament/don-t-stop-wa-cs-1-last-chance-qualifier",
       "events": [
         {
           "event_id": 1637958,
           "event_slug": "tournament/don-t-stop-wa-cs-1-last-chance-qualifier/event/singletournament",
           "event_name": "SingleTournament",
-          "num_entrants": 27,
+          "num_entrants": 28,
           "type": 1,
           "start_at": 1782612000
         }
@@ -919,14 +919,14 @@
       "city": "札幌市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 43,
+      "num_attendees": 44,
       "url": "/tournament/pochisuma-next-patch-4",
       "events": [
         {
           "event_id": 1638445,
           "event_slug": "tournament/pochisuma-next-patch-4/event/ultimate-singles",
           "event_name": "Ultimate Singles",
-          "num_entrants": 43,
+          "num_entrants": 44,
           "type": 1,
           "start_at": 1783206000
         }
