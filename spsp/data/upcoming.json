@@ -1,5 +1,5 @@
 {
-  "generated_at": 1781881240,
+  "generated_at": 1781892041,
   "country_code": "JP",
   "lookahead_days": 21,
   "count": 42,
@@ -152,7 +152,7 @@
       "city": "さいたま市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 49,
+      "num_attendees": 48,
       "url": "/tournament/aya-8",
       "events": [
         {
@@ -267,14 +267,14 @@
       "city": "渋谷区",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 43,
+      "num_attendees": 44,
       "url": "/tournament/to-win-10",
       "events": [
         {
           "event_id": 1645515,
           "event_slug": "tournament/to-win-10/event/singles",
           "event_name": "Singles",
-          "num_entrants": 43,
+          "num_entrants": 44,
           "type": 1,
           "start_at": 1782003600
         }
@@ -290,14 +290,14 @@
       "city": "和泉市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 24,
+      "num_attendees": 25,
       "url": "/tournament/innosuma-25",
       "events": [
         {
           "event_id": 1629805,
           "event_slug": "tournament/innosuma-25/event/sp-1on1",
           "event_name": "スマブラSP 1on1 トーナメント",
-          "num_entrants": 24,
+          "num_entrants": 25,
           "type": 1,
           "start_at": 1782014400
         }
