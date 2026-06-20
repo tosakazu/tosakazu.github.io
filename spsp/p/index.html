@@ -497,6 +497,9 @@
       <div id="char-line" style="display:none;margin-top:4px;font-size:13px;line-height:1.4">
         <span id="char-line-body"></span>
       </div>
+      <div id="pref-line" style="display:none;margin-top:4px;font-size:12px;color:#6b7280">
+        <span id="pref-body"></span>
+      </div>
     </div>
 
     <div class="rank-hero">
@@ -611,7 +614,7 @@
   </div>
 
   <div class="footer" id="footer-info">
-    <span class="site-version" style="font-size:11px;color:#9ca3af">v 2462eb2 · 2026-06-20 15:14 UTC</span>
+    <span class="site-version" style="font-size:11px;color:#9ca3af">v e27234f · 2026-06-20 15:34 UTC</span>
   </div>
 </main>
 
@@ -631,6 +634,7 @@ let RANK_CHART = null;
 let OVERSEAS_UIDS = null;  // Set<number> from data/overseas.json (loadData で fetch)
 let CHAR_IDX = null;       // character_index.json (loadData で fetch)
 let CHAR_EMOJI = null;     // data/char_emoji.json { char_id: {name, emoji} } (loadData で fetch)
+let PLAYER_PREF = null;    // data/player_prefectures.json { uid: 都道府県漢字 } (loadData で fetch)
 let _CHAR_EMOJI_BY_UID = null;  // uid -> メインキャラ絵文字 (CHAR_IDX.main_by_char × CHAR_EMOJI から遅延構築)
 // uid -> メイン使用キャラの絵文字. character_index の main_by_char (char→uids) を逆引きし
 // char_emoji.json の emoji を引く. 1 度だけ構築してメモ化.
@@ -684,15 +688,19 @@ function fmtRank(r) { return r != null && r > 0 ? r.toLocaleString() : '—'; }
 async function loadData() {
   if (!UID || UID < 1) { showNotFound('URL に uid パラメータがありません。'); return; }
   try {
-    const [metaRes, playerRes, overseasRes, charIdxRes, charEmojiRes] = await Promise.all([
+    const [metaRes, playerRes, overseasRes, charIdxRes, charEmojiRes, prefRes] = await Promise.all([
       fetch('../meta.json'),
       fetch(`../players/${UID}.json`),
       fetch('../data/overseas.json').catch(() => null),
       fetch('../data/character_index.json').catch(() => null),
       fetch('../data/char_emoji.json').catch(() => null),
+      fetch('../data/player_prefectures.json').catch(() => null),
     ]);
     if (charEmojiRes && charEmojiRes.ok) {
       try { CHAR_EMOJI = await charEmojiRes.json(); } catch (e) {}
+    }
+    if (prefRes && prefRes.ok) {
+      try { PLAYER_PREF = await prefRes.json(); } catch (e) {}
     }
     if (overseasRes && overseasRes.ok) {
       try {
@@ -899,6 +907,13 @@ function render() {
       return `<a href="../c/ranking.html?char=${canonicalId}" style="color:${color};font-weight:${weight};text-decoration:none">${emoji}${c.name}</a>`;
     }).join('<span style="color:#d1d5db;margin:0 6px">·</span>');
     charLine.style.display = '';
+  }
+
+  // 居住地 (都道府県). player_prefectures.json (uid -> 都道府県漢字) から引く。
+  const pref = PLAYER_PREF && PLAYER_PREF[String(UID)];
+  if (pref) {
+    document.getElementById('pref-body').textContent = `📍 ${pref}`;
+    document.getElementById('pref-line').style.display = '';
   }
 
   // Achievements: priority 順、上位 N 件のみデフォルト表示、それ以降は折りたたみ

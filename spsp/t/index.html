@@ -137,6 +137,8 @@
   .tour-item .meta a { color: #dc2626; text-decoration: none; font-weight: 500; font-size: 13px; }
   .tour-item .meta a:hover { text-decoration: underline; }
   .tour-item .meta .sub { color: #9ca3af; font-size: 10px; margin-top: 1px; }
+  .pref-badge { display: inline-block; margin-left: 6px; font-size: 10px; color: #0e7490;
+    background: rgba(8,145,178,0.08); border-radius: 8px; padding: 1px 6px; white-space: nowrap; }
   .tour-item .v {
     text-align: center; font-variant-numeric: tabular-nums; font-weight: 700;
     color: #16a34a; font-size: 18px; line-height: 1.1; min-width: 56px;
@@ -435,7 +437,7 @@
   </div>
 
   <div class="footer" id="footer-info">
-    <span class="site-version" style="font-size:11px;color:#9ca3af">v 2462eb2 · 2026-06-20 15:14 UTC</span>
+    <span class="site-version" style="font-size:11px;color:#9ca3af">v e27234f · 2026-06-20 15:34 UTC</span>
   </div>
 </main>
 
@@ -447,19 +449,28 @@ const TID = parseInt(params.get('id') || location.hash.replace(/^#/, '') || '0')
 
 let META = null;
 let TOURNEY = null;
+let PLAYER_PREF = null;   // data/player_prefectures.json { uid: 都道府県漢字 }
 
 function fmtRank(r) { return r != null && r > 0 ? r.toLocaleString() : '—'; }
+
+// 居住地(都道府県)バッジ. player_prefectures.json から uid で引く。
+function prefBadge(p) {
+  const pref = (p && p.user_id != null && PLAYER_PREF) ? PLAYER_PREF[String(p.user_id)] : null;
+  return pref ? `<span class="pref-badge">📍${pref}</span>` : '';
+}
 
 async function load() {
   if (!TID || TID < 1) { showNotFound(); return; }
   try {
-    const [metaRes, tRes] = await Promise.all([
+    const [metaRes, tRes, prefRes] = await Promise.all([
       fetch('../meta.json'),
       fetch(`../tournaments/${TID}.json`),
+      fetch('../data/player_prefectures.json').catch(() => null),
     ]);
     if (!tRes.ok) { showNotFound(); return; }
     META = await metaRes.json();
     TOURNEY = await tRes.json();
+    if (prefRes && prefRes.ok) { try { PLAYER_PREF = await prefRes.json(); } catch (e) {} }
     render();
   } catch (e) {
     console.error(e);
@@ -566,7 +577,7 @@ function render() {
         ? `<div class="sub">全国 #${er}</div>` : '';
       return `<div class="tour-item">
         <span class="place ${placeClass(p.place)}">${p.place}</span>
-        <div class="meta">${playerLink(p)}${grank}</div>
+        <div class="meta">${playerLink(p)}${prefBadge(p)}${grank}</div>
         <div class="v">${valueFn(p)}</div>
       </div>`;
     }).join('');
@@ -748,7 +759,7 @@ function renderStandings() {
     return `<div class="tour-group" data-uid="${p.user_id}">
       <div class="tour-item">
         <span class="place ${placeCls}"><span class="num">${placeStr}</span>${placeFrac}</span>
-        <div class="meta">${playerLink(p)}${grank}</div>
+        <div class="meta">${playerLink(p)}${prefBadge(p)}${grank}</div>
         ${vHtml}
       </div>
       <div class="tour-matches"></div>
