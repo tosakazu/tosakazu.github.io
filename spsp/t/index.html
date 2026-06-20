@@ -80,6 +80,7 @@
   .hero .meta-line .chip.pre { background: #f3e8ff; color: #6b21a8; }
   .hero .meta-line .chip.res { background: #ffe4e6; color: #be123c; }
   .hero .meta-line .chip.lc  { background: #e0f2fe; color: #0369a1; }
+  .hero .meta-line .chip.gf  { background: #ffedd5; color: #9a3412; font-weight: 600; }
 
   /* Podium (Top 3) */
   .podium {
@@ -434,7 +435,7 @@
   </div>
 
   <div class="footer" id="footer-info">
-    <span class="site-version" style="font-size:11px;color:#9ca3af">v feb5fac · 2026-06-20 13:14 UTC</span>
+    <span class="site-version" style="font-size:11px;color:#9ca3af">v 9dfb236 · 2026-06-20 14:28 UTC</span>
   </div>
 </main>
 
@@ -523,6 +524,10 @@ function render() {
     lnk.style.display = '';
   }
   const chips = [];
+  // 決勝(Grand Finals)未報告 = 優勝者未確定の未完了大会。BT/TJPR 集計対象外 (= ポイント未反映、
+  // 暫定順位のみ)。決勝が報告され次第、再取得で正式集計される。
+  if (TOURNEY.is_gf_missing)
+    chips.push('<span class="chip gf" title="決勝(Grand Finals)が未報告のため暫定順位のみ。ポイントは未反映で、結果確定後に集計されます">未完了</span>');
   chips.push(TOURNEY.is_weekend
     ? '<span class="chip wk">休日</span>'
     : '<span class="chip wd">平日</span>');
