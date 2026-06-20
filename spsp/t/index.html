@@ -434,7 +434,7 @@
   </div>
 
   <div class="footer" id="footer-info">
-    <span class="site-version" style="font-size:11px;color:#9ca3af">v ff27dc0 · 2026-06-20 12:09 UTC</span>
+    <span class="site-version" style="font-size:11px;color:#9ca3af">v 1907bd3 · 2026-06-20 12:23 UTC</span>
   </div>
 </main>
 
@@ -691,10 +691,13 @@ function renderStandings() {
   list.innerHTML = rows.map(p => {
     const placeStr = p.place != null ? p.place : '—';
     const placeCls = placeClass(p.place);
-    const er = preRank(p, 'ensemble');
-    const lvTxt = lvLabel(p.at_lv, er);
+    const er = preRank(p, 'ensemble');                         // 当時 (参加前) の全国#
+    const after = (er != null && p.rank_delta_ensemble != null) // T直後 (大会結果確定直後) の全国#
+      ? (er - p.rank_delta_ensemble) : null;
+    const cur = (p.global_ranks && p.global_ranks.ensemble != null) // 現在の全国#
+      ? p.global_ranks.ensemble : null;
     const grank = er != null
-      ? `<div class="sub">全国 #${er}${lvTxt ? ' · 当時' + lvTxt : ''}</div>` : '';
+      ? `<div class="sub">当時全国 #${er}${after != null ? ' → #' + after : ''}${cur != null ? ' ・現在 #' + cur : ''}</div>` : '';
     // SPR chip. sub 行に seed 番号を表示 (= 他 chip と高さ揃える).
     const seedSub = p.seed != null
       ? `<span class="sub">seed ${p.seed}</span>`
