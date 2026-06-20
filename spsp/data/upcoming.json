@@ -1,8 +1,8 @@
 {
-  "generated_at": 1781870422,
+  "generated_at": 1781881240,
   "country_code": "JP",
   "lookahead_days": 21,
-  "count": 41,
+  "count": 42,
   "tournaments": [
     {
       "tournament_id": 916561,
@@ -37,14 +37,14 @@
       "city": "名古屋市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 10,
+      "num_attendees": 11,
       "url": "/tournament/6-gamer-s",
       "events": [
         {
           "event_id": 1645902,
           "event_slug": "tournament/6-gamer-s/event/1on1",
           "event_name": "1on1 トーナメント",
-          "num_entrants": 10,
+          "num_entrants": 11,
           "type": 1,
           "start_at": 1781928000
         }
@@ -244,14 +244,14 @@
       "city": "熊谷市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 21,
+      "num_attendees": 22,
       "url": "/tournament/6-21-32",
       "events": [
         {
           "event_id": 1642158,
           "event_slug": "tournament/6-21-32/event/32",
           "event_name": "プチ大会32人規模",
-          "num_entrants": 21,
+          "num_entrants": 22,
           "type": 1,
           "start_at": 1782000000
         }
@@ -952,6 +952,29 @@
           "num_entrants": 29,
           "type": 1,
           "start_at": 1783213200
+        }
+      ]
+    },
+    {
+      "tournament_id": 922351,
+      "tournament_slug": "tournament/2-194",
+      "tournament_name": "快進会#2",
+      "start_at": 1783663200,
+      "end_at": 1783688400,
+      "is_online": false,
+      "city": "厚木市",
+      "venue_name": "",
+      "country_code": "JP",
+      "num_attendees": 4,
+      "url": "/tournament/2-194",
+      "events": [
+        {
+          "event_id": 1646462,
+          "event_slug": "tournament/2-194/event/1on1",
+          "event_name": "1on1メイントーナメント",
+          "num_entrants": 4,
+          "type": 1,
+          "start_at": 1781276400
         }
       ]
     }
