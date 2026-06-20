@@ -1,5 +1,5 @@
 {
-  "generated_at": 1781913700,
+  "generated_at": 1781924572,
   "country_code": "JP",
   "lookahead_days": 21,
   "count": 32,
@@ -60,14 +60,14 @@
       "city": "和泉市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 25,
+      "num_attendees": 26,
       "url": "/tournament/innosuma-25",
       "events": [
         {
           "event_id": 1629805,
           "event_slug": "tournament/innosuma-25/event/sp-1on1",
           "event_name": "スマブラSP 1on1 トーナメント",
-          "num_entrants": 25,
+          "num_entrants": 26,
           "type": 1,
           "start_at": 1782014400
         }
@@ -198,14 +198,14 @@
       "city": "中野区",
       "venue_name": "Red Bull Gaming Sphere Tokyo",
       "country_code": "JP",
-      "num_attendees": 1,
+      "num_attendees": 4,
       "url": "/tournament/weekly-smash-party-235",
       "events": [
         {
           "event_id": 1649614,
           "event_slug": "tournament/weekly-smash-party-235/event/special-1on1-ultimate-singles",
           "event_name": "SPECIAL 1on1/ Ultimate Singles",
-          "num_entrants": 1,
+          "num_entrants": 7,
           "type": 1,
           "start_at": 1782291600
         }
@@ -221,14 +221,14 @@
       "city": "京都市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 12,
+      "num_attendees": 13,
       "url": "/tournament/dsw-56",
       "events": [
         {
           "event_id": 1650077,
           "event_slug": "tournament/dsw-56/event/singletournament",
           "event_name": "SingleTournament",
-          "num_entrants": 12,
+          "num_entrants": 13,
           "type": 1,
           "start_at": 1782298800
         }
@@ -336,14 +336,14 @@
       "city": "仙台市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 36,
+      "num_attendees": 39,
       "url": "/tournament/ost-15",
       "events": [
         {
           "event_id": 1643798,
           "event_slug": "tournament/ost-15/event/sp",
           "event_name": "SPシングルストーナメント",
-          "num_entrants": 36,
+          "num_entrants": 39,
           "type": 1,
           "start_at": 1782522000
         }
@@ -497,14 +497,14 @@
       "city": "京都市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 27,
+      "num_attendees": 26,
       "url": "/tournament/don-t-stop-wa-cs-1-last-chance-qualifier",
       "events": [
         {
           "event_id": 1637958,
           "event_slug": "tournament/don-t-stop-wa-cs-1-last-chance-qualifier/event/singletournament",
           "event_name": "SingleTournament",
-          "num_entrants": 27,
+          "num_entrants": 26,
           "type": 1,
           "start_at": 1782612000
         }
@@ -520,14 +520,14 @@
       "city": "宇部市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 7,
+      "num_attendees": 8,
       "url": "/tournament/34-10",
       "events": [
         {
           "event_id": 1647081,
           "event_slug": "tournament/34-10/event/sp-1on1",
           "event_name": "スマブラSP 1on1",
-          "num_entrants": 7,
+          "num_entrants": 8,
           "type": 1,
           "start_at": 1782615600
         }
