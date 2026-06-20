@@ -611,7 +611,7 @@
   </div>
 
   <div class="footer" id="footer-info">
-    <span class="site-version" style="font-size:11px;color:#9ca3af">v a3c9693 · 2026-06-20 14:37 UTC</span>
+    <span class="site-version" style="font-size:11px;color:#9ca3af">v 2462eb2 · 2026-06-20 14:54 UTC</span>
   </div>
 </main>
 
@@ -893,7 +893,10 @@ function render() {
       const color = isMain ? '#dc2626' : '#6b7280';
       const weight = isMain ? 600 : 400;
       const canonicalId = CHAR_MERGE_CANONICAL[c.id] || c.id;
-      return `<a href="../c/ranking.html?char=${canonicalId}" style="color:${color};font-weight:${weight};text-decoration:none">${c.name}</a>`;
+      // 使用キャラ名の前にキャラ絵文字 (char_emoji.json, char_id キー) を表示。
+      const ce = CHAR_EMOJI && (CHAR_EMOJI[c.id] || CHAR_EMOJI[canonicalId]);
+      const emoji = (ce && ce.emoji) ? ce.emoji + ' ' : '';
+      return `<a href="../c/ranking.html?char=${canonicalId}" style="color:${color};font-weight:${weight};text-decoration:none">${emoji}${c.name}</a>`;
     }).join('<span style="color:#d1d5db;margin:0 6px">·</span>');
     charLine.style.display = '';
   }
