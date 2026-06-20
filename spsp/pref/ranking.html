@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>都道府県別ランキング — SPSP</title>
+<meta name="description" content="SPSP 都道府県別のプレイヤーランキング — 居住地ごとの順位。">
+<link rel="stylesheet" href="../ranking-table.css">
+<script src="../ranking-table.js"></script>
+<script src="../player-detail.js"></script>
+<style>
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Hiragino Sans", sans-serif;
+    background: #ffffff; color: #111827; font-size: 14px;
+    -webkit-text-size-adjust: 100%;
+  }
+  .header { max-width: 1400px; margin: 0 auto; padding: 20px 24px 0; }
+  h1 { font-size: 22px; color: #111827; margin: 0 0 4px; }
+  .method-tabs {
+    display: flex; gap: 4px; margin: 12px 0;
+    background: #ffffff; padding: 4px; border-radius: 8px;
+    border: 1px solid #e5e7eb; overflow-x: auto;
+  }
+  .method-tab {
+    padding: 8px 14px; cursor: pointer; border-radius: 6px;
+    font-size: 13px; color: #6b7280; transition: all 0.1s;
+    user-select: none; white-space: nowrap;
+  }
+  .method-tab:hover { color: #374151; background: #f3f4f6; }
+  .method-tab.active { background: #dc2626; color: #fff; }
+  .method-tab .tab-desc { display: block; font-size: 10px; opacity: 0.7; margin-top: 2px; }
+
+  .controls { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; margin: 12px 0; }
+  input { padding: 8px 12px; border: 1px solid #e5e7eb; background: #fff; color: #111827; border-radius: 6px; font-size: 13px; font-family: inherit; }
+  input[type="search"] { min-width: 280px; }
+  .status { color: #6b7280; font-size: 12px; }
+  .table-wrap { max-width: 1400px; margin: 0 auto; padding: 0 24px 32px; }
+  .empty-msg { padding: 24px; text-align: center; color: #6b7280; }
+  .footer { text-align: center; color: #9ca3af; font-size: 12px; padding: 32px 0 16px; }
+  .footer a { color: #dc2626; text-decoration: none; }
+
+  /* === Detail panel (大会別 / 直接対決) — c/ranking.html と同期 === */
+  .detail-section { margin-bottom: 20px; }
+  .detail-section h4 { margin: 0 0 8px; color: #dc2626; font-size: 13px; font-weight: 600; }
+  .detail-section h5 { margin: 0 0 6px; color: #374151; font-size: 12px; font-weight: 600; }
+  .detail-tabs { display: flex; gap: 4px; margin: 4px 0 10px; border-bottom: 1px solid #e5e7eb; }
+  .detail-tab {
+    padding: 7px 14px; cursor: pointer; user-select: none;
+    font-size: 13px; color: #6b7280; font-weight: 500;
+    border-bottom: 2px solid transparent; border-radius: 4px 4px 0 0;
+    transition: color .12s, background .12s, border-color .12s;
+  }
+  .detail-tab:hover { color: #dc2626; background: #fef2f2; border-bottom-color: #fca5a5; }
+  .detail-tab.active { color: #dc2626; border-bottom-color: #dc2626; font-weight: 600; }
+  .h2h-section { display: flex; flex-direction: column; gap: 16px; }
+  .h2h-col { min-width: 0; }
+  .h2h-list { display: flex; flex-direction: column; gap: 6px; }
+  .h2h-opp { border: 1px solid #f3f4f6; border-radius: 6px; padding: 8px 10px; background: #fafafa; transition: background 0.1s, border-color 0.1s; }
+  .h2h-opp:hover { background: #f0f0f0; border-color: #d1d5db; }
+  .h2h-opp.h2h-win  { border-left: 3px solid #16a34a; }
+  .h2h-opp.h2h-loss { border-left: 3px solid #2563eb; }
+  .h2h-head { display: flex; align-items: baseline; gap: 8px; margin-bottom: 4px; }
+  .h2h-opp-name { color: #dc2626; font-weight: 600; text-decoration: none; font-size: 13px; word-break: break-word; min-width: 0; }
+  .h2h-opp.h2h-win .h2h-opp-name { color: #16a34a; }
+  .h2h-opp.h2h-loss .h2h-opp-name { color: #2563eb; }
+  .h2h-opp-name:hover { text-decoration: underline; }
+  .h2h-rank { color: #9ca3af; font-size: 11px; font-variant-numeric: tabular-nums; }
+  .h2h-count { color: #6b7280; font-size: 11px; margin-left: auto; flex-shrink: 0; }
+  .h2h-match { display: flex; gap: 8px; align-items: baseline; font-size: 11px; color: #6b7280; padding: 3px 0; }
+  .h2h-match .h2h-date { color: #9ca3af; font-size: 10px; flex-shrink: 0; }
+  .h2h-match .h2h-tname { flex: 1 1 auto; min-width: 0; word-break: break-word; }
+  .h2h-match .h2h-tname a { color: #6b7280; text-decoration: none; }
+  .h2h-match .h2h-tname a:hover { color: #dc2626; text-decoration: underline; }
+  .h2h-match .h2h-delta { font-weight: 700; font-variant-numeric: tabular-nums; color: #9ca3af; font-size: 12px; flex-shrink: 0; }
+  .h2h-match .h2h-delta.pos { color: #16a34a; }
+  .h2h-match .h2h-delta.neg { color: #2563eb; }
+  @media (min-width: 800px) { .h2h-section { flex-direction: row; gap: 20px; } .h2h-col { flex: 1 1 50%; } }
+  .tour-table, .breakdown-table { font-size: 12px; width: 100%; border-collapse: collapse; }
+  .tour-table th, .breakdown-table th { background: #f9fafb; position: static; padding: 6px 8px; border-bottom: 1px solid #f3f4f6; cursor: default; font-weight: 600; }
+  .tour-table th::after, .breakdown-table th::after { content: ""; }
+  .tour-table td, .breakdown-table td { padding: 4px 8px; border-bottom: 1px solid #ffffff; }
+  .tour-table tr.counted, .breakdown-table tr.counted { background: rgba(220, 38, 38, 0.04); }
+  .tour-table tr.weekday { color: #6b7280; }
+  .tour-table tr.weekend { color: #374151; }
+  .num { font-variant-numeric: tabular-nums; text-align: right; }
+  .pos { color: #16a34a; } .neg { color: #2563eb; }
+
+  @media (max-width: 720px) {
+    body { font-size: 13px; }
+    .header { padding: 12px 12px 0; }
+    h1 { font-size: 18px; }
+    .method-tabs { padding: 2px; gap: 2px; }
+    .method-tab { padding: 6px 8px; font-size: 11px; }
+    .method-tab .tab-desc { display: none; }
+    .controls { gap: 6px; }
+    input[type="search"] { min-width: 0; flex: 1 1 100%; font-size: 14px; padding: 8px 10px; }
+    .status { width: 100%; font-size: 10px; }
+    .table-wrap { padding: 0 8px 24px; max-width: 100vw; overflow-x: hidden; }
+  }
+</style>
+</head>
+<body>
+
+<div id="nav-root"></div>
+<script src="../nav.js"></script>
+
+<div class="header">
+  <h1 id="title-h1">都道府県別ランキング</h1>
+
+  <div class="method-tabs" id="method-tabs">
+    <div class="method-tab active" data-method="ensemble">総合評価<span class="tab-desc">推奨</span></div>
+    <div class="method-tab" data-method="tjpr">順位評価<span class="tab-desc">大会順位ベース</span></div>
+    <div class="method-tab" data-method="bt_gated">直対評価<span class="tab-desc">直接対決ベース</span></div>
+  </div>
+
+  <div class="controls">
+    <input type="search" id="search" placeholder="プレイヤー名 / UID で検索…" autocomplete="off">
+    <span class="status" id="status">読み込み中…</span>
+  </div>
+</div>
+
+<div class="table-wrap">
+  <table id="ranktable">
+    <tbody id="tbody">
+      <tr><td colspan="11" class="empty-msg">読み込み中…</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<div class="footer" id="footer-info"></div>
+
+<script>
+'use strict';
+
+const STATE = {
+  pref: null,
+  prefMap: null,               // uid(str) -> 都道府県
+  masterMap: new Map(),        // uid -> rec
+  masterMeta: null,
+  data: [],
+  method: 'ensemble',
+  sortKey: 'rank',
+  sortDir: 'asc',
+  searchText: '',
+};
+
+function escapeHtml(s) {
+  return String(s ?? '').replace(/[&<>"']/g, c => (
+    { '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;' }[c]
+  ));
+}
+function getQueryParam(name) { return new URL(location.href).searchParams.get(name); }
+
+function buildData() {
+  const ranked = [];
+  for (const [uid, src] of STATE.masterMap) {
+    if (STATE.prefMap[String(uid)] !== STATE.pref) continue;
+    const rec = JSON.parse(JSON.stringify(src));
+    rec.ranks = rec.ranks || {};
+    rec.ranks.global_ensemble = rec.ranks.ensemble;
+    rec.ranks.global_tjpr = rec.ranks.tjpr;
+    rec.ranks.global_bt_gated = rec.ranks.bt_gated;
+    ranked.push(rec);
+  }
+  ranked.sort((a, b) => (a.ranks.global_ensemble || 1e9) - (b.ranks.global_ensemble || 1e9));
+  ranked.forEach((r, i) => { r.ranks.ensemble = i + 1; });
+  return ranked;
+}
+
+const _smallGray = (v, d = 1) =>
+  v != null ? `<span style="color:#9ca3af;font-size:11px">${v.toFixed(d)}</span>` : '–';
+const TJPR_SCORE_COL = {
+  id: 'tjpr_score_cell', label: '順位評', sortable: true, sortKey: 'tjpr_score', css: 'col-score',
+  value: (rec) => -((rec.scores && rec.scores.tjpr_elo) || -Infinity),
+  cell: (rec) => _smallGray(rec.scores && rec.scores.tjpr_elo, 2),
+};
+const BT_SCORE_COL = {
+  id: 'bt_score_cell', label: '直対評', sortable: true, sortKey: 'bt_score', css: 'col-avg-rank',
+  value: (rec) => -((rec.scores && rec.scores.bt_gated_elo) || -Infinity),
+  cell: (rec) => _smallGray(rec.scores && rec.scores.bt_gated_elo, 2),
+};
+
+let TABLE = null;
+function ensureTable() {
+  if (TABLE) return TABLE;
+  TABLE = new window.SPSPRankingTable.RankingTable({
+    table: document.getElementById('ranktable'),
+    rows: STATE.data,
+    method: STATE.method,
+    sort: { key: STATE.sortKey, dir: STATE.sortDir },
+    pageSize: 200,
+    infiniteScroll: true,
+    totalForRankFrac: 'rows',
+    playerHrefPrefix: '../',
+    showTopTours: true,
+    showDisplayBadges: true,
+    showGlobalRank: true,
+    btWeekdayStyle: 'pill',
+    columns: [
+      'rank', 'display', BT_SCORE_COL, TJPR_SCORE_COL,
+      'tjpr_lv', 'tour_count', 'bt_weekday',
+      'rank_tjpr', 'rank_bt_gated',
+    ],
+    rowClick: (rec, tr, ev) => prefRowClickHandler(rec, tr, ev),
+  });
+  TABLE.on('rendered', ({ filtered }) => {
+    document.getElementById('status').textContent = `${filtered.length} / ${STATE.data.length} 表示中`;
+  });
+  return TABLE;
+}
+
+function render() {
+  const tbl = ensureTable();
+  tbl.setRows(STATE.data);
+  tbl.setMethod(STATE.method);
+  tbl.setFilterText(STATE.searchText);
+  tbl.setSort(STATE.sortKey, STATE.sortDir);
+}
+
+function setupEvents() {
+  document.getElementById('search').addEventListener('input', e => {
+    STATE.searchText = e.target.value;
+    if (TABLE) TABLE.setFilterText(STATE.searchText);
+  });
+  document.querySelectorAll('.method-tab').forEach(tab => {
+    tab.addEventListener('click', () => {
+      document.querySelectorAll('.method-tab').forEach(t => t.classList.remove('active'));
+      tab.classList.add('active');
+      STATE.method = tab.dataset.method;
+      if (TABLE) TABLE.setMethod(STATE.method);
+    });
+  });
+}
+
+async function init() {
+  setupEvents();
+  STATE.pref = getQueryParam('pref');
+  if (!STATE.pref) {
+    document.getElementById('title-h1').textContent = '都道府県が指定されていません';
+    document.getElementById('tbody').innerHTML =
+      '<tr><td colspan="11" class="empty-msg"><a href="./" style="color:#dc2626">都道府県一覧に戻る</a></td></tr>';
+    return;
+  }
+  try {
+    const t0 = performance.now();
+    const [prefRes, metaRes, jsonlRes] = await Promise.all([
+      fetch('../data/player_prefectures.json'),
+      fetch('../meta.json'),
+      fetch('../latest_tjpr_full.jsonl'),
+    ]);
+    if (!prefRes.ok) throw new Error('player_prefectures.json 取得失敗');
+    if (!metaRes.ok) throw new Error('meta.json 取得失敗');
+    if (!jsonlRes.ok) throw new Error('latest_tjpr_full.jsonl 取得失敗');
+    STATE.prefMap = await prefRes.json();
+    STATE.masterMeta = await metaRes.json();
+
+    const txt = await jsonlRes.text();
+    for (const line of txt.split('\n')) {
+      if (!line.length) continue;
+      try { const rec = JSON.parse(line); STATE.masterMap.set(rec.user_id, rec); } catch {}
+    }
+    STATE.data = buildData();
+
+    document.title = `${STATE.pref}のランキング — SPSP`;
+    document.getElementById('title-h1').textContent = `📍 ${STATE.pref} のランキング`;
+    document.getElementById('footer-info').innerHTML =
+      `評価日 ${escapeHtml(STATE.masterMeta.eval_date || '')} · ${STATE.data.length}名 · ` +
+      `<a href="./">← 都道府県一覧</a> · <a href="../index.html">全体ランキング</a>`;
+
+    if (STATE.data.length === 0) {
+      document.getElementById('tbody').innerHTML =
+        `<tr><td colspan="11" class="empty-msg">${escapeHtml(STATE.pref)} の該当選手がいません。<br><a href="./" style="color:#dc2626">都道府県一覧に戻る</a></td></tr>`;
+    } else {
+      render();
+    }
+    document.getElementById('status').textContent =
+      `${STATE.data.length} 人 (${(performance.now() - t0).toFixed(0)}ms)`;
+  } catch (e) {
+    console.error(e);
+    document.getElementById('tbody').innerHTML =
+      `<tr><td colspan="11" class="empty-msg" style="color:#dc2626">${escapeHtml(e.message)}</td></tr>`;
+  }
+}
+
+// 行クリック → 大会別詳細 / 直接対決 を inline 展開 (c/ranking.html と同形, player-detail.js)。
+function getDetailCfg() {
+  return {
+    getMeta: () => STATE.masterMeta || {},
+    getDataArray: () => STATE.data,
+    getMasterMap: () => STATE.masterMap,
+    pathPrefix: '../',
+  };
+}
+function prefRowClickHandler(rec, tr, _ev) {
+  if (!rec) return;
+  const next = tr.nextElementSibling;
+  if (next && next.classList && next.classList.contains('detail-row')) {
+    next.remove(); tr.classList.remove('expanded'); return;
+  }
+  const table = tr.closest('table');
+  const open = table.querySelector('tr.detail-row');
+  if (open) { const prev = open.previousElementSibling; if (prev) prev.classList.remove('expanded'); open.remove(); }
+  const detail = document.createElement('tr');
+  detail.className = 'detail-row';
+  detail.innerHTML = `<td colspan="11"><div class="detail-inner">
+    <div class="loading-msg" style="padding:14px;color:#6b7280;font-size:12px">詳細情報を取得中…</div>
+  </div></td>`;
+  tr.classList.add('expanded');
+  tr.after(detail);
+  const cfg = getDetailCfg();
+  window.SPSPDetail.fetchPlayerDetail(rec.user_id, cfg).then(detailData => {
+    if (!detailData) return;
+    rec.tournaments = detailData.tournaments || [];
+    rec.history = detailData.history || [];
+    rec.recent_matches = detailData.recent_matches || [];
+    if (rec.scores) rec.scores.tjpr_lv_breakdown = detailData.tjpr_lv_breakdown || {};
+    const inner = detail.querySelector('.detail-inner');
+    if (inner) inner.innerHTML = window.SPSPDetail.buildDetailContent(rec, cfg);
+  }).catch(err => {
+    const inner = detail.querySelector('.loading-msg');
+    if (inner) inner.textContent = '詳細情報の取得に失敗: ' + err.message;
+  });
+}
+
+// Detail-row 内のタブ切替 / H2H 展開 / 並べ替え (tbody-level)。
+document.getElementById('tbody').addEventListener('click', e => {
+  const tabBtn = e.target.closest('.detail-tab');
+  if (tabBtn) {
+    e.stopPropagation();
+    const section = tabBtn.closest('.detail-section');
+    if (!section) return;
+    const key = tabBtn.dataset.tab;
+    section.querySelectorAll('.detail-tab').forEach(t => t.classList.toggle('active', t.dataset.tab === key));
+    section.querySelectorAll('.tab-content').forEach(c => c.classList.toggle('active', c.dataset.tab === key));
+    return;
+  }
+  const sortToggle = e.target.closest('.tour-sort-toggle');
+  if (sortToggle) {
+    e.stopPropagation();
+    const uid = sortToggle.dataset.uid;
+    const rec = STATE.data.find(r => String(r.user_id) === String(uid));
+    if (!rec) return;
+    const tabContent = sortToggle.closest('.tab-tour');
+    if (!tabContent) return;
+    const cfg = getDetailCfg();
+    cfg.tourSortKey = (cfg.tourSortKey === 'date') ? 'tjpr' : 'date';
+    tabContent.innerHTML = window.SPSPDetail.buildTournamentTable(rec, cfg);
+    return;
+  }
+  const h2hToggle = e.target.closest('.h2h-toggle');
+  if (h2hToggle) {
+    e.stopPropagation();
+    const target = h2hToggle.nextElementSibling;
+    if (target && target.classList.contains('h2h-body')) {
+      target.classList.toggle('open'); h2hToggle.classList.toggle('open');
+    }
+    return;
+  }
+});
+
+init();
+</script>
+</body>
+</html>

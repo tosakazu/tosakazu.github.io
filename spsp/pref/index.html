@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>都道府県別ランキング — SPSP</title>
+<meta name="description" content="SPSP: スマブラSP 都道府県別のプレイヤーランキング一覧。">
+<style>
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Hiragino Sans", sans-serif;
+    background: #ffffff; color: #111827; font-size: 14px;
+    -webkit-text-size-adjust: 100%;
+  }
+  .header { max-width: 1400px; margin: 0 auto; padding: 20px 24px 0; }
+  h1 { font-size: 22px; color: #111827; margin: 0 0 4px; }
+  .subtitle { font-size: 13px; color: #6b7280; margin-bottom: 16px; }
+
+  .controls { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; margin: 12px 0; }
+  input {
+    padding: 8px 12px; border: 1px solid #e5e7eb;
+    background: #ffffff; color: #111827;
+    border-radius: 6px; font-size: 13px; font-family: inherit;
+  }
+  input[type="search"] { min-width: 280px; flex: 1; }
+  .status { color: #6b7280; font-size: 12px; }
+
+  .table-wrap { max-width: 1400px; margin: 0 auto; padding: 0 24px 32px; }
+  table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  th {
+    text-align: left; background: #ffffff; color: #374151;
+    padding: 10px 8px; border-bottom: 2px solid #e5e7eb;
+    user-select: none; cursor: pointer; font-weight: 600;
+    position: sticky; top: var(--nav-height, 56px); z-index: 2;
+  }
+  th:hover { color: #dc2626; }
+  th.sortable::after { content: "↕"; opacity: 0.3; margin-left: 4px; font-size: 10px; }
+  th.sorted-asc::after { content: "↑"; opacity: 1; }
+  th.sorted-desc::after { content: "↓"; opacity: 1; }
+  td { padding: 10px 8px; border-bottom: 1px solid #f3f4f6; }
+  tr.pref-row { cursor: pointer; transition: background 0.1s; }
+  tr.pref-row:hover { background: #f9fafb; }
+  tr.pref-row td.col-name a { color: #dc2626; font-weight: 500; text-decoration: none; }
+  tr.pref-row:hover td.col-name a { text-decoration: underline; }
+
+  th.col-idx, td.col-idx {
+    width: 24px; text-align: left; color: #9ca3af; font-size: 11px;
+    font-variant-numeric: tabular-nums; padding-left: 2px; padding-right: 2px;
+  }
+  th.col-name, td.col-name { width: auto; min-width: 160px; }
+  th.col-num, td.col-num {
+    text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap;
+    width: 110px;
+  }
+  th.col-top, td.col-top { width: auto; min-width: 200px; color: #374151; }
+  td.col-top a { color: #111827; text-decoration: none; }
+  td.col-top a:hover { color: #dc2626; text-decoration: underline; }
+  td.col-top .top-rank { color: #9ca3af; font-size: 11px; margin-left: 4px; }
+
+  .empty-msg { padding: 24px; text-align: center; color: #6b7280; }
+  .footer { text-align: center; color: #9ca3af; font-size: 12px; padding: 32px 0 16px; }
+  .footer a { color: #dc2626; text-decoration: none; }
+
+  @media (max-width: 720px) {
+    body { font-size: 13px; }
+    .header { padding: 12px 12px 0; }
+    h1 { font-size: 18px; }
+    .subtitle { font-size: 11px; }
+    .table-wrap { padding: 0 8px 24px; max-width: 100vw; overflow-x: hidden; }
+    th, td { padding: 8px 6px; font-size: 12px; }
+    th.col-idx, td.col-idx { width: 16px; padding-left: 0; padding-right: 3px; }
+    th.col-name, td.col-name { min-width: 0; width: auto; }
+    th.col-num, td.col-num { width: 56px; }
+    th.col-top, td.col-top { min-width: 100px; }
+    th { position: static; }
+  }
+</style>
+</head>
+<body>
+
+<div id="nav-root"></div>
+<script src="../nav.js"></script>
+
+<div class="header">
+  <h1>都道府県別ランキング</h1>
+  <p class="subtitle">居住地（都道府県）別のプレイヤーランキング</p>
+
+  <div class="controls">
+    <input type="search" id="search" placeholder="都道府県名で検索…" autocomplete="off">
+    <span class="status" id="status">読み込み中…</span>
+  </div>
+</div>
+
+<div class="table-wrap">
+  <table id="preftable">
+    <thead>
+      <tr>
+        <th class="col-idx"></th>
+        <th class="col-name sortable" data-sort="name">都道府県</th>
+        <th class="col-num sortable" data-sort="n">人数</th>
+        <th class="col-top sortable sorted-asc" data-sort="top_rank">全一</th>
+      </tr>
+    </thead>
+    <tbody id="tbody">
+      <tr><td colspan="4" class="empty-msg">読み込み中…</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<div class="footer" id="footer-info"></div>
+
+<script>
+'use strict';
+
+// 都道府県の標準並び順 (北海道→沖縄, 全国地方公共団体コード順)。
+const PREF_ORDER = [
+  '北海道','青森県','岩手県','宮城県','秋田県','山形県','福島県','茨城県','栃木県','群馬県',
+  '埼玉県','千葉県','東京都','神奈川県','新潟県','富山県','石川県','福井県','山梨県','長野県',
+  '岐阜県','静岡県','愛知県','三重県','滋賀県','京都府','大阪府','兵庫県','奈良県','和歌山県',
+  '鳥取県','島根県','岡山県','広島県','山口県','徳島県','香川県','愛媛県','高知県','福岡県',
+  '佐賀県','長崎県','熊本県','大分県','宮崎県','鹿児島県','沖縄県',
+];
+const PREF_INDEX = {}; PREF_ORDER.forEach((p, i) => { PREF_INDEX[p] = i; });
+
+const STATE = {
+  prefs: [],                     // [{name, n, top_uid, top_rank}]
+  uid_to_display: new Map(),
+  filtered: [],
+  sortKey: 'top_rank',
+  sortDir: 'asc',
+  searchText: '',
+};
+
+function escapeHtml(s) {
+  return String(s ?? '').replace(/[&<>"']/g, c => (
+    { '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;' }[c]
+  ));
+}
+
+// 各 sort key の canonical direction で 1..N 番号を割り当てる。
+function assignFixedRanks() {
+  const ps = STATE.prefs;
+  const byTop = ps.slice().sort((a, b) =>
+    (a.top_rank == null ? Infinity : a.top_rank) - (b.top_rank == null ? Infinity : b.top_rank));
+  byTop.forEach((p, i) => { p.rank_top = i + 1; });
+  const byN = ps.slice().sort((a, b) => (b.n || 0) - (a.n || 0));
+  byN.forEach((p, i) => { p.rank_n = i + 1; });
+  const byName = ps.slice().sort((a, b) => (PREF_INDEX[a.name] ?? 99) - (PREF_INDEX[b.name] ?? 99));
+  byName.forEach((p, i) => { p.rank_name = i + 1; });
+}
+
+function currentRankOf(p) {
+  if (STATE.sortKey === 'name') return p.rank_name;
+  if (STATE.sortKey === 'n') return p.rank_n;
+  return p.rank_top;
+}
+
+function applyFilters() {
+  const ft = STATE.searchText.trim();
+  STATE.filtered = STATE.prefs.filter(p => !ft || p.name.includes(ft));
+  const sign = STATE.sortDir === 'asc' ? 1 : -1;
+  const key = STATE.sortKey;
+  STATE.filtered.sort((a, b) => {
+    if (key === 'name') return sign * ((PREF_INDEX[a.name] ?? 99) - (PREF_INDEX[b.name] ?? 99));
+    if (key === 'top_rank') {
+      const av = a.top_rank == null ? Infinity : a.top_rank;
+      const bv = b.top_rank == null ? Infinity : b.top_rank;
+      return sign * (av - bv);
+    }
+    return sign * ((a[key] || 0) - (b[key] || 0));
+  });
+}
+
+function render() {
+  const tbody = document.getElementById('tbody');
+  const rows = STATE.filtered;
+  if (rows.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="4" class="empty-msg">該当なし</td></tr>';
+  } else {
+    tbody.innerHTML = rows.map(p => {
+      const url = `ranking.html?pref=${encodeURIComponent(p.name)}`;
+      let topHtml = '<span style="color:#9ca3af">—</span>';
+      if (p.top_uid != null) {
+        const disp = STATE.uid_to_display.get(p.top_uid) || `uid:${p.top_uid}`;
+        const rankFrag = p.top_rank ? `<span class="top-rank">#${p.top_rank}</span>` : '';
+        topHtml = `<a href="../p/?uid=${p.top_uid}">${escapeHtml(disp)}</a>${rankFrag}`;
+      }
+      return `
+        <tr class="pref-row" onclick="if(event.target.closest('a'))return;location.href='${url}'">
+          <td class="col-idx">${currentRankOf(p)}</td>
+          <td class="col-name"><a href="${url}">${escapeHtml(p.name)}</a></td>
+          <td class="col-num">${p.n}</td>
+          <td class="col-top">${topHtml}</td>
+        </tr>`;
+    }).join('');
+  }
+  document.querySelectorAll('th.sortable').forEach(th => {
+    th.classList.remove('sorted-asc', 'sorted-desc');
+    if (th.dataset.sort === STATE.sortKey) th.classList.add(STATE.sortDir === 'asc' ? 'sorted-asc' : 'sorted-desc');
+  });
+  document.getElementById('status').textContent = `${rows.length} / ${STATE.prefs.length} 都道府県`;
+}
+
+function setupEvents() {
+  document.getElementById('search').addEventListener('input', e => {
+    STATE.searchText = e.target.value; applyFilters(); render();
+  });
+  document.querySelectorAll('th.sortable').forEach(th => {
+    th.addEventListener('click', () => {
+      const key = th.dataset.sort;
+      if (STATE.sortKey === key) STATE.sortDir = STATE.sortDir === 'asc' ? 'desc' : 'asc';
+      else { STATE.sortKey = key; STATE.sortDir = (key === 'name' || key === 'top_rank') ? 'asc' : 'desc'; }
+      applyFilters(); render();
+    });
+  });
+}
+
+async function init() {
+  setupEvents();
+  try {
+    const [prefRes, jsonlRes, overseasRes] = await Promise.all([
+      fetch('../data/player_prefectures.json'),
+      fetch('../latest_tjpr_full.jsonl'),
+      fetch('../data/overseas.json').catch(() => null),
+    ]);
+    if (!prefRes.ok) throw new Error('player_prefectures.json 取得失敗');
+    if (!jsonlRes.ok) throw new Error('latest_tjpr_full.jsonl 取得失敗');
+    const prefMap = await prefRes.json();
+    let overseasUids = null;
+    if (overseasRes && overseasRes.ok) {
+      try { overseasUids = new Set((await overseasRes.json()).uids || []); } catch (e) {}
+    }
+    // jsonl を走査し、ランク付き選手を都道府県別に集計。
+    const agg = {};   // pref -> {n, top_uid, top_rank}
+    const text = await jsonlRes.text();
+    for (const ln of text.split('\n')) {
+      if (!ln.trim()) continue;
+      let rec; try { rec = JSON.parse(ln); } catch { continue; }
+      const pref = prefMap[String(rec.user_id)];
+      if (!pref) continue;
+      const ens = (rec.ranks && rec.ranks.ensemble) || null;
+      const a = agg[pref] || (agg[pref] = { n: 0, top_uid: null, top_rank: null });
+      a.n++;
+      // 全一 = 海外勢を除いた最上位 (ens 最小)。
+      if (!(overseasUids && overseasUids.has(rec.user_id)) && ens != null
+          && (a.top_rank == null || ens < a.top_rank)) {
+        a.top_rank = ens; a.top_uid = rec.user_id;
+        STATE.uid_to_display.set(rec.user_id, rec.display);
+      }
+    }
+    STATE.prefs = Object.keys(agg).map(name => ({ name, ...agg[name] }));
+    assignFixedRanks();
+    applyFilters(); render();
+    const total = STATE.prefs.reduce((s, p) => s + p.n, 0);
+    document.getElementById('footer-info').innerHTML =
+      `${STATE.prefs.length} 都道府県 — 居住地が判定できたランク付き選手 ${total} 名。<br>` +
+      `<a href="../">全国ランキングに戻る</a>`;
+  } catch (e) {
+    document.getElementById('tbody').innerHTML =
+      `<tr><td colspan="4" class="empty-msg">読み込みエラー: ${escapeHtml(e.message)}</td></tr>`;
+    document.getElementById('status').textContent = '';
+  }
+}
+init();
+</script>
+</body>
+</html>

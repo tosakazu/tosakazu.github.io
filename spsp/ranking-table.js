@@ -165,7 +165,10 @@
         const lvClass = lv > 0 ? `lv-${lv}` : '';
         // レベル接尾辞: Lv5 は順位で 👑(≤8)/🥇(≤16)/🥈(≤32)/🥉(≤64)/+(≤128)、
         // Lv1-4 は +カットオフ(384/768/1536/3072)以内なら「+」。
-        const _rk = (rec.ranks && rec.ranks.ensemble) || 0;
+        // 👑/メダルは「全国での到達度」を表すので、絞り込みビュー(使い手/都道府県別=
+        // ensemble がローカル順位に再付番される)では global_ensemble を使う。
+        // 本番ランキングは global_ensemble 未設定なので ensemble(=全国順位) に fallback。
+        const _rk = (rec.ranks && (rec.ranks.global_ensemble || rec.ranks.ensemble)) || 0;
         let lvSuffix = '';
         if (lv === 5 && _rk) {
           lvSuffix = _rk <= 8 ? '👑' : _rk <= 16 ? '🥇' : _rk <= 32 ? '🥈'
