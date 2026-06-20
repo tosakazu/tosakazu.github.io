@@ -599,7 +599,7 @@
     </div>
 
     <div class="section">
-      <h2>📅 最近の出場履歴</h2>
+      <h2>📅 出場履歴</h2>
       <div class="pager" id="recent-pager" data-target="recent" style="display:none"></div>
       <div id="recent"></div>
     </div>
@@ -611,7 +611,7 @@
   </div>
 
   <div class="footer" id="footer-info">
-    <span class="site-version" style="font-size:11px;color:#9ca3af">v 1907bd3 · 2026-06-20 12:23 UTC</span>
+    <span class="site-version" style="font-size:11px;color:#9ca3af">v 35a8fb2 · 2026-06-20 12:55 UTC</span>
   </div>
 </main>
 
@@ -630,6 +630,24 @@ let MAIN_REC = null;   // main record from latest_tjpr_full.jsonl (need to find)
 let RANK_CHART = null;
 let OVERSEAS_UIDS = null;  // Set<number> from data/overseas.json (loadData で fetch)
 let CHAR_IDX = null;       // character_index.json (loadData で fetch)
+let CHAR_EMOJI = null;     // data/char_emoji.json { char_id: {name, emoji} } (loadData で fetch)
+let _CHAR_EMOJI_BY_UID = null;  // uid -> メインキャラ絵文字 (CHAR_IDX.main_by_char × CHAR_EMOJI から遅延構築)
+// uid -> メイン使用キャラの絵文字. character_index の main_by_char (char→uids) を逆引きし
+// char_emoji.json の emoji を引く. 1 度だけ構築してメモ化.
+function charEmojiOf(uid) {
+  if (_CHAR_EMOJI_BY_UID == null) {
+    _CHAR_EMOJI_BY_UID = {};
+    const mbc = CHAR_IDX && CHAR_IDX.main_by_char;
+    if (mbc && CHAR_EMOJI) {
+      for (const cid in mbc) {
+        const em = CHAR_EMOJI[cid] && CHAR_EMOJI[cid].emoji;
+        if (!em) continue;
+        for (const u of (mbc[cid] || [])) _CHAR_EMOJI_BY_UID[u] = em;
+      }
+    }
+  }
+  return (uid != null && _CHAR_EMOJI_BY_UID[uid]) || '';
+}
 let FILTER = { period: 'all', kind: 'all' };  // 共通フィルタ state (render() で再初期化される)
 // 期間 → 日数. 'all' は無制限 (Infinity), 他は最大日数.
 const PERIOD_DAYS = { 'all': Infinity, '3y': 1095, '1y': 365, '6m': 183, '3m': 91 };
@@ -666,12 +684,16 @@ function fmtRank(r) { return r != null && r > 0 ? r.toLocaleString() : '—'; }
 async function loadData() {
   if (!UID || UID < 1) { showNotFound('URL に uid パラメータがありません。'); return; }
   try {
-    const [metaRes, playerRes, overseasRes, charIdxRes] = await Promise.all([
+    const [metaRes, playerRes, overseasRes, charIdxRes, charEmojiRes] = await Promise.all([
       fetch('../meta.json'),
       fetch(`../players/${UID}.json`),
       fetch('../data/overseas.json').catch(() => null),
       fetch('../data/character_index.json').catch(() => null),
+      fetch('../data/char_emoji.json').catch(() => null),
     ]);
+    if (charEmojiRes && charEmojiRes.ok) {
+      try { CHAR_EMOJI = await charEmojiRes.json(); } catch (e) {}
+    }
     if (overseasRes && overseasRes.ok) {
       try {
         const j = await overseasRes.json();
@@ -746,7 +768,11 @@ function tournamentItem(t, valueHtml) {
       <div class="meta">
         ${link}${resTag}${lcTag}
         ${t.event ? `<span style="color:#9ca3af">/ ${escapeHtml(t.event)}</span>` : ''}
-        <br><span class="date date-inline">${t.date}</span> · ${t.nent}名
+        <br><span class="date date-inline">${t.date}</span> · ${t.nent}名${
+          (t.pretour_ranks && t.pretour_ranks.ensemble != null)
+            ? ` · <span style="color:#6b7280">当時全国 #${t.pretour_ranks.ensemble}${
+                t.rank_delta_ensemble != null ? ' → #' + (t.pretour_ranks.ensemble - t.rank_delta_ensemble) : ''}</span>`
+            : ''}
       </div>
       <div class="v">${valueHtml}</div>
     </div>
@@ -1363,6 +1389,7 @@ function render() {
     const bracket = compactBracketLabel(m.global_bracket_label, m.round_text) || '';
     const pSeedHtml = pSeed != null ? `<div class="m-seed">#${pSeed}</div>` : '';
     const oSeedHtml = m.opp_seed != null ? `<div class="m-seed">#${m.opp_seed}</div>` : '';
+    const oppEmoji = charEmojiOf(m.opp_uid);  // 対戦相手のメイン使用キャラ絵文字 (名前の前に付与)
     const oppLink = m.opp_uid
       ? `<a href="?uid=${m.opp_uid}">${escapeHtml(m.opp_display || '')}</a>`
       : escapeHtml(m.opp_display || '');
@@ -1382,7 +1409,7 @@ function render() {
           <div>${score}</div>
           ${ufHtml}
         </span>
-        <span class="m-opp"><div>${oppLink}</div>${oSeedHtml}</span>
+        <span class="m-opp"><div>${oppEmoji ? oppEmoji + ' ' : ''}${oppLink}</div>${oSeedHtml}</span>
       </span>
       <span class="m-delta" style="color:${dColor}">${dStr}</span>
     </div>`;
