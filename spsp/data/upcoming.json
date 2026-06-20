@@ -1,8 +1,8 @@
 {
-  "generated_at": 1781946039,
+  "generated_at": 1781956834,
   "country_code": "JP",
   "lookahead_days": 21,
-  "count": 32,
+  "count": 33,
   "tournaments": [
     {
       "tournament_id": 921903,
@@ -745,6 +745,29 @@
           "num_entrants": 28,
           "type": 1,
           "start_at": 1783729800
+        }
+      ]
+    },
+    {
+      "tournament_id": 922645,
+      "tournament_slug": "tournament/revival-14",
+      "tournament_name": "みどブラRevival#14",
+      "start_at": 1783735200,
+      "end_at": 1783764000,
+      "is_online": false,
+      "city": "福岡市",
+      "venue_name": "",
+      "country_code": "JP",
+      "num_attendees": 27,
+      "url": "/tournament/revival-14",
+      "events": [
+        {
+          "event_id": 1647071,
+          "event_slug": "tournament/revival-14/event/1on1",
+          "event_name": "1on1トーナメント",
+          "num_entrants": 27,
+          "type": 1,
+          "start_at": 1783735200
         }
       ]
     }
