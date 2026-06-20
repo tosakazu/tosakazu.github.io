@@ -137,8 +137,6 @@
   .tour-item .meta a { color: #dc2626; text-decoration: none; font-weight: 500; font-size: 13px; }
   .tour-item .meta a:hover { text-decoration: underline; }
   .tour-item .meta .sub { color: #9ca3af; font-size: 10px; margin-top: 1px; }
-  .pref-badge { display: inline-block; margin-left: 6px; font-size: 10px; color: #0e7490;
-    background: rgba(8,145,178,0.08); border-radius: 8px; padding: 1px 6px; white-space: nowrap; }
   .tour-item .v {
     text-align: center; font-variant-numeric: tabular-nums; font-weight: 700;
     color: #16a34a; font-size: 18px; line-height: 1.1; min-width: 56px;
@@ -437,7 +435,7 @@
   </div>
 
   <div class="footer" id="footer-info">
-    <span class="site-version" style="font-size:11px;color:#9ca3af">v 429720a · 2026-06-20 16:43 UTC</span>
+    <span class="site-version" style="font-size:11px;color:#9ca3af">v 3446cf2 · 2026-06-20 17:10 UTC</span>
   </div>
 </main>
 
@@ -449,28 +447,46 @@ const TID = parseInt(params.get('id') || location.hash.replace(/^#/, '') || '0')
 
 let META = null;
 let TOURNEY = null;
-let PLAYER_PREF = null;   // data/player_prefectures.json { uid: 都道府県漢字 }
+let TOURNEY_PREF = null;       // この大会の開催地 都道府県 (tournament_prefectures.json[TID])
+let CHAR_EMOJI_BY_UID = null;  // uid -> メイン使用キャラ絵文字 (character_index × char_emoji)
 
 function fmtRank(r) { return r != null && r > 0 ? r.toLocaleString() : '—'; }
 
-// 居住地(都道府県)バッジ. player_prefectures.json から uid で引く。
-function prefBadge(p) {
-  const pref = (p && p.user_id != null && PLAYER_PREF) ? PLAYER_PREF[String(p.user_id)] : null;
-  return pref ? `<span class="pref-badge">📍${pref}</span>` : '';
+// uid -> メイン使用キャラ絵文字 (character_index.main_by_char 逆引き × char_emoji)。
+function charEmojiOf(uid) {
+  return (uid != null && CHAR_EMOJI_BY_UID && CHAR_EMOJI_BY_UID[uid]) || '';
 }
 
 async function load() {
   if (!TID || TID < 1) { showNotFound(); return; }
   try {
-    const [metaRes, tRes, prefRes] = await Promise.all([
+    const [metaRes, tRes, tprefRes, charIdxRes, charEmojiRes] = await Promise.all([
       fetch('../meta.json'),
       fetch(`../tournaments/${TID}.json`),
-      fetch('../data/player_prefectures.json').catch(() => null),
+      fetch('../data/tournament_prefectures.json').catch(() => null),
+      fetch('../data/character_index.json').catch(() => null),
+      fetch('../data/char_emoji.json').catch(() => null),
     ]);
     if (!tRes.ok) { showNotFound(); return; }
     META = await metaRes.json();
     TOURNEY = await tRes.json();
-    if (prefRes && prefRes.ok) { try { PLAYER_PREF = await prefRes.json(); } catch (e) {} }
+    if (tprefRes && tprefRes.ok) {
+      try { TOURNEY_PREF = (await tprefRes.json())[String(TID)] || null; } catch (e) {}
+    }
+    // uid -> キャラ絵文字 マップ (character_index.main_by_char × char_emoji)。
+    if (charIdxRes && charIdxRes.ok && charEmojiRes && charEmojiRes.ok) {
+      try {
+        const idx = await charIdxRes.json();
+        const ce = await charEmojiRes.json();
+        CHAR_EMOJI_BY_UID = {};
+        const mbc = idx.main_by_char || {};
+        for (const cid in mbc) {
+          const em = ce[cid] && ce[cid].emoji;
+          if (!em) continue;
+          for (const u of mbc[cid]) CHAR_EMOJI_BY_UID[u] = em;
+        }
+      } catch (e) {}
+    }
     render();
   } catch (e) {
     console.error(e);
@@ -488,8 +504,10 @@ function escapeHtml(s) {
 }
 
 function playerLink(p) {
-  if (p.user_id == null) return escapeHtml(p.display);
-  return `<a href="../p/?uid=${p.user_id}">${escapeHtml(p.display)}</a>`;
+  const em = charEmojiOf(p.user_id);
+  const pre = em ? em + ' ' : '';
+  if (p.user_id == null) return pre + escapeHtml(p.display);
+  return `${pre}<a href="../p/?uid=${p.user_id}">${escapeHtml(p.display)}</a>`;
 }
 
 function placeClass(p) {
@@ -545,9 +563,11 @@ function render() {
   if (TOURNEY.is_pre) chips.push('<span class="chip pre">プレ大会</span>');
   if (TOURNEY.is_restricted) chips.push('<span class="chip res">制限</span>');
   if (TOURNEY.is_lower_class) chips.push('<span class="chip lc">下位クラス</span>');
+  // 開催地の都道府県 (tournament_prefectures.json[TID])。
+  const locHtml = TOURNEY_PREF ? `📍${escapeHtml(TOURNEY_PREF)} · ` : '';
   document.getElementById('meta-line').innerHTML =
     `${TOURNEY.date}${TOURNEY.end_date && TOURNEY.end_date !== TOURNEY.date ? ' 〜 ' + TOURNEY.end_date : ''} · ` +
-    `<b style="color:#111827">${TOURNEY.nent || TOURNEY.standings.length}</b> 名 ${chips.join('')}`;
+    `${locHtml}<b style="color:#111827">${TOURNEY.nent || TOURNEY.standings.length}</b> 名 ${chips.join('')}`;
 
   // Podium
   const top3 = TOURNEY.standings.slice(0, 3);
@@ -577,7 +597,7 @@ function render() {
         ? `<div class="sub">全国 #${er}</div>` : '';
       return `<div class="tour-item">
         <span class="place ${placeClass(p.place)}">${p.place}</span>
-        <div class="meta">${playerLink(p)}${prefBadge(p)}${grank}</div>
+        <div class="meta">${playerLink(p)}${grank}</div>
         <div class="v">${valueFn(p)}</div>
       </div>`;
     }).join('');
@@ -759,7 +779,7 @@ function renderStandings() {
     return `<div class="tour-group" data-uid="${p.user_id}">
       <div class="tour-item">
         <span class="place ${placeCls}"><span class="num">${placeStr}</span>${placeFrac}</span>
-        <div class="meta">${playerLink(p)}${prefBadge(p)}${grank}</div>
+        <div class="meta">${playerLink(p)}${grank}</div>
         ${vHtml}
       </div>
       <div class="tour-matches"></div>
