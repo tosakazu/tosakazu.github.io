@@ -611,7 +611,7 @@
   </div>
 
   <div class="footer" id="footer-info">
-    <span class="site-version" style="font-size:11px;color:#9ca3af">v 35a8fb2 · 2026-06-20 12:55 UTC</span>
+    <span class="site-version" style="font-size:11px;color:#9ca3af">v 230f505 · 2026-06-20 13:08 UTC</span>
   </div>
 </main>
 
@@ -768,9 +768,9 @@ function tournamentItem(t, valueHtml) {
       <div class="meta">
         ${link}${resTag}${lcTag}
         ${t.event ? `<span style="color:#9ca3af">/ ${escapeHtml(t.event)}</span>` : ''}
-        <br><span class="date date-inline">${t.date}</span> · ${t.nent}名${
+        <br><span class="date date-inline">${t.date}</span>${
           (t.pretour_ranks && t.pretour_ranks.ensemble != null)
-            ? ` · <span style="color:#6b7280">当時全国 #${t.pretour_ranks.ensemble}${
+            ? `<br><span style="color:#9ca3af;font-size:10px">当時全国 #${t.pretour_ranks.ensemble}${
                 t.rank_delta_ensemble != null ? ' → #' + (t.pretour_ranks.ensemble - t.rank_delta_ensemble) : ''}</span>`
             : ''}
       </div>
