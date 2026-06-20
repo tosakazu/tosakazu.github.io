@@ -125,6 +125,7 @@
   .tag-uchi { background: rgba(168, 85, 247, 0.12); color: #6b21a8; }
   .tag-special { background: rgba(236, 72, 153, 0.10); color: #be185d; }
   .tag-small { background: rgba(107, 114, 128, 0.12); color: #4b5563; }
+  .tag-gf { background: #ffedd5; color: #9a3412; font-weight: 600; }
 
   .empty-msg { padding: 24px; text-align: center; color: #6b7280; }
   .footer { text-align: center; color: #9ca3af; font-size: 12px; padding: 32px 0 16px; }
@@ -318,6 +319,7 @@ function render() {
   } else {
     const html = shown.map(e => {
       const tags = [];
+      if (e.is_gf_missing) tags.push('<span class="tag tag-gf" title="決勝(Grand Finals)が未報告のため暫定順位のみ。ポイントは未反映で、結果確定後に集計されます">未完了</span>');
       if (e.is_weekend) tags.push('<span class="tag tag-wk">休日</span>');
       else tags.push('<span class="tag tag-wd">平日</span>');
       if (e.is_pre) tags.push('<span class="tag tag-pre">プレ大会</span>');
