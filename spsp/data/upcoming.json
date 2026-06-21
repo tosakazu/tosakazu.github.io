@@ -1,8 +1,8 @@
 {
-  "generated_at": 1782021869,
+  "generated_at": 1782032417,
   "country_code": "JP",
   "lookahead_days": 21,
-  "count": 33,
+  "count": 34,
   "tournaments": [
     {
       "tournament_id": 922565,
@@ -14,14 +14,14 @@
       "city": "台東区",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 8,
+      "num_attendees": 9,
       "url": "/tournament/22-485",
       "events": [
         {
           "event_id": 1646941,
           "event_slug": "tournament/22-485/event/on",
           "event_name": "シングルス（１on１トーナメント）",
-          "num_entrants": 8,
+          "num_entrants": 9,
           "type": 1,
           "start_at": 1782115200
         }
@@ -60,14 +60,14 @@
       "city": "渋谷区",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 7,
+      "num_attendees": 8,
       "url": "/tournament/129-shibuya-tatsu",
       "events": [
         {
           "event_id": 1648730,
           "event_slug": "tournament/129-shibuya-tatsu/event/singles",
           "event_name": "Singles",
-          "num_entrants": 7,
+          "num_entrants": 8,
           "type": 1,
           "start_at": 1782208800
         }
@@ -129,14 +129,14 @@
       "city": "京都市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 13,
+      "num_attendees": 14,
       "url": "/tournament/dsw-56",
       "events": [
         {
           "event_id": 1650077,
           "event_slug": "tournament/dsw-56/event/singletournament",
           "event_name": "SingleTournament",
-          "num_entrants": 13,
+          "num_entrants": 14,
           "type": 1,
           "start_at": 1782298800
         }
@@ -267,14 +267,14 @@
       "city": "大分市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 3,
+      "num_attendees": 4,
       "url": "/tournament/14-30",
       "events": [
         {
           "event_id": 1652294,
           "event_slug": "tournament/14-30/event/1on1",
           "event_name": "1on1トーナメント",
-          "num_entrants": 3,
+          "num_entrants": 4,
           "type": 1,
           "start_at": 1782469800
         }
@@ -290,14 +290,14 @@
       "city": "仙台市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 40,
+      "num_attendees": 42,
       "url": "/tournament/ost-15",
       "events": [
         {
           "event_id": 1643798,
           "event_slug": "tournament/ost-15/event/sp",
           "event_name": "SPシングルストーナメント",
-          "num_entrants": 40,
+          "num_entrants": 42,
           "type": 1,
           "start_at": 1782522000
         }
@@ -566,14 +566,14 @@
       "city": "岐阜市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 97,
+      "num_attendees": 96,
       "url": "/tournament/21-16",
       "events": [
         {
           "event_id": 1636233,
           "event_slug": "tournament/21-16/event/gifusma21",
           "event_name": "gifusma21",
-          "num_entrants": 94,
+          "num_entrants": 93,
           "type": 1,
           "start_at": 1783126800
         },
@@ -666,14 +666,14 @@
       "city": "奈良市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 29,
+      "num_attendees": 30,
       "url": "/tournament/badawi-5",
       "events": [
         {
           "event_id": 1620892,
           "event_slug": "tournament/badawi-5/event/badawi",
           "event_name": "Badawi",
-          "num_entrants": 29,
+          "num_entrants": 30,
           "type": 1,
           "start_at": 1783213200
         }
@@ -768,6 +768,29 @@
           "num_entrants": 18,
           "type": 1,
           "start_at": 1783782000
+        }
+      ]
+    },
+    {
+      "tournament_id": 923677,
+      "tournament_slug": "tournament/masterhand73",
+      "tournament_name": "MasterHand73",
+      "start_at": 1783821600,
+      "end_at": 1783846800,
+      "is_online": false,
+      "city": "大阪市",
+      "venue_name": "クレオ大阪南 (Creo Osaka South)",
+      "country_code": "JP",
+      "num_attendees": 10,
+      "url": "/tournament/masterhand73",
+      "events": [
+        {
+          "event_id": 1649090,
+          "event_slug": "tournament/masterhand73/event/sp-ultimate-singles",
+          "event_name": "SP シングルス / Ultimate Singles",
+          "num_entrants": 5,
+          "type": 1,
+          "start_at": 1783821600
         }
       ]
     }
