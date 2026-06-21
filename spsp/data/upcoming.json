@@ -1,8 +1,8 @@
 {
-  "generated_at": 1782032417,
+  "generated_at": 1782043231,
   "country_code": "JP",
   "lookahead_days": 21,
-  "count": 34,
+  "count": 35,
   "tournaments": [
     {
       "tournament_id": 922565,
@@ -14,14 +14,14 @@
       "city": "台東区",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 9,
+      "num_attendees": 10,
       "url": "/tournament/22-485",
       "events": [
         {
           "event_id": 1646941,
           "event_slug": "tournament/22-485/event/on",
           "event_name": "シングルス（１on１トーナメント）",
-          "num_entrants": 9,
+          "num_entrants": 10,
           "type": 1,
           "start_at": 1782115200
         }
@@ -129,14 +129,14 @@
       "city": "京都市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 14,
+      "num_attendees": 15,
       "url": "/tournament/dsw-56",
       "events": [
         {
           "event_id": 1650077,
           "event_slug": "tournament/dsw-56/event/singletournament",
           "event_name": "SingleTournament",
-          "num_entrants": 14,
+          "num_entrants": 15,
           "type": 1,
           "start_at": 1782298800
         }
@@ -359,14 +359,14 @@
       "city": "Kadena",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 9,
+      "num_attendees": 10,
       "url": "/tournament/oki-military-brawl-june-2026",
       "events": [
         {
           "event_id": 1631838,
           "event_slug": "tournament/oki-military-brawl-june-2026/event/ultimate-singles",
           "event_name": "Ultimate singles",
-          "num_entrants": 2,
+          "num_entrants": 3,
           "type": 1,
           "start_at": 1782547200
         }
@@ -768,6 +768,29 @@
           "num_entrants": 18,
           "type": 1,
           "start_at": 1783782000
+        }
+      ]
+    },
+    {
+      "tournament_id": 920972,
+      "tournament_slug": "tournament/seibugeki",
+      "tournament_name": "西武撃 / Seibugeki #拾玖﹅伍",
+      "start_at": 1783814400,
+      "end_at": 1783854000,
+      "is_online": false,
+      "city": "練馬区",
+      "venue_name": "",
+      "country_code": "JP",
+      "num_attendees": 256,
+      "url": "/tournament/seibugeki",
+      "events": [
+        {
+          "event_id": 1643603,
+          "event_slug": "tournament/seibugeki/event/singles",
+          "event_name": "シングルストーナメント/Singles",
+          "num_entrants": 256,
+          "type": 1,
+          "start_at": 1783814400
         }
       ]
     },
