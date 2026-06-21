@@ -1,78 +1,9 @@
 {
-  "generated_at": 1781989268,
+  "generated_at": 1782000011,
   "country_code": "JP",
   "lookahead_days": 21,
-  "count": 33,
+  "count": 31,
   "tournaments": [
-    {
-      "tournament_id": 921903,
-      "tournament_slug": "tournament/to-win-10",
-      "tournament_name": "TO WIN#10",
-      "start_at": 1782003600,
-      "end_at": 1782039600,
-      "is_online": false,
-      "city": "渋谷区",
-      "venue_name": "",
-      "country_code": "JP",
-      "num_attendees": 44,
-      "url": "/tournament/to-win-10",
-      "events": [
-        {
-          "event_id": 1645515,
-          "event_slug": "tournament/to-win-10/event/singles",
-          "event_name": "Singles",
-          "num_entrants": 44,
-          "type": 1,
-          "start_at": 1782003600
-        }
-      ]
-    },
-    {
-      "tournament_id": 914093,
-      "tournament_slug": "tournament/innosuma-25",
-      "tournament_name": "INNOSUMA!!#25",
-      "start_at": 1782014400,
-      "end_at": 1782036000,
-      "is_online": false,
-      "city": "和泉市",
-      "venue_name": "",
-      "country_code": "JP",
-      "num_attendees": 27,
-      "url": "/tournament/innosuma-25",
-      "events": [
-        {
-          "event_id": 1629805,
-          "event_slug": "tournament/innosuma-25/event/sp-1on1",
-          "event_name": "スマブラSP 1on1 トーナメント",
-          "num_entrants": 27,
-          "type": 1,
-          "start_at": 1782014400
-        }
-      ]
-    },
-    {
-      "tournament_id": 922099,
-      "tournament_slug": "tournament/2-193",
-      "tournament_name": "きとスマ！#2",
-      "start_at": 1782018000,
-      "end_at": 1782036000,
-      "is_online": false,
-      "city": "京都市",
-      "venue_name": "",
-      "country_code": "JP",
-      "num_attendees": 16,
-      "url": "/tournament/2-193",
-      "events": [
-        {
-          "event_id": 1645922,
-          "event_slug": "tournament/2-193/event/ultimate-singles",
-          "event_name": "Ultimate Singles",
-          "num_entrants": 16,
-          "type": 1,
-          "start_at": 1782018000
-        }
-      ]
-    },
     {
       "tournament_id": 922565,
       "tournament_slug": "tournament/22-485",
@@ -298,6 +229,29 @@
           "event_slug": "tournament/6-98/event/super-smash-bros-ultimate-singles",
           "event_name": "シングルス",
           "num_entrants": 0,
+          "type": 1,
+          "start_at": 1782464400
+        }
+      ]
+    },
+    {
+      "tournament_id": 925136,
+      "tournament_slug": "tournament/smalab-41",
+      "tournament_name": "Smalab 41",
+      "start_at": 1782464400,
+      "end_at": 1782482400,
+      "is_online": false,
+      "city": "広島市",
+      "venue_name": "",
+      "country_code": "JP",
+      "num_attendees": 3,
+      "url": "/tournament/smalab-41",
+      "events": [
+        {
+          "event_id": 1652200,
+          "event_slug": "tournament/smalab-41/event/ultimate-singles",
+          "event_name": "Ultimate Singles",
+          "num_entrants": 2,
           "type": 1,
           "start_at": 1782464400
         }
@@ -758,14 +712,14 @@
       "city": "福岡市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 29,
+      "num_attendees": 30,
       "url": "/tournament/revival-14",
       "events": [
         {
           "event_id": 1647071,
           "event_slug": "tournament/revival-14/event/1on1",
           "event_name": "1on1トーナメント",
-          "num_entrants": 29,
+          "num_entrants": 30,
           "type": 1,
           "start_at": 1783735200
         }
