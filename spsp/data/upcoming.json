@@ -1,5 +1,5 @@
 {
-  "generated_at": 1781967663,
+  "generated_at": 1781978426,
   "country_code": "JP",
   "lookahead_days": 21,
   "count": 33,
@@ -37,14 +37,14 @@
       "city": "和泉市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 26,
+      "num_attendees": 27,
       "url": "/tournament/innosuma-25",
       "events": [
         {
           "event_id": 1629805,
           "event_slug": "tournament/innosuma-25/event/sp-1on1",
           "event_name": "スマブラSP 1on1 トーナメント",
-          "num_entrants": 26,
+          "num_entrants": 27,
           "type": 1,
           "start_at": 1782014400
         }
@@ -175,14 +175,14 @@
       "city": "中野区",
       "venue_name": "Red Bull Gaming Sphere Tokyo",
       "country_code": "JP",
-      "num_attendees": 54,
+      "num_attendees": 55,
       "url": "/tournament/weekly-smash-party-235",
       "events": [
         {
           "event_id": 1649614,
           "event_slug": "tournament/weekly-smash-party-235/event/special-1on1-ultimate-singles",
           "event_name": "SPECIAL 1on1/ Ultimate Singles",
-          "num_entrants": 53,
+          "num_entrants": 54,
           "type": 1,
           "start_at": 1782291600
         }
@@ -620,14 +620,14 @@
       "city": "日光市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 8,
+      "num_attendees": 9,
       "url": "/tournament/1-nikko",
       "events": [
         {
           "event_id": 1637615,
           "event_slug": "tournament/1-nikko/event/sp",
           "event_name": "スマブラSPトーナメント",
-          "num_entrants": 8,
+          "num_entrants": 9,
           "type": 1,
           "start_at": 1780239600
         }
