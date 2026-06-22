@@ -3,13 +3,13 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>SPSP 理論編 3: 数式と厳密な定義 — スマブラSP ランキング</title>
-<meta name="description" content="SPSP のランキング算出アルゴリズムの厳密な数式定義。Bradley-Terry / 5層カスケード / 全パラメータ一覧を MathJax 付きで掲載。">
+<title>理論編 3: 数式 — SPSP</title>
+<meta name="description" content="SPSP のアルゴリズムの厳密な数式定義。直対評価 (Glicko2 + LVゲート学習) と順位評価を再現実装可能なレベルで定義。">
 <link rel="canonical" href="https://tosakazu.github.io/spsp/math.html">
 <meta property="og:type" content="article">
 <meta property="og:site_name" content="SPSP">
-<meta property="og:title" content="SPSP 理論編 3: 数式と厳密な定義">
-<meta property="og:description" content="SPSP の厳密な数式定義 (Bradley-Terry / 5層カスケード)。">
+<meta property="og:title" content="SPSP 理論編 3: 数式">
+<meta property="og:description" content="SPSP の厳密な数式定義。">
 <meta property="og:url" content="https://tosakazu.github.io/spsp/math.html">
 <meta property="og:locale" content="ja_JP">
 <script>
@@ -56,19 +56,13 @@ MathJax = {
     color: #111827; font-family: ui-monospace, "SF Mono", Menlo, monospace;
     line-height: 1.5;
   }
-  .formula {
-    background: #ffffff; border-left: 3px solid #dc2626;
-    padding: 12px 16px; margin: 12px 0;
-    font-family: ui-monospace, "SF Mono", Menlo, monospace;
-    font-size: 14px; color: #dc2626;
-  }
   .nb {
     background: #dcfce7; border-left: 3px solid #16a34a;
     padding: 8px 14px; margin: 12px 0; color: #374151; font-size: 13px;
   }
-  .warn {
-    background: #fee2e2; border-left: 3px solid #dc2626;
-    padding: 8px 14px; margin: 12px 0; color: #374151; font-size: 13px;
+  .lead {
+    color: #374151; font-size: 15px; line-height: 1.8;
+    background: #f9fafb; border-radius: 6px; padding: 14px 18px; margin: 12px 0 24px;
   }
   table { border-collapse: collapse; margin: 12px 0; font-size: 13px; }
   th, td { padding: 6px 12px; border-bottom: 1px solid #e5e7eb; text-align: left; }
@@ -104,7 +98,7 @@ MathJax = {
     h3 { font-size: 14px; }
     p, ul, ol { font-size: 13px; line-height: 1.6; }
     pre { font-size: 11px; padding: 8px 10px; }
-    .formula { font-size: 12px; padding: 8px 10px; }
+    .lead { font-size: 13px; padding: 10px 12px; }
     table { font-size: 11px; display: block; overflow-x: auto; -webkit-overflow-scrolling: touch; white-space: nowrap; }
     th, td { padding: 4px 8px; }
     .pagenav { flex-direction: column; }
@@ -117,310 +111,335 @@ MathJax = {
 <script src="nav.js"></script>
 
 <main>
-  <h1>SPSP — 理論編 3: 数式と厳密な定義</h1>
-  <p class="lead" style="color:#6b7280;">
-    ここまでの 3 ページ (<a href="overview.html" style="color:#dc2626;">基本編</a> /
-    <a href="details.html" style="color:#dc2626;">理論編・概念</a> /
-    <a href="eval.html" style="color:#dc2626;">理論編・評価</a>) で概念と検証は説明した。
-    本ページは数式で厳密に定義する。再現実装が可能なレベルを目指す。
-    OpenSkill BradleyTerryFull の内部更新式は省略する (<a href="https://openskill.me/en/stable/" target="_blank" rel="noopener" style="color:#dc2626;">公式 docs</a> を参照)。
-    それ以外の SPSP 固有の式はすべて記述する。
+  <h1>SPSP 理論編 3: 数式</h1>
+
+  <p class="lead">
+    再現実装が可能なレベルで定義を並べる。概念解説は <a href="details.html" style="color:#dc2626;">理論編・概念</a>、検証は <a href="eval.html" style="color:#dc2626;">理論編・評価</a>。
+    Glicko2 内部更新の式は <a href="http://www.glicko.net/glicko/glicko2.pdf" target="_blank" rel="noopener" style="color:#dc2626;">Glickman 公式論文</a> を参照。
   </p>
 
-  <h2>1. 記法</h2>
+  <h2>0. 記法</h2>
   <ul>
-    <li>$t$ = 大会、$u$ = プレイヤー、$p^t_u$ = 大会 $t$ におけるプレイヤー $u$ の placement (順位)</li>
-    <li>$n_t$ = 大会 $t$ の参加者数 (重複・DQ・no-show 除外後)</li>
-    <li>$d_t$ = 大会 $t$ の eval_date からの経過日数</li>
-    <li>$\sigma_u,\ \mu_u$ = プレイヤー $u$ の直対評価レート (OpenSkill BT) の標準偏差・平均</li>
-    <li>$r_u$ = プレイヤー $u$ の正規化直対レート (= 順位評価の gain 計算入力)</li>
-    <li>「休日」 = 土日祝。期間中のいずれかが休日なら大会全体を休日扱い (ただし 14 日超は開始日のみで判定)</li>
+    <li>$t$ = 大会、$u$ = プレイヤー、$p^t_u$ = 大会 $t$ におけるプレイヤー $u$ の最終順位</li>
+    <li>$n_t$ = 大会 $t$ の参加者数 (重複・DQ 除外後)</li>
+    <li>$d_t$ = 評価基準日から大会 $t$ までの経過日数</li>
+    <li>$\rho_u,\ \text{RD}_u,\ \nu_u$ = プレイヤー $u$ の Glicko2 レート・不確実性・変動性</li>
+    <li>$r_u$ = $u$ の正規化レート (= 順位評価で使う相手レート)</li>
+    <li>$w_t \in \{0,1\}$ = 大会 $t$ が休日大会なら 1。期間中いずれかが土日祝なら全体を休日扱い (ただし 14 日超の長期大会は開始日のみで判定)</li>
+    <li>$L_k(u) = 1 \iff$ プレイヤー $u$ が Lv $k$ の母集団に属する ($k \in \{1,\dots,5\}$)</li>
+    <li>「制限大会・下位クラス」 = 雛囃子・西武撃 Rising 等の制限大会、または B/C/D/E クラスのイベント</li>
   </ul>
 
-  <h2>2. 直対評価 (OpenSkill BradleyTerryFull)</h2>
+  <h2>1. 直対評価 (Glicko2)</h2>
 
-  <h3>2.1 概要</h3>
+  <h3>1.1 状態量と更新</h3>
   <ul>
-    <li>各プレイヤーは平均 $\mu$ と標準偏差 $\sigma$ の 2 パラメータ</li>
-    <li>初期値: $\mu_0 = 25,\ \sigma_0 = 25/3 \approx 8.33$</li>
-    <li>skill spread $\beta = 25/6 \approx 4.167$、drift $\tau = 25/300$</li>
-    <li>順序付けスコア (ordinal): $\text{ord}_u = \mu_u - z\, \sigma_u$ (デフォルト $z = 3$)</li>
-    <li>詳細な更新式は <a href="https://openskill.me/en/stable/" target="_blank" rel="noopener" style="color:#dc2626;">OpenSkill 公式 docs</a> を参照</li>
+    <li>各プレイヤーはレート $\rho$、不確実性 $\text{RD}$、変動性 $\nu$ の 3 値を持つ</li>
+    <li>初期値: $\rho_0 = 1500,\ \text{RD}_0 = 350,\ \nu_0 = 0.06$</li>
+    <li>系統定数 $\tau = 0.5$</li>
+    <li>1 試合ごとに $(\rho, \text{RD}, \nu)$ を逐次更新する (バッチではない)</li>
   </ul>
+  <p>1 試合の更新式は Glickman 論文のとおり。期待勝率は</p>
+  $$E(\rho_u, \rho_v) = \frac{1}{1 + 10^{-(\rho_u - \rho_v)/400}}$$
+  <p>で計算し、実結果 $s \in \{0, 1\}$ とのズレ $s - E$ を、$\text{RD}$ と $\nu$ で重み付けしてレートに反映する。</p>
 
-  <h3>2.2 σ floor + μ-compensation</h3>
+  <h3>1.2 復帰加算 (不参加期間による不確実性の膨張)</h3>
   <p>
-    通常の Bradley-Terry では試合を重ねると $\sigma$ が単調減少する。
-    これだと「覚醒選手」の急上昇を反映しにくい。SPSP では更新後の rating $(\mu_u, \sigma_u)$ に対し、
-    $\sigma$ が下限 $\sigma_{\text{floor}}$ を下回ったら次のように補正する:
+    プレイヤー $u$ の最終出場時刻を $\tau_u$、現大会 $t$ の開始時刻を $t_{\text{start}}$ とおき、
+    不参加日数を $\delta_u = (t_{\text{start}} - \tau_u) / 86400$ で定義する。
+    試合更新の直前に sigmoid で滑らかに $\text{RD}$ を膨らませる:
   </p>
-  $$\sigma'_u = \max(\sigma_u,\ \sigma_{\text{floor}})$$
-  $$\mu'_u = \mu_u + z \cdot (\sigma'_u - \sigma_u)$$
+  $$\text{RD}'_u = \max\!\left(\text{RD}_u,\ \text{RD}_{\text{infl}} \cdot \sigma\!\left(\frac{\delta_u - D_{\text{mid}}}{D_{\text{scale}}}\right)\right)$$
   <p>
-    この補正によって ordinal は不変:
-  </p>
-  $$\text{ord}'_u = \mu'_u - z\, \sigma'_u = \mu_u - z\, \sigma_u = \text{ord}_u$$
-  <p>
-    つまり「一回の試合の結果」は正しく反映されつつ、次回の試合では $\sigma$ が下限以上で確保されているので
-    更新幅が大きい状態を維持できる。
-  </p>
-  <p>
-    SPSP 本番では $\sigma_{\text{floor}} = 3.0$。
+    ただし $\delta_u \le D_{\text{grace}}$ なら何もしない ($\text{RD}'_u = \text{RD}_u$)。$\max$ なので $\text{RD}$ は下がらない。
   </p>
 
-  <h3>2.3 Inactivity σ inflation (不参加期間による不確実性増加)</h3>
-  <p>
-    各プレイヤー $u$ の最終出場大会タイムスタンプを $\tau_u$ とおき、現大会 $t$ 開始時点での不参加日数を
-    $d_u = (t_{\text{start}} - \tau_u) / 86400$ で定義する.
-    試合 update の <strong>直前</strong> に、$\sigma$ を以下の式で sigmoid 曲線で滑らかに膨らませる:
+  <svg viewBox="0 0 640 240" xmlns="http://www.w3.org/2000/svg" style="max-width:100%;height:auto;display:block;margin:8px 0 12px">
+    <style>
+      .ax { stroke:#9ca3af; stroke-width:1; fill:none; }
+      .gd { stroke:#e5e7eb; stroke-width:1; fill:none; }
+      .lbl { font-size:10px; font-family:-apple-system,sans-serif; fill:#6b7280; }
+      .crv { stroke:#dc2626; stroke-width:2; fill:none; }
+      .asymp { stroke:#6b7280; stroke-width:1; fill:none; stroke-dasharray:4,3; }
+      .anno { font-size:11px; font-family:-apple-system,sans-serif; fill:#dc2626; font-weight:600; }
+      .gz { fill:#f3f4f6; }
+    </style>
+    <!-- title -->
+    <text class="lbl" x="60" y="20" font-weight="600" fill="#374151">復帰加算カーブ: RD 上限の sigmoid 増加 (RD_infl = 128, D_mid = 540 日, D_scale = 180 日)</text>
+    <!-- grace zone -->
+    <rect class="gz" x="60" y="40" width="12.86" height="140"/>
+    <text class="lbl" x="66" y="195" text-anchor="middle">grace</text>
+    <!-- axes -->
+    <line class="ax" x1="60" y1="40" x2="60" y2="180"/>
+    <line class="ax" x1="60" y1="180" x2="600" y2="180"/>
+    <!-- y-grid -->
+    <line class="gd" x1="60" y1="110" x2="600" y2="110"/>
+    <text class="lbl" x="55" y="113" text-anchor="end">64</text>
+    <text class="lbl" x="55" y="44" text-anchor="end">128</text>
+    <text class="lbl" x="55" y="183" text-anchor="end">0</text>
+    <text class="lbl" x="40" y="110" text-anchor="middle" transform="rotate(-90 40 110)">RD' (上限)</text>
+    <!-- asymptote -->
+    <line class="asymp" x1="60" y1="40" x2="600" y2="40"/>
+    <!-- x-ticks -->
+    <text class="lbl" x="60" y="200" text-anchor="middle">0</text>
+    <text class="lbl" x="200" y="200" text-anchor="middle">300</text>
+    <text class="lbl" x="291" y="200" text-anchor="middle">540 (1.5y)</text>
+    <text class="lbl" x="380" y="200" text-anchor="middle">780</text>
+    <text class="lbl" x="523" y="200" text-anchor="middle">1080 (3y)</text>
+    <text class="lbl" x="330" y="220" text-anchor="middle">不参加日数 δ</text>
+    <!-- curve (sampled) -->
+    <path class="crv" d="M 60 178.4 L 72.9 178.4 L 137.1 162.7 L 214.3 142.3 L 291.4 110.0 L 368.6 77.6 L 445.7 56.6 L 522.9 46.5 L 600 42.5"/>
+    <!-- midpoint marker -->
+    <circle cx="291.4" cy="110.0" r="3" fill="#dc2626"/>
+    <text class="anno" x="298" y="105">RD' = 64 (上限の半分)</text>
+  </svg>
+
+  <h3>1.3 表示用 Elo 換算と正規化レート</h3>
+  <p>Glicko2 のレートはそのものが Elo 空間 (1500 基準) なので、サイト表示は内部レートをそのまま使う:</p>
+  $$\text{Elo}^{\text{bt}}_u = \rho_u$$
+  <p>順位評価で使う正規化レート $r_u$ は、全プレイヤーの最大値が 2500 になるようシフトする:</p>
+  $$r_u = \rho_u - \bigl(\max_v \rho_v - 2500\bigr)$$
+  <p>直対評価で値を持たないプレイヤーは $r_u = 1500$ で扱う。</p>
+  <p style="font-size:12px;color:#9ca3af;line-height:1.6">
+    シフト量 $\max_v \rho_v - 2500$ は評価基準日時点のグローバル最大で固定し、過去大会の素点計算でも同じ値を使う。
   </p>
-  $$\sigma'_u = \max\!\left(\sigma_u,\ \sigma_{\text{floor}} + (\sigma_{\text{infl}} - \sigma_{\text{floor}}) \cdot \mathrm{sigmoid}\!\left(\frac{d_u - D_{\text{mid}}}{D_{\text{scale}}}\right)\right)$$
-  <p>
-    ただし $d_u \leq D_{\text{grace}}$ のときは何もしない (= $\sigma'_u = \sigma_u$).
-    $\sigma$ を下げる方向には作用しない (max を取るため).
-  </p>
+
+  <h2>2. レベルシステム</h2>
+
+  <h3>2.1 LV ごとの対象大会フィルタ</h3>
+  <p>Lv $k$ の大会フィルタ $F_k(t) \in \{0,1\}$:</p>
   <table>
-    <thead><tr><th>定数</th><th>値</th><th>意味</th></tr></thead>
+    <thead><tr><th>Lv</th><th>条件 $F_k(t) = 1 \iff$</th></tr></thead>
     <tbody>
-      <tr><td>$\sigma_{\text{infl}}$</td><td>$6.0$</td><td>inactivity による σ の上限 (target)</td></tr>
-      <tr><td>$D_{\text{mid}}$</td><td>$540$ 日 (1.5 年)</td><td>sigmoid の中央 (この日数で σ が floor と target の中間)</td></tr>
-      <tr><td>$D_{\text{scale}}$</td><td>$180$ 日</td><td>sigmoid の幅 (大きいほどなだらか)</td></tr>
-      <tr><td>$D_{\text{grace}}$</td><td>$30$ 日</td><td>この期間以内なら inflation を適用しない</td></tr>
+      <tr><td>1</td><td>$n_t \ge 5$</td></tr>
+      <tr><td>2</td><td>$n_t \ge 9$</td></tr>
+      <tr><td>3</td><td>$n_t \ge 25 \ \land\ w_t = 1 \ \land\ \lnot\,\text{制限・下位クラス}$</td></tr>
+      <tr><td>4</td><td>$n_t \ge 33 \ \land\ w_t = 1 \ \land\ \lnot\,\text{制限・下位クラス}$</td></tr>
+      <tr><td>5</td><td>$n_t \ge 49 \ \land\ w_t = 1 \ \land\ \lnot\,\text{制限・下位クラス}$</td></tr>
     </tbody>
   </table>
+  <p>各プレイヤーの現 Lv を $\ell_u \in \{1,\dots,5\}$ と書く ($\ell_u$ の決まり方は §2.3)。</p>
+
+  <h3>2.2 LVゲート学習 (直対評価)</h3>
+  <p>試合 $(u_w, u_l)$ について、勝者・敗者それぞれ独立に学習可否を判定する:</p>
+  $$\text{update}(u, t) = F_{\ell_u}(t)$$
   <p>
-    この補正により、長期 inactive 後の復帰戦では BT update 幅が大きくなり、復帰時の本当の実力を素早く反映できる.
-    Sweep 評価では <strong>全 Kendall τ scope で改善</strong> (top_32 で +0.0033, top_8 で +0.0019).
+    勝者・敗者で独立に判定するので、片方だけ更新される試合もある。
+    例: Lv1 のプレイヤーは閾値を満たす全大会で更新される一方、Lv5 のプレイヤーは $F_5(t) = 1$ の大会以外では据え置きとなる。
   </p>
 
-  <h3>2.4 レア / 常連ゲート (per-player gating)</h3>
-  <p>
-    プレイヤー $u$ の累計大会数を $c_u$、大会 $t$ が休日なら $w_t = 1$、平日なら $w_t = 0$ とおく。
-    試合 $(u_w, u_l)$ (winner / loser) について、それぞれ独立に rating を更新するか判定する:
-  </p>
-  $$\text{update}(u) = \begin{cases} \text{Yes} & w_t = 1 \ \lor\ c_u \le M \\ \text{No} & \text{otherwise} \end{cases}$$
-  <p>
-    ここで $M = 20$ (定数 <code>GATED_M_TOUR</code>)。winner / loser それぞれ独立に判定し、
-    片方だけ rating が動く試合もあり得る。
-  </p>
-  <p>
-    つまり「自分の累計大会数が 20 以下」または「その大会が休日開催」のとき直対評価を更新。
-    ベテラン (>20 大会) は平日大会の影響を受けない。
-  </p>
-  <p style="font-size:13px;color:#6b7280">
-    ※ <strong>下位クラスイベント</strong> (B/C/D/E クラス等のサブブラケット) は土日開催であっても $w_t = 0$ (= 平日扱い) とする。
-    お楽しみで参加する常連プレイヤーのレートを下位クラスでの結果で動かさないため。
-    <strong>制限大会</strong> (雛囃子・西武撃 Rising 等) は通常通り $w_t$ を判定 (= 休日であれば $w_t = 1$)。
-  </p>
-
-  <h3>2.5 DQ (途中棄権) の判定</h3>
-  <p>
-    試合 $m$ について start.gg 側で <code>dq=True</code> となっているものは、BT 学習・SPR / UF 計算から除外する.
-    一方、大会 $t$ におけるプレイヤー $u$ の DQ 判定 $\mathrm{DQ}(u, t)$ は以下の OR で決まる:
-  </p>
-  $$
-  \mathrm{DQ}(u, t) = \mathrm{DQ}^{\text{exp}}(u, t) \;\lor\; \mathrm{DQ}^{\text{imp}}(u, t)
-  $$
-  <p>
-    明示的 DQ (start.gg 側に dq match が存在):
-  </p>
-  $$
-  \mathrm{DQ}^{\text{exp}}(u, t) = (u \in D_t)
-  $$
-  <p>
-    ここで $D_t$ は大会 $t$ の dq=True match の loser_id 集合.
-    なお phase 内クラス bracket がある大会では、$D_t$ を main bracket / class bracket で分離して保持し、
-    親 event entry と class virtual entry に別々に適用する.
-  </p>
-  <p>
-    暗黙的 DQ (試合データありの大会で 1 試合も記録なし):
-  </p>
-  $$
-  \mathrm{DQ}^{\text{imp}}(u, t) =
-  \begin{cases}
-  \text{True} & |\mathcal{M}_t| > 0 \;\land\; p_u^t > 2 \;\land\; w_{u,t} = 0 \;\land\; \ell_{u,t} = 0 \\
-  \text{False} & \text{otherwise}
-  \end{cases}
-  $$
-  <p>
-    $|\mathcal{M}_t|$ = 大会 $t$ の総試合数, $p_u^t$ = $u$ の placement, $w_{u,t}$ = 勝ち数, $\ell_{u,t}$ = 負け数.
-    暗黙ルールが保守的 ($w=0 \land \ell=0$) なのは、data 欠損で false-positive を生まないため.
+  <h3>2.3 5 層カスケードと Lv の決定</h3>
+  <p>大会 $t$ で Lv $k$ の母集団 $L_k$ に属するプレイヤー $u$ の集計対象大会も $F_k$ で決まる。Lv $k$ における順位評価スコアを</p>
+  $$S^{\text{rank}}_k(u) \quad (\text{§3 で定義})$$
+  <p>とし、$u$ の Lv $k$ 内での順位評価ランクを $R^{\text{rank}}_k(u)$、直対評価ランクを $R^{\text{bt}}_k(u)$ とする。各 Lv 段の昇格判定にはこの 2 つの平均</p>
+  $$\text{ens}_k(u) = \frac{R^{\text{rank}}_k(u) + R^{\text{bt}}_k(u)}{2}$$
+  <p>を使う。$\text{ens}_k(u)$ の値が小さい (= 順位が上の) プレイヤーから上位 $N_{k+1}$ 名を次の母集団に残す:</p>
+  $$L_{k+1} = \{\,u \in L_k \,:\, \text{ens}_k(u) \le N_{k+1}\,\}$$
+  <p>同値は直対評価ランク $R^{\text{bt}}_k(u)$ が上のほうを優先。母集団サイズ:</p>
+  <table>
+    <thead><tr><th>$k$</th><th>$L_k$</th><th>$N_{k+1}$</th></tr></thead>
+    <tbody>
+      <tr><td>1</td><td>全プレイヤー</td><td>$N_2 = 2048$</td></tr>
+      <tr><td>2</td><td>Lv1 上位 2048</td><td>$N_3 = 1024$</td></tr>
+      <tr><td>3</td><td>Lv2 上位 1024</td><td>$N_4 = 512$</td></tr>
+      <tr><td>4</td><td>Lv3 上位 512</td><td>$N_5 = 256$</td></tr>
+      <tr><td>5</td><td>Lv4 上位 256</td><td>(なし)</td></tr>
+    </tbody>
+  </table>
+  <p>プレイヤー $u$ の最終 Lv は到達した最大の $k$:</p>
+  $$\ell_u = \max\{\,k \,:\, u \in L_k\,\}$$
+  <p style="font-size:12px;color:#9ca3af;line-height:1.6">
+    実装上、5 段カスケードは評価ターゲット時刻ごとに過去大会全部を使って再計算される。各時刻における Lv は時系列で確定し、未来の大会に依存しない。
+    Lv 決定用の直対評価ランクは Glicko2 BT ではなく OpenSkill BradleyTerry ($\sigma$ floor $= 3.0$、$\mu$-compensation あり) を別途学習して使う。最終的な BT 表示と総合評価ランクは §1 の Glicko2 で計算される。
   </p>
 
-  <h3>2.6 表示用 Elo 換算</h3>
+  <h3>2.4 DQ 判定</h3>
   <p>
-    ordinal を Elo の "log-odds" に変換する係数 $\beta_E$:
+    大会 $t$ におけるプレイヤー $u$ の DQ 判定 $\text{DQ}(u, t)$ は明示的判定と暗黙的判定の論理和で決まる。
   </p>
-  $$\beta_E = \frac{400}{\ln 10 \cdot \sqrt{2} \cdot \beta} \approx 29.48$$
-  <p>
-    これを使い、表示用 Elo はオフセット $1000$ を加えて:
-  </p>
-  $$\text{bt\_gated\_elo}_u = \text{ord}_u \cdot \beta_E + 1000$$
-  <p>
-    一方、順位評価の gain 計算に使う $r_u$ (正規化直対レート) は、全プレイヤーの最大が $2500$ になるようシフトする:
-  </p>
-  $$r_u = \text{ord}_u \cdot \beta_E - \bigl(\max_v \text{ord}_v \cdot \beta_E - 2500\bigr)$$
-  <p>
-    直対評価で値を持たないプレイヤー (該当試合に出ていない等) は $r_u = 1500$ (デフォルト基準値)。
+  $$\text{DQ}(u, t) = \text{DQ}^{\text{exp}}(u, t) \,\lor\, \text{DQ}^{\text{imp}}(u, t)$$
+  <p>明示的 DQ: start.gg 側で <code>dq=True</code> となっている試合の敗者集合を $D_t$ とすると</p>
+  $$\text{DQ}^{\text{exp}}(u, t) = (u \in D_t)$$
+  <p>暗黙的 DQ: 試合データはあるのに本人の試合が記録ゼロ (= no-show)。$w_{u,t}$ を $u$ の勝ち数、$\ell_{u,t}$ を負け数、$M_t$ を大会 $t$ の総試合数とすると</p>
+  $$\text{DQ}^{\text{imp}}(u, t) = \bigl(M_t > 0\bigr) \land \bigl(p^t_u > 2\bigr) \land \bigl(w_{u,t} = 0\bigr) \land \bigl(\ell_{u,t} = 0\bigr)$$
+  <p>DQ 認定された試合・順位は直対評価の学習と順位評価の集計から除外される。</p>
+  <p style="font-size:12px;color:#9ca3af;line-height:1.6">
+    暗黙的 DQ が保守的 ($w = 0 \land \ell = 0$) なのは、データ欠損で誤検出を生まないため。メイン + クラスブラケット構成の大会では $D_t$ をメイン側・クラス側で分けて保持し、親イベントエントリとクラスエントリに別々に適用する。
   </p>
 
   <h2>3. 順位評価</h2>
 
-  <h3 id="w2w">3.1 placement → W2W (Wins-to-Win) 変換</h3>
+  <h3>3.1 順位 → 勝ち上がりラウンド数</h3>
   <p>
-    ダブルイリミ (double elimination) bracket の構造を仮定する。優勝までに必要な勝ち数 W2W は placement ごとに決まる。
-    n 人参加の場合、losers bracket と winners bracket を組み立てた上で、各 placement $p$ が losers bracket の何ラウンド目に該当するかが一意に決まる。
-    たとえば $n = 8$ なら $\text{W2W}(1) = 5,\ \text{W2W}(2) = 4,\ \text{W2W}(3) = 3,\ \text{W2W}(5) = 2,\ \text{W2W}(7) = 1$。
-  </p>
-  <p>
-    定義: $\text{W2W}(p)$ = placement $p$ の参加者が losers bracket で 勝ち抜いた (= 勝ち上がる必要があった) ラウンド数。
-    SPSP では大会ごとの placement 列を `W2W` 列に変換してから集計を行う。
-  </p>
-
-  <h3>3.2 各ラウンドの参加者集合</h3>
-  <p>
-    各大会 $t$ で、参加者をシード番号順に並べ、それぞれの正規化直対レートを $\{r_i\}_{i=1}^{n_t}$ とする
-    ($i$ はシード位置, 1-indexed)。
-    仮想ダブルイリミの losers' bracket のラウンド $j$ に到達するシード index 集合を $R_j$ とする
-    (winners bracket と losers bracket の組み合わせから構築する標準的なダブルイリミシードの定式化)。
-  </p>
-
-  <h3>3.3 gain 関数 (Elo win probability)</h3>
-  <p>
-    ラウンド $j$ にいる相手レート $r$ に対し、基準レート $\text{base}$ の人が勝った時の「ゲインの大きさ」:
-  </p>
-  $$g(r;\ \text{base}) = 1 - \frac{1}{1 + 10^{(r - \text{base})/400}}$$
-  <p>
-    これは Elo の win probability 式 (= 基準が $\text{base}$ のプレイヤーが、レート $r$ の相手に勝つ確率を反転したもの)。
-    $r > \text{base}$ なら $g > 0.5$、$r < \text{base}$ なら $g < 0.5$。
-  </p>
-
-  <h3>3.4 ラウンドポイント $m_j(t)$</h3>
-  <p>
-    レート下限を $\text{floor}$、零回避定数 $\varepsilon = 0.01$ とする:
-  </p>
-  $$m_j(t) = \varepsilon + \frac{1}{|R_j|} \sum_{i \in R_j} g\bigl(\max(r_i, \text{floor});\ \text{base}\bigr)$$
-  <p>
-    $r_i < \text{floor}$ なら $\text{floor}$ にクリップしてから $g$ に渡す。
-    また $g$ の値は $\max(0, g)$ に下限を入れる (極端な負を除く)。
-  </p>
-
-  <h3>3.5 プレイヤー個別の大会 raw points</h3>
-  <p>
-    プレイヤー $u$ の大会 $t$ における raw points は「勝ち上がったラウンド数 $rw_t(u)$ ぶん」の和:
-  </p>
-  $$P_{t,u} = \sum_{j=1}^{rw_t(u)} m_j(t)$$
-  <p>
-    ここで
-  </p>
-  $$rw_t(u) = \max\bigl(0,\ \text{tier}(n_t) - \text{tier}(p^t_u)\bigr)$$
-  <p>
-    = 「大会の最大ラウンド数 − 自分が落ちたラウンド」 = 勝ち上がりラウンド数。
-  </p>
-
-  <h3>3.6 age decay と position factor</h3>
-  <p>
-    時間減衰は月 3% の指数減衰 (= 半減期 ≈ 22.8 ヶ月):
-  </p>
-  $$\alpha(d) = 0.97^{d/30}$$
-  <p>
-    プレイヤー $u$ の全大会を $P_{t,u} \cdot \alpha(d_t)$ の降順に並べる。
-    $i$ 番目 (1-indexed) の大会について:
-  </p>
-  $$\text{pos}_i = \begin{cases} 1 & i \le N \\ pd^{\,i - N + 1} & i > N \end{cases}$$
-  <p>
-    すなわち上位 $N$ 件はフル評価、$N+1$ 件目以降は $pd$ の冪で減衰。
-  </p>
-
-  <h3>3.7 大会の重み付き計上pt</h3>
-  $$w_{t,u} = P_{t,u} \cdot \alpha(d_t) \cdot \text{pos}_{r(u,t)}$$
-  <p>
-    ここで $r(u,t)$ は重み $P_{t,u} \cdot \alpha(d_t)$ をプレイヤー $u$ の全大会で降順に並べたときの順位。
-    $w_{t,u}$ が「大会 $t$ がプレイヤー $u$ のスコアに **計上** される実 pt 量」を表す。
-  </p>
-
-  <h3>3.8 順位評価スコア</h3>
-  $$\text{S}^{\text{rank}}_{\text{Lv}}(u) = \sum_{t \in F_{\text{Lv}}} w_{t,u}$$
-  <p>
-    (レベル Lv の対象大会フィルタ $F_{\text{Lv}}$ を満たす大会のみで集計)
-  </p>
-
-  <h3>3.9 表示 Elo</h3>
-  <p>
-    raw の順位評価スコアは大会の難しさ・本数に応じて 0 〜 数十 のオーダーになる。
-    サイト表示時は <strong>$c = 100$ 倍</strong> して整数 3〜4 桁の Elo 風数値にする (順位に影響しない線形変換):
-  </p>
-  $$E^{\text{rank}}_u = \text{S}^{\text{rank}}(u) \cdot c, \quad c = 100$$
-  <p>
-    (オフセットなし、つまり raw = 0 のプレイヤーは表示 Elo = 0)
-  </p>
-
-  <h2>4. 5 層カスケード</h2>
-  <p>
-    各 Lv のパラメータ $(\text{base},\ \text{floor},\ N,\ pd)$ と大会フィルタ $F_k$:
+    大会 $t$ をダブルエリミの敗者復活ブラケットに当てはめ、最終順位 $p^t_u$ から勝ち上がりラウンド数 $\text{rw}^t_u$ を機械的に決める。
+    たとえば $n_t = 8$ なら順位ごとの $\text{rw}$ は:
   </p>
   <table>
+    <thead><tr><th>順位 $p$</th><th>1</th><th>2</th><th>3</th><th>4</th><th>5〜6</th><th>7〜8</th></tr></thead>
+    <tbody><tr><td>$\text{rw}(p)$</td><td>5</td><td>4</td><td>3</td><td>2</td><td>1</td><td>0</td></tr></tbody>
+  </table>
+  <p>一般に、参加者数 $n$ における順位 $p$ の階段関数を $\text{tier}(p)$ とすると ($n$ には陽に依存しない)</p>
+  $$\text{rw}^t_u = \max\bigl(0,\ \text{tier}(1) - \text{tier}(p^t_u)\bigr) \quad \text{かつ} \quad \text{rw}^t_u \le \text{tier}(1) = \text{placement\_to\_tier}(n_t)$$
+  <p>$\text{tier}(\cdot)$ は順位を敗者復活ラウンド段に対応させる階段関数:</p>
+  <table>
+    <thead><tr><th>順位 $p$</th><th>1</th><th>2</th><th>3</th><th>4</th><th>5〜6</th><th>7〜8</th><th>9〜12</th><th>13〜16</th><th>17〜24</th><th>25〜32</th><th>33〜48</th><th>49〜64</th><th>65〜96</th></tr></thead>
+    <tbody><tr><td>$\text{tier}(p)$</td><td>0</td><td>1</td><td>2</td><td>3</td><td>4</td><td>5</td><td>6</td><td>7</td><td>8</td><td>9</td><td>10</td><td>11</td><td>12</td></tr></tbody>
+  </table>
+  <p style="font-size:13px;color:#6b7280">
+    $p \ge 5$ の階段幅は 2 つの tier ごとに倍になる ($\text{tier } 4{+}2k, 4{+}2k{+}1$ がサイズ $2^{k+1}$)。シングルエリミ・スイス・リーグなど DE 以外の大会も最終順位だけ与えればこの表で換算できる。
+  </p>
+
+  <h3>3.2 ラウンドの参加者集合 (シードで仮想配置)</h3>
+  <p>
+    大会 $t$ の参加者をシード番号順に並べ、各人の正規化レートを $\{r_i\}_{i=1}^{n_t}$ とする ($i$ はシード位置)。
+    仮想ダブルエリミの敗者復活ブラケットのラウンド $j$ に居るシード集合を $R_j(t)$ と書く。
+    実際の進行は見ず、シードどおりに勝ち上がった場合の構造で固定する。
+  </p>
+  <p>
+    <strong>自己強化を防ぐため</strong>、ラウンド集合の構築前にその大会の出場者のうち最もレートの高い 1 名 $u^\star_t = \arg\max_u r_u$ を除外する:
+  </p>
+  $$\tilde R_j(t) = \{\,i \in R_j(t) \,:\, i \ne u^\star_t\,\}$$
+  <p>除外は場の難しさを構成する側のみで、$u^\star_t$ 自身もポイント取得対象に残る。</p>
+
+  <h3>3.3 勝つことの価値とラウンドの難しさ</h3>
+  <p>Lv ごとの基準値 $\text{base}_k$ から見て、レート $r$ の相手に勝つことの価値を Elo の勝率式で測る:</p>
+  $$g_k(r) = 1 - \frac{1}{1 + 10^{(r - \text{base}_k)/400}}$$
+  <p>勝つことの「情報量」を取り、ラウンド $j$ に居る全相手で平均したものを <strong>ラウンドの難しさ</strong> $m^t_{k,j}$ と定義する:</p>
+  $$m^t_{k,j} = \varepsilon + \frac{1}{|\tilde R_j(t)|} \sum_{i \in \tilde R_j(t)} \bigl[-\log_2\!\bigl(1 - g_k(\max(r_i, \text{floor}_k))\bigr)\bigr]$$
+  <ul>
+    <li>$\varepsilon = 0.01$ (零回避)</li>
+    <li>相手レート $r_i$ は <strong>勝利ポイントの最低保証</strong> $\text{floor}_k$ でクリップ (極端にレートの低い相手で難しさが下がりすぎないように)</li>
+    <li>$1 - g$ は数値安定のため $\max(10^{-3},\ \cdot)$ にクリップしてから $\log_2$ を取る</li>
+  </ul>
+  <p>$\tilde R_j(t)$ が空のラウンドは $m^t_{k,j} = \varepsilon$。</p>
+
+  <svg viewBox="0 0 640 260" xmlns="http://www.w3.org/2000/svg" style="max-width:100%;height:auto;display:block;margin:8px 0 12px">
+    <style>
+      .ax2 { stroke:#9ca3af; stroke-width:1; fill:none; }
+      .gd2 { stroke:#e5e7eb; stroke-width:1; fill:none; }
+      .lbl2 { font-size:10px; font-family:-apple-system,sans-serif; fill:#6b7280; }
+      .crv2 { stroke:#dc2626; stroke-width:2; fill:none; }
+      .ref { stroke:#6b7280; stroke-width:1; fill:none; stroke-dasharray:3,3; }
+      .anno2 { font-size:11px; font-family:-apple-system,sans-serif; fill:#dc2626; font-weight:600; }
+    </style>
+    <text class="lbl2" x="60" y="20" font-weight="600" fill="#374151">勝つことの価値: $-\log_2(1 - g)$ ・横軸は base からの相手レート差</text>
+    <!-- axes -->
+    <line class="ax2" x1="60" y1="40" x2="60" y2="200"/>
+    <line class="ax2" x1="60" y1="200" x2="600" y2="200"/>
+    <!-- y-grid -->
+    <line class="gd2" x1="60" y1="160" x2="600" y2="160"/>
+    <line class="gd2" x1="60" y1="120" x2="600" y2="120"/>
+    <line class="gd2" x1="60" y1="80" x2="600" y2="80"/>
+    <text class="lbl2" x="55" y="203" text-anchor="end">0</text>
+    <text class="lbl2" x="55" y="163" text-anchor="end">1</text>
+    <text class="lbl2" x="55" y="123" text-anchor="end">2</text>
+    <text class="lbl2" x="55" y="83" text-anchor="end">3</text>
+    <text class="lbl2" x="55" y="43" text-anchor="end">4</text>
+    <text class="lbl2" x="40" y="120" text-anchor="middle" transform="rotate(-90 40 120)">勝つ価値</text>
+    <!-- x-ticks: (r - base) -->
+    <text class="lbl2" x="60" y="218" text-anchor="middle">-800</text>
+    <text class="lbl2" x="195" y="218" text-anchor="middle">-400</text>
+    <text class="lbl2" x="330" y="218" text-anchor="middle">0</text>
+    <text class="lbl2" x="465" y="218" text-anchor="middle">+400</text>
+    <text class="lbl2" x="600" y="218" text-anchor="middle">+800</text>
+    <text class="lbl2" x="330" y="238" text-anchor="middle">相手レート - base</text>
+    <!-- baseline marker: r = base, value = 1 -->
+    <line class="ref" x1="330" y1="200" x2="330" y2="160"/>
+    <line class="ref" x1="60" y1="160" x2="330" y2="160"/>
+    <!-- curve sampled: x px = 60 + (r-base+800)*0.3375, y px = 200 - val*40 -->
+    <path class="crv2" d="M 60 199.4 L 127.5 198.2 L 195 194.5 L 262.5 184.2 L 330 160.0 L 397.5 117.7 L 465 61.6 L 532.5 -1.1 L 600 -66.4" stroke-linecap="round"/>
+    <!-- The curve goes off-chart for large positive; clip via clip-path or just visually show -->
+    <circle cx="330" cy="160" r="3" fill="#dc2626"/>
+    <text class="anno2" x="336" y="156">同レート: 価値 = 1</text>
+    <circle cx="465" cy="61.6" r="3" fill="#dc2626"/>
+    <text class="anno2" x="430" y="55">+400: ~3.46</text>
+    <text class="lbl2" x="195" y="195" font-style="italic">下に張り付く: 低レート相手は寄与が小</text>
+  </svg>
+
+  <h3>3.4 大会素点</h3>
+  <p>
+    プレイヤー $u$ の大会 $t$ における Lv $k$ 素点 $P^t_{k,u}$ は、勝ち上がったラウンド分の難しさの和に大会規模の重みを掛けたもの:
+  </p>
+  $$P^t_{k,u} = \left( \sum_{j=1}^{\text{rw}^t_u} m^t_{k,j} \right) \cdot s(n_t), \qquad s(n) = \sqrt{\log_2 n}$$
+  <p>
+    大会規模補正 $s(n)$ は 8 人で約 $1.7$、32 人で約 $2.2$、128 人で約 $2.6$、512 人で約 $3.0$、2000 人で約 $3.3$。
+  </p>
+
+  <h3>3.5 集計 (時間減衰と位置減衰)</h3>
+  <p>時間減衰 ($\approx$ 月 4%):</p>
+  $$\alpha(d) = 0.96^{d/30}$$
+  <p>
+    プレイヤー $u$ の Lv $k$ 集計対象大会 (= $u \in L_k$ かつ $F_k(t) = 1$ の大会) を、時間減衰後ポイント $P^t_{k,u} \cdot \alpha(d_t)$ の降順に並べ、$i$ 番目の大会の位置減衰を
+  </p>
+  $$\pi_k(i) = \begin{cases} 1 & i \le N_k^{\text{top}} \\ (pd)^{\,i - N_k^{\text{top}} + 1} & i > N_k^{\text{top}} \end{cases}$$
+  <p>とおく ($pd = 0.3$、$N_k^{\text{top}}$ は Lv1 が 1、Lv2〜5 が 3)。$u$ の Lv $k$ 順位評価スコアは</p>
+  $$S^{\text{rank}}_k(u) = \sum_{i} P^{t_i}_{k,u} \cdot \alpha(d_{t_i}) \cdot \pi_k(i)$$
+  <p>表示用 Elo 風数値は</p>
+  $$\text{Elo}^{\text{rank}}_u = S^{\text{rank}}_{\ell_u}(u) \cdot 17.5$$
+  <p>順位への影響はない。</p>
+
+  <h3>3.6 Lv ごとのパラメータ</h3>
+  <table>
     <thead>
-      <tr>
-        <th>Lv</th><th>母集団</th><th>大会フィルタ</th>
-        <th>$\text{base}$</th><th>$\text{floor}$</th><th>$N$</th><th>$pd$</th>
-      </tr>
+      <tr><th>Lv</th><th>$\text{base}_k$</th><th>$\text{floor}_k$</th><th>$N_k^{\text{top}}$</th><th>$pd$</th></tr>
     </thead>
     <tbody>
-      <tr><td>1</td><td>全プレイヤー</td><td>$n_t \ge 8$、3 年以内</td><td>1700</td><td>350</td><td>1</td><td>0.3</td></tr>
-      <tr><td>2</td><td>Lv1 上位 2048</td><td>(Lv1 と同じ)</td><td>1900</td><td>700</td><td>3</td><td>0.3</td></tr>
-      <tr><td>3</td><td>Lv2 上位 1024</td><td>$n_t > 24$、制限大会・下位クラス除外</td><td>1900</td><td>700</td><td>3</td><td>0.3</td></tr>
-      <tr><td>4</td><td>Lv3 上位 512</td><td>$n_t > 24$、休日のみ、制限大会・下位クラス除外</td><td>1900</td><td>700</td><td>3</td><td>0.3</td></tr>
-      <tr><td>5</td><td>Lv4 上位 256</td><td>$n_t > 48$、休日のみ、制限大会・下位クラス除外</td><td>1900</td><td>700</td><td>3</td><td>0.3</td></tr>
+      <tr><td>1</td><td>1700</td><td>350</td><td>1</td><td>0.3</td></tr>
+      <tr><td>2</td><td>1900</td><td>700</td><td>3</td><td>0.3</td></tr>
+      <tr><td>3</td><td>1900</td><td>700</td><td>3</td><td>0.3</td></tr>
+      <tr><td>4</td><td>1900</td><td>700</td><td>3</td><td>0.3</td></tr>
+      <tr><td>5</td><td>1900</td><td>700</td><td>3</td><td>0.3</td></tr>
     </tbody>
   </table>
-  <p>
-    プレイヤー $u$ の最終 Lv は到達した最大の $k$:
-  </p>
-  $$\text{Lv}(u) = \max\{\,k : u \in L_k\,\}$$
-  <p>
-    スコアはその Lv のスコア。Lv5 まで生き残った人は Lv5 で並び、Lv4 止まりの人は Lv4 で並び、....
-  </p>
 
-  <h2>5. 総合評価 (ensemble)</h2>
+  <h2>4. 総合評価</h2>
   <p>
-    直対評価ランクを $R^{\text{bt}}_u$、順位評価ランクを $R^{\text{rank}}_u$ とする。
-    総合評価の平均順位:
+    最終 Lv $\ell_u$ 内での順位評価ランクを $R^{\text{rank}}(u)$、直対評価ランクを $R^{\text{bt}}(u)$ とする。総合評価の平均順位:
   </p>
-  $$\bar{R}_u = \frac{R^{\text{rank}}_u + R^{\text{bt}}_u}{2}$$
+  $$\bar R(u) = \frac{R^{\text{rank}}(u) + R^{\text{bt}}(u)}{2}$$
   <p>
-    最終ランクは $\bar{R}_u$ の昇順。同値は平均 Elo
+    最終ランクは $(-\ell_u,\ \bar R(u),\ R^{\text{bt}}(u))$ の辞書式昇順、すなわち
   </p>
-  $$\bar{E}_u = \tfrac{1}{2}\bigl(E^{\text{rank}}_u + E^{\text{bt}}_u\bigr)$$
-  <p>
-    の降順で tie-break。
-    ここで $E^{\text{rank}}_u$ は §3.9 の順位評価表示 Elo、$E^{\text{bt}}_u$ は直対評価 (BT-gated) の表示 Elo
-    (ordinal × β<sub>E</sub> + 1000)。
-    どちらか片方しか rate されていないプレイヤーは欠けた側を「全プレイヤー数 + 1」で穴埋めしてから平均する。
-  </p>
+  <ol>
+    <li>Lv が高いほど上位</li>
+    <li>同 Lv 内では $\bar R(u)$ が小さい (= 平均順位が上) ほど上位</li>
+    <li>同値タイブレークは $R^{\text{bt}}(u)$ が上のほうを優先</li>
+  </ol>
+  <p>どちらか片方しかレートを持たないプレイヤーは、欠けた側のランクを「その Lv の総プレイヤー数 + 1」で穴埋めする。</p>
 
-  <h2>6. パラメータ一覧</h2>
+  <h2>5. (付録) パラメータ一覧</h2>
   <table>
     <thead><tr><th>定数</th><th>値</th><th>意味</th></tr></thead>
     <tbody>
-      <tr><td>LOOKBACK 期間</td><td>$365 \times 6$</td><td>直対・順位評価の学習窓 (6 年)</td></tr>
-      <tr><td>レア / 常連 境界大会数 $M$</td><td>$20$</td><td>累計大会数がこの値以下のプレイヤーは平日大会も直対学習に含む</td></tr>
-      <tr><td>σ floor</td><td>$3.0$</td><td>直対評価 $\sigma$ の下限</td></tr>
-      <tr><td>σ inactivity target $\sigma_{\text{infl}}$</td><td>$6.0$</td><td>不参加期間で膨らませる $\sigma$ の上限</td></tr>
-      <tr><td>$D_{\text{mid}}$</td><td>$540$</td><td>sigmoid の中央 (1.5 年)</td></tr>
-      <tr><td>$D_{\text{scale}}$</td><td>$180$</td><td>sigmoid の幅</td></tr>
-      <tr><td>$D_{\text{grace}}$</td><td>$30$</td><td>inactivity inflation 猶予日数</td></tr>
-      <tr><td>直対基準デフォルト</td><td>$1500$</td><td>直対評価がないプレイヤーのデフォルトレート</td></tr>
-      <tr><td>順位評価 Elo 倍率</td><td>$100$</td><td>順位評価スコアの表示 Elo 換算</td></tr>
-      <tr><td>順位評価 Elo オフセット</td><td>$0$</td><td>順位評価表示 Elo の offset</td></tr>
-      <tr><td>直対評価 Elo オフセット</td><td>$1000$</td><td>直対評価表示 Elo の offset</td></tr>
-      <tr><td>$\beta_E$ (Elo 換算)</td><td>$\dfrac{400}{\ln 10 \cdot \sqrt{2} \cdot \beta} \approx 29.48$</td><td>直対評価 ordinal → Elo</td></tr>
-      <tr><td>OpenSkill $\beta$</td><td>$25/6 \approx 4.167$</td><td>BT skill spread</td></tr>
-      <tr><td>OpenSkill $\tau$</td><td>$25/300$</td><td>drift</td></tr>
-      <tr><td>Lv1 パラメータ</td><td>$(1700,\ 350,\ 1,\ 0.3)$</td><td>$(\text{base}, \text{floor}, N, pd)$</td></tr>
-      <tr><td>Lv2-5 パラメータ</td><td>$(1900,\ 700,\ 3,\ 0.3)$</td><td>$(\text{base}, \text{floor}, N, pd)$</td></tr>
-      <tr><td>$\varepsilon$ (gain)</td><td>$0.01$</td><td>ラウンドポイントの零回避</td></tr>
-      <tr><td>age decay rate</td><td>$0.97^{d/30}$</td><td>月 3% の時間減衰</td></tr>
+      <tr><td colspan="3" style="background:#f3f4f6;font-weight:bold">直対評価 (Glicko2)</td></tr>
+      <tr><td>$\rho_0$</td><td>$1500$</td><td>初期レート</td></tr>
+      <tr><td>$\text{RD}_0$</td><td>$350$</td><td>初期不確実性</td></tr>
+      <tr><td>$\nu_0$</td><td>$0.06$</td><td>初期変動性</td></tr>
+      <tr><td>$\tau$</td><td>$0.5$</td><td>系統定数 (変動性の制約)</td></tr>
+      <tr><td>$\text{RD}_{\text{infl}}$</td><td>$128$</td><td>復帰加算の上限</td></tr>
+      <tr><td>$D_{\text{mid}}$</td><td>$540$ 日</td><td>復帰加算 sigmoid の中央</td></tr>
+      <tr><td>$D_{\text{scale}}$</td><td>$180$ 日</td><td>復帰加算 sigmoid の幅</td></tr>
+      <tr><td>$D_{\text{grace}}$</td><td>$30$ 日</td><td>復帰加算の猶予日数</td></tr>
+      <tr><td>表示 Elo</td><td>$\rho_u$ (オフセットなし)</td><td>Glicko2 内部レートをそのまま表示</td></tr>
+      <tr><td colspan="3" style="background:#f3f4f6;font-weight:bold">対象大会フィルタ $F_k$</td></tr>
+      <tr><td>$F_1$</td><td>$n_t \ge 5$</td><td>Lv1 学習・集計対象</td></tr>
+      <tr><td>$F_2$</td><td>$n_t \ge 9$</td><td>Lv2 学習・集計対象</td></tr>
+      <tr><td>$F_3$</td><td>$n_t \ge 25$ かつ 休日 かつ ¬制限・下位クラス</td><td>Lv3 学習・集計対象</td></tr>
+      <tr><td>$F_4$</td><td>$n_t \ge 33$ かつ 休日 かつ ¬制限・下位クラス</td><td>Lv4 学習・集計対象</td></tr>
+      <tr><td>$F_5$</td><td>$n_t \ge 49$ かつ 休日 かつ ¬制限・下位クラス</td><td>Lv5 学習・集計対象</td></tr>
+      <tr><td colspan="3" style="background:#f3f4f6;font-weight:bold">カスケード</td></tr>
+      <tr><td>$N_2$</td><td>$2048$</td><td>Lv1 上位 2048 を Lv2 母集団へ</td></tr>
+      <tr><td>$N_3$</td><td>$1024$</td><td>Lv2 上位 1024 を Lv3 母集団へ</td></tr>
+      <tr><td>$N_4$</td><td>$512$</td><td>Lv3 上位 512 を Lv4 母集団へ</td></tr>
+      <tr><td>$N_5$</td><td>$256$</td><td>Lv4 上位 256 を Lv5 母集団へ</td></tr>
+      <tr><td colspan="3" style="background:#f3f4f6;font-weight:bold">順位評価</td></tr>
+      <tr><td>Lv1 パラメータ</td><td>$(\text{base},\text{floor},N^{\text{top}},pd) = (1700, 350, 1, 0.3)$</td><td>$(\text{base}, \text{floor}, N^{\text{top}}, pd)$</td></tr>
+      <tr><td>Lv2〜5 パラメータ</td><td>$(1900, 700, 3, 0.3)$</td><td>同上</td></tr>
+      <tr><td>大会規模補正</td><td>$s(n) = \sqrt{\log_2 n}$</td><td>素点に乗じる規模重み</td></tr>
+      <tr><td>$\varepsilon$</td><td>$0.01$</td><td>ラウンド難しさの零回避</td></tr>
+      <tr><td>時間減衰</td><td>$\alpha(d) = 0.96^{d/30}$</td><td>月約 4% 減衰</td></tr>
+      <tr><td>表示 Elo 倍率</td><td>$17.5$</td><td>$\text{Elo}^{\text{rank}}_u = S^{\text{rank}} \cdot 17.5$ (順位に影響なし)</td></tr>
+      <tr><td>自己強化除去</td><td>$\arg\max_u r_u$ を $\tilde R_j$ から除外</td><td>場の難しさ構成側のみ適用</td></tr>
     </tbody>
   </table>
 
@@ -430,8 +449,8 @@ MathJax = {
   </div>
 
   <div class="footer">
-    SPSP (Saikyo Players SPECIAL) · データソース: start.gg
-    <br><span class="site-version" style="font-size:11px;color:#9ca3af">v e3a4686 · 2026-06-22 11:22 UTC</span>
+    SPSP (Saikyo Player SPECIAL) · データソース: start.gg
+    <br><span class="site-version" style="font-size:11px;color:#9ca3af">v 19feab4 · 2026-06-22 12:08 UTC</span>
   </div>
 </main>
 </body>
