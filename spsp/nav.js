@@ -69,6 +69,8 @@
     if (/\/local\//.test(p))         return 'local-series';
     if (/\/c\/ranking\.html$/.test(p)) return 'char-ranking';
     if (/\/c\//.test(p))             return 'char-list';
+    if (/\/pref\/ranking\.html$/.test(p)) return 'pref-ranking';
+    if (/\/pref\//.test(p))          return 'pref-list';
     if (/\/events\//.test(p))        return 'events';
     if (/\/news\//.test(p))          return 'news';
     if (/\/p\//.test(p))             return 'player';
@@ -76,7 +78,7 @@
     return 'ranking';
   }
   const cur = currentPage();
-  const isRanking = cur === 'ranking' || cur === 'local-series' || cur === 'local-ranking' || cur === 'char-list' || cur === 'char-ranking' || cur === 'events';
+  const isRanking = cur === 'ranking' || cur === 'local-series' || cur === 'local-ranking' || cur === 'char-list' || cur === 'char-ranking' || cur === 'pref-list' || cur === 'pref-ranking' || cur === 'events';
   const isSeeding = cur === 'seed' || cur === 'seed-upload';
   const isMethod  = ['overview', 'details', 'eval', 'math'].includes(cur);
 
@@ -89,6 +91,7 @@
           <a href="${prefix}index.html"${cur === 'ranking' ? ' class="current"' : ''} role="menuitem">全国ランキング</a>
           <a href="${prefix}local/"${cur === 'local-series' || cur === 'local-ranking' ? ' class="current"' : ''} role="menuitem">ローカルランキング</a>
           <a href="${prefix}c/"${cur === 'char-list' || cur === 'char-ranking' ? ' class="current"' : ''} role="menuitem">使い手ランキング</a>
+          <a href="${prefix}pref/"${cur === 'pref-list' || cur === 'pref-ranking' ? ' class="current"' : ''} role="menuitem">都道府県別ランキング</a>
           <a href="${prefix}events/"${cur === 'events' ? ' class="current"' : ''} role="menuitem">大会一覧</a>
         </div>
       </div>
