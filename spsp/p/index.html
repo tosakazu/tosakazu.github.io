@@ -614,7 +614,7 @@
   </div>
 
   <div class="footer" id="footer-info">
-    <span class="site-version" style="font-size:11px;color:#9ca3af">v bb2084e · 2026-06-22 10:33 UTC</span>
+    <span class="site-version" style="font-size:11px;color:#9ca3af">v 0555806 · 2026-06-22 10:46 UTC</span>
   </div>
 </main>
 
@@ -635,6 +635,7 @@ let OVERSEAS_UIDS = null;  // Set<number> from data/overseas.json (loadData で 
 let CHAR_IDX = null;       // character_index.json (loadData で fetch)
 let CHAR_EMOJI = null;     // data/char_emoji.json { char_id: {name, emoji} } (loadData で fetch)
 let PLAYER_PREF = null;    // data/player_prefectures.json { uid: 都道府県漢字 } (loadData で fetch)
+let PLAYER_SUBRANKS = null; // data/player_subranks.json { uid: {char:{id,rank}, pref:{name,rank}} }
 let _CHAR_EMOJI_BY_UID = null;  // uid -> メインキャラ絵文字 (CHAR_IDX.main_by_char × CHAR_EMOJI から遅延構築)
 // uid -> メイン使用キャラの絵文字. character_index の main_by_char (char→uids) を逆引きし
 // char_emoji.json の emoji を引く. 1 度だけ構築してメモ化.
@@ -688,14 +689,18 @@ function fmtRank(r) { return r != null && r > 0 ? r.toLocaleString() : '—'; }
 async function loadData() {
   if (!UID || UID < 1) { showNotFound('URL に uid パラメータがありません。'); return; }
   try {
-    const [metaRes, playerRes, overseasRes, charIdxRes, charEmojiRes, prefRes] = await Promise.all([
+    const [metaRes, playerRes, overseasRes, charIdxRes, charEmojiRes, prefRes, subrankRes] = await Promise.all([
       fetch('../meta.json'),
       fetch(`../players/${UID}.json`),
       fetch('../data/overseas.json').catch(() => null),
       fetch('../data/character_index.json').catch(() => null),
       fetch('../data/char_emoji.json').catch(() => null),
       fetch('../data/player_prefectures.json').catch(() => null),
+      fetch('../data/player_subranks.json').catch(() => null),
     ]);
+    if (subrankRes && subrankRes.ok) {
+      try { PLAYER_SUBRANKS = await subrankRes.json(); } catch (e) {}
+    }
     if (charEmojiRes && charEmojiRes.ok) {
       try { CHAR_EMOJI = await charEmojiRes.json(); } catch (e) {}
     }
@@ -906,14 +911,25 @@ function render() {
       const emoji = (ce && ce.emoji) ? ce.emoji + ' ' : '';
       return `<a href="../c/ranking.html?char=${canonicalId}" style="color:${color};font-weight:${weight};text-decoration:none">${emoji}${c.name}</a>`;
     }).join('<span style="color:#d1d5db;margin:0 6px">·</span>');
+    // メインキャラの 使い手ランキング 内順位を右隣に表示。
+    const SUB = PLAYER_SUBRANKS && PLAYER_SUBRANKS[String(UID)];
+    if (SUB && SUB.char) {
+      const mainCanon = CHAR_MERGE_CANONICAL[chars[0].id] || chars[0].id;
+      body.innerHTML += `<a href="../c/ranking.html?char=${mainCanon}" ` +
+        `style="margin-left:8px;color:#9ca3af;font-size:11px;text-decoration:none">使い手 #${SUB.char.rank}</a>`;
+    }
     charLine.style.display = '';
   }
 
   // 居住地 (都道府県). player_prefectures.json (uid -> 都道府県漢字) から引く。
   const pref = PLAYER_PREF && PLAYER_PREF[String(UID)];
   if (pref) {
+    const SUBP = PLAYER_SUBRANKS && PLAYER_SUBRANKS[String(UID)];
+    const prefRankHtml = (SUBP && SUBP.pref)
+      ? `<span style="margin-left:8px;color:#9ca3af;font-size:11px">${pref}内 #${SUBP.pref.rank}</span>`
+      : '';
     document.getElementById('pref-body').innerHTML =
-      `📍 <a href="../pref/ranking.html?pref=${encodeURIComponent(pref)}" style="color:inherit;text-decoration:none">${pref}</a>`;
+      `📍 <a href="../pref/ranking.html?pref=${encodeURIComponent(pref)}" style="color:inherit;text-decoration:none">${pref}</a>` + prefRankHtml;
     document.getElementById('pref-line').style.display = '';
   }
 
