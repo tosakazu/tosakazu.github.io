@@ -1,5 +1,5 @@
 {
-  "generated_at": 1782054021,
+  "generated_at": 1782064838,
   "country_code": "JP",
   "lookahead_days": 21,
   "count": 35,
@@ -14,14 +14,14 @@
       "city": "台東区",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 10,
+      "num_attendees": 11,
       "url": "/tournament/22-485",
       "events": [
         {
           "event_id": 1646941,
           "event_slug": "tournament/22-485/event/on",
           "event_name": "シングルス（１on１トーナメント）",
-          "num_entrants": 10,
+          "num_entrants": 11,
           "type": 1,
           "start_at": 1782115200
         }
@@ -83,7 +83,7 @@
       "city": "川崎市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 4,
+      "num_attendees": 5,
       "url": "/tournament/24-11",
       "events": [
         {
@@ -313,14 +313,14 @@
       "city": "大東市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 329,
+      "num_attendees": 330,
       "url": "/tournament/70-sp-1",
       "events": [
         {
           "event_id": 1634012,
           "event_slug": "tournament/70-sp-1/event/1on1",
           "event_name": "予選あり1on1トーナメント",
-          "num_entrants": 318,
+          "num_entrants": 319,
           "type": 1,
           "start_at": 1782523800
         }
@@ -643,14 +643,14 @@
       "city": "札幌市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 46,
+      "num_attendees": 48,
       "url": "/tournament/pochisuma-next-patch-4",
       "events": [
         {
           "event_id": 1638445,
           "event_slug": "tournament/pochisuma-next-patch-4/event/ultimate-singles",
           "event_name": "Ultimate Singles",
-          "num_entrants": 46,
+          "num_entrants": 48,
           "type": 1,
           "start_at": 1783206000
         }
