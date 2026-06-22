@@ -16,6 +16,8 @@
 <script src="../seed-upload/seed_uploader.js"></script>
 <script src="../ranking-table.js"></script>
 <script src="../player-detail.js"></script>
+<script src="../seeding/seed_optimizer.js"></script>
+<script src="../seeding/seed_data.js"></script>
 <style>
   * { box-sizing: border-box; }
   html, body { margin: 0; padding: 0; }
@@ -522,6 +524,81 @@
   <div id="error-help" style="display:none;margin-top:8px"></div>
 </div>
 
+<!-- 🔀 被り回避最適化パネル -->
+<div id="seedopt-panel" style="display:none;max-width:1400px;margin:14px auto 0;padding:12px 24px">
+  <div style="border:1px solid #e5e7eb;border-radius:8px;padding:14px;background:#fafafa">
+    <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+      <strong style="font-size:14px;color:#111827">🔀 被り回避最適化</strong>
+      <span style="font-size:11px;color:#6b7280">地域被り（都道府県）と直近再対戦を避けるようシード順を最適化します。</span>
+    </div>
+    <div style="display:flex;gap:14px;flex-wrap:wrap;align-items:flex-end;margin-top:10px">
+      <label style="font-size:11px;color:#6b7280">プール数
+        <input type="number" id="so-pools" value="1" min="1" max="128" step="1"
+          style="display:block;width:80px;padding:5px 6px;border:1px solid #d1d5db;border-radius:5px;font-size:13px">
+      </label>
+      <span id="so-format-label" style="font-size:11px;color:#9ca3af"></span>
+      <button id="so-run" style="background:#2563eb;color:#fff;border:none;padding:8px 16px;border-radius:6px;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit">最適化を実行</button>
+      <button id="so-stop" disabled style="background:#6b7280;color:#fff;border:none;padding:8px 14px;border-radius:6px;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;display:none">中断して結果を反映</button>
+      <button id="so-apply" disabled style="background:#16a34a;color:#fff;border:none;padding:8px 14px;border-radius:6px;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;display:none">この結果を適用</button>
+    </div>
+    <div style="margin-top:8px">
+      <details>
+        <summary style="font-size:11px;color:#6b7280;cursor:pointer">上級者向けパラメータ（全ハイパラ編集可・空欄＝既定）</summary>
+        <div style="margin-top:8px;font-size:11px;color:#6b7280">
+          <div style="font-weight:600;color:#374151;margin:6px 0 2px">探索</div>
+          <div style="display:flex;gap:12px;flex-wrap:wrap;align-items:flex-end">
+            <label>モード
+              <select id="so-mode" style="display:block;padding:4px;border:1px solid #d1d5db;border-radius:5px;font-size:12px">
+                <option value="multistart-sa">多点スタート焼きなまし（既定）</option>
+                <option value="multistart-hillclimb">多点スタート山登り</option>
+                <option value="sa">焼きなまし</option>
+                <option value="hillclimb">山登り</option>
+              </select>
+            </label>
+            <label>多点数<input type="number" id="so-restarts" value="30" min="1" max="100" style="display:block;width:64px;padding:4px;border:1px solid #d1d5db;border-radius:5px;font-size:12px"></label>
+            <label>SA冷却率<input type="number" id="so-cooling" value="0.995" step="0.001" min="0.5" max="0.9999" style="display:block;width:72px;padding:4px;border:1px solid #d1d5db;border-radius:5px;font-size:12px"></label>
+            <label>乱数シード<input type="number" id="so-rngseed" value="12345" style="display:block;width:84px;padding:4px;border:1px solid #d1d5db;border-radius:5px;font-size:12px"></label>
+          </div>
+          <div style="font-weight:600;color:#374151;margin:8px 0 2px">罰則の重み</div>
+          <div style="display:flex;gap:12px;flex-wrap:wrap;align-items:flex-end">
+            <label>地域重み W_region<input type="number" id="so-wregion" value="1.0" step="0.1" style="display:block;width:72px;padding:4px;border:1px solid #d1d5db;border-radius:5px;font-size:12px"></label>
+            <label>直近重み W_recent<input type="number" id="so-wrecent" value="0.3" step="0.05" style="display:block;width:72px;padding:4px;border:1px solid #d1d5db;border-radius:5px;font-size:12px"></label>
+            <label>県の重み式
+              <select id="so-prefweight" style="display:block;padding:4px;border:1px solid #d1d5db;border-radius:5px;font-size:12px">
+                <option value="inv_sqrt">1/√人数（既定）</option>
+                <option value="inv">1/人数</option>
+                <option value="inv_log">1/log2(1+人数)</option>
+                <option value="const">一定</option>
+              </select>
+            </label>
+          </div>
+          <div style="font-weight:600;color:#374151;margin:8px 0 2px">直近対戦（固定期間まで重み一定→0到達日にかけて急減）</div>
+          <div style="display:flex;gap:12px;flex-wrap:wrap;align-items:flex-end">
+            <label title="この日数までは重み一定">固定期間(日)<input type="number" id="so-plateau" value="182.5" min="0" step="0.5" style="display:block;width:80px;padding:4px;border:1px solid #d1d5db;border-radius:5px;font-size:12px"></label>
+            <label title="この日数で重み0、以降も0">0到達(日)<input type="number" id="so-cutoff" value="365" min="1" style="display:block;width:80px;padding:4px;border:1px solid #d1d5db;border-radius:5px;font-size:12px"></label>
+            <label title="大きいほど急減">急減度<input type="number" id="so-decaypow" value="3" min="1" step="0.5" style="display:block;width:64px;padding:4px;border:1px solid #d1d5db;border-radius:5px;font-size:12px"></label>
+            <label>大会規模重み式
+              <select id="so-sizeweight" style="display:block;padding:4px;border:1px solid #d1d5db;border-radius:5px;font-size:12px">
+                <option value="log2">log2(参加人数)（既定）</option>
+                <option value="sqrt">√参加人数</option>
+                <option value="linear">参加人数</option>
+              </select>
+            </label>
+          </div>
+          <div style="font-weight:600;color:#374151;margin:8px 0 2px">プール内・可動制約（CSV / 空欄＝既定）</div>
+          <div style="display:flex;gap:12px;flex-wrap:wrap;align-items:flex-end">
+            <label>回戦重み<input type="text" id="so-roundweights" placeholder="1,0.6,0.2,0.06,0.02" style="display:block;width:160px;padding:4px;border:1px solid #d1d5db;border-radius:5px;font-size:12px"></label>
+            <label title="プール内順位ごとに動かせるプール数。空欄＝既定(0,1,2,…)">プール間可動 k_inter<input type="text" id="so-kinter" placeholder="既定: 0,1,2,3,…" style="display:block;width:160px;padding:4px;border:1px solid #d1d5db;border-radius:5px;font-size:12px"></label>
+            <label title="プール内順位ごとに動かせる順位数。空欄＝既定(上位1/4固定+下位ほど大きく動く凸ランプ)">プール内可動 k_intra<input type="text" id="so-kintra" placeholder="既定: 上位1/4固定+凸ランプ" style="display:block;width:160px;padding:4px;border:1px solid #d1d5db;border-radius:5px;font-size:12px"></label>
+          </div>
+        </div>
+      </details>
+    </div>
+    <div id="so-progress" style="margin-top:10px;font-size:12px;color:#374151"></div>
+    <div id="so-report" style="margin-top:10px;font-size:12px;color:#374151"></div>
+  </div>
+</div>
+
 <div class="table-wrap">
   <table id="ranktable">
     <!-- thead は SPSPRankingTable コンポーネントが自動生成 -->
@@ -537,7 +614,7 @@
 </div>
 
 <div class="footer" id="footer-info"></div>
-<div class="footer" style="margin-top:-12px"><span class="site-version" style="font-size:11px;color:#9ca3af">v 1aa9ee1 · 2026-06-22 15:09 UTC</span></div>
+<div class="footer" style="margin-top:-12px"><span class="site-version" style="font-size:11px;color:#9ca3af">v 459cfa8 · 2026-06-22 21:06 UTC</span></div>
 
 <!-- Chart.js (lazy load on first graph use) -->
 <script>
@@ -573,6 +650,18 @@ let MASTER_MAP = null;
 let MASTER_META = null;
 // 直近フェッチした event 情報 (phaseId, eventName, entrant list, etc.)
 let EVENT_CONTEXT = null;
+// 被り回避最適化を「適用」した場合のシード順 (= uid 配列)。null なら currentMethod 順。
+let APPLIED_ORDER = null;
+
+// CSV / start.gg 適用で使うシード出力順。APPLIED_ORDER があればそれ、なければ currentMethod 順。
+function orderedRecs() {
+  if (APPLIED_ORDER) {
+    const pos = new Map(APPLIED_ORDER.map((u, i) => [u, i]));
+    return DATA.slice().sort((a, b) =>
+      (pos.has(a.user_id) ? pos.get(a.user_id) : 1e9) - (pos.has(b.user_id) ? pos.get(b.user_id) : 1e9));
+  }
+  return DATA.slice().sort((a, b) => (a.ranks[currentMethod] || 1e9) - (b.ranks[currentMethod] || 1e9));
+}
 
 // V4 用 (= site/index.html の _columnsForMeta と同形): 平均順位 / 平均スコアの
 // 代わりに 直対評 / 順位評 を小さい灰色で表示する.
@@ -965,8 +1054,8 @@ function downloadCsv() {
   const methodLabel = {
     ensemble: '総合評価', tjpr: '順位評価', bt_gated: '直対評価',
   }[currentMethod] || '総合評価';
-  // Sort by current method's rank, then assign phaseseed 1..N
-  const recs = DATA.slice().sort((a, b) => (a.ranks[currentMethod] || 1e9) - (b.ranks[currentMethod] || 1e9));
+  // Sort by current method's rank (or 被り回避適用順), then assign phaseseed 1..N
+  const recs = orderedRecs();
   const lines = ['phaseseed,seedId,player,user_id,method,banzuke_rank,avg_rank,score,original_seed'];
   recs.forEach((r, i) => {
     const phaseseed = i + 1;
@@ -1011,7 +1100,7 @@ async function uploadToStartgg() {
   const methodLabel = {
     ensemble: '総合評価', tjpr: '順位評価', bt_gated: '直対評価',
   }[currentMethod] || '総合評価';
-  const recs = DATA.slice().sort((a, b) => (a.ranks[currentMethod] || 1e9) - (b.ranks[currentMethod] || 1e9));
+  const recs = orderedRecs();
   const mapping = [];
   for (let i = 0; i < recs.length; i++) {
     const r = recs[i];
@@ -1144,6 +1233,9 @@ function setParticipantsUiVisible(visible) {
   if (sr) sr.style.display = disp;
   if (cb) cb.style.display = disp;
   if (ub) ub.style.display = disp;
+  const panel = document.getElementById('seedopt-panel');
+  if (panel) panel.style.display = disp;
+  if (visible) initSeedOptPanel();
 }
 
 async function handleFetch() {
@@ -1254,10 +1346,13 @@ async function performSeedFetch(token, ev, phaseId) {
   const seedInfos = seedNodes.map(seedNodeToInfo);
   status.textContent = `${seedInfos.length} 名取得。フィルター中…`;
   const { records, rankedCount, missingCount } = filterAndRerank(seedInfos);
+  const _phase = (ev.phases || []).find(p => String(p.id) === String(phaseId));
   EVENT_CONTEXT = {
     phaseId, eventName: ev.name,
     eventId: ev.id, tournamentName: ev.tournament ? ev.tournament.name : '',
+    bracketType: _phase ? _phase.bracketType : null,
   };
+  APPLIED_ORDER = null;   // 新規取得で被り回避の適用をリセット
   // Repopulate DATA in place (preserve reference)
   DATA.length = 0;
   for (const r of records) DATA.push(r);
@@ -1289,7 +1384,9 @@ async function performEntrantsFetch(token, ev) {
   EVENT_CONTEXT = {
     phaseId: null, eventName: ev.name,
     eventId: ev.id, tournamentName: ev.tournament ? ev.tournament.name : '',
+    bracketType: null,   // phase 未作成 → 形式不明 → 既定 DE 想定
   };
+  APPLIED_ORDER = null;
   DATA.length = 0;
   for (const r of records) DATA.push(r);
   document.getElementById('meta-info').textContent = `${ev.name} (参加者一覧 / ブラケット未作成)`;
@@ -1332,6 +1429,7 @@ document.getElementById('method-tabs').addEventListener('click', e => {
   document.querySelectorAll('.method-tab').forEach(t => t.classList.remove('active'));
   tab.classList.add('active');
   currentMethod = tab.dataset.method;
+  if (APPLIED_ORDER) { APPLIED_ORDER = null; clearSeedOptApplied(); }  // 基準が変わるので適用解除
   const tbl = TABLE; if (tbl) tbl.setMethod(currentMethod);
 });
 
@@ -1728,6 +1826,13 @@ function showEventPickerInline(tournamentSlug, events) {
   document.getElementById('upload-btn').addEventListener('click', () => {
     uploadToStartgg().catch(e => showError(e.message, e.rawError));
   });
+  // 被り回避最適化パネル
+  document.getElementById('so-run').addEventListener('click', () => {
+    runSeedOptimize().catch(e => { document.getElementById('so-progress').textContent = '⚠ ' + e.message; });
+  });
+  document.getElementById('so-stop').addEventListener('click', stopSeedOptimize);
+  document.getElementById('so-apply').addEventListener('click', applySeedOptimize);
+  document.getElementById('so-mode').addEventListener('change', applyModeDefaults);
 
   // ── 直近の大会ピッカー: イベント binding ──
   const upToggle = document.getElementById('upcoming-toggle');
@@ -1747,6 +1852,347 @@ function showEventPickerInline(tournamentSlug, events) {
     openUpcomingBox();
   }
 })();
+
+// ───────────────────────── 被り回避最適化パネル ─────────────────────────
+let SEEDOPT_WORKER = null;
+let SEEDOPT_RESULT = null;
+
+// データ取得後にパネルを初期化（プール数 / 形式を既定で埋める）。
+function soFormat() {
+  // 形式は start.gg の bracketType から自動。取得できなければ DE 想定。
+  const bt = EVENT_CONTEXT && EVENT_CONTEXT.bracketType;
+  return (bt === 'SINGLE_ELIMINATION' || bt === 'ROUND_ROBIN') ? bt : 'DOUBLE_ELIMINATION';
+}
+// 探索モードに応じて多点数/SA冷却率の既定をミラー（optimizer の MODE_DEFAULTS と一致）。
+function applyModeDefaults() {
+  const md = (window.SeedOptimizer && SeedOptimizer.MODE_DEFAULTS) || {};
+  const m = document.getElementById('so-mode').value;
+  const d = md[m] || {};
+  if (d.restarts != null) document.getElementById('so-restarts').value = d.restarts;
+  if (d.saCooling != null) document.getElementById('so-cooling').value = d.saCooling;
+}
+function initSeedOptPanel() {
+  const poolsEl = document.getElementById('so-pools');
+  if (!poolsEl) return;
+  applyModeDefaults();
+  // プール数の既定: phase 作成 UI のプール数（無ければ 1）。
+  const pc = parseInt((document.getElementById('pc-group-count') || {}).value, 10);
+  if (Number.isFinite(pc) && pc >= 1) poolsEl.value = pc;
+  // 形式は自動取得 → ラベル表示のみ。
+  const fmtJa = { DOUBLE_ELIMINATION: 'ダブルイリミネーション', SINGLE_ELIMINATION: 'シングルイリミネーション', ROUND_ROBIN: '総当たり' }[soFormat()];
+  const bt = EVENT_CONTEXT && EVENT_CONTEXT.bracketType;
+  document.getElementById('so-format-label').textContent = `形式: ${fmtJa}${bt ? '（自動取得）' : '（未取得→DE想定）'}`;
+  document.getElementById('so-report').innerHTML = '';
+  document.getElementById('so-progress').textContent = '';
+  document.getElementById('so-apply').style.display = 'none';
+  document.getElementById('so-apply').disabled = true;
+  SEEDOPT_RESULT = null;
+}
+
+function clearSeedOptApplied() {
+  const r = document.getElementById('so-report');
+  if (r) {
+    const banner = r.querySelector('.seedopt-applied-banner');
+    if (banner) banner.remove();
+  }
+  render();
+}
+
+function escHtml(s) {
+  return String(s == null ? '' : s).replace(/[&<>"']/g, c =>
+    ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+}
+
+async function runSeedOptimize() {
+  if (!DATA.length || !EVENT_CONTEXT) { return; }
+  const progress = document.getElementById('so-progress');
+  const reportEl = document.getElementById('so-report');
+  reportEl.innerHTML = '';
+  document.getElementById('so-apply').style.display = 'none';
+  document.getElementById('so-apply').disabled = true;
+
+  const poolCount = Math.max(1, parseInt(document.getElementById('so-pools').value, 10) || 1);
+  const format = soFormat();   // start.gg bracketType から自動
+
+  // 入力ランキング = 現在の出力順（currentMethod 順。適用済みなら解除して基準に戻す）。
+  const baseRecs = DATA.slice().sort((a, b) => (a.ranks[currentMethod] || 1e9) - (b.ranks[currentMethod] || 1e9));
+  const ranking = baseRecs.map(r => r.user_id).filter(u => u != null);
+  const displayOf = {};
+  for (const r of DATA) displayOf[r.user_id] = r.display;
+
+  // 非対応形式を事前判定（worker でも返るが、取得前に弾く）。
+  if (poolCount === 1 && format !== 'DOUBLE_ELIMINATION') {
+    progress.textContent = '⚠ 1プール×ダブルイリミネーション以外は被り回避非対応です。';
+    return;
+  }
+
+  // CSV → 数値配列（空欄なら undefined＝既定を使う）。
+  const csvNums = (id) => {
+    const v = (document.getElementById(id).value || '').trim();
+    if (!v) return undefined;
+    const arr = v.split(',').map(s => parseFloat(s.trim())).filter(x => Number.isFinite(x));
+    return arr.length ? arr : undefined;
+  };
+  const params = {
+    mode: document.getElementById('so-mode').value,
+    restarts: Math.max(1, parseInt(document.getElementById('so-restarts').value, 10) || 8),
+    saCooling: Math.min(0.9999, Math.max(0.5, parseFloat(document.getElementById('so-cooling').value) || 0.995)),
+    rngSeed: parseInt(document.getElementById('so-rngseed').value, 10) || 12345,
+    W_region: parseFloat(document.getElementById('so-wregion').value) || 1.0,
+    W_recent: parseFloat(document.getElementById('so-wrecent').value) || 0.3,
+    prefWeight: document.getElementById('so-prefweight').value,
+    roundWeights: csvNums('so-roundweights'),   // undefined→既定
+    kInter: csvNums('so-kinter'),
+    kIntra: csvNums('so-kintra'),
+  };
+  // undefined のキーは optimizer 既定に任せる（明示的に消す）。
+  Object.keys(params).forEach(k => { if (params[k] === undefined) delete params[k]; });
+  const recentPlateauDays = Math.max(0, parseFloat(document.getElementById('so-plateau').value) || 182.5);
+  const recentCutoffDays = Math.max(recentPlateauDays + 1, parseFloat(document.getElementById('so-cutoff').value) || 365);
+  const recentDecayPow = Math.max(1, parseFloat(document.getElementById('so-decaypow').value) || 3);
+  const sizeWeight = document.getElementById('so-sizeweight').value;
+  // レポートの直近対戦は固定期間(半年)以内のみ表示。
+  params.reportRecentMaxDays = recentPlateauDays;
+  if (!(params.W_region > params.W_recent)) {
+    progress.textContent = '⚠ 地域重みは直近重みより大きくしてください（地域被り優先）。';
+    return;
+  }
+
+  document.getElementById('so-run').disabled = true;
+  progress.textContent = `データ取得中… (${ranking.length} 名の居住地・対戦履歴)`;
+
+  // 1) 取得・集計（メインスレッド。fetch はここだけ）。
+  let bundle;
+  try {
+    bundle = await SeedData.buildSeedData(ranking, {
+      prefix: '../',
+      params: { recentPlateauDays, recentCutoffDays, recentDecayPow, sizeWeight },
+      onProgress: (p) => {
+        if (p.phase === 'fetch') progress.textContent = `選手データ取得中 ${p.done}/${p.total}…`;
+      },
+    });
+  } catch (e) {
+    progress.textContent = '⚠ データ取得に失敗: ' + e.message;
+    document.getElementById('so-run').disabled = false;
+    return;
+  }
+  // 取得状況（同意なきフォールバック禁止 → missing/errors を明示）。
+  const m = bundle.meta;
+  let note = `居住地特定 ${m.prefIdentified}/${m.attendees} 名`;
+  if (m.missing.length) note += ` · DB未登録 ${m.missing.length} 名（対戦履歴なし扱い）`;
+  if (m.errors.length) note += ` · ⚠ 取得失敗 ${m.errors.length} 名`;
+
+  // 2) Worker で最適化。
+  if (SEEDOPT_WORKER) { SEEDOPT_WORKER.terminate(); SEEDOPT_WORKER = null; }
+  SEEDOPT_WORKER = new Worker('../seeding/seed_worker.js');
+  document.getElementById('so-stop').style.display = '';
+  document.getElementById('so-stop').disabled = false;
+
+  SEEDOPT_WORKER.onmessage = (ev) => {
+    const msg = ev.data || {};
+    if (msg.type === 'progress') {
+      progress.textContent = `${note} ｜ 最適化中 (round ${msg.round + 1}/${msg.restarts}, phase ${msg.phase || ''})`;
+    } else if (msg.type === 'checkpoint') {
+      const imp = msg.beforeScore > 0 ? ((1 - msg.bestScore / msg.beforeScore) * 100).toFixed(1) : '0.0';
+      progress.textContent = `${note} ｜ 最適化中 (${msg.round + 1}/${msg.restarts}) 暫定改善 ${imp}%`;
+    } else if (msg.type === 'done') {
+      finishSeedOptimize(msg.result, displayOf, note, ranking);
+    } else if (msg.type === 'error') {
+      progress.textContent = '⚠ 最適化エラー: ' + msg.message;
+      cleanupSeedOptWorker();
+    }
+  };
+  SEEDOPT_WORKER.postMessage({ type: 'start', input: {
+    poolCount, format, ranking,
+    prefByUid: bundle.prefByUid, prefCounts: bundle.prefCounts,
+    recentPair: bundle.recentPair, recentMeta: bundle.recentMeta,
+    params,
+  } });
+}
+
+function stopSeedOptimize() {
+  if (SEEDOPT_WORKER) SEEDOPT_WORKER.postMessage({ type: 'stop' });
+}
+function cleanupSeedOptWorker() {
+  document.getElementById('so-run').disabled = false;
+  document.getElementById('so-stop').style.display = 'none';
+  if (SEEDOPT_WORKER) { SEEDOPT_WORKER.terminate(); SEEDOPT_WORKER = null; }
+}
+
+function finishSeedOptimize(result, displayOf, note, ranking) {
+  cleanupSeedOptWorker();
+  const progress = document.getElementById('so-progress');
+  if (result && result.unsupported) {
+    progress.textContent = '⚠ ' + result.reason;
+    return;
+  }
+  SEEDOPT_RESULT = result;
+  const rep = result.report;
+  const imp = rep.improvementPct.toFixed(1);
+  progress.textContent = `${note} ｜ 完了${result.stoppedEarly ? '（中断）' : ''}`;
+
+  // レポート描画: {プール間, プール内} × {同一地域, 直近対戦} の4セル。
+  const dn = (u) => escHtml(displayOf[u] || u);
+  const rc = rep.residualConcerns;
+  const sectionHead = (t) => `<div style="margin-top:10px;padding-top:6px;border-top:1px solid #e5e7eb;font-weight:700;font-size:12px;color:#111827">${t}</div>`;
+  const ul = (items) => items.length ? `<ul style="margin:3px 0 0;padding-left:18px;font-size:11px;color:#374151">${items.map(x => `<li>${x}</li>`).join('')}</ul>` : '';
+  const ok = (t) => `<div style="margin-top:3px;font-size:11px;color:#16a34a">✅ ${t}</div>`;
+  const warn = (t) => `<div style="margin-top:5px;font-weight:600;font-size:11px;color:#b91c1c">⚠ ${t}</div>`;
+
+  // 同一地域セルの描画（separable=要改善, majority=不可避）。
+  function regionCell(reg, withRound) {
+    let h = '';
+    const sep = reg.separable || {}, prefs = Object.keys(sep);
+    const sepN = reg.separablePairs != null ? reg.separablePairs : (reg.separableEarlyPairs || 0);
+    const sepObj = reg.separable || reg.separableEarly || {};
+    const sepK = Object.keys(sepObj);
+    if (sepK.length) {
+      h += warn(`分散できるはずの地域に残る被り ${sepN} 組`);
+      h += ul(sepK.map(pf => `<strong>${escHtml(pf)}</strong>（${sepObj[pf][0].prefCount}名）: ` +
+        sepObj[pf].map(x => `${dn(x.a)}×${dn(x.b)}(P${x.pool + 1}${withRound ? '/' + x.round + '回戦' : ''})`).join('、')));
+    } else {
+      h += ok('分散できる地域はすべて別プール（少人数地域の被りなし）');
+    }
+    if (reg.majority && Object.keys(reg.majority).length) {
+      const mp = Object.keys(reg.majority);
+      h += `<div style="margin-top:3px;font-size:11px;color:#9ca3af">人数が多く回避不能な地域: ${mp.map(pf => `${escHtml(pf)} ${reg.majority[pf]}組`).join('、')}（計${reg.majorityPairs}組）</div>`;
+    }
+    return h;
+  }
+  // ③ プール内×同一地域: 同一地域が当たる最早回戦の分布 + 早期被りの内訳。
+  function intraRegionCell(reg, earlyRound) {
+    let h = '';
+    if (!reg.totalPairs) { return ok('同プール内に同一地域の組み合わせなし'); }
+    // 主役: 分散可能地域が早期回戦で当たる（actionable）。
+    const eb = reg.earlyByRegion || {}, ebPrefs = Object.keys(eb);
+    if (reg.earlyPairs) {
+      h += warn(`分散できる地域が ${earlyRound}回戦以内で当たる: ${reg.earlyPairs} 組（なるべく遅い回戦が理想）`);
+      h += ul(ebPrefs.map(pf => `<strong>${escHtml(pf)}</strong>: ` +
+        eb[pf].map(x => `${dn(x.a)}×${dn(x.b)}(P${x.pool + 1}/${x.round}回戦)`).join('、')));
+    } else {
+      h += ok(`分散できる地域が早期回戦(${earlyRound}回戦以内)で当たる組み合わせなし`);
+    }
+    if (reg.majorityEarlyPairs) {
+      h += `<div style="margin-top:3px;font-size:11px;color:#9ca3af">人数が多い地域(南関東等)の早期被り ${reg.majorityEarlyPairs} 組（同プール内では鳩の巣で不可避）</div>`;
+    }
+    // 参考: 同一地域の最早対戦回戦の分布（早い回戦＝赤寄り）。
+    const hist = reg.roundHistogram || {};
+    const rounds = Object.keys(hist).map(Number).sort((a, b) => a - b);
+    const maxR = rounds.length ? rounds[rounds.length - 1] : 0;
+    const cells = [];
+    for (let r = 1; r <= maxR; r++) {
+      const col = r <= earlyRound ? '#b91c1c' : '#6b7280';
+      cells.push(`<span style="color:${col}">${r}回戦:${hist[r] || 0}</span>`);
+    }
+    h += `<details style="margin-top:4px"><summary style="font-size:11px;color:#6b7280;cursor:pointer">同一地域の最早対戦回戦の分布（全地域）</summary><div style="font-size:11px;color:#374151;margin-top:3px">${cells.join(' / ')}</div></details>`;
+    return h;
+  }
+  // 直近対戦セルの描画。
+  function recentCell(recent, withRound) {
+    let h = `<div style="margin-top:5px;font-size:11px;color:#374151">同プールに残る直近対戦: <strong>${recent.pairs}</strong> 組${recent.top.length ? '（上位）' : ''}</div>`;
+    h += ul(recent.top.map(c => `${dn(c.a)} × ${dn(c.b)}（P${c.pool + 1}${withRound ? ' / ' + c.round + '回戦' : ''} / ${c.count}回, 最終${c.lastDate}）`));
+    return h;
+  }
+
+  // 各プールの地域バランス（① 用）。地域ごとのプール間分布と、各プールの内訳。
+  function regionBalanceCell(reg) {
+    const spread = reg.spread || {};
+    const regs = Object.keys(spread).sort((a, b) => spread[b].total - spread[a].total);
+    let h = '';
+    if (!regs.length) { return ok('地域データのある選手がいません'); }
+    // 地域ごとの分布（min–max/プール）。完全均等なら max−min ≤ 1。
+    const uneven = regs.filter(r => spread[r].max - spread[r].min >= 2);
+    h += uneven.length
+      ? warn(`プール間でばらつきの大きい地域 ${uneven.length} 件（下表で確認）`)
+      : ok('全地域がプール間でほぼ均等（各プールの差 ≤ 1名）');
+    h += ul(regs.map(r => {
+      const s = spread[r];
+      const bad = (s.max - s.min) >= 2;
+      const mark = bad ? '⚠' : '';
+      return `<span style="${bad ? 'color:#b91c1c;font-weight:600' : ''}">${escHtml(r)}（計${s.total}名）: 各プール ${s.min}–${s.max}名 ${mark}</span>`;
+    }));
+    // 各プールの内訳（detail）。
+    const comp = reg.poolComposition || [];
+    h += `<details style="margin-top:4px"><summary style="font-size:11px;color:#6b7280;cursor:pointer">各プールの地域内訳</summary>`;
+    h += `<div style="font-size:11px;color:#374151;margin-top:3px">`;
+    comp.forEach((pc, i) => {
+      const parts = Object.keys(pc.counts).sort((a, b) => pc.counts[b] - pc.counts[a])
+        .map(r => `${escHtml(r)}${pc.counts[r]}`);
+      if (pc.unknown) parts.push(`不明${pc.unknown}`);
+      h += `<div>P${i + 1}（${pc.size}名）: ${parts.join(' / ')}</div>`;
+    });
+    h += `</div></details>`;
+    return h;
+  }
+
+  let html = `<div style="font-weight:600;color:#111827">改善: 罰則合計 ${rep.before.total.toFixed(2)} → ${rep.after.total.toFixed(2)}（<span style="color:#16a34a">${imp}% 改善</span>）</div>`;
+
+  // ① プール間 × 同一地域 ＝ 各プールの地域バランス
+  html += sectionHead('① プール間 × 同一地域（各プールの地域バランス）') + `<div style="font-size:10px;color:#9ca3af">各地域がプール間で均等に散っているか（同一地域＝都道府県/南関東等）</div>`;
+  html += regionBalanceCell(rc.inter.region);
+  // ② プール間 × 直近対戦
+  html += sectionHead('② プール間 × 直近対戦') + `<div style="font-size:10px;color:#9ca3af">最近(1年内)対戦した相手が同じプールにいないか</div>`;
+  html += recentCell(rc.inter.recent, false);
+
+  if (rc.intra) {
+    const er = rc.intra.earlyRound;
+    // ③ プール内 × 同一地域 ＝ 同一地域が当たる最早回戦の分布
+    html += sectionHead(`③ プール内 × 同一地域（ブラケット内の当たり回戦バランス）`) + `<div style="font-size:10px;color:#9ca3af">同プールの同一地域同士がなるべく遅い回戦で当たるか（罰則 ${rep.before.intra.toFixed(1)}→${rep.after.intra.toFixed(1)}）</div>`;
+    html += intraRegionCell(rc.intra.region, er);
+    // ④ プール内 × 直近対戦
+    html += sectionHead(`④ プール内 × 直近対戦（${er}回戦以内）`) + `<div style="font-size:10px;color:#9ca3af">同プール内でも直近対戦相手と早期回戦で当たらないか</div>`;
+    html += recentCell(rc.intra.recent, true);
+  }
+
+  // ── 最適化前後の順位比較 ──
+  if (ranking && ranking.length) {
+    const P = result.pools.length;
+    const origRank = {};
+    ranking.forEach((u, i) => { origRank[u] = i + 1; });
+    const rows = result.seedOrder.map((u, i) => {
+      const seed = i + 1, orig = origRank[u] || null;
+      const delta = orig != null ? (seed - orig) : null;   // +は元より下のシードへ
+      const pool = (window.SeedOptimizer ? SeedOptimizer.poolOfSeed(i, P) : 0) + 1;
+      return { u, seed, orig, delta, pool };
+    });
+    const moved = rows.filter(r => r.delta != null && r.delta !== 0).length;
+    const maxAbs = rows.reduce((m, r) => Math.max(m, Math.abs(r.delta || 0)), 0);
+    html += sectionHead('🔄 最適化前後の順位比較') + `<div style="font-size:10px;color:#9ca3af">元ランキング順位 → 最適化後のシード順位（${moved}名が移動・最大±${maxAbs}）</div>`;
+    let t = `<details style="margin-top:4px"><summary style="font-size:11px;color:#6b7280;cursor:pointer">一覧を開く（シード順）</summary>`;
+    t += `<table style="margin-top:4px;border-collapse:collapse;font-size:11px;width:100%"><thead><tr style="color:#6b7280;text-align:left">`;
+    t += `<th style="padding:2px 6px">シード</th><th style="padding:2px 6px">P</th><th style="padding:2px 6px">プレイヤー</th><th style="padding:2px 6px">元順位</th><th style="padding:2px 6px">差分</th></tr></thead><tbody>`;
+    for (const r of rows) {
+      const dcol = r.delta > 0 ? '#b91c1c' : (r.delta < 0 ? '#2563eb' : '#9ca3af');
+      const dtxt = r.delta == null ? '—' : (r.delta > 0 ? '↓+' + r.delta : (r.delta < 0 ? '↑' + r.delta : '0'));
+      t += `<tr><td style="padding:2px 6px">${r.seed}</td><td style="padding:2px 6px;color:#9ca3af">${r.pool}</td><td style="padding:2px 6px">${escHtml((displayOf[r.u] || r.u))}</td><td style="padding:2px 6px">${r.orig == null ? '—' : r.orig}</td><td style="padding:2px 6px;color:${dcol}">${dtxt}</td></tr>`;
+    }
+    t += `</tbody></table></details>`;
+    html += t;
+  }
+  document.getElementById('so-report').innerHTML = html;
+  const applyBtn = document.getElementById('so-apply');
+  applyBtn.style.display = '';
+  applyBtn.disabled = false;
+}
+
+function applySeedOptimize() {
+  if (!SEEDOPT_RESULT || !SEEDOPT_RESULT.seedOrder) return;
+  APPLIED_ORDER = SEEDOPT_RESULT.seedOrder.slice();
+  // 表示順も最適化後に合わせる。
+  const pos = new Map(APPLIED_ORDER.map((u, i) => [u, i]));
+  DATA.sort((a, b) =>
+    (pos.has(a.user_id) ? pos.get(a.user_id) : 1e9) - (pos.has(b.user_id) ? pos.get(b.user_id) : 1e9));
+  render();
+  const reportEl = document.getElementById('so-report');
+  if (!reportEl.querySelector('.seedopt-applied-banner')) {
+    const div = document.createElement('div');
+    div.className = 'seedopt-applied-banner';
+    div.style.cssText = 'margin-top:10px;padding:6px 10px;background:#dcfce7;border:1px solid #16a34a;border-radius:6px;color:#166534;font-size:12px;font-weight:600';
+    div.textContent = '✅ 被り回避を適用しました。CSV ダウンロード / start.gg 適用は最適化後の順序になります。';
+    reportEl.appendChild(div);
+  }
+  document.getElementById('so-apply').disabled = true;
+}
 </script>
 
 <!-- Optional: load chartjs-adapter-date-fns for time scale -->
