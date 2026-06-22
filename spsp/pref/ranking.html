@@ -263,8 +263,8 @@ async function init() {
     }
     STATE.data = buildData();
 
-    document.title = `${STATE.pref}のランキング — SPSP`;
-    document.getElementById('title-h1').textContent = `📍 ${STATE.pref} のランキング`;
+    document.title = `${STATE.pref}民ランキング — SPSP`;
+    document.getElementById('title-h1').textContent = `📍 ${STATE.pref}民ランキング`;
     document.getElementById('footer-info').innerHTML =
       `評価日 ${escapeHtml(STATE.masterMeta.eval_date || '')} · ${STATE.data.length}名 · ` +
       `<a href="./">← 都道府県一覧</a> · <a href="../index.html">全体ランキング</a>`;
