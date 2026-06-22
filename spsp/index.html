@@ -467,7 +467,7 @@
 
 <div class="header">
   <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
-    <h1 style="margin:0">Saikyo Player SPECIAL <span style="color:#9ca3af;font-size:0.7em;font-weight:500">(SPSP)</span></h1>
+    <h1 style="margin:0">Saikyo Players SPECIAL <span style="color:#9ca3af;font-size:0.7em;font-weight:500">(SPSP)</span></h1>
     <button class="share-icon-btn" id="share-icon-btn" title="URL を共有" aria-label="URL を共有"
       style="background:#fff;border:1px solid #e5e7eb;color:#6b7280;border-radius:8px;padding:6px 8px;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;line-height:1;transition:all 0.15s">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:16px;height:16px;display:block">
@@ -526,7 +526,7 @@
 </div>
 
 <div class="footer" id="footer-info"></div>
-<div class="footer" style="margin-top:-12px"><span class="site-version" style="font-size:11px;color:#9ca3af">v 760f636 · 2026-06-22 10:53 UTC</span></div>
+<div class="footer" style="margin-top:-12px"><span class="site-version" style="font-size:11px;color:#9ca3af">v e3a4686 · 2026-06-22 11:02 UTC</span></div>
 
 <button id="scroll-top" aria-label="ページの一番上へ戻る" title="一番上へ" hidden>↑</button>
 
@@ -587,7 +587,7 @@ async function loadData() {
     }
     // ヘッダ (nav bar) に「最終更新時刻 · バージョン」を表示
     const genTime = (META.generated_at || META.eval_date || '').split('.')[0].replace('T', ' ');
-    const SITE_VERSION_FULL = 'v 760f636 · 2026-06-22 10:53 UTC';
+    const SITE_VERSION_FULL = 'v e3a4686 · 2026-06-22 11:02 UTC';
     const versionShort = SITE_VERSION_FULL.split(' · ')[0] || SITE_VERSION_FULL;
     const navMeta = document.getElementById('meta-info');
     if (navMeta) navMeta.textContent = `最終更新 ${genTime} · ${versionShort}`;
