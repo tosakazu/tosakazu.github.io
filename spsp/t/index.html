@@ -435,7 +435,7 @@
   </div>
 
   <div class="footer" id="footer-info">
-    <span class="site-version" style="font-size:11px;color:#9ca3af">v 19feab4 · 2026-06-22 12:08 UTC</span>
+    <span class="site-version" style="font-size:11px;color:#9ca3af">v 1aa9ee1 · 2026-06-22 13:59 UTC</span>
   </div>
 </main>
 
@@ -888,7 +888,8 @@ function renderPlayerMatches(uid) {
     const scoreColor = won ? '#16a34a' : '#2563eb';
     const bracket = compactBracketLabel(m.global_bracket_label, m.round_text);
     const oppName = escapeHtml(_displayByUid(oppUid));
-    const oppLink = `<a href="../p/?uid=${oppUid}">${oppName}</a>`;
+    const oppEmoji = charEmojiOf(oppUid);
+    const oppLink = `${oppEmoji ? oppEmoji + ' ' : ''}<a href="../p/?uid=${oppUid}">${oppName}</a>`;
     const oSeed = _seedByUid(oppUid);
     const pSeed = _seedByUid(uid);
     const pSeedHtml = pSeed != null ? `<span class="m-seed">#${pSeed}</span>` : '';
