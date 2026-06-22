@@ -1,5 +1,5 @@
 {
-  "generated_at": 1782043231,
+  "generated_at": 1782054021,
   "country_code": "JP",
   "lookahead_days": 21,
   "count": 35,
@@ -83,14 +83,14 @@
       "city": "川崎市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 3,
+      "num_attendees": 4,
       "url": "/tournament/24-11",
       "events": [
         {
           "event_id": 1649480,
           "event_slug": "tournament/24-11/event/super-smash-bros-ultimate-singles",
           "event_name": "雷影杯",
-          "num_entrants": 3,
+          "num_entrants": 5,
           "type": 1,
           "start_at": 1782291600
         }
@@ -175,14 +175,14 @@
       "city": "渋谷区",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 2,
+      "num_attendees": 3,
       "url": "/tournament/shibuya-g-g-smash-weekly-68",
       "events": [
         {
           "event_id": 1650224,
           "event_slug": "tournament/shibuya-g-g-smash-weekly-68/event/singles",
           "event_name": "Singles",
-          "num_entrants": 2,
+          "num_entrants": 3,
           "type": 1,
           "start_at": 1782383400
         }
@@ -198,14 +198,14 @@
       "city": "台東区",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 11,
+      "num_attendees": 12,
       "url": "/tournament/26-488",
       "events": [
         {
           "event_id": 1646990,
           "event_slug": "tournament/26-488/event/on",
           "event_name": "シングルス（１on１トーナメント）",
-          "num_entrants": 11,
+          "num_entrants": 12,
           "type": 1,
           "start_at": 1782460800
         }
