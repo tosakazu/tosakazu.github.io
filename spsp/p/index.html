@@ -614,7 +614,7 @@
   </div>
 
   <div class="footer" id="footer-info">
-    <span class="site-version" style="font-size:11px;color:#9ca3af">v 0555806 · 2026-06-22 10:46 UTC</span>
+    <span class="site-version" style="font-size:11px;color:#9ca3af">v 760f636 · 2026-06-22 10:53 UTC</span>
   </div>
 </main>
 
@@ -901,6 +901,8 @@ function render() {
   if (chars.length > 0) {
     const charLine = document.getElementById('char-line');
     const body = document.getElementById('char-line-body');
+    // メインキャラの 使い手ランキング 内順位 (= メインキャラの直後に表示)。
+    const SUB = PLAYER_SUBRANKS && PLAYER_SUBRANKS[String(UID)];
     body.innerHTML = chars.map((c, i) => {
       const isMain = i === 0;
       const color = isMain ? '#dc2626' : '#6b7280';
@@ -909,15 +911,13 @@ function render() {
       // 使用キャラ名の前にキャラ絵文字 (char_emoji.json, char_id キー) を表示。
       const ce = CHAR_EMOJI && (CHAR_EMOJI[c.id] || CHAR_EMOJI[canonicalId]);
       const emoji = (ce && ce.emoji) ? ce.emoji + ' ' : '';
-      return `<a href="../c/ranking.html?char=${canonicalId}" style="color:${color};font-weight:${weight};text-decoration:none">${emoji}${c.name}</a>`;
+      let html = `<a href="../c/ranking.html?char=${canonicalId}" style="color:${color};font-weight:${weight};text-decoration:none">${emoji}${c.name}</a>`;
+      if (isMain && SUB && SUB.char) {
+        html += `<a href="../c/ranking.html?char=${canonicalId}" ` +
+          `style="margin-left:5px;color:#9ca3af;font-size:11px;text-decoration:none">#${SUB.char.rank}</a>`;
+      }
+      return html;
     }).join('<span style="color:#d1d5db;margin:0 6px">·</span>');
-    // メインキャラの 使い手ランキング 内順位を右隣に表示。
-    const SUB = PLAYER_SUBRANKS && PLAYER_SUBRANKS[String(UID)];
-    if (SUB && SUB.char) {
-      const mainCanon = CHAR_MERGE_CANONICAL[chars[0].id] || chars[0].id;
-      body.innerHTML += `<a href="../c/ranking.html?char=${mainCanon}" ` +
-        `style="margin-left:8px;color:#9ca3af;font-size:11px;text-decoration:none">使い手 #${SUB.char.rank}</a>`;
-    }
     charLine.style.display = '';
   }
 
@@ -926,7 +926,7 @@ function render() {
   if (pref) {
     const SUBP = PLAYER_SUBRANKS && PLAYER_SUBRANKS[String(UID)];
     const prefRankHtml = (SUBP && SUBP.pref)
-      ? `<span style="margin-left:8px;color:#9ca3af;font-size:11px">${pref}内 #${SUBP.pref.rank}</span>`
+      ? `<span style="margin-left:8px;color:#9ca3af;font-size:11px">#${SUBP.pref.rank}</span>`
       : '';
     document.getElementById('pref-body').innerHTML =
       `📍 <a href="../pref/ranking.html?pref=${encodeURIComponent(pref)}" style="color:inherit;text-decoration:none">${pref}</a>` + prefRankHtml;
