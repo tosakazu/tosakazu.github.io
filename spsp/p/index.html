@@ -614,7 +614,7 @@
   </div>
 
   <div class="footer" id="footer-info">
-    <span class="site-version" style="font-size:11px;color:#9ca3af">v 2a59add · 2026-06-22 10:29 UTC</span>
+    <span class="site-version" style="font-size:11px;color:#9ca3af">v bb2084e · 2026-06-22 10:33 UTC</span>
   </div>
 </main>
 
@@ -912,7 +912,8 @@ function render() {
   // 居住地 (都道府県). player_prefectures.json (uid -> 都道府県漢字) から引く。
   const pref = PLAYER_PREF && PLAYER_PREF[String(UID)];
   if (pref) {
-    document.getElementById('pref-body').textContent = `📍 ${pref}`;
+    document.getElementById('pref-body').innerHTML =
+      `📍 <a href="../pref/ranking.html?pref=${encodeURIComponent(pref)}" style="color:inherit;text-decoration:none">${pref}</a>`;
     document.getElementById('pref-line').style.display = '';
   }
 
