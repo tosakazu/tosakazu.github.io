@@ -37,6 +37,8 @@ async function run(input) {
 
   for (let k = 0; k < restarts; k++) {
     if (stopRequested) break;
+    // 各リスタートは「同じ良い初期解(ランキングsnake)＋乱数シード違いのSA」。
+    // 初期攪乱(_perturbStart)はベンチで逆に悪化したため使わない（良い出発点を維持する方が強い）。
     const inp = Object.assign({}, input, {
       params: Object.assign({}, input.params, {
         mode: innerMode, restarts: 1, rngSeed: baseSeed + k * 97,

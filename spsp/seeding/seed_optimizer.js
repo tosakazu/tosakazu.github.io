@@ -66,17 +66,19 @@
   const DEFAULT_PARAMS = {
     W_region: 1.0,
     W_recent: 0.3,                       // 必ず < W_region
+    W_order: 0.001,                      // 元ランキングからのシードズレ罰則(タイブレーカー級, 分離は不悪化)。0で無効
+    orderPow: 1,                         // ズレ罰則の指数（1=線形, 2=2乗で大きなズレを強く罰）
     prefWeight: 'inv_sqrt',              // 県別出場人数 count → 重み（人数が少ない県ほど大きい）
-    roundWeights: [1.0, 0.6, 0.2, 0.06, 0.02], // R1..; 超過は末尾を使用
+    roundWeights: [1.0, 0.6, 0.4, 0.06, 0.02], // R1..; 超過は末尾を使用（R3を強めて3回戦被りを回避）
     reportRecentMaxDays: 182.5,          // レポートに載せる直近対戦の最大経過日数（半年）。スコアには無関係
     // 可動制約（初期順位基準）。null ならデフォルト式。
     kInter: null,   // (row1based) -> 動けるプール数。default row-1
     kIntra: null,   // (rank1based, M) -> 動ける順位数。default 上位半分0 / 下位 rank-ceil(M/2)
     // 探索
     mode: 'multistart-sa',               // 'hillclimb'|'sa'|'multistart-hillclimb'|'multistart-sa'
-    restarts: 30,
+    restarts: 15,
     maxIters: null,                      // null なら状態サイズ×maxItersScale
-    maxItersScale: 200,                  // maxIters = max(500, stateSize*scale)
+    maxItersScale: 1000,                 // maxIters = max(500, stateSize*scale)。既定=参加人数×1000
     saT0: null,                          // null なら自動推定
     saCooling: 0.997,
     saMinT: 1e-4,
@@ -86,10 +88,10 @@
   // モード別の既定（ベンチで調整）。input.params が明示した値が最優先、無ければここ、無ければ DEFAULT_PARAMS。
   // 多点系は restarts/scale を上げて分離精度を優先（~10-20s。実大会ベンチで R1-3 を大幅削減）。
   const MODE_DEFAULTS = {
-    'hillclimb':            { restarts: 1, maxItersScale: 200 },            // 単発: 反復多め
-    'sa':                   { restarts: 1, saCooling: 0.997, maxItersScale: 150 },
-    'multistart-hillclimb': { restarts: 30, maxItersScale: 200 },
-    'multistart-sa':        { restarts: 30, saCooling: 0.997, maxItersScale: 200 },
+    'hillclimb':            { restarts: 1, maxItersScale: 1500 },           // 単発: 反復多め
+    'sa':                   { restarts: 1, saCooling: 0.997, maxItersScale: 1000 },
+    'multistart-hillclimb': { restarts: 15, maxItersScale: 1000 },
+    'multistart-sa':        { restarts: 15, saCooling: 0.997, maxItersScale: 1000 },
   };
 
   function prefWeightFn(kind) {
@@ -189,17 +191,13 @@
       const arr = params.kIntra;
       return (rank1) => (rank1 <= arr.length ? arr[rank1 - 1] : arr[arr.length - 1]);
     }
-    // 既定: プール内順位を四分位で段階制。上1/4=0(固定), 次1/4=1, 次1/4=2, 下1/4=3。
-    // 最大可動を3順位に抑え、シードの動きを小さく保つ。
-    return (rank1, M) => {
-      const quarter = M / 4;
-      return Math.min(3, Math.floor((rank1 - 1) / quarter));
-    };
+    // 既定: 上位1/4は固定(0)、残りは ±1 のみ。最大可動1順位で動きを最小限に。
+    return (rank1, M) => (rank1 <= M / 4 ? 0 : 1);
   }
 
   // ───────────────────────── inter 最適化 ─────────────────────────
   // 状態: seedOrder(uid 配列)。プール membership を pools[p]=seedIndex 配列で保持。
-  function interOptimize(seedOrder, P, pp, params, rng, ctx) {
+  function interOptimize(seedOrder, P, pp, params, rng, ctx, orderOf) {
     const N = seedOrder.length;
     const kInter = kInterFn(params);
     // 各 uid の inter 初期プール（= 入力 snake のプール）。
@@ -231,7 +229,7 @@
       return true;
     }
 
-    // inter swap の Δ（プール pi, pj の内部ペア和の変化）。pools は uid 配列。
+    // inter swap の Δ（プール pi, pj の内部ペア和の変化 + order 罰則の変化）。pools は uid 配列。
     function interDelta(order, pools, i, j) {
       const pi = poolOfSeed(i, P), pj = poolOfSeed(j, P);
       const X = order[i], Y = order[j];
@@ -239,7 +237,17 @@
       let before = 0, after = 0;
       for (const z of poolI) { if (z !== X) { before += pp(X, z); after += pp(Y, z); } }
       for (const z of poolJ) { if (z !== Y) { before += pp(Y, z); after += pp(X, z); } }
-      return after - before;
+      let d = after - before;
+      if (orderOf) {  // X→seed j+1, Y→seed i+1
+        d += (orderOf(X, j + 1) + orderOf(Y, i + 1)) - (orderOf(X, i + 1) + orderOf(Y, j + 1));
+      }
+      return d;
+    }
+    function interOrderTotal(order) {
+      if (!orderOf) return 0;
+      let t = 0;
+      for (let s = 0; s < N; s++) t += orderOf(order[s], s + 1);
+      return t;
     }
 
     // 有効な近傍 swap をランダムに1つ返す（{i,j} または null）。
@@ -271,7 +279,7 @@
     const result = runSearch({
       state: seedOrder.slice(),
       makePools: poolsOf,
-      scoreFull: (order) => scoreInterFull(order, P, pp),
+      scoreFull: (order) => scoreInterFull(order, P, pp) + interOrderTotal(order),
       randomNeighbor,
       delta: interDelta,
       applySwap,
@@ -282,7 +290,7 @@
 
   // ───────────────────────── intra 最適化（プール単位） ─────────────────────────
   // poolUids: within-pool seed 順の uid 配列。プール内でのみ swap。
-  function intraOptimizePool(poolUids, pp, params, rng, ctx, poolLabel) {
+  function intraOptimizePool(poolUids, pp, params, rng, ctx, poolLabel, orderOf, globalSeeds, fixedUids) {
     const M = poolUids.length;
     if (M < 2) return { state: poolUids.slice(), score: 0, iters: 0 };
     const rw = roundWeightFn(params.roundWeights);
@@ -292,9 +300,13 @@
     // 初期 within-pool rank（1始まり）を uid ごとに記録。
     const initRank = {};
     for (let i = 0; i < M; i++) initRank[poolUids[i]] = i + 1;
+    // order 罰則: 位置 k の uid は globalSeeds[k]+1 のシードに座る。
+    const gs1 = orderOf && globalSeeds ? globalSeeds.map((s) => s + 1) : null;
 
     function swapAllowed(order, i, j) {
       const A = order[i], B2 = order[j];
+      // プール間移動したプレイヤーはプール内移動不可（どちらかが該当なら交換禁止）。
+      if (fixedUids && (fixedUids.has(A) || fixedUids.has(B2))) return false;
       // 交換後の rank（=index+1）が各自の初期 rank ±k 内か。
       if (Math.abs((j + 1) - initRank[A]) > kIntra(initRank[A], M)) return false;
       if (Math.abs((i + 1) - initRank[B2]) > kIntra(initRank[B2], M)) return false;
@@ -315,7 +327,16 @@
         // B: 旧 slotJ → 新 slotI
         d += (rw(earliestMeetRound(slotI, slotK)) - rw(earliestMeetRound(slotJ, slotK))) * pp(Bp, C);
       }
+      if (gs1) {  // A→位置 j のシード, B→位置 i のシード
+        d += (orderOf(A, gs1[j]) + orderOf(Bp, gs1[i])) - (orderOf(A, gs1[i]) + orderOf(Bp, gs1[j]));
+      }
       return d; // (A,B) ペアは slot 入替でも最早回戦が対称ゆえ不変
+    }
+    function intraOrderTotal(order) {
+      if (!gs1) return 0;
+      let t = 0;
+      for (let k = 0; k < M; k++) t += orderOf(order[k], gs1[k]);
+      return t;
     }
 
     function randomNeighbor(order) {
@@ -334,7 +355,7 @@
     const result = runSearch({
       state: poolUids.slice(),
       makePools: null,
-      scoreFull: (order) => scoreIntraPoolFull(order, pp, rw),
+      scoreFull: (order) => scoreIntraPoolFull(order, pp, rw) + intraOrderTotal(order),
       randomNeighbor,
       delta: intraDelta,
       applySwap,
@@ -357,10 +378,11 @@
 
     for (let k = 0; k < restarts; k++) {
       if (ctx.shouldStop && ctx.shouldStop()) break;
-      // 初期解: k=0 は基準そのまま。k>0 は制約内ランダム swap で攪乱。
+      // 初期解: k=0 は基準そのまま。k>0（または _perturbStart 指定時）は制約内ランダム swap で攪乱。
+      // Worker 経由の多点は restarts=1 を繰り返すので _perturbStart で各リスタートの初期攪乱を制御する。
       let state = opt.state.slice();
       let pools = opt.makePools ? opt.makePools(state) : null;
-      if (k > 0) {
+      if (k > 0 || params._perturbStart) {
         const perturb = stateSize;
         for (let t = 0; t < perturb; t++) {
           const nb = opt.randomNeighbor(state);
@@ -381,7 +403,10 @@
         T = n ? Math.max((acc / n) * 1.5, 1e-3) : 1.0;
       }
 
-      let noImprove = 0;
+      // 探索中の最良解を保持（SA は最終状態が最良とは限らないため）＋ 収束で早期終了。
+      let bestSeen = score, bestState = state.slice(), sinceBest = 0;
+      // best が連続で更新されない回数がこの閾値を超えたら収束打ち切り（緩め: maxIters の一定割合）。
+      const earlyStop = params.earlyStopIters || Math.max(10000, Math.floor(maxIters * (params.earlyStopFrac != null ? params.earlyStopFrac : 0.3)));
       for (let iter = 0; iter < maxIters; iter++) {
         if ((iter & 1023) === 0 && ctx.shouldStop && ctx.shouldStop()) break;
         const nb = opt.randomNeighbor(state);
@@ -401,19 +426,18 @@
                 ' (' + opt.phaseName + ')');
             }
           }
-          if (d < -1e-12) noImprove = 0; else noImprove++;
-        } else {
-          noImprove++;
         }
+        if (score < bestSeen - 1e-12) { bestSeen = score; bestState = state.slice(); sinceBest = 0; }
+        else sinceBest++;
         if (useSA) T *= params.saCooling;
-        // 山登りは長い停滞で早期終了。SA は冷えるまで継続。
-        if (!useSA && noImprove > Math.max(200, stateSize * 8)) break;
+        // best が earlyStop 回連続で更新されなければ収束とみなし打ち切り（SA/山登り共通）。
+        if (sinceBest > earlyStop) break;
         if (ctx.onProgress && (iter & 255) === 0) {
           ctx.onProgress({ phase: opt.phaseName, restart: k, iter, score });
         }
       }
-      if (!best || score < best.score - 1e-12) {
-        best = { state: state.slice(), score };
+      if (!best || bestSeen < best.score - 1e-12) {
+        best = { state: bestState, score: bestSeen };
       }
     }
     return best;
@@ -461,14 +485,29 @@
 
   function fullReport(seedOrderBefore, seedOrderAfter, P, pp, params, runIntra, recentMeta) {
     const rw = roundWeightFn(params.roundWeights);
+    const prefByUid = params._prefByUid || {}, origRank = params._origRank || {};
+    const pwFn = prefWeightFn(params.prefWeight);
+    const Wr = params.W_region, Wn = params.W_recent, Wo = params.W_order || 0, oPow = params.orderPow || 1;
+    const regionW = (a, b) => { const pa = prefByUid[a], pb = prefByUid[b]; return (pa && pb && pa === pb) ? pwFn((params._prefCounts || {})[pa] || 2) : 0; };
+    const recentW = (a, b) => { const m = recentMeta && recentMeta[pairKey(a, b)]; return m ? m.penalty : 0; };
+    // セル別（プール間/内 × 地域/直近）と order 罰則のスコアを計算。
     function poolScores(order) {
-      const inter = scoreInterFull(order, P, pp);
-      let intra = 0;
-      if (runIntra) {
-        const pools = poolsFromSeedOrder(order, P);
-        for (const pool of pools) intra += scoreIntraPoolFull(pool, pp, rw);
+      const pools = poolsFromSeedOrder(order, P);
+      let interRegion = 0, interRecent = 0, intraRegion = 0, intraRecent = 0;
+      for (const pool of pools) {
+        const Bn = nextPow2(pool.length), sOf = slotOfSeedMap(Bn);
+        for (let i = 0; i < pool.length; i++)
+          for (let j = i + 1; j < pool.length; j++) {
+            const a = pool[i], b = pool[j];
+            const rg = Wr * regionW(a, b), rc = Wn * recentW(a, b);
+            interRegion += rg; interRecent += rc;
+            if (runIntra) { const w = rw(earliestMeetRound(sOf[i + 1], sOf[j + 1])); intraRegion += w * rg; intraRecent += w * rc; }
+          }
       }
-      return { inter, intra, total: inter + intra };
+      let order_ = 0;
+      if (Wo > 0) order.forEach((u, s) => { order_ += Wo * Math.pow(Math.abs((s + 1) - (origRank[u] || (s + 1))), oPow); });
+      const inter = interRegion + interRecent, intra = intraRegion + intraRecent;
+      return { inter, intra, total: inter + intra, interRegion, interRecent, intraRegion, intraRecent, order: order_ };
     }
     const before = poolScores(seedOrderBefore);
     const after = poolScores(seedOrderAfter);
@@ -481,15 +520,16 @@
     const prefCounts = params._prefCounts || {};
     const earlyRound = params.earlyRoundThreshold || 3;   // 「早期回戦」の閾値
     const reportRecentMaxDays = params.reportRecentMaxDays != null ? params.reportRecentMaxDays : 182.5; // レポート表示は半年以内
+    // 最多地域（報告から除外）。
+    let mostPopRegion = null, _mp = -1;
+    for (const r in prefCounts) { if (prefCounts[r] > _mp) { _mp = prefCounts[r]; mostPopRegion = r; } }
 
     // 同プール全ペアを走査し、地域(少数派/多数派)・直近・最早回戦を集計。
     const sepByPref = {};   // プール間: 分離可能県(少数派)の同プール被り = 理想違反
     const majByPref = {};   // プール間: 多数派県(>P)の同プール被り数 = 鳩の巣で不可避
     const recentInter = []; // プール間: 同プール直近対戦ペア
     const recentIntra = []; // プール内: 早期回戦で当たる直近対戦ペア
-    const intraRoundHist = {}; // プール内: 同一地域が当たる最早回戦の分布（全地域）
-    const intraEarlyByPref = {}; // プール内: 早期回戦(<=earlyRound)で当たる「分散可能地域」ペア（要改善）
-    let intraMajEarly = 0;       // プール内: 早期回戦で当たる多数派地域ペア数（不可避）
+    const intraEarlyMatchups = []; // プール内: 早期回戦で当たる同地域ペア（最多地域を除く）
     for (let pi = 0; pi < poolsAfter.length; pi++) {
       const pool = poolsAfter[pi];
       const B = nextPow2(pool.length), slotOf = slotOfSeedMap(B);
@@ -506,17 +546,9 @@
             } else {
               majByPref[pa] = (majByPref[pa] || 0) + 1;
             }
-            // プール内：同一地域が当たる最早回戦の分布。早期で当たる「分散可能地域」が要改善。
-            // 多数派地域(>P)は同プール内で早期に当たるのが鳩の巣で不可避なので分けて数える。
-            if (runIntra) {
-              intraRoundHist[round] = (intraRoundHist[round] || 0) + 1;
-              if (round <= earlyRound) {
-                if (cnt > 0 && cnt <= P) {
-                  intraEarlyByPref[pa] = intraEarlyByPref[pa] || []; intraEarlyByPref[pa].push({ a, b, pool: pi, prefCount: cnt, round });
-                } else {
-                  intraMajEarly++;
-                }
-              }
+            // プール内：早期回戦(<=earlyRound)で当たる同地域ペアを列挙（最多地域は除外）。
+            if (runIntra && round <= earlyRound && pa !== mostPopRegion) {
+              intraEarlyMatchups.push({ a, b, pool: pi, round, region: pa, prefCount: cnt });
             }
           }
           // 直近対戦（レポートには最終対戦が reportRecentMaxDays 以内=半年のものだけ載せる。
@@ -572,11 +604,10 @@
         intra: runIntra ? {
           earlyRound,
           region: {
-            roundHistogram: intraRoundHist,                 // 同一地域が当たる最早回戦の分布（全地域）
-            totalPairs: Object.values(intraRoundHist).reduce((s, n) => s + n, 0),
-            earlyByRegion: intraEarlyByPref,                // 早期回戦で当たる「分散可能地域」（要改善）
-            earlyPairs: sum(intraEarlyByPref),
-            majorityEarlyPairs: intraMajEarly,              // 早期回戦で当たる多数派地域（不可避）
+            // 早期回戦で当たる同地域ペア（最多地域は除外）。回戦が早い順。
+            earlyMatchups: intraEarlyMatchups.slice().sort((x, y) => x.round - y.round).slice(0, 20),
+            earlyPairs: intraEarlyMatchups.length,
+            excludedRegion: mostPopRegion,                  // 報告から除外した最多地域
           },
           recent: { pairs: recentIntra.length, top: recentIntra.slice(0, 10) },
         } : null,
@@ -609,6 +640,22 @@
     params._prefCounts = prefCounts; // レポート用（少数派/多数派の判定）
     const pp = buildPairPenalty(params, prefByUid, prefCounts, recentPair);
 
+    // 元ランキングからのズレ罰則: シードが元順位から離れるほど少し罰する（形を保つ）。
+    const origRank = {};
+    ranking.forEach((u, i) => { origRank[u] = i + 1; });
+    params._origRank = origRank; // レポート用
+    const Wo = params.W_order || 0, oPow = params.orderPow || 1;
+    const orderOf = Wo > 0
+      ? (uid, seed1) => Wo * Math.pow(Math.abs(seed1 - origRank[uid]), oPow)
+      : null;
+    // プールごとのグローバルシード位置（intra の order 罰則用）。
+    const globalSeedsByPool = [];
+    for (let p = 0; p < P; p++) globalSeedsByPool.push([]);
+    for (let s = 0; s < N; s++) globalSeedsByPool[poolOfSeed(s, P)].push(s);
+    // 各 uid の初期プール（プール間移動の判定用）。
+    const initPoolByUid = {};
+    ranking.forEach((u, s) => { initPoolByUid[u] = poolOfSeed(s, P); });
+
     const seedOrderBefore = ranking.slice();
     let seedOrder = ranking.slice();
     let stoppedEarly = false;
@@ -616,7 +663,7 @@
     // 1) inter
     if (gate.runInter) {
       if (ctx.onProgress) ctx.onProgress({ phase: 'inter', stage: 'start' });
-      const r = interOptimize(seedOrder, P, pp, params, rng, ctx);
+      const r = interOptimize(seedOrder, P, pp, params, rng, ctx, orderOf);
       if (r) seedOrder = r.state;
       if (ctx.onCheckpoint) ctx.onCheckpoint({ phase: 'inter', seedOrder: seedOrder.slice() });
       if (ctx.shouldStop && ctx.shouldStop()) stoppedEarly = true;
@@ -628,7 +675,9 @@
       for (let pi = 0; pi < pools.length; pi++) {
         if (ctx.shouldStop && ctx.shouldStop()) { stoppedEarly = true; break; }
         if (ctx.onProgress) ctx.onProgress({ phase: 'intra', pool: pi, stage: 'start' });
-        const r = intraOptimizePool(pools[pi], pp, params, rng, ctx, String(pi));
+        // プール間移動でこのプールに来た（または出た）選手は intra で固定する。
+        const fixedUids = new Set(pools[pi].filter((u) => initPoolByUid[u] !== pi));
+        const r = intraOptimizePool(pools[pi], pp, params, rng, ctx, String(pi), orderOf, globalSeedsByPool[pi], fixedUids);
         if (r) pools[pi] = r.state;
         if (ctx.onCheckpoint) ctx.onCheckpoint({ phase: 'intra', pool: pi });
       }

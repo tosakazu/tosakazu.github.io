@@ -28,15 +28,21 @@
     }
   }
 
-  // 日付減衰: Δ日 <= plateau は固定重み1、plateau〜cutoff で急減し cutoff(既定365)で0、以降0。
-  // 減少は (1 - x)^pow（x=(Δ-plateau)/(cutoff-plateau)）。pow を大きくするほど急減。
-  function recentDecayFn(plateau, cutoff, pow) {
-    const span = Math.max(1e-9, cutoff - plateau);
+  // 日付減衰: 制御点 [[日, 重み], ...] の折れ線（線形補間）。
+  //   Δ ≤ 最初の点 → その重み（=1）。Δ ≥ 最後の点 → 0。間は線形補間。
+  //   既定で 0:1 / 30:0.9 / 91:0.7 / 182.5:0.5 / 273.75:0.12 / 365:0（1ヶ月・3ヶ月・半年に差、半年以降は急減）。
+  function recentDecayFn(points) {
+    const pts = (points && points.length ? points : [[0, 1], [365, 0]]).slice()
+      .map((p) => [Number(p[0]), Number(p[1])]).sort((a, b) => a[0] - b[0]);
     return (delta) => {
-      if (delta <= plateau) return 1;
-      if (delta >= cutoff) return 0;
-      const x = (delta - plateau) / span;
-      return Math.pow(1 - x, pow);
+      if (delta <= pts[0][0]) return pts[0][1];
+      for (let i = 1; i < pts.length; i++) {
+        if (delta <= pts[i][0]) {
+          const d0 = pts[i - 1][0], w0 = pts[i - 1][1], d1 = pts[i][0], w1 = pts[i][1];
+          return w0 + (w1 - w0) * ((delta - d0) / Math.max(1e-9, d1 - d0));
+        }
+      }
+      return 0; // 最後の点より後は0
     };
   }
 
@@ -49,11 +55,15 @@
   };
 
   const DEFAULT_DATA_PARAMS = {
-    recentPlateauDays: 182.5, // この日数までは固定重み（半年）
-    recentCutoffDays: 365,    // この日数で重み0（以降も0）
-    recentDecayPow: 3,        // plateau〜cutoff の急減度（大きいほど急）
-    sizeWeight: 'log2',       // 大会規模重み
-    todayDays: null,          // null なら実行時の現在日
+    // 日付減衰の制御点 [[日, 重み], ...]（線形補間。最後の点より後は0）。
+    // 1ヶ月まではフル(1.0)＝直後の再戦を徹底回避、3ヶ月0.5/半年0.25/1年0。
+    recentDecayPoints: [[0, 1], [30, 1], [91, 0.5], [182.5, 0.25], [365, 0]],
+    sizeWeight: 'log2',          // 大会規模重み
+    todayDays: null,             // null なら実行時の現在日
+    // ペア内集計: 同じ2人が複数回対戦した分の罰則をどうまとめるか。
+    //   'max'(既定): そのペアの最も重い1試合だけ採用（対戦回数に依らず横並び）。
+    //   'sum'       : 全対戦の罰則を合算（頻度の高い常連カードほど重く＝強く分離）。
+    recentAgg: 'max',
   };
 
   // ── デフォルト fetch（ブラウザ用）。prefix は seed ページからの相対パス基準。
@@ -110,7 +120,7 @@
     const concurrency = opts.concurrency || 8;
 
     const attendeeSet = new Set(ranking);
-    const decayFn = recentDecayFn(params.recentPlateauDays, params.recentCutoffDays, params.recentDecayPow);
+    const decayFn = recentDecayFn(params.recentDecayPoints);
     const sw = sizeWeightFn(params.sizeWeight);
     const todayDays = (params.todayDays != null)
       ? params.todayDays : Math.floor(Date.now() * EPOCH_DAYS);
@@ -155,9 +165,12 @@
         const sizeW = (nent != null) ? sw(nent) : sw(2);  // nent 不明時は最小規模(log2(2)=1)。要約: §3.2 で結合可を確認済
         const val = decay * sizeW;
         const key = pairKey(uid, opp);
-        recentPair[key] = (recentPair[key] || 0) + val;
+        const useMax = params.recentAgg !== 'sum';   // 既定 max
+        recentPair[key] = useMax
+          ? Math.max(recentPair[key] || 0, val)
+          : (recentPair[key] || 0) + val;
         const meta = recentMeta[key] || (recentMeta[key] = { penalty: 0, count: 0, lastDate: null, lastDeltaDays: null });
-        meta.penalty += val;
+        meta.penalty = useMax ? Math.max(meta.penalty, val) : meta.penalty + val;
         meta.count += 1;
         if (!meta.lastDate || m.date > meta.lastDate) meta.lastDate = m.date;
         const delta = todayDays - dd;

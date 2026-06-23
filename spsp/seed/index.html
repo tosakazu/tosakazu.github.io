@@ -585,6 +585,12 @@
                 <option value="linear">参加人数</option>
               </select>
             </label>
+            <label title="同じ2人の複数対戦の罰則のまとめ方。max=最重1試合(回数に依らず)、sum=合算(常連ほど強く分離)">ペア内集計
+              <select id="so-recentagg" style="display:block;padding:4px;border:1px solid #d1d5db;border-radius:5px;font-size:12px">
+                <option value="max">max（最重1試合・既定）</option>
+                <option value="sum">sum（全対戦を合算）</option>
+              </select>
+            </label>
           </div>
           <div style="font-weight:600;color:#374151;margin:8px 0 2px">プール内・可動制約（CSV / 空欄＝既定）</div>
           <div style="display:flex;gap:12px;flex-wrap:wrap;align-items:flex-end">
@@ -615,7 +621,7 @@
 </div>
 
 <div class="footer" id="footer-info"></div>
-<div class="footer" style="margin-top:-12px"><span class="site-version" style="font-size:11px;color:#9ca3af">v 557babd · 2026-06-23 09:06 UTC</span></div>
+<div class="footer" style="margin-top:-12px"><span class="site-version" style="font-size:11px;color:#9ca3af">v 51d11d8 · 2026-06-23 18:06 UTC</span></div>
 
 <!-- Chart.js (lazy load on first graph use) -->
 <script>
@@ -1970,6 +1976,7 @@ async function runSeedOptimize() {
     if (pts.length >= 2) recentDecayPoints = pts;
   }
   const sizeWeight = document.getElementById('so-sizeweight').value;
+  const recentAgg = document.getElementById('so-recentagg').value;
   if (!(params.W_region > params.W_recent)) {
     progress.textContent = '⚠ 地域重みは直近重みより大きくしてください（地域被り優先）。';
     return;
@@ -1981,7 +1988,7 @@ async function runSeedOptimize() {
   // 1) 取得・集計（メインスレッド。fetch はここだけ）。
   let bundle;
   try {
-    const dataParams = { sizeWeight };
+    const dataParams = { sizeWeight, recentAgg };
     if (recentDecayPoints) dataParams.recentDecayPoints = recentDecayPoints;  // 空欄なら既定を使う
     bundle = await SeedData.buildSeedData(ranking, {
       prefix: '../',
