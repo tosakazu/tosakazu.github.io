@@ -575,11 +575,9 @@
               </select>
             </label>
           </div>
-          <div style="font-weight:600;color:#374151;margin:8px 0 2px">直近対戦（固定期間まで重み一定→0到達日にかけて急減）</div>
+          <div style="font-weight:600;color:#374151;margin:8px 0 2px">直近対戦の時間減衰（日:重み の制御点・折れ線, 最後の点より後は0）</div>
           <div style="display:flex;gap:12px;flex-wrap:wrap;align-items:flex-end">
-            <label title="この日数までは重み一定">固定期間(日)<input type="number" id="so-plateau" value="182.5" min="0" step="0.5" style="display:block;width:80px;padding:4px;border:1px solid #d1d5db;border-radius:5px;font-size:12px"></label>
-            <label title="この日数で重み0、以降も0">0到達(日)<input type="number" id="so-cutoff" value="365" min="1" style="display:block;width:80px;padding:4px;border:1px solid #d1d5db;border-radius:5px;font-size:12px"></label>
-            <label title="大きいほど急減">急減度<input type="number" id="so-decaypow" value="3" min="1" step="0.5" style="display:block;width:64px;padding:4px;border:1px solid #d1d5db;border-radius:5px;font-size:12px"></label>
+            <label title="日:重み をカンマ区切り。例 0:1,30:0.9,91:0.7,182:0.5,274:0.12,365:0">減衰点<input type="text" id="so-decaypoints" placeholder="0:1,30:0.9,91:0.7,182.5:0.5,273.75:0.12,365:0" style="display:block;width:300px;padding:4px;border:1px solid #d1d5db;border-radius:5px;font-size:12px"></label>
             <label>大会規模重み式
               <select id="so-sizeweight" style="display:block;padding:4px;border:1px solid #d1d5db;border-radius:5px;font-size:12px">
                 <option value="log2">log2(参加人数)（既定）</option>
@@ -617,7 +615,7 @@
 </div>
 
 <div class="footer" id="footer-info"></div>
-<div class="footer" style="margin-top:-12px"><span class="site-version" style="font-size:11px;color:#9ca3af">v 55d758f · 2026-06-23 03:06 UTC</span></div>
+<div class="footer" style="margin-top:-12px"><span class="site-version" style="font-size:11px;color:#9ca3af">v 5015b7a · 2026-06-23 04:01 UTC</span></div>
 
 <!-- Chart.js (lazy load on first graph use) -->
 <script>
@@ -1954,12 +1952,17 @@ async function runSeedOptimize() {
   };
   // undefined のキーは optimizer 既定に任せる（明示的に消す）。
   Object.keys(params).forEach(k => { if (params[k] === undefined) delete params[k]; });
-  const recentPlateauDays = Math.max(0, parseFloat(document.getElementById('so-plateau').value) || 182.5);
-  const recentCutoffDays = Math.max(recentPlateauDays + 1, parseFloat(document.getElementById('so-cutoff').value) || 365);
-  const recentDecayPow = Math.max(1, parseFloat(document.getElementById('so-decaypow').value) || 3);
+  // 減衰の制御点 "日:重み,..." をパース（空欄なら既定）。
+  const dpRaw = (document.getElementById('so-decaypoints').value || '').trim();
+  let recentDecayPoints;
+  if (dpRaw) {
+    const pts = dpRaw.split(',').map(s => s.trim()).filter(Boolean).map(s => {
+      const [d, w] = s.split(':').map(x => parseFloat(x));
+      return [d, w];
+    }).filter(p => Number.isFinite(p[0]) && Number.isFinite(p[1]));
+    if (pts.length >= 2) recentDecayPoints = pts;
+  }
   const sizeWeight = document.getElementById('so-sizeweight').value;
-  // レポートの直近対戦は固定期間(半年)以内のみ表示。
-  params.reportRecentMaxDays = recentPlateauDays;
   if (!(params.W_region > params.W_recent)) {
     progress.textContent = '⚠ 地域重みは直近重みより大きくしてください（地域被り優先）。';
     return;
@@ -1971,9 +1974,11 @@ async function runSeedOptimize() {
   // 1) 取得・集計（メインスレッド。fetch はここだけ）。
   let bundle;
   try {
+    const dataParams = { sizeWeight };
+    if (recentDecayPoints) dataParams.recentDecayPoints = recentDecayPoints;  // 空欄なら既定を使う
     bundle = await SeedData.buildSeedData(ranking, {
       prefix: '../',
-      params: { recentPlateauDays, recentCutoffDays, recentDecayPow, sizeWeight },
+      params: dataParams,
       onProgress: (p) => {
         if (p.phase === 'fetch') progress.textContent = `選手データ取得中 ${p.done}/${p.total}…`;
       },
