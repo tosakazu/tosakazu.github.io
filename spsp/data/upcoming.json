@@ -1,32 +1,9 @@
 {
-  "generated_at": 1782205224,
+  "generated_at": 1782216022,
   "country_code": "JP",
   "lookahead_days": 21,
-  "count": 38,
+  "count": 37,
   "tournaments": [
-    {
-      "tournament_id": 923480,
-      "tournament_slug": "tournament/129-shibuya-tatsu",
-      "tournament_name": "渋谷\"達\" #129 shibuya -tatsu-",
-      "start_at": 1782208800,
-      "end_at": 1782221400,
-      "is_online": false,
-      "city": "渋谷区",
-      "venue_name": "",
-      "country_code": "JP",
-      "num_attendees": 20,
-      "url": "/tournament/129-shibuya-tatsu",
-      "events": [
-        {
-          "event_id": 1648730,
-          "event_slug": "tournament/129-shibuya-tatsu/event/singles",
-          "event_name": "Singles",
-          "num_entrants": 20,
-          "type": 1,
-          "start_at": 1782208800
-        }
-      ]
-    },
     {
       "tournament_id": 923874,
       "tournament_slug": "tournament/24-11",
@@ -129,14 +106,14 @@
       "city": "渋谷区",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 7,
+      "num_attendees": 8,
       "url": "/tournament/shibuya-g-g-smash-weekly-68",
       "events": [
         {
           "event_id": 1650224,
           "event_slug": "tournament/shibuya-g-g-smash-weekly-68/event/singles",
           "event_name": "Singles",
-          "num_entrants": 7,
+          "num_entrants": 8,
           "type": 1,
           "start_at": 1782383400
         }
@@ -152,14 +129,14 @@
       "city": "大阪市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 2,
+      "num_attendees": 4,
       "url": "/tournament/hit-176-maesuma-hit-176",
       "events": [
         {
           "event_id": 1646507,
           "event_slug": "tournament/hit-176-maesuma-hit-176/event/singles-tournament",
           "event_name": "Singles Tournament",
-          "num_entrants": 2,
+          "num_entrants": 4,
           "type": 1,
           "start_at": 1782381600
         }
@@ -827,14 +804,14 @@
       "city": "熊谷市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 18,
+      "num_attendees": 19,
       "url": "/tournament/flyhigh-27-96",
       "events": [
         {
           "event_id": 1639012,
           "event_slug": "tournament/flyhigh-27-96/event/fly-high-96",
           "event_name": "Fly High!! 96人トーナメント 埼玉県熊谷市スマブラ大会",
-          "num_entrants": 18,
+          "num_entrants": 19,
           "type": 1,
           "start_at": 1783782000
         }
