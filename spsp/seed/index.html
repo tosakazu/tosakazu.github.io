@@ -555,9 +555,9 @@
                 <option value="hillclimb">山登り</option>
               </select>
             </label>
-            <label>多点数<input type="number" id="so-restarts" value="30" min="1" max="100" style="display:block;width:64px;padding:4px;border:1px solid #d1d5db;border-radius:5px;font-size:12px"></label>
+            <label>多点数<input type="number" id="so-restarts" value="15" min="1" max="100" style="display:block;width:64px;padding:4px;border:1px solid #d1d5db;border-radius:5px;font-size:12px"></label>
             <label>SA冷却率<input type="number" id="so-cooling" value="0.995" step="0.001" min="0.5" max="0.9999" style="display:block;width:72px;padding:4px;border:1px solid #d1d5db;border-radius:5px;font-size:12px"></label>
-            <label title="反復回数 = max(500, 状態数×この値)。大きいほど高精度・低速">反復係数<input type="number" id="so-itersscale" value="300" min="10" max="2000" step="10" style="display:block;width:72px;padding:4px;border:1px solid #d1d5db;border-radius:5px;font-size:12px"></label>
+            <label title="反復回数 = max(500, 状態数×この値)。大きいほど高精度・低速">反復係数<input type="number" id="so-itersscale" value="1000" min="10" max="2000" step="10" style="display:block;width:72px;padding:4px;border:1px solid #d1d5db;border-radius:5px;font-size:12px"></label>
             <label>乱数シード<input type="number" id="so-rngseed" value="12345" style="display:block;width:84px;padding:4px;border:1px solid #d1d5db;border-radius:5px;font-size:12px"></label>
           </div>
           <div style="font-weight:600;color:#374151;margin:8px 0 2px">罰則の重み</div>
@@ -577,7 +577,7 @@
           </div>
           <div style="font-weight:600;color:#374151;margin:8px 0 2px">直近対戦の時間減衰（日:重み の制御点・折れ線, 最後の点より後は0）</div>
           <div style="display:flex;gap:12px;flex-wrap:wrap;align-items:flex-end">
-            <label title="日:重み をカンマ区切り。例 0:1,30:0.9,91:0.7,182:0.5,274:0.12,365:0">減衰点<input type="text" id="so-decaypoints" placeholder="0:1,30:0.9,91:0.7,182.5:0.5,273.75:0.12,365:0" style="display:block;width:300px;padding:4px;border:1px solid #d1d5db;border-radius:5px;font-size:12px"></label>
+            <label title="日:重み をカンマ区切り。例 0:1,30:1,91:0.5,182.5:0.25,365:0">減衰点<input type="text" id="so-decaypoints" placeholder="0:1,30:1,91:0.5,182.5:0.25,365:0" style="display:block;width:300px;padding:4px;border:1px solid #d1d5db;border-radius:5px;font-size:12px"></label>
             <label>大会規模重み式
               <select id="so-sizeweight" style="display:block;padding:4px;border:1px solid #d1d5db;border-radius:5px;font-size:12px">
                 <option value="log2">log2(参加人数)（既定）</option>
@@ -615,7 +615,7 @@
 </div>
 
 <div class="footer" id="footer-info"></div>
-<div class="footer" style="margin-top:-12px"><span class="site-version" style="font-size:11px;color:#9ca3af">v 5015b7a · 2026-06-23 04:01 UTC</span></div>
+<div class="footer" style="margin-top:-12px"><span class="site-version" style="font-size:11px;color:#9ca3af">v 3e0c05e · 2026-06-23 06:06 UTC</span></div>
 
 <!-- Chart.js (lazy load on first graph use) -->
 <script>
@@ -2071,32 +2071,18 @@ function finishSeedOptimize(result, displayOf, note, ranking) {
     }
     return h;
   }
-  // ③ プール内×同一地域: 同一地域が当たる最早回戦の分布 + 早期被りの内訳。
+  // ③ プール内×同一地域: 早期回戦で当たる同地域ペアを列挙（最多地域は除外）。
   function intraRegionCell(reg, earlyRound) {
-    let h = '';
-    if (!reg.totalPairs) { return ok('同プール内に同一地域の組み合わせなし'); }
-    // 主役: 分散可能地域が早期回戦で当たる（actionable）。
-    const eb = reg.earlyByRegion || {}, ebPrefs = Object.keys(eb);
-    if (reg.earlyPairs) {
-      h += warn(`分散できる地域が ${earlyRound}回戦以内で当たる: ${reg.earlyPairs} 組（なるべく遅い回戦が理想）`);
-      h += ul(ebPrefs.map(pf => `<strong>${escHtml(pf)}</strong>: ` +
-        eb[pf].map(x => `${dn(x.a)}×${dn(x.b)}(P${x.pool + 1}/${x.round}回戦)`).join('、')));
-    } else {
-      h += ok(`分散できる地域が早期回戦(${earlyRound}回戦以内)で当たる組み合わせなし`);
+    const ex = reg.excludedRegion ? `（最多地域 ${escHtml(reg.excludedRegion)} は除外）` : '';
+    if (!reg.earlyPairs) {
+      return ok(`同地域が ${earlyRound}回戦以内で当たる組み合わせなし${ex}`);
     }
-    if (reg.majorityEarlyPairs) {
-      h += `<div style="margin-top:3px;font-size:11px;color:#9ca3af">人数が多い地域(南関東等)の早期被り ${reg.majorityEarlyPairs} 組（同プール内では鳩の巣で不可避）</div>`;
+    let h = warn(`同地域が ${earlyRound}回戦以内で当たる: ${reg.earlyPairs} 組${ex}`);
+    h += ul(reg.earlyMatchups.map(x =>
+      `<strong>${escHtml(x.region)}</strong>: ${dn(x.a)} × ${dn(x.b)}（P${x.pool + 1} / ${x.round}回戦）`));
+    if (reg.earlyPairs > reg.earlyMatchups.length) {
+      h += `<div style="font-size:11px;color:#9ca3af">…ほか ${reg.earlyPairs - reg.earlyMatchups.length} 組</div>`;
     }
-    // 参考: 同一地域の最早対戦回戦の分布（早い回戦＝赤寄り）。
-    const hist = reg.roundHistogram || {};
-    const rounds = Object.keys(hist).map(Number).sort((a, b) => a - b);
-    const maxR = rounds.length ? rounds[rounds.length - 1] : 0;
-    const cells = [];
-    for (let r = 1; r <= maxR; r++) {
-      const col = r <= earlyRound ? '#b91c1c' : '#6b7280';
-      cells.push(`<span style="color:${col}">${r}回戦:${hist[r] || 0}</span>`);
-    }
-    h += `<details style="margin-top:4px"><summary style="font-size:11px;color:#6b7280;cursor:pointer">同一地域の最早対戦回戦の分布（全地域）</summary><div style="font-size:11px;color:#374151;margin-top:3px">${cells.join(' / ')}</div></details>`;
     return h;
   }
   // 直近対戦セルの描画。

@@ -1,5 +1,5 @@
 {
-  "generated_at": 1782151213,
+  "generated_at": 1782162012,
   "country_code": "JP",
   "lookahead_days": 21,
   "count": 37,
@@ -83,14 +83,14 @@
       "city": "京都市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 19,
+      "num_attendees": 21,
       "url": "/tournament/dsw-56",
       "events": [
         {
           "event_id": 1650077,
           "event_slug": "tournament/dsw-56/event/singletournament",
           "event_name": "SingleTournament",
-          "num_entrants": 19,
+          "num_entrants": 21,
           "type": 1,
           "start_at": 1782298800
         }
@@ -267,14 +267,14 @@
       "city": "福岡市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 1,
+      "num_attendees": 2,
       "url": "/tournament/smash-142-1",
       "events": [
         {
           "event_id": 1636151,
           "event_slug": "tournament/smash-142-1/event/1on1",
           "event_name": "1on1トーナメント",
-          "num_entrants": 1,
+          "num_entrants": 2,
           "type": 1,
           "start_at": 1782469800
         }
@@ -313,14 +313,14 @@
       "city": "仙台市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 44,
+      "num_attendees": 45,
       "url": "/tournament/ost-15",
       "events": [
         {
           "event_id": 1643798,
           "event_slug": "tournament/ost-15/event/sp",
           "event_name": "SPシングルストーナメント",
-          "num_entrants": 44,
+          "num_entrants": 45,
           "type": 1,
           "start_at": 1782522000
         }
@@ -382,7 +382,7 @@
       "city": "Kadena",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 11,
+      "num_attendees": 12,
       "url": "/tournament/oki-military-brawl-june-2026",
       "events": [
         {
