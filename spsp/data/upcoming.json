@@ -1,5 +1,5 @@
 {
-  "generated_at": 1782140414,
+  "generated_at": 1782151213,
   "country_code": "JP",
   "lookahead_days": 21,
   "count": 37,
@@ -14,14 +14,14 @@
       "city": "渋谷区",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 13,
+      "num_attendees": 15,
       "url": "/tournament/129-shibuya-tatsu",
       "events": [
         {
           "event_id": 1648730,
           "event_slug": "tournament/129-shibuya-tatsu/event/singles",
           "event_name": "Singles",
-          "num_entrants": 13,
+          "num_entrants": 15,
           "type": 1,
           "start_at": 1782208800
         }
@@ -37,14 +37,14 @@
       "city": "川崎市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 9,
+      "num_attendees": 10,
       "url": "/tournament/24-11",
       "events": [
         {
           "event_id": 1649480,
           "event_slug": "tournament/24-11/event/super-smash-bros-ultimate-singles",
           "event_name": "雷影杯",
-          "num_entrants": 9,
+          "num_entrants": 10,
           "type": 1,
           "start_at": 1782291600
         }
@@ -129,7 +129,7 @@
       "city": "渋谷区",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 6,
+      "num_attendees": 7,
       "url": "/tournament/shibuya-g-g-smash-weekly-68",
       "events": [
         {
@@ -735,14 +735,14 @@
       "city": "厚木市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 5,
+      "num_attendees": 6,
       "url": "/tournament/2-194",
       "events": [
         {
           "event_id": 1646462,
           "event_slug": "tournament/2-194/event/1on1",
           "event_name": "1on1メイントーナメント",
-          "num_entrants": 5,
+          "num_entrants": 6,
           "type": 1,
           "start_at": 1781276400
         }

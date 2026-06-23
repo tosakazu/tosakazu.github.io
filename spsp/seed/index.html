@@ -564,7 +564,7 @@
           <div style="display:flex;gap:12px;flex-wrap:wrap;align-items:flex-end">
             <label>地域重み W_region<input type="number" id="so-wregion" value="1.0" step="0.1" style="display:block;width:72px;padding:4px;border:1px solid #d1d5db;border-radius:5px;font-size:12px"></label>
             <label>直近重み W_recent<input type="number" id="so-wrecent" value="0.3" step="0.05" style="display:block;width:72px;padding:4px;border:1px solid #d1d5db;border-radius:5px;font-size:12px"></label>
-            <label title="元ランキングからのシードズレ罰則の重み(0で無効)">元順位ズレ重み<input type="number" id="so-worder" value="0.005" step="0.005" min="0" style="display:block;width:80px;padding:4px;border:1px solid #d1d5db;border-radius:5px;font-size:12px"></label>
+            <label title="元ランキングからのシードズレ罰則の重み(0で無効)">元順位ズレ重み<input type="number" id="so-worder" value="0.001" step="0.005" min="0" style="display:block;width:80px;padding:4px;border:1px solid #d1d5db;border-radius:5px;font-size:12px"></label>
             <label title="ズレ罰則の指数(1=線形, 2=2乗)">ズレ指数<input type="number" id="so-orderpow" value="1" step="1" min="1" max="3" style="display:block;width:64px;padding:4px;border:1px solid #d1d5db;border-radius:5px;font-size:12px"></label>
             <label>県の重み式
               <select id="so-prefweight" style="display:block;padding:4px;border:1px solid #d1d5db;border-radius:5px;font-size:12px">
@@ -590,7 +590,7 @@
           </div>
           <div style="font-weight:600;color:#374151;margin:8px 0 2px">プール内・可動制約（CSV / 空欄＝既定）</div>
           <div style="display:flex;gap:12px;flex-wrap:wrap;align-items:flex-end">
-            <label>回戦重み<input type="text" id="so-roundweights" placeholder="1,0.6,0.2,0.06,0.02" style="display:block;width:160px;padding:4px;border:1px solid #d1d5db;border-radius:5px;font-size:12px"></label>
+            <label>回戦重み<input type="text" id="so-roundweights" placeholder="1,0.6,0.4,0.06,0.02" style="display:block;width:160px;padding:4px;border:1px solid #d1d5db;border-radius:5px;font-size:12px"></label>
             <label title="プール内順位ごとに動かせるプール数。空欄＝既定(0,1,2,…)">プール間可動 k_inter<input type="text" id="so-kinter" placeholder="既定: 0,1,2,3,…" style="display:block;width:160px;padding:4px;border:1px solid #d1d5db;border-radius:5px;font-size:12px"></label>
             <label title="プール内順位ごとに動かせる順位数。空欄＝既定(上位1/4固定+下位ほど大きく動く凸ランプ)">プール内可動 k_intra<input type="text" id="so-kintra" placeholder="既定: 上位1/4固定+凸ランプ" style="display:block;width:160px;padding:4px;border:1px solid #d1d5db;border-radius:5px;font-size:12px"></label>
           </div>
@@ -617,7 +617,7 @@
 </div>
 
 <div class="footer" id="footer-info"></div>
-<div class="footer" style="margin-top:-12px"><span class="site-version" style="font-size:11px;color:#9ca3af">v 6c8fd2a · 2026-06-23 00:06 UTC</span></div>
+<div class="footer" style="margin-top:-12px"><span class="site-version" style="font-size:11px;color:#9ca3af">v 55d758f · 2026-06-23 03:06 UTC</span></div>
 
 <!-- Chart.js (lazy load on first graph use) -->
 <script>
