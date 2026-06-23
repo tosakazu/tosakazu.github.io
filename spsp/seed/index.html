@@ -557,12 +557,15 @@
             </label>
             <label>多点数<input type="number" id="so-restarts" value="30" min="1" max="100" style="display:block;width:64px;padding:4px;border:1px solid #d1d5db;border-radius:5px;font-size:12px"></label>
             <label>SA冷却率<input type="number" id="so-cooling" value="0.995" step="0.001" min="0.5" max="0.9999" style="display:block;width:72px;padding:4px;border:1px solid #d1d5db;border-radius:5px;font-size:12px"></label>
+            <label title="反復回数 = max(500, 状態数×この値)。大きいほど高精度・低速">反復係数<input type="number" id="so-itersscale" value="300" min="10" max="2000" step="10" style="display:block;width:72px;padding:4px;border:1px solid #d1d5db;border-radius:5px;font-size:12px"></label>
             <label>乱数シード<input type="number" id="so-rngseed" value="12345" style="display:block;width:84px;padding:4px;border:1px solid #d1d5db;border-radius:5px;font-size:12px"></label>
           </div>
           <div style="font-weight:600;color:#374151;margin:8px 0 2px">罰則の重み</div>
           <div style="display:flex;gap:12px;flex-wrap:wrap;align-items:flex-end">
             <label>地域重み W_region<input type="number" id="so-wregion" value="1.0" step="0.1" style="display:block;width:72px;padding:4px;border:1px solid #d1d5db;border-radius:5px;font-size:12px"></label>
             <label>直近重み W_recent<input type="number" id="so-wrecent" value="0.3" step="0.05" style="display:block;width:72px;padding:4px;border:1px solid #d1d5db;border-radius:5px;font-size:12px"></label>
+            <label title="元ランキングからのシードズレ罰則の重み(0で無効)">元順位ズレ重み<input type="number" id="so-worder" value="0.005" step="0.005" min="0" style="display:block;width:80px;padding:4px;border:1px solid #d1d5db;border-radius:5px;font-size:12px"></label>
+            <label title="ズレ罰則の指数(1=線形, 2=2乗)">ズレ指数<input type="number" id="so-orderpow" value="1" step="1" min="1" max="3" style="display:block;width:64px;padding:4px;border:1px solid #d1d5db;border-radius:5px;font-size:12px"></label>
             <label>県の重み式
               <select id="so-prefweight" style="display:block;padding:4px;border:1px solid #d1d5db;border-radius:5px;font-size:12px">
                 <option value="inv_sqrt">1/√人数（既定）</option>
@@ -614,7 +617,7 @@
 </div>
 
 <div class="footer" id="footer-info"></div>
-<div class="footer" style="margin-top:-12px"><span class="site-version" style="font-size:11px;color:#9ca3af">v 459cfa8 · 2026-06-22 21:06 UTC</span></div>
+<div class="footer" style="margin-top:-12px"><span class="site-version" style="font-size:11px;color:#9ca3af">v 6c8fd2a · 2026-06-23 00:06 UTC</span></div>
 
 <!-- Chart.js (lazy load on first graph use) -->
 <script>
@@ -1870,6 +1873,7 @@ function applyModeDefaults() {
   const d = md[m] || {};
   if (d.restarts != null) document.getElementById('so-restarts').value = d.restarts;
   if (d.saCooling != null) document.getElementById('so-cooling').value = d.saCooling;
+  if (d.maxItersScale != null) document.getElementById('so-itersscale').value = d.maxItersScale;
 }
 function initSeedOptPanel() {
   const poolsEl = document.getElementById('so-pools');
@@ -1937,9 +1941,12 @@ async function runSeedOptimize() {
     mode: document.getElementById('so-mode').value,
     restarts: Math.max(1, parseInt(document.getElementById('so-restarts').value, 10) || 8),
     saCooling: Math.min(0.9999, Math.max(0.5, parseFloat(document.getElementById('so-cooling').value) || 0.995)),
+    maxItersScale: Math.max(10, parseInt(document.getElementById('so-itersscale').value, 10) || 200),
     rngSeed: parseInt(document.getElementById('so-rngseed').value, 10) || 12345,
     W_region: parseFloat(document.getElementById('so-wregion').value) || 1.0,
     W_recent: parseFloat(document.getElementById('so-wrecent').value) || 0.3,
+    W_order: Math.max(0, parseFloat(document.getElementById('so-worder').value) || 0),
+    orderPow: Math.max(1, parseInt(document.getElementById('so-orderpow').value, 10) || 1),
     prefWeight: document.getElementById('so-prefweight').value,
     roundWeights: csvNums('so-roundweights'),   // undefined→既定
     kInter: csvNums('so-kinter'),
@@ -2125,22 +2132,26 @@ function finishSeedOptimize(result, displayOf, note, ranking) {
     return h;
   }
 
-  let html = `<div style="font-weight:600;color:#111827">改善: 罰則合計 ${rep.before.total.toFixed(2)} → ${rep.after.total.toFixed(2)}（<span style="color:#16a34a">${imp}% 改善</span>）</div>`;
+  // 各セルの評価値変化 before→after を小さく添える。
+  const ev = (k) => `<span style="font-size:10px;color:#6b7280">評価 ${rep.before[k].toFixed(1)}→${rep.after[k].toFixed(1)}</span>`;
+  const ordTxt = (rep.before.order != null)
+    ? ` ／ 元順位ズレ罰則 ${rep.before.order.toFixed(1)}→${rep.after.order.toFixed(1)}` : '';
+  let html = `<div style="font-weight:600;color:#111827">改善: 罰則合計 ${rep.before.total.toFixed(2)} → ${rep.after.total.toFixed(2)}（<span style="color:#16a34a">${imp}% 改善</span>）<span style="font-size:10px;color:#9ca3af">${ordTxt}</span></div>`;
 
   // ① プール間 × 同一地域 ＝ 各プールの地域バランス
-  html += sectionHead('① プール間 × 同一地域（各プールの地域バランス）') + `<div style="font-size:10px;color:#9ca3af">各地域がプール間で均等に散っているか（同一地域＝都道府県/南関東等）</div>`;
+  html += sectionHead(`① プール間 × 同一地域（各プールの地域バランス） ${ev('interRegion')}`) + `<div style="font-size:10px;color:#9ca3af">各地域がプール間で均等に散っているか（同一地域＝都道府県/南関東等）</div>`;
   html += regionBalanceCell(rc.inter.region);
   // ② プール間 × 直近対戦
-  html += sectionHead('② プール間 × 直近対戦') + `<div style="font-size:10px;color:#9ca3af">最近(1年内)対戦した相手が同じプールにいないか</div>`;
+  html += sectionHead(`② プール間 × 直近対戦 ${ev('interRecent')}`) + `<div style="font-size:10px;color:#9ca3af">最近(1年内)対戦した相手が同じプールにいないか</div>`;
   html += recentCell(rc.inter.recent, false);
 
   if (rc.intra) {
     const er = rc.intra.earlyRound;
     // ③ プール内 × 同一地域 ＝ 同一地域が当たる最早回戦の分布
-    html += sectionHead(`③ プール内 × 同一地域（ブラケット内の当たり回戦バランス）`) + `<div style="font-size:10px;color:#9ca3af">同プールの同一地域同士がなるべく遅い回戦で当たるか（罰則 ${rep.before.intra.toFixed(1)}→${rep.after.intra.toFixed(1)}）</div>`;
+    html += sectionHead(`③ プール内 × 同一地域（ブラケット内の当たり回戦バランス） ${ev('intraRegion')}`) + `<div style="font-size:10px;color:#9ca3af">同プールの同一地域同士がなるべく遅い回戦で当たるか</div>`;
     html += intraRegionCell(rc.intra.region, er);
     // ④ プール内 × 直近対戦
-    html += sectionHead(`④ プール内 × 直近対戦（${er}回戦以内）`) + `<div style="font-size:10px;color:#9ca3af">同プール内でも直近対戦相手と早期回戦で当たらないか</div>`;
+    html += sectionHead(`④ プール内 × 直近対戦（${er}回戦以内） ${ev('intraRecent')}`) + `<div style="font-size:10px;color:#9ca3af">同プール内でも直近対戦相手と早期回戦で当たらないか</div>`;
     html += recentCell(rc.intra.recent, true);
   }
 

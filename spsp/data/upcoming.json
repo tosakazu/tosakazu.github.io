@@ -1,8 +1,8 @@
 {
-  "generated_at": 1782129612,
+  "generated_at": 1782140414,
   "country_code": "JP",
   "lookahead_days": 21,
-  "count": 36,
+  "count": 37,
   "tournaments": [
     {
       "tournament_id": 923480,
@@ -14,14 +14,14 @@
       "city": "渋谷区",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 12,
+      "num_attendees": 13,
       "url": "/tournament/129-shibuya-tatsu",
       "events": [
         {
           "event_id": 1648730,
           "event_slug": "tournament/129-shibuya-tatsu/event/singles",
           "event_name": "Singles",
-          "num_entrants": 12,
+          "num_entrants": 13,
           "type": 1,
           "start_at": 1782208800
         }
@@ -60,7 +60,7 @@
       "city": "中野区",
       "venue_name": "Red Bull Gaming Sphere Tokyo",
       "country_code": "JP",
-      "num_attendees": 68,
+      "num_attendees": 69,
       "url": "/tournament/weekly-smash-party-235",
       "events": [
         {
@@ -136,9 +136,32 @@
           "event_id": 1650224,
           "event_slug": "tournament/shibuya-g-g-smash-weekly-68/event/singles",
           "event_name": "Singles",
-          "num_entrants": 6,
+          "num_entrants": 7,
           "type": 1,
           "start_at": 1782383400
+        }
+      ]
+    },
+    {
+      "tournament_id": 922380,
+      "tournament_slug": "tournament/hit-176-maesuma-hit-176",
+      "tournament_name": "マエスマ'HIT#176 / Maesuma'HIT#176",
+      "start_at": 1782381600,
+      "end_at": 1782396000,
+      "is_online": false,
+      "city": "大阪市",
+      "venue_name": "",
+      "country_code": "JP",
+      "num_attendees": 0,
+      "url": "/tournament/hit-176-maesuma-hit-176",
+      "events": [
+        {
+          "event_id": 1646507,
+          "event_slug": "tournament/hit-176-maesuma-hit-176/event/singles-tournament",
+          "event_name": "Singles Tournament",
+          "num_entrants": 0,
+          "type": 1,
+          "start_at": 1782381600
         }
       ]
     },
@@ -267,14 +290,14 @@
       "city": "大阪市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 4,
+      "num_attendees": 5,
       "url": "/tournament/339-act",
       "events": [
         {
           "event_id": 1653011,
           "event_slug": "tournament/339-act/event/ultimate-singles",
           "event_name": "Ultimate singles",
-          "num_entrants": 4,
+          "num_entrants": 5,
           "type": 1,
           "start_at": 1782470400
         }
