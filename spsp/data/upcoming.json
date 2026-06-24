@@ -1,32 +1,9 @@
 {
-  "generated_at": 1782291624,
+  "generated_at": 1782302420,
   "country_code": "JP",
   "lookahead_days": 21,
   "count": 36,
   "tournaments": [
-    {
-      "tournament_id": 924160,
-      "tournament_slug": "tournament/dsw-56",
-      "tournament_name": "新京都DSW#56",
-      "start_at": 1782298800,
-      "end_at": 1782309600,
-      "is_online": false,
-      "city": "京都市",
-      "venue_name": "",
-      "country_code": "JP",
-      "num_attendees": 26,
-      "url": "/tournament/dsw-56",
-      "events": [
-        {
-          "event_id": 1650077,
-          "event_slug": "tournament/dsw-56/event/singletournament",
-          "event_name": "SingleTournament",
-          "num_entrants": 26,
-          "type": 1,
-          "start_at": 1782298800
-        }
-      ]
-    },
     {
       "tournament_id": 922600,
       "tournament_slug": "tournament/25-487",
@@ -83,14 +60,14 @@
       "city": "大阪市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 28,
+      "num_attendees": 32,
       "url": "/tournament/hit-176-maesuma-hit-176",
       "events": [
         {
           "event_id": 1646507,
           "event_slug": "tournament/hit-176-maesuma-hit-176/event/singles-tournament",
           "event_name": "Singles Tournament",
-          "num_entrants": 28,
+          "num_entrants": 32,
           "type": 1,
           "start_at": 1782381600
         }
@@ -221,14 +198,14 @@
       "city": "大阪市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 9,
+      "num_attendees": 10,
       "url": "/tournament/339-act",
       "events": [
         {
           "event_id": 1653011,
           "event_slug": "tournament/339-act/event/ultimate-singles",
           "event_name": "Ultimate singles",
-          "num_entrants": 9,
+          "num_entrants": 10,
           "type": 1,
           "start_at": 1782470400
         }
@@ -507,6 +484,29 @@
           "num_entrants": 1,
           "type": 1,
           "start_at": 1782723600
+        }
+      ]
+    },
+    {
+      "tournament_id": 926364,
+      "tournament_slug": "tournament/130-shibuya-tatsu",
+      "tournament_name": "渋谷\"達\" #130 shibuya -tatsu-",
+      "start_at": 1782813600,
+      "end_at": 1782826200,
+      "is_online": false,
+      "city": "渋谷区",
+      "venue_name": "",
+      "country_code": "JP",
+      "num_attendees": 0,
+      "url": "/tournament/130-shibuya-tatsu",
+      "events": [
+        {
+          "event_id": 1654644,
+          "event_slug": "tournament/130-shibuya-tatsu/event/singles",
+          "event_name": "Singles",
+          "num_entrants": 0,
+          "type": 1,
+          "start_at": 1782813600
         }
       ]
     },
