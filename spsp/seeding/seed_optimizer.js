@@ -64,8 +64,12 @@
 
   // ───────────────────────── デフォルトパラメータ ─────────────────────────
   const DEFAULT_PARAMS = {
+    // 罰則のオンオフ（UI トグル対応）。false で該当罰則を完全に無効化する。
+    avoidRegion: true,                   // 地域被り（同一都道府県/地域）を避けるか
+    avoidRecent: true,                   // 直近の再対戦を避けるか
+    enableIntra: true,                   // プール内変動（intra 最適化）を行うか（P>=2 のときのみ有効）
     W_region: 1.0,
-    W_recent: 0.3,                       // 必ず < W_region
+    W_recent: 0.3,                       // 必ず < W_region（両方有効なときのみ）
     W_order: 0.001,                      // 元ランキングからのシードズレ罰則(タイブレーカー級, 分離は不悪化)。0で無効
     orderPow: 1,                         // ズレ罰則の指数（1=線形, 2=2乗で大きなズレを強く罰）
     prefWeight: 'inv_sqrt',              // 県別出場人数 count → 重み（人数が少ない県ほど大きい）
@@ -124,11 +128,15 @@
     const wByPref = {};
     for (const k in prefCounts) wByPref[k] = pw(prefCounts[k]);
     const Wr = params.W_region, Wn = params.W_recent;
+    const useRegion = params.avoidRegion !== false;   // 既定 ON
+    const useRecent = params.avoidRecent !== false;   // 既定 ON
     return function (a, b) {
       let region = 0;
-      const pa = prefByUid[a], pb = prefByUid[b];
-      if (pa && pb && pa === pb) region = (wByPref[pa] != null ? wByPref[pa] : pw(prefCounts[pa] || 2));
-      const recent = recentPair[pairKey(a, b)] || 0;
+      if (useRegion) {
+        const pa = prefByUid[a], pb = prefByUid[b];
+        if (pa && pb && pa === pb) region = (wByPref[pa] != null ? wByPref[pa] : pw(prefCounts[pa] || 2));
+      }
+      const recent = useRecent ? (recentPair[pairKey(a, b)] || 0) : 0;
       return Wr * region + Wn * recent;
     };
   }
@@ -446,7 +454,10 @@
   // ───────────────────────── トップレベル ─────────────────────────
   function resolveParams(p) {
     const out = Object.assign({}, DEFAULT_PARAMS, p || {});
-    if (!(out.W_region > out.W_recent)) {
+    // 地域被り優先の不変条件は「両方の罰則が有効」なときのみ要求する。
+    // どちらかを無効化した場合は重み比較に意味がないので課さない。
+    const bothActive = (out.avoidRegion !== false) && (out.avoidRecent !== false);
+    if (bothActive && !(out.W_region > out.W_recent)) {
       throw new Error('W_region は W_recent より大きくしてください (地域被り優先)。');
     }
     return out;
@@ -488,8 +499,14 @@
     const prefByUid = params._prefByUid || {}, origRank = params._origRank || {};
     const pwFn = prefWeightFn(params.prefWeight);
     const Wr = params.W_region, Wn = params.W_recent, Wo = params.W_order || 0, oPow = params.orderPow || 1;
-    const regionW = (a, b) => { const pa = prefByUid[a], pb = prefByUid[b]; return (pa && pb && pa === pb) ? pwFn((params._prefCounts || {})[pa] || 2) : 0; };
-    const recentW = (a, b) => { const m = recentMeta && recentMeta[pairKey(a, b)]; return m ? m.penalty : 0; };
+    // 罰則のオンオフを反映（無効化した成分はスコア 0 に＝改善率が実効目的を表す）。
+    const useRegion = params.avoidRegion !== false, useRecent = params.avoidRecent !== false;
+    const regionW = useRegion
+      ? (a, b) => { const pa = prefByUid[a], pb = prefByUid[b]; return (pa && pb && pa === pb) ? pwFn((params._prefCounts || {})[pa] || 2) : 0; }
+      : () => 0;
+    const recentW = useRecent
+      ? (a, b) => { const m = recentMeta && recentMeta[pairKey(a, b)]; return m ? m.penalty : 0; }
+      : () => 0;
     // セル別（プール間/内 × 地域/直近）と order 罰則のスコアを計算。
     function poolScores(order) {
       const pools = poolsFromSeedOrder(order, P);
@@ -632,6 +649,9 @@
     // モード別既定を適用（input.params が最優先）。
     const reqMode = (input.params && input.params.mode) || DEFAULT_PARAMS.mode;
     const params = resolveParams(Object.assign({}, MODE_DEFAULTS[reqMode] || {}, input.params));
+    // プール内変動(intra)の実効可否。P>=2 のときだけ UI トグルで無効化できる。
+    // P==1×DE は intra が唯一の被り回避なので常に実行する（トグル対象外）。
+    const runIntra = gate.runIntra && !(P >= 2 && params.enableIntra === false);
     const rng = makeRng(params.rngSeed);
     const prefByUid = input.prefByUid || {};
     const prefCounts = input.prefCounts || derivePrefCounts(ranking, prefByUid);
@@ -670,7 +690,7 @@
     }
 
     // 2) intra（プールごと独立）
-    if (gate.runIntra && !stoppedEarly) {
+    if (runIntra && !stoppedEarly) {
       const pools = poolsFromSeedOrder(seedOrder, P);
       for (let pi = 0; pi < pools.length; pi++) {
         if (ctx.shouldStop && ctx.shouldStop()) { stoppedEarly = true; break; }
@@ -684,16 +704,16 @@
       seedOrder = seedOrderFromPools(pools, P, N);
     }
 
-    const report = fullReport(seedOrderBefore, seedOrder, P, pp, params, gate.runIntra, input.recentMeta);
+    const report = fullReport(seedOrderBefore, seedOrder, P, pp, params, runIntra, input.recentMeta);
     const poolsOut = poolsFromSeedOrder(seedOrder, P);
 
     return {
       seedOrder,
       pools: poolsOut,
-      bracketByPool: gate.runIntra ? poolsOut.map((x) => x.slice()) : null,
+      bracketByPool: runIntra ? poolsOut.map((x) => x.slice()) : null,
       report,
       stoppedEarly,
-      ranAfter: { runInter: gate.runInter, runIntra: gate.runIntra },
+      ranAfter: { runInter: gate.runInter, runIntra: runIntra },
     };
   }
 

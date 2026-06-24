@@ -49,10 +49,25 @@
   function pairKey(a, b) { return a < b ? a + ':' + b : b + ':' + a; }
 
   // 地域グルーピング: 被り回避では近隣の県を同一地域として扱う。
-  // 既定で南関東(埼玉・千葉・神奈川・東京)を1グループにまとめる。
-  const DEFAULT_REGION_GROUPS = {
-    '埼玉県': '南関東', '千葉県': '南関東', '神奈川県': '南関東', '東京都': '南関東',
+  // 各グループは UI トグルで個別に ON/OFF できる（buildRegionGroups）。
+  const REGION_GROUP_DEFS = {
+    // 南関東(埼玉・千葉・神奈川・東京)。既定 ON。
+    minamiKanto: { '埼玉県': '南関東', '千葉県': '南関東', '神奈川県': '南関東', '東京都': '南関東' },
+    // 京阪神(兵庫・大阪・京都)。既定 OFF。
+    keihanshin: { '兵庫県': '京阪神', '大阪府': '京阪神', '京都府': '京阪神' },
   };
+
+  // トグル指定からグルーピング表を組み立てる。既定: 南関東 ON / 京阪神 OFF。
+  function buildRegionGroups(opts) {
+    opts = opts || {};
+    const g = {};
+    if (opts.minamiKanto !== false) Object.assign(g, REGION_GROUP_DEFS.minamiKanto);
+    if (opts.keihanshin === true) Object.assign(g, REGION_GROUP_DEFS.keihanshin);
+    return g;
+  }
+
+  // 既定（南関東のみ）。後方互換のため従来名も残す。
+  const DEFAULT_REGION_GROUPS = buildRegionGroups();
 
   const DEFAULT_DATA_PARAMS = {
     // 日付減衰の制御点 [[日, 重み], ...]（線形補間。最後の点より後は0）。
@@ -193,7 +208,8 @@
   const API = {
     buildSeedData, fetchAllPlayers, defaultFetchers,
     dateToDays, sizeWeightFn, recentDecayFn, pairKey,
-    DEFAULT_DATA_PARAMS, DEFAULT_REGION_GROUPS,
+    buildRegionGroups,
+    DEFAULT_DATA_PARAMS, DEFAULT_REGION_GROUPS, REGION_GROUP_DEFS,
   };
   global.SeedData = API;
   if (typeof module !== 'undefined' && module.exports) module.exports = API;
