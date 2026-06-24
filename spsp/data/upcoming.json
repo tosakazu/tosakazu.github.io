@@ -1,5 +1,5 @@
 {
-  "generated_at": 1782259222,
+  "generated_at": 1782270021,
   "country_code": "JP",
   "lookahead_days": 21,
   "count": 37,
@@ -14,14 +14,14 @@
       "city": "川崎市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 12,
+      "num_attendees": 11,
       "url": "/tournament/24-11",
       "events": [
         {
           "event_id": 1649480,
           "event_slug": "tournament/24-11/event/super-smash-bros-ultimate-singles",
           "event_name": "雷影杯",
-          "num_entrants": 12,
+          "num_entrants": 11,
           "type": 1,
           "start_at": 1782291600
         }
@@ -37,14 +37,14 @@
       "city": "中野区",
       "venue_name": "Red Bull Gaming Sphere Tokyo",
       "country_code": "JP",
-      "num_attendees": 65,
+      "num_attendees": 58,
       "url": "/tournament/weekly-smash-party-235",
       "events": [
         {
           "event_id": 1649614,
           "event_slug": "tournament/weekly-smash-party-235/event/special-1on1-ultimate-singles",
           "event_name": "SPECIAL 1on1/ Ultimate Singles",
-          "num_entrants": 64,
+          "num_entrants": 57,
           "type": 1,
           "start_at": 1782291600
         }
@@ -106,14 +106,14 @@
       "city": "渋谷区",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 10,
+      "num_attendees": 11,
       "url": "/tournament/shibuya-g-g-smash-weekly-68",
       "events": [
         {
           "event_id": 1650224,
           "event_slug": "tournament/shibuya-g-g-smash-weekly-68/event/singles",
           "event_name": "Singles",
-          "num_entrants": 10,
+          "num_entrants": 11,
           "type": 1,
           "start_at": 1782383400
         }
@@ -129,14 +129,14 @@
       "city": "大阪市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 19,
+      "num_attendees": 21,
       "url": "/tournament/hit-176-maesuma-hit-176",
       "events": [
         {
           "event_id": 1646507,
           "event_slug": "tournament/hit-176-maesuma-hit-176/event/singles-tournament",
           "event_name": "Singles Tournament",
-          "num_entrants": 19,
+          "num_entrants": 21,
           "type": 1,
           "start_at": 1782381600
         }
@@ -244,14 +244,14 @@
       "city": "福岡市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 8,
+      "num_attendees": 9,
       "url": "/tournament/smash-142-1",
       "events": [
         {
           "event_id": 1636151,
           "event_slug": "tournament/smash-142-1/event/1on1",
           "event_name": "1on1トーナメント",
-          "num_entrants": 8,
+          "num_entrants": 9,
           "type": 1,
           "start_at": 1782469800
         }
@@ -428,14 +428,14 @@
       "city": "台東区",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 2,
+      "num_attendees": 3,
       "url": "/tournament/acd",
       "events": [
         {
           "event_id": 1637909,
           "event_slug": "tournament/acd/event/acd-3",
           "event_name": "【お昼食えます】ACDオフスマ#3",
-          "num_entrants": 2,
+          "num_entrants": 3,
           "type": 1,
           "start_at": 1782612000
         }
@@ -712,14 +712,14 @@
       "city": "奈良市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 29,
+      "num_attendees": 30,
       "url": "/tournament/badawi-5",
       "events": [
         {
           "event_id": 1620892,
           "event_slug": "tournament/badawi-5/event/badawi",
           "event_name": "Badawi",
-          "num_entrants": 29,
+          "num_entrants": 30,
           "type": 1,
           "start_at": 1783213200
         }
