@@ -1,55 +1,9 @@
 {
-  "generated_at": 1782280864,
+  "generated_at": 1782291624,
   "country_code": "JP",
   "lookahead_days": 21,
-  "count": 38,
+  "count": 36,
   "tournaments": [
-    {
-      "tournament_id": 923874,
-      "tournament_slug": "tournament/24-11",
-      "tournament_name": "雷影杯#24",
-      "start_at": 1782291600,
-      "end_at": 1782307800,
-      "is_online": false,
-      "city": "川崎市",
-      "venue_name": "",
-      "country_code": "JP",
-      "num_attendees": 11,
-      "url": "/tournament/24-11",
-      "events": [
-        {
-          "event_id": 1649480,
-          "event_slug": "tournament/24-11/event/super-smash-bros-ultimate-singles",
-          "event_name": "雷影杯",
-          "num_entrants": 11,
-          "type": 1,
-          "start_at": 1782291600
-        }
-      ]
-    },
-    {
-      "tournament_id": 923926,
-      "tournament_slug": "tournament/weekly-smash-party-235",
-      "tournament_name": "Weekly Smash Party ～スマパ～ #235",
-      "start_at": 1782291600,
-      "end_at": 1782311400,
-      "is_online": false,
-      "city": "中野区",
-      "venue_name": "Red Bull Gaming Sphere Tokyo",
-      "country_code": "JP",
-      "num_attendees": 58,
-      "url": "/tournament/weekly-smash-party-235",
-      "events": [
-        {
-          "event_id": 1649614,
-          "event_slug": "tournament/weekly-smash-party-235/event/special-1on1-ultimate-singles",
-          "event_name": "SPECIAL 1on1/ Ultimate Singles",
-          "num_entrants": 57,
-          "type": 1,
-          "start_at": 1782291600
-        }
-      ]
-    },
     {
       "tournament_id": 924160,
       "tournament_slug": "tournament/dsw-56",
@@ -106,14 +60,14 @@
       "city": "渋谷区",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 12,
+      "num_attendees": 13,
       "url": "/tournament/shibuya-g-g-smash-weekly-68",
       "events": [
         {
           "event_id": 1650224,
           "event_slug": "tournament/shibuya-g-g-smash-weekly-68/event/singles",
           "event_name": "Singles",
-          "num_entrants": 12,
+          "num_entrants": 13,
           "type": 1,
           "start_at": 1782383400
         }
@@ -129,14 +83,14 @@
       "city": "大阪市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 25,
+      "num_attendees": 28,
       "url": "/tournament/hit-176-maesuma-hit-176",
       "events": [
         {
           "event_id": 1646507,
           "event_slug": "tournament/hit-176-maesuma-hit-176/event/singles-tournament",
           "event_name": "Singles Tournament",
-          "num_entrants": 25,
+          "num_entrants": 28,
           "type": 1,
           "start_at": 1782381600
         }
@@ -152,14 +106,14 @@
       "city": "台東区",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 19,
+      "num_attendees": 18,
       "url": "/tournament/26-488",
       "events": [
         {
           "event_id": 1646990,
           "event_slug": "tournament/26-488/event/on",
           "event_name": "シングルス（１on１トーナメント）",
-          "num_entrants": 19,
+          "num_entrants": 18,
           "type": 1,
           "start_at": 1782460800
         }
@@ -267,14 +221,14 @@
       "city": "大阪市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 8,
+      "num_attendees": 9,
       "url": "/tournament/339-act",
       "events": [
         {
           "event_id": 1653011,
           "event_slug": "tournament/339-act/event/ultimate-singles",
           "event_name": "Ultimate singles",
-          "num_entrants": 8,
+          "num_entrants": 9,
           "type": 1,
           "start_at": 1782470400
         }
@@ -712,14 +666,14 @@
       "city": "札幌市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 52,
+      "num_attendees": 53,
       "url": "/tournament/pochisuma-next-patch-4",
       "events": [
         {
           "event_id": 1638445,
           "event_slug": "tournament/pochisuma-next-patch-4/event/ultimate-singles",
           "event_name": "Ultimate Singles",
-          "num_entrants": 52,
+          "num_entrants": 53,
           "type": 1,
           "start_at": 1783206000
         }
@@ -873,7 +827,7 @@
       "city": "大阪市",
       "venue_name": "クレオ大阪南 (Creo Osaka South)",
       "country_code": "JP",
-      "num_attendees": 11,
+      "num_attendees": 12,
       "url": "/tournament/masterhand73",
       "events": [
         {
