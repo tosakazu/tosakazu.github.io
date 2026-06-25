@@ -1,5 +1,5 @@
 {
-  "generated_at": 1782334813,
+  "generated_at": 1782345613,
   "country_code": "JP",
   "lookahead_days": 21,
   "count": 36,
@@ -37,14 +37,14 @@
       "city": "渋谷区",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 18,
+      "num_attendees": 24,
       "url": "/tournament/shibuya-g-g-smash-weekly-68",
       "events": [
         {
           "event_id": 1650224,
           "event_slug": "tournament/shibuya-g-g-smash-weekly-68/event/singles",
           "event_name": "Singles",
-          "num_entrants": 18,
+          "num_entrants": 24,
           "type": 1,
           "start_at": 1782383400
         }
@@ -83,14 +83,14 @@
       "city": "台東区",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 20,
+      "num_attendees": 21,
       "url": "/tournament/26-488",
       "events": [
         {
           "event_id": 1646990,
           "event_slug": "tournament/26-488/event/on",
           "event_name": "シングルス（１on１トーナメント）",
-          "num_entrants": 20,
+          "num_entrants": 21,
           "type": 1,
           "start_at": 1782460800
         }
@@ -129,14 +129,14 @@
       "city": "広島市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 13,
+      "num_attendees": 14,
       "url": "/tournament/smalab-41",
       "events": [
         {
           "event_id": 1652200,
           "event_slug": "tournament/smalab-41/event/ultimate-singles",
           "event_name": "Ultimate Singles",
-          "num_entrants": 12,
+          "num_entrants": 13,
           "type": 1,
           "start_at": 1782464400
         }
@@ -152,14 +152,14 @@
       "city": "大分市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 7,
+      "num_attendees": 8,
       "url": "/tournament/14-30",
       "events": [
         {
           "event_id": 1652294,
           "event_slug": "tournament/14-30/event/1on1",
           "event_name": "1on1トーナメント",
-          "num_entrants": 7,
+          "num_entrants": 8,
           "type": 1,
           "start_at": 1782469800
         }
@@ -244,14 +244,14 @@
       "city": "大東市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 321,
+      "num_attendees": 319,
       "url": "/tournament/70-sp-1",
       "events": [
         {
           "event_id": 1634012,
           "event_slug": "tournament/70-sp-1/event/1on1",
           "event_name": "予選あり1on1トーナメント",
-          "num_entrants": 308,
+          "num_entrants": 306,
           "type": 1,
           "start_at": 1782523800
         }
@@ -267,14 +267,14 @@
       "city": "台東区",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 12,
+      "num_attendees": 13,
       "url": "/tournament/27-489-1",
       "events": [
         {
           "event_id": 1646992,
           "event_slug": "tournament/27-489-1/event/on",
           "event_name": "シングルス（１on１トーナメント）",
-          "num_entrants": 11,
+          "num_entrants": 12,
           "type": 1,
           "start_at": 1782529200
         }
@@ -290,7 +290,7 @@
       "city": "Kadena",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 15,
+      "num_attendees": 16,
       "url": "/tournament/oki-military-brawl-june-2026",
       "events": [
         {
@@ -405,14 +405,14 @@
       "city": "宇部市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 9,
+      "num_attendees": 11,
       "url": "/tournament/34-10",
       "events": [
         {
           "event_id": 1647081,
           "event_slug": "tournament/34-10/event/sp-1on1",
           "event_name": "スマブラSP 1on1",
-          "num_entrants": 9,
+          "num_entrants": 11,
           "type": 1,
           "start_at": 1782615600
         }
@@ -428,14 +428,14 @@
       "city": "四日市市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 9,
+      "num_attendees": 11,
       "url": "/tournament/quattro-3",
       "events": [
         {
           "event_id": 1650114,
           "event_slug": "tournament/quattro-3/event/quattro",
           "event_name": "四闘-Quattro-",
-          "num_entrants": 8,
+          "num_entrants": 10,
           "type": 1,
           "start_at": 1782619200
         }
