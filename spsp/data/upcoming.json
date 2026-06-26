@@ -1,5 +1,5 @@
 {
-  "generated_at": 1782399612,
+  "generated_at": 1782410415,
   "country_code": "JP",
   "lookahead_days": 21,
   "count": 35,
@@ -14,14 +14,14 @@
       "city": "台東区",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 28,
+      "num_attendees": 29,
       "url": "/tournament/26-488",
       "events": [
         {
           "event_id": 1646990,
           "event_slug": "tournament/26-488/event/on",
           "event_name": "シングルス（１on１トーナメント）",
-          "num_entrants": 28,
+          "num_entrants": 29,
           "type": 1,
           "start_at": 1782460800
         }
@@ -106,14 +106,14 @@
       "city": "福岡市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 15,
+      "num_attendees": 16,
       "url": "/tournament/smash-142-1",
       "events": [
         {
           "event_id": 1636151,
           "event_slug": "tournament/smash-142-1/event/1on1",
           "event_name": "1on1トーナメント",
-          "num_entrants": 15,
+          "num_entrants": 16,
           "type": 1,
           "start_at": 1782469800
         }
@@ -474,21 +474,21 @@
       "city": "中野区",
       "venue_name": "Red Bull Gaming Sphere Tokyo",
       "country_code": "JP",
-      "num_attendees": 4,
+      "num_attendees": 6,
       "url": "/tournament/weekly-smash-party-236",
       "events": [
-        {
-          "event_id": 1655219,
-          "event_slug": "tournament/weekly-smash-party-236/event/special-1on1-ultimate-singles",
-          "event_name": "SPECIAL 1on1/ Ultimate Singles",
-          "num_entrants": 2,
-          "type": 1,
-          "start_at": 1782896400
-        },
         {
           "event_id": 1655220,
           "event_slug": "tournament/weekly-smash-party-236/event/casual-tournament",
           "event_name": "カジュアルトーナメント / Casual Tournament",
+          "num_entrants": 3,
+          "type": 1,
+          "start_at": 1782896400
+        },
+        {
+          "event_id": 1655219,
+          "event_slug": "tournament/weekly-smash-party-236/event/special-1on1-ultimate-singles",
+          "event_name": "SPECIAL 1on1/ Ultimate Singles",
           "num_entrants": 2,
           "type": 1,
           "start_at": 1782896400
@@ -528,14 +528,14 @@
       "city": "渋谷区",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 1,
+      "num_attendees": 2,
       "url": "/tournament/shibuya-g-g-smash-weekly-69-1",
       "events": [
         {
           "event_id": 1655106,
           "event_slug": "tournament/shibuya-g-g-smash-weekly-69-1/event/singles",
           "event_name": "Singles",
-          "num_entrants": 1,
+          "num_entrants": 2,
           "type": 1,
           "start_at": 1782988200
         }
