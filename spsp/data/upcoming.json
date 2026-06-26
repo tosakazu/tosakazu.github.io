@@ -1,5 +1,5 @@
 {
-  "generated_at": 1782388812,
+  "generated_at": 1782399612,
   "country_code": "JP",
   "lookahead_days": 21,
   "count": 35,
@@ -14,14 +14,14 @@
       "city": "台東区",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 27,
+      "num_attendees": 28,
       "url": "/tournament/26-488",
       "events": [
         {
           "event_id": 1646990,
           "event_slug": "tournament/26-488/event/on",
           "event_name": "シングルス（１on１トーナメント）",
-          "num_entrants": 27,
+          "num_entrants": 28,
           "type": 1,
           "start_at": 1782460800
         }
@@ -67,7 +67,7 @@
           "event_id": 1652200,
           "event_slug": "tournament/smalab-41/event/ultimate-singles",
           "event_name": "Ultimate Singles",
-          "num_entrants": 14,
+          "num_entrants": 13,
           "type": 1,
           "start_at": 1782464400
         }
@@ -651,14 +651,14 @@
       "city": "札幌市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 54,
+      "num_attendees": 55,
       "url": "/tournament/pochisuma-next-patch-4",
       "events": [
         {
           "event_id": 1638445,
           "event_slug": "tournament/pochisuma-next-patch-4/event/ultimate-singles",
           "event_name": "Ultimate Singles",
-          "num_entrants": 54,
+          "num_entrants": 55,
           "type": 1,
           "start_at": 1783206000
         }
@@ -766,14 +766,14 @@
       "city": "熊谷市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 20,
+      "num_attendees": 21,
       "url": "/tournament/flyhigh-27-96",
       "events": [
         {
           "event_id": 1639012,
           "event_slug": "tournament/flyhigh-27-96/event/fly-high-96",
           "event_name": "Fly High!! 96人トーナメント 埼玉県熊谷市スマブラ大会",
-          "num_entrants": 20,
+          "num_entrants": 21,
           "type": 1,
           "start_at": 1783782000
         }
