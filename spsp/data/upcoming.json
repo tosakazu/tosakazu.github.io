@@ -1,5 +1,5 @@
 {
-  "generated_at": 1782421214,
+  "generated_at": 1782432013,
   "country_code": "JP",
   "lookahead_days": 21,
   "count": 35,
@@ -14,14 +14,14 @@
       "city": "台東区",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 29,
+      "num_attendees": 31,
       "url": "/tournament/26-488",
       "events": [
         {
           "event_id": 1646990,
           "event_slug": "tournament/26-488/event/on",
           "event_name": "シングルス（１on１トーナメント）",
-          "num_entrants": 29,
+          "num_entrants": 31,
           "type": 1,
           "start_at": 1782460800
         }
@@ -37,14 +37,14 @@
       "city": "川崎市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 7,
+      "num_attendees": 8,
       "url": "/tournament/6-98",
       "events": [
         {
           "event_id": 1650960,
           "event_slug": "tournament/6-98/event/super-smash-bros-ultimate-singles",
           "event_name": "シングルス",
-          "num_entrants": 7,
+          "num_entrants": 8,
           "type": 1,
           "start_at": 1782464400
         }
@@ -106,14 +106,14 @@
       "city": "福岡市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 16,
+      "num_attendees": 25,
       "url": "/tournament/smash-142-1",
       "events": [
         {
           "event_id": 1636151,
           "event_slug": "tournament/smash-142-1/event/1on1",
           "event_name": "1on1トーナメント",
-          "num_entrants": 16,
+          "num_entrants": 25,
           "type": 1,
           "start_at": 1782469800
         }
@@ -129,14 +129,14 @@
       "city": "大阪市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 15,
+      "num_attendees": 17,
       "url": "/tournament/339-act",
       "events": [
         {
           "event_id": 1653011,
           "event_slug": "tournament/339-act/event/ultimate-singles",
           "event_name": "Ultimate singles",
-          "num_entrants": 15,
+          "num_entrants": 16,
           "type": 1,
           "start_at": 1782470400
         }
@@ -221,7 +221,7 @@
       "city": "Kadena",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 19,
+      "num_attendees": 20,
       "url": "/tournament/oki-military-brawl-june-2026",
       "events": [
         {
@@ -651,14 +651,14 @@
       "city": "札幌市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 55,
+      "num_attendees": 56,
       "url": "/tournament/pochisuma-next-patch-4",
       "events": [
         {
           "event_id": 1638445,
           "event_slug": "tournament/pochisuma-next-patch-4/event/ultimate-singles",
           "event_name": "Ultimate Singles",
-          "num_entrants": 55,
+          "num_entrants": 56,
           "type": 1,
           "start_at": 1783206000
         }
