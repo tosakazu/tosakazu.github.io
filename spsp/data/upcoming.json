@@ -1,101 +1,9 @@
 {
-  "generated_at": 1782453688,
+  "generated_at": 1782464428,
   "country_code": "JP",
   "lookahead_days": 21,
-  "count": 47,
+  "count": 43,
   "tournaments": [
-    {
-      "tournament_id": 922601,
-      "tournament_slug": "tournament/26-488",
-      "tournament_name": "26(金)上野スマコミ#488(オープン)",
-      "start_at": 1782460800,
-      "end_at": 1782482400,
-      "is_online": false,
-      "city": "台東区",
-      "venue_name": "",
-      "country_code": "JP",
-      "num_attendees": 30,
-      "url": "/tournament/26-488",
-      "events": [
-        {
-          "event_id": 1646990,
-          "event_slug": "tournament/26-488/event/on",
-          "event_name": "シングルス（１on１トーナメント）",
-          "num_entrants": 30,
-          "type": 1,
-          "start_at": 1782460800
-        }
-      ]
-    },
-    {
-      "tournament_id": 921740,
-      "tournament_slug": "tournament/sumao2026-12",
-      "tournament_name": "スマ王/SumaO2026 #12",
-      "start_at": 1782462600,
-      "end_at": 1782478800,
-      "is_online": false,
-      "city": "立川市",
-      "venue_name": "",
-      "country_code": "JP",
-      "num_attendees": 19,
-      "url": "/tournament/sumao2026-12",
-      "events": [
-        {
-          "event_id": 1645170,
-          "event_slug": "tournament/sumao2026-12/event/sp-1on1",
-          "event_name": "スマブラSP 1on1",
-          "num_entrants": 19,
-          "type": 1,
-          "start_at": 1782462600
-        }
-      ]
-    },
-    {
-      "tournament_id": 924573,
-      "tournament_slug": "tournament/6-98",
-      "tournament_name": "もびすまっ！#6",
-      "start_at": 1782464400,
-      "end_at": 1782482400,
-      "is_online": false,
-      "city": "川崎市",
-      "venue_name": "",
-      "country_code": "JP",
-      "num_attendees": 10,
-      "url": "/tournament/6-98",
-      "events": [
-        {
-          "event_id": 1650960,
-          "event_slug": "tournament/6-98/event/super-smash-bros-ultimate-singles",
-          "event_name": "シングルス",
-          "num_entrants": 10,
-          "type": 1,
-          "start_at": 1782464400
-        }
-      ]
-    },
-    {
-      "tournament_id": 925136,
-      "tournament_slug": "tournament/smalab-41",
-      "tournament_name": "Smalab 41",
-      "start_at": 1782464400,
-      "end_at": 1782482400,
-      "is_online": false,
-      "city": "広島市",
-      "venue_name": "",
-      "country_code": "JP",
-      "num_attendees": 15,
-      "url": "/tournament/smalab-41",
-      "events": [
-        {
-          "event_id": 1652200,
-          "event_slug": "tournament/smalab-41/event/ultimate-singles",
-          "event_name": "Ultimate Singles",
-          "num_entrants": 13,
-          "type": 1,
-          "start_at": 1782464400
-        }
-      ]
-    },
     {
       "tournament_id": 925191,
       "tournament_slug": "tournament/14-30",
@@ -120,29 +28,6 @@
       ]
     },
     {
-      "tournament_id": 926851,
-      "tournament_slug": "tournament/double-g-46-1",
-      "tournament_name": "Double G #46",
-      "start_at": 1782469800,
-      "end_at": 1782480600,
-      "is_online": false,
-      "city": "鹿児島市",
-      "venue_name": "",
-      "country_code": "JP",
-      "num_attendees": 19,
-      "url": "/tournament/double-g-46-1",
-      "events": [
-        {
-          "event_id": 1655650,
-          "event_slug": "tournament/double-g-46-1/event/1on1",
-          "event_name": "1on1トーナメント",
-          "num_entrants": 19,
-          "type": 1,
-          "start_at": 1782469800
-        }
-      ]
-    },
-    {
       "tournament_id": 917264,
       "tournament_slug": "tournament/smash-142-1",
       "tournament_name": "Smash薬院#142",
@@ -160,6 +45,29 @@
           "event_slug": "tournament/smash-142-1/event/1on1",
           "event_name": "1on1トーナメント",
           "num_entrants": 26,
+          "type": 1,
+          "start_at": 1782469800
+        }
+      ]
+    },
+    {
+      "tournament_id": 926851,
+      "tournament_slug": "tournament/double-g-46-1",
+      "tournament_name": "Double G #46",
+      "start_at": 1782469800,
+      "end_at": 1782480600,
+      "is_online": false,
+      "city": "鹿児島市",
+      "venue_name": "",
+      "country_code": "JP",
+      "num_attendees": 19,
+      "url": "/tournament/double-g-46-1",
+      "events": [
+        {
+          "event_id": 1655650,
+          "event_slug": "tournament/double-g-46-1/event/1on1",
+          "event_name": "1on1トーナメント",
+          "num_entrants": 19,
           "type": 1,
           "start_at": 1782469800
         }
@@ -382,14 +290,14 @@
       "city": "宇部市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 13,
+      "num_attendees": 14,
       "url": "/tournament/34-10",
       "events": [
         {
           "event_id": 1647081,
           "event_slug": "tournament/34-10/event/sp-1on1",
           "event_name": "スマブラSP 1on1",
-          "num_entrants": 13,
+          "num_entrants": 14,
           "type": 1,
           "start_at": 1782615600
         }
@@ -405,14 +313,14 @@
       "city": "四日市市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 12,
+      "num_attendees": 14,
       "url": "/tournament/quattro-3",
       "events": [
         {
           "event_id": 1650114,
           "event_slug": "tournament/quattro-3/event/quattro",
           "event_name": "四闘-Quattro-",
-          "num_entrants": 10,
+          "num_entrants": 12,
           "type": 1,
           "start_at": 1782619200
         }
@@ -474,14 +382,14 @@
       "city": "渋谷区",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 1,
+      "num_attendees": 2,
       "url": "/tournament/130-shibuya-tatsu",
       "events": [
         {
           "event_id": 1654644,
           "event_slug": "tournament/130-shibuya-tatsu/event/singles",
           "event_name": "Singles",
-          "num_entrants": 1,
+          "num_entrants": 2,
           "type": 1,
           "start_at": 1782813600
         }
@@ -551,14 +459,14 @@
       "city": "大分市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 3,
+      "num_attendees": 6,
       "url": "/tournament/15-29",
       "events": [
         {
           "event_id": 1655738,
           "event_slug": "tournament/15-29/event/1on1",
           "event_name": "1on1トーナメント",
-          "num_entrants": 4,
+          "num_entrants": 6,
           "type": 1,
           "start_at": 1782903600
         }
