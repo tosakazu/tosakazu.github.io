@@ -1,101 +1,9 @@
 {
-  "generated_at": 1782464428,
+  "generated_at": 1782475209,
   "country_code": "JP",
   "lookahead_days": 21,
-  "count": 43,
+  "count": 39,
   "tournaments": [
-    {
-      "tournament_id": 925191,
-      "tournament_slug": "tournament/14-30",
-      "tournament_name": "平日いろスマ#14",
-      "start_at": 1782469800,
-      "end_at": 1782480600,
-      "is_online": false,
-      "city": "大分市",
-      "venue_name": "",
-      "country_code": "JP",
-      "num_attendees": 8,
-      "url": "/tournament/14-30",
-      "events": [
-        {
-          "event_id": 1652294,
-          "event_slug": "tournament/14-30/event/1on1",
-          "event_name": "1on1トーナメント",
-          "num_entrants": 8,
-          "type": 1,
-          "start_at": 1782469800
-        }
-      ]
-    },
-    {
-      "tournament_id": 917264,
-      "tournament_slug": "tournament/smash-142-1",
-      "tournament_name": "Smash薬院#142",
-      "start_at": 1782469800,
-      "end_at": 1782482400,
-      "is_online": false,
-      "city": "福岡市",
-      "venue_name": "",
-      "country_code": "JP",
-      "num_attendees": 26,
-      "url": "/tournament/smash-142-1",
-      "events": [
-        {
-          "event_id": 1636151,
-          "event_slug": "tournament/smash-142-1/event/1on1",
-          "event_name": "1on1トーナメント",
-          "num_entrants": 26,
-          "type": 1,
-          "start_at": 1782469800
-        }
-      ]
-    },
-    {
-      "tournament_id": 926851,
-      "tournament_slug": "tournament/double-g-46-1",
-      "tournament_name": "Double G #46",
-      "start_at": 1782469800,
-      "end_at": 1782480600,
-      "is_online": false,
-      "city": "鹿児島市",
-      "venue_name": "",
-      "country_code": "JP",
-      "num_attendees": 19,
-      "url": "/tournament/double-g-46-1",
-      "events": [
-        {
-          "event_id": 1655650,
-          "event_slug": "tournament/double-g-46-1/event/1on1",
-          "event_name": "1on1トーナメント",
-          "num_entrants": 19,
-          "type": 1,
-          "start_at": 1782469800
-        }
-      ]
-    },
-    {
-      "tournament_id": 925589,
-      "tournament_slug": "tournament/339-act",
-      "tournament_name": "【第339回】スマACT",
-      "start_at": 1782470400,
-      "end_at": 1782482400,
-      "is_online": false,
-      "city": "大阪市",
-      "venue_name": "",
-      "country_code": "JP",
-      "num_attendees": 15,
-      "url": "/tournament/339-act",
-      "events": [
-        {
-          "event_id": 1653011,
-          "event_slug": "tournament/339-act/event/ultimate-singles",
-          "event_name": "Ultimate singles",
-          "num_entrants": 15,
-          "type": 1,
-          "start_at": 1782470400
-        }
-      ]
-    },
     {
       "tournament_id": 921064,
       "tournament_slug": "tournament/ost-15",
@@ -221,7 +129,7 @@
       "city": "柏市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 22,
+      "num_attendees": 23,
       "url": "/tournament/sen-smash-4",
       "events": [
         {
@@ -359,14 +267,14 @@
       "city": "横浜市",
       "venue_name": "おださがプラザ",
       "country_code": "JP",
-      "num_attendees": 4,
+      "num_attendees": 5,
       "url": "/tournament/gg-3-kannai-gg-1",
       "events": [
         {
           "event_id": 1652781,
           "event_slug": "tournament/gg-3-kannai-gg-1/event/sp-1on1",
           "event_name": "スマブラSP 1on1",
-          "num_entrants": 4,
+          "num_entrants": 5,
           "type": 1,
           "start_at": 1782723600
         }
