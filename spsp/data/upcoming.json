@@ -1,5 +1,5 @@
 {
-  "generated_at": 1782410415,
+  "generated_at": 1782421214,
   "country_code": "JP",
   "lookahead_days": 21,
   "count": 35,
@@ -129,14 +129,14 @@
       "city": "大阪市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 14,
+      "num_attendees": 15,
       "url": "/tournament/339-act",
       "events": [
         {
           "event_id": 1653011,
           "event_slug": "tournament/339-act/event/ultimate-singles",
           "event_name": "Ultimate singles",
-          "num_entrants": 14,
+          "num_entrants": 15,
           "type": 1,
           "start_at": 1782470400
         }
@@ -198,14 +198,14 @@
       "city": "台東区",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 14,
+      "num_attendees": 15,
       "url": "/tournament/27-489-1",
       "events": [
         {
           "event_id": 1646992,
           "event_slug": "tournament/27-489-1/event/on",
           "event_name": "シングルス（１on１トーナメント）",
-          "num_entrants": 12,
+          "num_entrants": 13,
           "type": 1,
           "start_at": 1782529200
         }
@@ -221,7 +221,7 @@
       "city": "Kadena",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 18,
+      "num_attendees": 19,
       "url": "/tournament/oki-military-brawl-june-2026",
       "events": [
         {
@@ -244,14 +244,14 @@
       "city": "横浜市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 5,
+      "num_attendees": 6,
       "url": "/tournament/7-67",
       "events": [
         {
           "event_id": 1650948,
           "event_slug": "tournament/7-67/event/super-smash-bros-ultimate-singles",
           "event_name": "シングルス",
-          "num_entrants": 5,
+          "num_entrants": 6,
           "type": 1,
           "start_at": 1782550800
         }
@@ -290,14 +290,14 @@
       "city": "台東区",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 4,
+      "num_attendees": 5,
       "url": "/tournament/acd",
       "events": [
         {
           "event_id": 1637909,
           "event_slug": "tournament/acd/event/acd-3",
           "event_name": "【お昼食えます】ACDオフスマ#3",
-          "num_entrants": 4,
+          "num_entrants": 5,
           "type": 1,
           "start_at": 1782612000
         }
@@ -313,14 +313,14 @@
       "city": "京都市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 27,
+      "num_attendees": 25,
       "url": "/tournament/don-t-stop-wa-cs-1-last-chance-qualifier",
       "events": [
         {
           "event_id": 1637958,
           "event_slug": "tournament/don-t-stop-wa-cs-1-last-chance-qualifier/event/singletournament",
           "event_name": "SingleTournament",
-          "num_entrants": 27,
+          "num_entrants": 25,
           "type": 1,
           "start_at": 1782612000
         }
@@ -359,7 +359,7 @@
       "city": "四日市市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 11,
+      "num_attendees": 12,
       "url": "/tournament/quattro-3",
       "events": [
         {
@@ -551,14 +551,14 @@
       "city": "熊本市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 18,
+      "num_attendees": 19,
       "url": "/tournament/sp-33-3",
       "events": [
         {
           "event_id": 1642641,
           "event_slug": "tournament/sp-33-3/event/sp-33",
           "event_name": "肥後ブラSP#33",
-          "num_entrants": 18,
+          "num_entrants": 19,
           "type": 1,
           "start_at": 1783123200
         }
