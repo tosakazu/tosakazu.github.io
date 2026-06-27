@@ -1,8 +1,8 @@
 {
-  "generated_at": 1782550807,
+  "generated_at": 1782561606,
   "country_code": "JP",
   "lookahead_days": 21,
-  "count": 38,
+  "count": 41,
   "tournaments": [
     {
       "tournament_id": 921297,
@@ -720,14 +720,14 @@
       "city": "福岡市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 34,
+      "num_attendees": 36,
       "url": "/tournament/revival-14",
       "events": [
         {
           "event_id": 1647071,
           "event_slug": "tournament/revival-14/event/1on1",
           "event_name": "1on1トーナメント",
-          "num_entrants": 34,
+          "num_entrants": 36,
           "type": 1,
           "start_at": 1783735200
         }
@@ -891,6 +891,75 @@
           "num_entrants": 1,
           "type": 1,
           "start_at": 1783929600
+        }
+      ]
+    },
+    {
+      "tournament_id": 919380,
+      "tournament_slug": "tournament/52-kurobra52",
+      "tournament_name": "第52回クロブラ/神奈川スマブラ対戦会クロブラ/Kurobra52",
+      "start_at": 1784332800,
+      "end_at": 1784368800,
+      "is_online": false,
+      "city": "横浜市",
+      "venue_name": "おださがプラザ",
+      "country_code": "JP",
+      "num_attendees": 106,
+      "url": "/tournament/52-kurobra52",
+      "events": [
+        {
+          "event_id": 1640297,
+          "event_slug": "tournament/52-kurobra52/event/sp-1on1",
+          "event_name": "SP 1on1トーナメント",
+          "num_entrants": 102,
+          "type": 1,
+          "start_at": 1784332800
+        }
+      ]
+    },
+    {
+      "tournament_id": 910195,
+      "tournament_slug": "tournament/kowloon-18",
+      "tournament_name": "九龍-KOWLOON-#18",
+      "start_at": 1784338200,
+      "end_at": 1784368800,
+      "is_online": false,
+      "city": "福岡市",
+      "venue_name": "",
+      "country_code": "JP",
+      "num_attendees": 420,
+      "url": "/tournament/kowloon-18",
+      "events": [
+        {
+          "event_id": 1622014,
+          "event_slug": "tournament/kowloon-18/event/kowloon_sp",
+          "event_name": "KOWLOON_SP",
+          "num_entrants": 415,
+          "type": 1,
+          "start_at": 1784338200
+        }
+      ]
+    },
+    {
+      "tournament_id": 926243,
+      "tournament_slug": "tournament/21-18",
+      "tournament_name": "第21回夢スマ",
+      "start_at": 1784343600,
+      "end_at": 1784376000,
+      "is_online": false,
+      "city": "豊橋市",
+      "venue_name": "",
+      "country_code": "JP",
+      "num_attendees": 12,
+      "url": "/tournament/21-18",
+      "events": [
+        {
+          "event_id": 1654347,
+          "event_slug": "tournament/21-18/event/21",
+          "event_name": "第21回夢スマ",
+          "num_entrants": 12,
+          "type": 1,
+          "start_at": 1784343600
         }
       ]
     }
