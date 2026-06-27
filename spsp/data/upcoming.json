@@ -1,8 +1,8 @@
 {
-  "generated_at": 1782518438,
+  "generated_at": 1782529395,
   "country_code": "JP",
   "lookahead_days": 21,
-  "count": 37,
+  "count": 38,
   "tournaments": [
     {
       "tournament_id": 915125,
@@ -14,14 +14,14 @@
       "city": "Kadena",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 24,
+      "num_attendees": 26,
       "url": "/tournament/oki-military-brawl-june-2026",
       "events": [
         {
           "event_id": 1631838,
           "event_slug": "tournament/oki-military-brawl-june-2026/event/ultimate-singles",
           "event_name": "Ultimate singles",
-          "num_entrants": 8,
+          "num_entrants": 9,
           "type": 1,
           "start_at": 1782549000
         }
@@ -60,7 +60,7 @@
       "city": "柏市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 24,
+      "num_attendees": 25,
       "url": "/tournament/sen-smash-4",
       "events": [
         {
@@ -83,14 +83,14 @@
       "city": "台東区",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 5,
+      "num_attendees": 6,
       "url": "/tournament/acd",
       "events": [
         {
           "event_id": 1637909,
           "event_slug": "tournament/acd/event/acd-3",
           "event_name": "【お昼食えます】ACDオフスマ#3",
-          "num_entrants": 5,
+          "num_entrants": 6,
           "type": 1,
           "start_at": 1782612000
         }
@@ -129,14 +129,14 @@
       "city": "宇部市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 13,
+      "num_attendees": 14,
       "url": "/tournament/34-10",
       "events": [
         {
           "event_id": 1647081,
           "event_slug": "tournament/34-10/event/sp-1on1",
           "event_name": "スマブラSP 1on1",
-          "num_entrants": 13,
+          "num_entrants": 14,
           "type": 1,
           "start_at": 1782615600
         }
@@ -152,14 +152,14 @@
       "city": "四日市市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 14,
+      "num_attendees": 16,
       "url": "/tournament/quattro-3",
       "events": [
         {
           "event_id": 1650114,
           "event_slug": "tournament/quattro-3/event/quattro",
           "event_name": "四闘-Quattro-",
-          "num_entrants": 13,
+          "num_entrants": 16,
           "type": 1,
           "start_at": 1782619200
         }
@@ -221,14 +221,14 @@
       "city": "渋谷区",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 3,
+      "num_attendees": 4,
       "url": "/tournament/130-shibuya-tatsu",
       "events": [
         {
           "event_id": 1654644,
           "event_slug": "tournament/130-shibuya-tatsu/event/singles",
           "event_name": "Singles",
-          "num_entrants": 3,
+          "num_entrants": 4,
           "type": 1,
           "start_at": 1782813600
         }
@@ -274,7 +274,7 @@
           "event_id": 1655219,
           "event_slug": "tournament/weekly-smash-party-236/event/special-1on1-ultimate-singles",
           "event_name": "SPECIAL 1on1/ Ultimate Singles",
-          "num_entrants": 4,
+          "num_entrants": 7,
           "type": 1,
           "start_at": 1782896400
         },
@@ -413,14 +413,14 @@
       "city": "熊本市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 23,
+      "num_attendees": 24,
       "url": "/tournament/sp-33-3",
       "events": [
         {
           "event_id": 1642641,
           "event_slug": "tournament/sp-33-3/event/sp-33",
           "event_name": "肥後ブラSP#33",
-          "num_entrants": 23,
+          "num_entrants": 24,
           "type": 1,
           "start_at": 1783123200
         }
@@ -513,14 +513,14 @@
       "city": "新潟市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 10,
+      "num_attendees": 12,
       "url": "/tournament/sudden-fes-2",
       "events": [
         {
           "event_id": 1583421,
           "event_slug": "tournament/sudden-fes-2/event/singles-tournament",
           "event_name": "Singles tournament",
-          "num_entrants": 10,
+          "num_entrants": 12,
           "type": 1,
           "start_at": 1783126800
         }
@@ -559,14 +559,14 @@
       "city": "奈良市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 30,
+      "num_attendees": 31,
       "url": "/tournament/badawi-5",
       "events": [
         {
           "event_id": 1620892,
           "event_slug": "tournament/badawi-5/event/badawi",
           "event_name": "Badawi",
-          "num_entrants": 30,
+          "num_entrants": 31,
           "type": 1,
           "start_at": 1783213200
         }
@@ -711,6 +711,29 @@
       ]
     },
     {
+      "tournament_id": 927161,
+      "tournament_slug": "tournament/71-sp-1",
+      "tournament_name": "第71回スマバトSP",
+      "start_at": 1783734000,
+      "end_at": 1783765800,
+      "is_online": false,
+      "city": "大東市",
+      "venue_name": "",
+      "country_code": "JP",
+      "num_attendees": 0,
+      "url": "/tournament/71-sp-1",
+      "events": [
+        {
+          "event_id": 1656228,
+          "event_slug": "tournament/71-sp-1/event/1on1",
+          "event_name": "予選あり1on1トーナメント",
+          "num_entrants": 0,
+          "type": 1,
+          "start_at": 1783734000
+        }
+      ]
+    },
+    {
       "tournament_id": 922645,
       "tournament_slug": "tournament/revival-14",
       "tournament_name": "みどブラRevival#14",
@@ -743,14 +766,14 @@
       "city": "台東区",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 1,
+      "num_attendees": 2,
       "url": "/tournament/11-499",
       "events": [
         {
           "event_id": 1655656,
           "event_slug": "tournament/11-499/event/on",
           "event_name": "シングルス（１on１トーナメント）",
-          "num_entrants": 1,
+          "num_entrants": 2,
           "type": 1,
           "start_at": 1783738800
         }
