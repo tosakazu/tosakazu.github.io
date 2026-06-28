@@ -1,8 +1,8 @@
 {
-  "generated_at": 1782561606,
+  "generated_at": 1782572409,
   "country_code": "JP",
   "lookahead_days": 21,
-  "count": 41,
+  "count": 43,
   "tournaments": [
     {
       "tournament_id": 921297,
@@ -14,14 +14,14 @@
       "city": "柏市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 26,
+      "num_attendees": 27,
       "url": "/tournament/sen-smash-4",
       "events": [
         {
           "event_id": 1644272,
           "event_slug": "tournament/sen-smash-4/event/singles",
           "event_name": "シングルス / Singles",
-          "num_entrants": 23,
+          "num_entrants": 24,
           "type": 1,
           "start_at": 1782608400
         }
@@ -454,6 +454,29 @@
           "num_entrants": 10,
           "type": 1,
           "start_at": 1780239600
+        }
+      ]
+    },
+    {
+      "tournament_id": 927311,
+      "tournament_slug": "tournament/3-145",
+      "tournament_name": "第3回もつカップ",
+      "start_at": 1783130400,
+      "end_at": 1783159200,
+      "is_online": false,
+      "city": "渋谷区",
+      "venue_name": "",
+      "country_code": "JP",
+      "num_attendees": 0,
+      "url": "/tournament/3-145",
+      "events": [
+        {
+          "event_id": 1656478,
+          "event_slug": "tournament/3-145/event/singles-tournament",
+          "event_name": "Singles Tournament",
+          "num_entrants": 0,
+          "type": 1,
+          "start_at": 1783130400
         }
       ]
     },
@@ -904,16 +927,39 @@
       "city": "横浜市",
       "venue_name": "おださがプラザ",
       "country_code": "JP",
-      "num_attendees": 106,
+      "num_attendees": 107,
       "url": "/tournament/52-kurobra52",
       "events": [
         {
           "event_id": 1640297,
           "event_slug": "tournament/52-kurobra52/event/sp-1on1",
           "event_name": "SP 1on1トーナメント",
-          "num_entrants": 102,
+          "num_entrants": 103,
           "type": 1,
           "start_at": 1784332800
+        }
+      ]
+    },
+    {
+      "tournament_id": 924823,
+      "tournament_slug": "tournament/7-gamer-s",
+      "tournament_name": "第7回gamer's！/名古屋スマブラオフ会",
+      "start_at": 1784336400,
+      "end_at": 1784379600,
+      "is_online": false,
+      "city": "名古屋市",
+      "venue_name": "",
+      "country_code": "JP",
+      "num_attendees": 7,
+      "url": "/tournament/7-gamer-s",
+      "events": [
+        {
+          "event_id": 1651528,
+          "event_slug": "tournament/7-gamer-s/event/1on1",
+          "event_name": "1on1 トーナメント",
+          "num_entrants": 7,
+          "type": 1,
+          "start_at": 1784347200
         }
       ]
     },
