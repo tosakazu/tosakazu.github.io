@@ -1,55 +1,9 @@
 {
-  "generated_at": 1782712842,
+  "generated_at": 1782723616,
   "country_code": "JP",
   "lookahead_days": 21,
-  "count": 47,
+  "count": 45,
   "tournaments": [
-    {
-      "tournament_id": 922604,
-      "tournament_slug": "tournament/29-490",
-      "tournament_name": "29(月)上野スマコミ#490(オープン)",
-      "start_at": 1782720000,
-      "end_at": 1782741600,
-      "is_online": false,
-      "city": "台東区",
-      "venue_name": "",
-      "country_code": "JP",
-      "num_attendees": 13,
-      "url": "/tournament/29-490",
-      "events": [
-        {
-          "event_id": 1646993,
-          "event_slug": "tournament/29-490/event/on",
-          "event_name": "シングルス（１on１トーナメント）",
-          "num_entrants": 13,
-          "type": 1,
-          "start_at": 1782720000
-        }
-      ]
-    },
-    {
-      "tournament_id": 925472,
-      "tournament_slug": "tournament/gg-3-kannai-gg-1",
-      "tournament_name": "関内GG #3 / kannai-gg",
-      "start_at": 1782723600,
-      "end_at": 1782736200,
-      "is_online": false,
-      "city": "横浜市",
-      "venue_name": "おださがプラザ",
-      "country_code": "JP",
-      "num_attendees": 6,
-      "url": "/tournament/gg-3-kannai-gg-1",
-      "events": [
-        {
-          "event_id": 1652781,
-          "event_slug": "tournament/gg-3-kannai-gg-1/event/sp-1on1",
-          "event_name": "スマブラSP 1on1",
-          "num_entrants": 6,
-          "type": 1,
-          "start_at": 1782723600
-        }
-      ]
-    },
     {
       "tournament_id": 922421,
       "tournament_slug": "tournament/hit-177-maesuma-hit-177",
@@ -83,14 +37,14 @@
       "city": "渋谷区",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 12,
+      "num_attendees": 13,
       "url": "/tournament/130-shibuya-tatsu",
       "events": [
         {
           "event_id": 1654644,
           "event_slug": "tournament/130-shibuya-tatsu/event/singles",
           "event_name": "Singles",
-          "num_entrants": 12,
+          "num_entrants": 13,
           "type": 1,
           "start_at": 1782813600
         }
@@ -106,14 +60,14 @@
       "city": "札幌市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 7,
+      "num_attendees": 8,
       "url": "/tournament/pochisuma-16",
       "events": [
         {
           "event_id": 1653748,
           "event_slug": "tournament/pochisuma-16/event/ultimate-singles",
           "event_name": "Ultimate Singles",
-          "num_entrants": 7,
+          "num_entrants": 8,
           "type": 1,
           "start_at": 1782815400
         }
@@ -160,14 +114,14 @@
       "city": "京都市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 12,
+      "num_attendees": 13,
       "url": "/tournament/dsw-57",
       "events": [
         {
           "event_id": 1656724,
           "event_slug": "tournament/dsw-57/event/singletournament",
           "event_name": "SingleTournament",
-          "num_entrants": 12,
+          "num_entrants": 13,
           "type": 1,
           "start_at": 1782903600
         }
@@ -421,14 +375,14 @@
       "city": "渋谷区",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 15,
+      "num_attendees": 17,
       "url": "/tournament/3-145",
       "events": [
         {
           "event_id": 1656478,
           "event_slug": "tournament/3-145/event/singles-tournament",
           "event_name": "Singles Tournament",
-          "num_entrants": 15,
+          "num_entrants": 17,
           "type": 1,
           "start_at": 1783130400
         }
@@ -444,14 +398,14 @@
       "city": "台東区",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 1,
+      "num_attendees": 2,
       "url": "/tournament/4-494",
       "events": [
         {
           "event_id": 1655652,
           "event_slug": "tournament/4-494/event/on",
           "event_name": "シングルス（１on１トーナメント）",
-          "num_entrants": 1,
+          "num_entrants": 2,
           "type": 1,
           "start_at": 1783134000
         }
@@ -950,7 +904,7 @@
       "city": "福岡市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 417,
+      "num_attendees": 418,
       "url": "/tournament/kowloon-18",
       "events": [
         {
