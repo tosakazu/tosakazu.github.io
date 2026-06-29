@@ -1,5 +1,5 @@
 {
-  "generated_at": 1782658816,
+  "generated_at": 1782669613,
   "country_code": "JP",
   "lookahead_days": 21,
   "count": 46,
@@ -129,7 +129,7 @@
       "city": "中野区",
       "venue_name": "Red Bull Gaming Sphere Tokyo",
       "country_code": "JP",
-      "num_attendees": 55,
+      "num_attendees": 58,
       "url": "/tournament/weekly-smash-party-236",
       "events": [
         {
@@ -321,14 +321,14 @@
       "city": "熊本市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 30,
+      "num_attendees": 32,
       "url": "/tournament/sp-33-3",
       "events": [
         {
           "event_id": 1642641,
           "event_slug": "tournament/sp-33-3/event/sp-33",
           "event_name": "肥後ブラSP#33",
-          "num_entrants": 31,
+          "num_entrants": 32,
           "type": 1,
           "start_at": 1783123200
         }
@@ -674,14 +674,14 @@
       "city": "大東市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 20,
+      "num_attendees": 23,
       "url": "/tournament/71-sp-1",
       "events": [
         {
           "event_id": 1656228,
           "event_slug": "tournament/71-sp-1/event/1on1",
           "event_name": "予選あり1on1トーナメント",
-          "num_entrants": 20,
+          "num_entrants": 23,
           "type": 1,
           "start_at": 1783734000
         }
