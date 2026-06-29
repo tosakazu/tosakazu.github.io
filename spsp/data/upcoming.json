@@ -1,32 +1,9 @@
 {
-  "generated_at": 1782723616,
+  "generated_at": 1782734418,
   "country_code": "JP",
   "lookahead_days": 21,
-  "count": 45,
+  "count": 46,
   "tournaments": [
-    {
-      "tournament_id": 922421,
-      "tournament_slug": "tournament/hit-177-maesuma-hit-177",
-      "tournament_name": "マエスマ'HIT#177 / Maesuma'HIT#177",
-      "start_at": 1782727200,
-      "end_at": 1782741600,
-      "is_online": false,
-      "city": "大阪市",
-      "venue_name": "",
-      "country_code": "JP",
-      "num_attendees": 16,
-      "url": "/tournament/hit-177-maesuma-hit-177",
-      "events": [
-        {
-          "event_id": 1646609,
-          "event_slug": "tournament/hit-177-maesuma-hit-177/event/singles-tournament",
-          "event_name": "Singles Tournament",
-          "num_entrants": 16,
-          "type": 1,
-          "start_at": 1782727200
-        }
-      ]
-    },
     {
       "tournament_id": 926364,
       "tournament_slug": "tournament/130-shibuya-tatsu",
@@ -37,14 +14,14 @@
       "city": "渋谷区",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 13,
+      "num_attendees": 14,
       "url": "/tournament/130-shibuya-tatsu",
       "events": [
         {
           "event_id": 1654644,
           "event_slug": "tournament/130-shibuya-tatsu/event/singles",
           "event_name": "Singles",
-          "num_entrants": 13,
+          "num_entrants": 14,
           "type": 1,
           "start_at": 1782813600
         }
@@ -60,14 +37,14 @@
       "city": "札幌市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 8,
+      "num_attendees": 9,
       "url": "/tournament/pochisuma-16",
       "events": [
         {
           "event_id": 1653748,
           "event_slug": "tournament/pochisuma-16/event/ultimate-singles",
           "event_name": "Ultimate Singles",
-          "num_entrants": 8,
+          "num_entrants": 9,
           "type": 1,
           "start_at": 1782815400
         }
@@ -285,6 +262,29 @@
           "num_entrants": 1,
           "type": 1,
           "start_at": 1783074600
+        }
+      ]
+    },
+    {
+      "tournament_id": 927941,
+      "tournament_slug": "tournament/340-act",
+      "tournament_name": "【第340回】スマACT",
+      "start_at": 1783075260,
+      "end_at": 1783087200,
+      "is_online": false,
+      "city": "大阪市",
+      "venue_name": "",
+      "country_code": "JP",
+      "num_attendees": 2,
+      "url": "/tournament/340-act",
+      "events": [
+        {
+          "event_id": 1657722,
+          "event_slug": "tournament/340-act/event/ultimate-singles",
+          "event_name": "Ultimate singles",
+          "num_entrants": 2,
+          "type": 1,
+          "start_at": 1783075260
         }
       ]
     },
@@ -1052,6 +1052,29 @@
           "num_entrants": 8,
           "type": 1,
           "start_at": 1784433600
+        }
+      ]
+    },
+    {
+      "tournament_id": 914462,
+      "tournament_slug": "tournament/absolute-smash-1",
+      "tournament_name": "ABsolute Smash #1（アブスマ）",
+      "start_at": 1784512800,
+      "end_at": 1784545200,
+      "is_online": false,
+      "city": "さいたま市",
+      "venue_name": "",
+      "country_code": "JP",
+      "num_attendees": 225,
+      "url": "/tournament/absolute-smash-1",
+      "events": [
+        {
+          "event_id": 1630488,
+          "event_slug": "tournament/absolute-smash-1/event/absolutesmash-1",
+          "event_name": "AbsoluteSmash#1（アブスマ）",
+          "num_entrants": 221,
+          "type": 1,
+          "start_at": 1784512800
         }
       ]
     }
