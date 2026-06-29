@@ -1,5 +1,5 @@
 {
-  "generated_at": 1782648015,
+  "generated_at": 1782658816,
   "country_code": "JP",
   "lookahead_days": 21,
   "count": 46,
@@ -21,7 +21,7 @@
           "event_id": 1646993,
           "event_slug": "tournament/29-490/event/on",
           "event_name": "シングルス（１on１トーナメント）",
-          "num_entrants": 8,
+          "num_entrants": 9,
           "type": 1,
           "start_at": 1782720000
         }
@@ -60,14 +60,14 @@
       "city": "大阪市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 14,
+      "num_attendees": 15,
       "url": "/tournament/hit-177-maesuma-hit-177",
       "events": [
         {
           "event_id": 1646609,
           "event_slug": "tournament/hit-177-maesuma-hit-177/event/singles-tournament",
           "event_name": "Singles Tournament",
-          "num_entrants": 14,
+          "num_entrants": 15,
           "type": 1,
           "start_at": 1782727200
         }
@@ -129,7 +129,7 @@
       "city": "中野区",
       "venue_name": "Red Bull Gaming Sphere Tokyo",
       "country_code": "JP",
-      "num_attendees": 54,
+      "num_attendees": 55,
       "url": "/tournament/weekly-smash-party-236",
       "events": [
         {
@@ -328,7 +328,7 @@
           "event_id": 1642641,
           "event_slug": "tournament/sp-33-3/event/sp-33",
           "event_name": "肥後ブラSP#33",
-          "num_entrants": 30,
+          "num_entrants": 31,
           "type": 1,
           "start_at": 1783123200
         }
@@ -490,14 +490,14 @@
       "city": "奈良市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 33,
+      "num_attendees": 34,
       "url": "/tournament/badawi-5",
       "events": [
         {
           "event_id": 1620892,
           "event_slug": "tournament/badawi-5/event/badawi",
           "event_name": "Badawi",
-          "num_entrants": 33,
+          "num_entrants": 34,
           "type": 1,
           "start_at": 1783213200
         }
@@ -674,14 +674,14 @@
       "city": "大東市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 19,
+      "num_attendees": 20,
       "url": "/tournament/71-sp-1",
       "events": [
         {
           "event_id": 1656228,
           "event_slug": "tournament/71-sp-1/event/1on1",
           "event_name": "予選あり1on1トーナメント",
-          "num_entrants": 19,
+          "num_entrants": 20,
           "type": 1,
           "start_at": 1783734000
         }
@@ -927,14 +927,14 @@
       "city": "福岡市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 415,
+      "num_attendees": 414,
       "url": "/tournament/kowloon-18",
       "events": [
         {
           "event_id": 1622014,
           "event_slug": "tournament/kowloon-18/event/kowloon_sp",
           "event_name": "KOWLOON_SP",
-          "num_entrants": 415,
+          "num_entrants": 414,
           "type": 1,
           "start_at": 1784338200
         }
@@ -996,7 +996,7 @@
       "city": "福岡市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 113,
+      "num_attendees": 114,
       "url": "/tournament/limit-break-3-2",
       "events": [
         {
