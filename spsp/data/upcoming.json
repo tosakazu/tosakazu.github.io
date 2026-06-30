@@ -1,8 +1,8 @@
 {
-  "generated_at": 1782799235,
+  "generated_at": 1782810014,
   "country_code": "JP",
   "lookahead_days": 21,
-  "count": 49,
+  "count": 50,
   "tournaments": [
     {
       "tournament_id": 926364,
@@ -60,7 +60,7 @@
       "city": "中野区",
       "venue_name": "Red Bull Gaming Sphere Tokyo",
       "country_code": "JP",
-      "num_attendees": 70,
+      "num_attendees": 69,
       "url": "/tournament/weekly-smash-party-236",
       "events": [
         {
@@ -75,7 +75,7 @@
           "event_id": 1655220,
           "event_slug": "tournament/weekly-smash-party-236/event/casual-tournament",
           "event_name": "カジュアルトーナメント / Casual Tournament",
-          "num_entrants": 10,
+          "num_entrants": 9,
           "type": 1,
           "start_at": 1782896400
         }
@@ -183,14 +183,14 @@
       "city": "大阪市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 8,
+      "num_attendees": 11,
       "url": "/tournament/hit-178-maesuma-hit-178",
       "events": [
         {
           "event_id": 1646610,
           "event_slug": "tournament/hit-178-maesuma-hit-178/event/singles-tournament",
           "event_name": "Singles Tournament",
-          "num_entrants": 8,
+          "num_entrants": 11,
           "type": 1,
           "start_at": 1782986400
         }
@@ -527,6 +527,29 @@
       ]
     },
     {
+      "tournament_id": 928336,
+      "tournament_slug": "tournament/hit-179-maesuma-hit-179",
+      "tournament_name": "マエスマ'HIT#179 / Maesuma'HIT#179",
+      "start_at": 1783332000,
+      "end_at": 1783346400,
+      "is_online": false,
+      "city": "大阪市",
+      "venue_name": "",
+      "country_code": "JP",
+      "num_attendees": 0,
+      "url": "/tournament/hit-179-maesuma-hit-179",
+      "events": [
+        {
+          "event_id": 1658496,
+          "event_slug": "tournament/hit-179-maesuma-hit-179/event/singles-tournament",
+          "event_name": "Singles Tournament",
+          "num_entrants": 0,
+          "type": 1,
+          "start_at": 1783332000
+        }
+      ]
+    },
+    {
       "tournament_id": 928243,
       "tournament_slug": "tournament/131-shibuya-tatsu",
       "tournament_name": "渋谷\"達\" #131 shibuya -tatsu-",
@@ -536,14 +559,14 @@
       "city": "渋谷区",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 0,
+      "num_attendees": 1,
       "url": "/tournament/131-shibuya-tatsu",
       "events": [
         {
           "event_id": 1658321,
           "event_slug": "tournament/131-shibuya-tatsu/event/singles",
           "event_name": "Singles",
-          "num_entrants": 0,
+          "num_entrants": 1,
           "type": 1,
           "start_at": 1783418400
         }
@@ -651,14 +674,14 @@
       "city": "信濃町",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 11,
+      "num_attendees": 12,
       "url": "/tournament/-3108",
       "events": [
         {
           "event_id": 1643638,
           "event_slug": "tournament/-3108/event/sp",
           "event_name": "【スマブラSP】シングルス",
-          "num_entrants": 11,
+          "num_entrants": 12,
           "type": 1,
           "start_at": 1783728000
         }
@@ -1088,7 +1111,7 @@
       "city": "帯広市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 8,
+      "num_attendees": 9,
       "url": "/tournament/sp2-3",
       "events": [
         {
