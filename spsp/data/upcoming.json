@@ -1,5 +1,5 @@
 {
-  "generated_at": 1782756017,
+  "generated_at": 1782766815,
   "country_code": "JP",
   "lookahead_days": 21,
   "count": 47,
@@ -14,14 +14,14 @@
       "city": "渋谷区",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 16,
+      "num_attendees": 18,
       "url": "/tournament/130-shibuya-tatsu",
       "events": [
         {
           "event_id": 1654644,
           "event_slug": "tournament/130-shibuya-tatsu/event/singles",
           "event_name": "Singles",
-          "num_entrants": 16,
+          "num_entrants": 18,
           "type": 1,
           "start_at": 1782813600
         }
@@ -37,14 +37,14 @@
       "city": "札幌市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 9,
+      "num_attendees": 10,
       "url": "/tournament/pochisuma-16",
       "events": [
         {
           "event_id": 1653748,
           "event_slug": "tournament/pochisuma-16/event/ultimate-singles",
           "event_name": "Ultimate Singles",
-          "num_entrants": 9,
+          "num_entrants": 10,
           "type": 1,
           "start_at": 1782815400
         }
@@ -160,14 +160,14 @@
       "city": "渋谷区",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 3,
+      "num_attendees": 4,
       "url": "/tournament/shibuya-g-g-smash-weekly-69-1",
       "events": [
         {
           "event_id": 1655106,
           "event_slug": "tournament/shibuya-g-g-smash-weekly-69-1/event/singles",
           "event_name": "Singles",
-          "num_entrants": 3,
+          "num_entrants": 4,
           "type": 1,
           "start_at": 1782988200
         }
@@ -252,14 +252,14 @@
       "city": "福岡市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 1,
+      "num_attendees": 3,
       "url": "/tournament/smash-143-1",
       "events": [
         {
           "event_id": 1657349,
           "event_slug": "tournament/smash-143-1/event/1on1",
           "event_name": "1on1トーナメント",
-          "num_entrants": 1,
+          "num_entrants": 3,
           "type": 1,
           "start_at": 1783074600
         }
@@ -298,14 +298,14 @@
       "city": "熊本市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 37,
+      "num_attendees": 38,
       "url": "/tournament/sp-33-3",
       "events": [
         {
           "event_id": 1642641,
           "event_slug": "tournament/sp-33-3/event/sp-33",
           "event_name": "肥後ブラSP#33",
-          "num_entrants": 37,
+          "num_entrants": 38,
           "type": 1,
           "start_at": 1783123200
         }
@@ -444,14 +444,14 @@
       "city": "札幌市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 58,
+      "num_attendees": 59,
       "url": "/tournament/pochisuma-next-patch-4",
       "events": [
         {
           "event_id": 1638445,
           "event_slug": "tournament/pochisuma-next-patch-4/event/ultimate-singles",
           "event_name": "Ultimate Singles",
-          "num_entrants": 58,
+          "num_entrants": 59,
           "type": 1,
           "start_at": 1783206000
         }
@@ -904,14 +904,14 @@
       "city": "福岡市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 415,
+      "num_attendees": 414,
       "url": "/tournament/kowloon-18",
       "events": [
         {
           "event_id": 1622014,
           "event_slug": "tournament/kowloon-18/event/kowloon_sp",
           "event_name": "KOWLOON_SP",
-          "num_entrants": 413,
+          "num_entrants": 412,
           "type": 1,
           "start_at": 1784338200
         }
@@ -927,14 +927,14 @@
       "city": "豊橋市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 19,
+      "num_attendees": 20,
       "url": "/tournament/21-18",
       "events": [
         {
           "event_id": 1654347,
           "event_slug": "tournament/21-18/event/21",
           "event_name": "第21回夢スマ",
-          "num_entrants": 19,
+          "num_entrants": 20,
           "type": 1,
           "start_at": 1784343600
         }
@@ -1096,14 +1096,14 @@
       "city": "さいたま市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 225,
+      "num_attendees": 224,
       "url": "/tournament/absolute-smash-1",
       "events": [
         {
           "event_id": 1630488,
           "event_slug": "tournament/absolute-smash-1/event/absolutesmash-1",
           "event_name": "AbsoluteSmash#1（アブスマ）",
-          "num_entrants": 221,
+          "num_entrants": 220,
           "type": 1,
           "start_at": 1784512800
         }
