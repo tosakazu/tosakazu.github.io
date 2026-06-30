@@ -1,5 +1,5 @@
 {
-  "generated_at": 1782766815,
+  "generated_at": 1782777614,
   "country_code": "JP",
   "lookahead_days": 21,
   "count": 47,
@@ -37,14 +37,14 @@
       "city": "札幌市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 10,
+      "num_attendees": 13,
       "url": "/tournament/pochisuma-16",
       "events": [
         {
           "event_id": 1653748,
           "event_slug": "tournament/pochisuma-16/event/ultimate-singles",
           "event_name": "Ultimate Singles",
-          "num_entrants": 10,
+          "num_entrants": 13,
           "type": 1,
           "start_at": 1782815400
         }
@@ -206,14 +206,14 @@
       "city": "広島市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 5,
+      "num_attendees": 6,
       "url": "/tournament/smalab-42",
       "events": [
         {
           "event_id": 1656629,
           "event_slug": "tournament/smalab-42/event/ultimate-singles",
           "event_name": "Ultimate Singles",
-          "num_entrants": 4,
+          "num_entrants": 5,
           "type": 1,
           "start_at": 1783069200
         }
@@ -252,14 +252,14 @@
       "city": "福岡市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 3,
+      "num_attendees": 4,
       "url": "/tournament/smash-143-1",
       "events": [
         {
           "event_id": 1657349,
           "event_slug": "tournament/smash-143-1/event/1on1",
           "event_name": "1on1トーナメント",
-          "num_entrants": 3,
+          "num_entrants": 4,
           "type": 1,
           "start_at": 1783074600
         }
@@ -858,14 +858,14 @@
       "city": "横浜市",
       "venue_name": "おださがプラザ",
       "country_code": "JP",
-      "num_attendees": 118,
+      "num_attendees": 120,
       "url": "/tournament/52-kurobra52",
       "events": [
         {
           "event_id": 1640297,
           "event_slug": "tournament/52-kurobra52/event/sp-1on1",
           "event_name": "SP 1on1トーナメント",
-          "num_entrants": 113,
+          "num_entrants": 115,
           "type": 1,
           "start_at": 1784332800
         }
