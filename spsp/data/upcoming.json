@@ -1,8 +1,8 @@
 {
-  "generated_at": 1782734418,
+  "generated_at": 1782745221,
   "country_code": "JP",
   "lookahead_days": 21,
-  "count": 46,
+  "count": 47,
   "tournaments": [
     {
       "tournament_id": 926364,
@@ -60,7 +60,7 @@
       "city": "中野区",
       "venue_name": "Red Bull Gaming Sphere Tokyo",
       "country_code": "JP",
-      "num_attendees": 67,
+      "num_attendees": 68,
       "url": "/tournament/weekly-smash-party-236",
       "events": [
         {
@@ -91,14 +91,14 @@
       "city": "京都市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 13,
+      "num_attendees": 14,
       "url": "/tournament/dsw-57",
       "events": [
         {
           "event_id": 1656724,
           "event_slug": "tournament/dsw-57/event/singletournament",
           "event_name": "SingleTournament",
-          "num_entrants": 13,
+          "num_entrants": 14,
           "type": 1,
           "start_at": 1782903600
         }
@@ -298,14 +298,14 @@
       "city": "熊本市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 35,
+      "num_attendees": 36,
       "url": "/tournament/sp-33-3",
       "events": [
         {
           "event_id": 1642641,
           "event_slug": "tournament/sp-33-3/event/sp-33",
           "event_name": "肥後ブラSP#33",
-          "num_entrants": 35,
+          "num_entrants": 36,
           "type": 1,
           "start_at": 1783123200
         }
@@ -321,14 +321,14 @@
       "city": "岐阜市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 95,
+      "num_attendees": 94,
       "url": "/tournament/21-16",
       "events": [
         {
           "event_id": 1636233,
           "event_slug": "tournament/21-16/event/gifusma21",
           "event_name": "gifusma21",
-          "num_entrants": 91,
+          "num_entrants": 90,
           "type": 1,
           "start_at": 1783126800
         },
@@ -398,14 +398,14 @@
       "city": "台東区",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 2,
+      "num_attendees": 4,
       "url": "/tournament/4-494",
       "events": [
         {
           "event_id": 1655652,
           "event_slug": "tournament/4-494/event/on",
           "event_name": "シングルス（１on１トーナメント）",
-          "num_entrants": 2,
+          "num_entrants": 4,
           "type": 1,
           "start_at": 1783134000
         }
@@ -766,14 +766,14 @@
       "city": "練馬区",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 256,
+      "num_attendees": 254,
       "url": "/tournament/seibugeki",
       "events": [
         {
           "event_id": 1643603,
           "event_slug": "tournament/seibugeki/event/singles",
           "event_name": "シングルストーナメント/Singles",
-          "num_entrants": 256,
+          "num_entrants": 254,
           "type": 1,
           "start_at": 1783814400
         }
@@ -1052,6 +1052,37 @@
           "num_entrants": 8,
           "type": 1,
           "start_at": 1784433600
+        }
+      ]
+    },
+    {
+      "tournament_id": 924566,
+      "tournament_slug": "tournament/2-5-r1600",
+      "tournament_name": "第2.5回スマフェス(通常トナメ＆R1600制限トナメの同時開催)",
+      "start_at": 1784505600,
+      "end_at": 1784552400,
+      "is_online": false,
+      "city": "堺市",
+      "venue_name": "",
+      "country_code": "JP",
+      "num_attendees": 28,
+      "url": "/tournament/2-5-r1600",
+      "events": [
+        {
+          "event_id": 1651029,
+          "event_slug": "tournament/2-5-r1600/event/non-limit",
+          "event_name": "通常トーナメント(Non Limit)",
+          "num_entrants": 16,
+          "type": 1,
+          "start_at": 1784505600
+        },
+        {
+          "event_id": 1651040,
+          "event_slug": "tournament/2-5-r1600/event/1600-limit1600",
+          "event_name": "レート1600制限トーナメント(Limit1600)",
+          "num_entrants": 12,
+          "type": 1,
+          "start_at": 1784505600
         }
       ]
     },
