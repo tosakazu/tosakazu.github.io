@@ -1,5 +1,5 @@
 {
-  "generated_at": 1782745221,
+  "generated_at": 1782756017,
   "country_code": "JP",
   "lookahead_days": 21,
   "count": 47,
@@ -14,14 +14,14 @@
       "city": "渋谷区",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 14,
+      "num_attendees": 16,
       "url": "/tournament/130-shibuya-tatsu",
       "events": [
         {
           "event_id": 1654644,
           "event_slug": "tournament/130-shibuya-tatsu/event/singles",
           "event_name": "Singles",
-          "num_entrants": 14,
+          "num_entrants": 16,
           "type": 1,
           "start_at": 1782813600
         }
@@ -298,14 +298,14 @@
       "city": "熊本市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 36,
+      "num_attendees": 37,
       "url": "/tournament/sp-33-3",
       "events": [
         {
           "event_id": 1642641,
           "event_slug": "tournament/sp-33-3/event/sp-33",
           "event_name": "肥後ブラSP#33",
-          "num_entrants": 36,
+          "num_entrants": 37,
           "type": 1,
           "start_at": 1783123200
         }
@@ -444,14 +444,14 @@
       "city": "札幌市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 57,
+      "num_attendees": 58,
       "url": "/tournament/pochisuma-next-patch-4",
       "events": [
         {
           "event_id": 1638445,
           "event_slug": "tournament/pochisuma-next-patch-4/event/ultimate-singles",
           "event_name": "Ultimate Singles",
-          "num_entrants": 57,
+          "num_entrants": 58,
           "type": 1,
           "start_at": 1783206000
         }
@@ -904,14 +904,14 @@
       "city": "福岡市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 418,
+      "num_attendees": 415,
       "url": "/tournament/kowloon-18",
       "events": [
         {
           "event_id": 1622014,
           "event_slug": "tournament/kowloon-18/event/kowloon_sp",
           "event_name": "KOWLOON_SP",
-          "num_entrants": 416,
+          "num_entrants": 413,
           "type": 1,
           "start_at": 1784338200
         }
