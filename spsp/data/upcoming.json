@@ -1,55 +1,9 @@
 {
-  "generated_at": 1782810014,
+  "generated_at": 1782820814,
   "country_code": "JP",
   "lookahead_days": 21,
-  "count": 50,
+  "count": 52,
   "tournaments": [
-    {
-      "tournament_id": 926364,
-      "tournament_slug": "tournament/130-shibuya-tatsu",
-      "tournament_name": "渋谷\"達\" #130 shibuya -tatsu-",
-      "start_at": 1782813600,
-      "end_at": 1782826200,
-      "is_online": false,
-      "city": "渋谷区",
-      "venue_name": "",
-      "country_code": "JP",
-      "num_attendees": 18,
-      "url": "/tournament/130-shibuya-tatsu",
-      "events": [
-        {
-          "event_id": 1654644,
-          "event_slug": "tournament/130-shibuya-tatsu/event/singles",
-          "event_name": "Singles",
-          "num_entrants": 18,
-          "type": 1,
-          "start_at": 1782813600
-        }
-      ]
-    },
-    {
-      "tournament_id": 925939,
-      "tournament_slug": "tournament/pochisuma-16",
-      "tournament_name": "ポチスマ/Pochisuma #16",
-      "start_at": 1782815400,
-      "end_at": 1782826200,
-      "is_online": false,
-      "city": "札幌市",
-      "venue_name": "",
-      "country_code": "JP",
-      "num_attendees": 16,
-      "url": "/tournament/pochisuma-16",
-      "events": [
-        {
-          "event_id": 1653748,
-          "event_slug": "tournament/pochisuma-16/event/ultimate-singles",
-          "event_name": "Ultimate Singles",
-          "num_entrants": 16,
-          "type": 1,
-          "start_at": 1782815400
-        }
-      ]
-    },
     {
       "tournament_id": 926636,
       "tournament_slug": "tournament/weekly-smash-party-236",
@@ -160,14 +114,14 @@
       "city": "渋谷区",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 6,
+      "num_attendees": 7,
       "url": "/tournament/shibuya-g-g-smash-weekly-69-1",
       "events": [
         {
           "event_id": 1655106,
           "event_slug": "tournament/shibuya-g-g-smash-weekly-69-1/event/singles",
           "event_name": "Singles",
-          "num_entrants": 6,
+          "num_entrants": 7,
           "type": 1,
           "start_at": 1782988200
         }
@@ -183,14 +137,14 @@
       "city": "大阪市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 11,
+      "num_attendees": 13,
       "url": "/tournament/hit-178-maesuma-hit-178",
       "events": [
         {
           "event_id": 1646610,
           "event_slug": "tournament/hit-178-maesuma-hit-178/event/singles-tournament",
           "event_name": "Singles Tournament",
-          "num_entrants": 11,
+          "num_entrants": 13,
           "type": 1,
           "start_at": 1782986400
         }
@@ -398,14 +352,14 @@
       "city": "渋谷区",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 18,
+      "num_attendees": 20,
       "url": "/tournament/3-145",
       "events": [
         {
           "event_id": 1656478,
           "event_slug": "tournament/3-145/event/singles-tournament",
           "event_name": "Singles Tournament",
-          "num_entrants": 18,
+          "num_entrants": 20,
           "type": 1,
           "start_at": 1783130400
         }
@@ -619,6 +573,29 @@
       ]
     },
     {
+      "tournament_id": 928385,
+      "tournament_slug": "tournament/hit-180-maesuma-hit-180",
+      "tournament_name": "マエスマ'HIT#180 / Maesuma'HIT#180",
+      "start_at": 1783591200,
+      "end_at": 1783605600,
+      "is_online": false,
+      "city": "大阪市",
+      "venue_name": "",
+      "country_code": "JP",
+      "num_attendees": 0,
+      "url": "/tournament/hit-180-maesuma-hit-180",
+      "events": [
+        {
+          "event_id": 1658621,
+          "event_slug": "tournament/hit-180-maesuma-hit-180/event/singles-tournament",
+          "event_name": "Singles Tournament",
+          "num_entrants": 0,
+          "type": 1,
+          "start_at": 1783591200
+        }
+      ]
+    },
+    {
       "tournament_id": 922351,
       "tournament_slug": "tournament/2-194",
       "tournament_name": "快進会#2",
@@ -661,6 +638,29 @@
           "num_entrants": 6,
           "type": 1,
           "start_at": 1783670400
+        }
+      ]
+    },
+    {
+      "tournament_id": 928353,
+      "tournament_slug": "tournament/sumao2026-13",
+      "tournament_name": "スマ王/SumaO2026 #13",
+      "start_at": 1783672200,
+      "end_at": 1783688400,
+      "is_online": false,
+      "city": "立川市",
+      "venue_name": "",
+      "country_code": "JP",
+      "num_attendees": 1,
+      "url": "/tournament/sumao2026-13",
+      "events": [
+        {
+          "event_id": 1658522,
+          "event_slug": "tournament/sumao2026-13/event/sp-1on1",
+          "event_name": "スマブラSP 1on1",
+          "num_entrants": 1,
+          "type": 1,
+          "start_at": 1783672200
         }
       ]
     },
@@ -914,6 +914,52 @@
           "num_entrants": 1,
           "type": 1,
           "start_at": 1783929600
+        }
+      ]
+    },
+    {
+      "tournament_id": 928394,
+      "tournament_slug": "tournament/hit-181-maesuma-hit-181",
+      "tournament_name": "マエスマ'HIT#181 / Maesuma'HIT#181",
+      "start_at": 1783936800,
+      "end_at": 1783951200,
+      "is_online": false,
+      "city": "大阪市",
+      "venue_name": "",
+      "country_code": "JP",
+      "num_attendees": 0,
+      "url": "/tournament/hit-181-maesuma-hit-181",
+      "events": [
+        {
+          "event_id": 1658641,
+          "event_slug": "tournament/hit-181-maesuma-hit-181/event/singles-tournament",
+          "event_name": "Singles Tournament",
+          "num_entrants": 0,
+          "type": 1,
+          "start_at": 1783936800
+        }
+      ]
+    },
+    {
+      "tournament_id": 928395,
+      "tournament_slug": "tournament/hit-182-maesuma-hit-182",
+      "tournament_name": "マエスマ'HIT#182 / Maesuma'HIT#182",
+      "start_at": 1784196000,
+      "end_at": 1784210400,
+      "is_online": false,
+      "city": "大阪市",
+      "venue_name": "",
+      "country_code": "JP",
+      "num_attendees": 0,
+      "url": "/tournament/hit-182-maesuma-hit-182",
+      "events": [
+        {
+          "event_id": 1658642,
+          "event_slug": "tournament/hit-182-maesuma-hit-182/event/singles-tournament",
+          "event_name": "Singles Tournament",
+          "num_entrants": 0,
+          "type": 1,
+          "start_at": 1784196000
         }
       ]
     },
