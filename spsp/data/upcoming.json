@@ -1,55 +1,9 @@
 {
-  "generated_at": 1782896427,
+  "generated_at": 1782907226,
   "country_code": "JP",
   "lookahead_days": 21,
-  "count": 53,
+  "count": 51,
   "tournaments": [
-    {
-      "tournament_id": 927429,
-      "tournament_slug": "tournament/dsw-57",
-      "tournament_name": "新京都DSW#57",
-      "start_at": 1782903600,
-      "end_at": 1782914400,
-      "is_online": false,
-      "city": "京都市",
-      "venue_name": "",
-      "country_code": "JP",
-      "num_attendees": 24,
-      "url": "/tournament/dsw-57",
-      "events": [
-        {
-          "event_id": 1656724,
-          "event_slug": "tournament/dsw-57/event/singletournament",
-          "event_name": "SingleTournament",
-          "num_entrants": 24,
-          "type": 1,
-          "start_at": 1782903600
-        }
-      ]
-    },
-    {
-      "tournament_id": 926909,
-      "tournament_slug": "tournament/15-29",
-      "tournament_name": "平日いろスマ#15",
-      "start_at": 1782903600,
-      "end_at": 1782914400,
-      "is_online": false,
-      "city": "大分市",
-      "venue_name": "",
-      "country_code": "JP",
-      "num_attendees": 12,
-      "url": "/tournament/15-29",
-      "events": [
-        {
-          "event_id": 1655738,
-          "event_slug": "tournament/15-29/event/1on1",
-          "event_name": "1on1トーナメント",
-          "num_entrants": 12,
-          "type": 1,
-          "start_at": 1782903600
-        }
-      ]
-    },
     {
       "tournament_id": 926273,
       "tournament_slug": "tournament/2-492",
@@ -496,29 +450,6 @@
       ]
     },
     {
-      "tournament_id": 928664,
-      "tournament_slug": "tournament/weekly-smash-party-237",
-      "tournament_name": "Weekly Smash Party ～スマパ～ #237",
-      "start_at": 1783501200,
-      "end_at": 1783517400,
-      "is_online": false,
-      "city": "中野区",
-      "venue_name": "Red Bull Gaming Sphere Tokyo",
-      "country_code": "JP",
-      "num_attendees": 0,
-      "url": "/tournament/weekly-smash-party-237",
-      "events": [
-        {
-          "event_id": 1659119,
-          "event_slug": "tournament/weekly-smash-party-237/event/special-1on1-ultimate-singles",
-          "event_name": "SPECIAL 1on1/ Ultimate Singles",
-          "num_entrants": 0,
-          "type": 1,
-          "start_at": 1783501200
-        }
-      ]
-    },
-    {
       "tournament_id": 928659,
       "tournament_slug": "tournament/26-13",
       "tournament_name": "雷影杯#26",
@@ -536,6 +467,29 @@
           "event_slug": "tournament/26-13/event/super-smash-bros-ultimate-singles",
           "event_name": "雷影杯",
           "num_entrants": 3,
+          "type": 1,
+          "start_at": 1783501200
+        }
+      ]
+    },
+    {
+      "tournament_id": 928664,
+      "tournament_slug": "tournament/weekly-smash-party-237",
+      "tournament_name": "Weekly Smash Party ～スマパ～ #237",
+      "start_at": 1783501200,
+      "end_at": 1783517400,
+      "is_online": false,
+      "city": "中野区",
+      "venue_name": "Red Bull Gaming Sphere Tokyo",
+      "country_code": "JP",
+      "num_attendees": 1,
+      "url": "/tournament/weekly-smash-party-237",
+      "events": [
+        {
+          "event_id": 1659119,
+          "event_slug": "tournament/weekly-smash-party-237/event/special-1on1-ultimate-singles",
+          "event_name": "SPECIAL 1on1/ Ultimate Singles",
+          "num_entrants": 1,
           "type": 1,
           "start_at": 1783501200
         }
@@ -735,14 +689,14 @@
       "city": "大東市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 133,
+      "num_attendees": 136,
       "url": "/tournament/71-sp-1",
       "events": [
         {
           "event_id": 1656228,
           "event_slug": "tournament/71-sp-1/event/1on1",
           "event_name": "予選あり1on1トーナメント",
-          "num_entrants": 133,
+          "num_entrants": 136,
           "type": 1,
           "start_at": 1783734000
         }
@@ -988,14 +942,14 @@
       "city": "横浜市",
       "venue_name": "おださがプラザ",
       "country_code": "JP",
-      "num_attendees": 130,
+      "num_attendees": 131,
       "url": "/tournament/52-kurobra52",
       "events": [
         {
           "event_id": 1640297,
           "event_slug": "tournament/52-kurobra52/event/sp-1on1",
           "event_name": "SP 1on1トーナメント",
-          "num_entrants": 123,
+          "num_entrants": 124,
           "type": 1,
           "start_at": 1784332800
         }
