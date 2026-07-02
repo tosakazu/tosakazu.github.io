@@ -1,5 +1,5 @@
 {
-  "generated_at": 1782907226,
+  "generated_at": 1782918033,
   "country_code": "JP",
   "lookahead_days": 21,
   "count": 51,
@@ -298,14 +298,14 @@
       "city": "台東区",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 11,
+      "num_attendees": 12,
       "url": "/tournament/4-494",
       "events": [
         {
           "event_id": 1655652,
           "event_slug": "tournament/4-494/event/on",
           "event_name": "シングルス（１on１トーナメント）",
-          "num_entrants": 11,
+          "num_entrants": 12,
           "type": 1,
           "start_at": 1783134000
         }
@@ -689,14 +689,14 @@
       "city": "大東市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 136,
+      "num_attendees": 140,
       "url": "/tournament/71-sp-1",
       "events": [
         {
           "event_id": 1656228,
           "event_slug": "tournament/71-sp-1/event/1on1",
           "event_name": "予選あり1on1トーナメント",
-          "num_entrants": 136,
+          "num_entrants": 140,
           "type": 1,
           "start_at": 1783734000
         }
