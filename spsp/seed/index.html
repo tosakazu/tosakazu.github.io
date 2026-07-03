@@ -564,7 +564,7 @@
               </select>
             </label>
             <label>多点数<input type="number" id="so-restarts" value="15" min="1" max="100" style="display:block;width:64px;padding:4px;border:1px solid #d1d5db;border-radius:5px;font-size:12px"></label>
-            <label>SA冷却率<input type="number" id="so-cooling" value="0.995" step="0.001" min="0.5" max="0.9999" style="display:block;width:72px;padding:4px;border:1px solid #d1d5db;border-radius:5px;font-size:12px"></label>
+            <label>SA冷却率<input type="number" id="so-cooling" value="0.997" step="0.001" min="0.5" max="0.9999" style="display:block;width:72px;padding:4px;border:1px solid #d1d5db;border-radius:5px;font-size:12px"></label>
             <label title="反復回数 = max(500, 状態数×この値)。大きいほど高精度・低速">反復係数<input type="number" id="so-itersscale" value="1000" min="10" max="2000" step="10" style="display:block;width:72px;padding:4px;border:1px solid #d1d5db;border-radius:5px;font-size:12px"></label>
             <label>乱数シード<input type="number" id="so-rngseed" value="12345" style="display:block;width:84px;padding:4px;border:1px solid #d1d5db;border-radius:5px;font-size:12px"></label>
           </div>
@@ -629,7 +629,7 @@
 </div>
 
 <div class="footer" id="footer-info"></div>
-<div class="footer" style="margin-top:-12px"><span class="site-version" style="font-size:11px;color:#9ca3af">v 3307b6a · 2026-07-03 15:07 UTC</span></div>
+<div class="footer" style="margin-top:-12px"><span class="site-version" style="font-size:11px;color:#9ca3af">v f521d78 · 2026-07-03 18:07 UTC</span></div>
 
 <!-- Chart.js (lazy load on first graph use) -->
 <script>
@@ -727,9 +727,11 @@ async function loadMasterData() {
   const status = document.getElementById('status');
   status.textContent = 'SPSP マスターランキングを取得中…';
   const t0 = performance.now();
+  // no-cache: デプロイ直後に新 meta と旧 jsonl の混在キャッシュを掴まないよう再検証させる
+  // （upcoming.json と同方針。304 で済むので実コストは小さい）。
   const [metaRes, jsonlRes] = await Promise.all([
-    fetch('../meta.json'),
-    fetch('../latest_tjpr_full.jsonl'),
+    fetch('../meta.json', { cache: 'no-cache' }),
+    fetch('../latest_tjpr_full.jsonl', { cache: 'no-cache' }),
   ]);
   if (!metaRes.ok) throw new Error('meta.json 取得失敗');
   if (!jsonlRes.ok) throw new Error('latest_tjpr_full.jsonl 取得失敗');
@@ -1339,8 +1341,21 @@ async function handleFetch() {
       document.getElementById('phase-row').style.display = '';
       phaseId = phases[0].id;
       sel.value = phaseId;
-      // re-fetch on phase change
-      sel.onchange = () => { phaseId = sel.value; performSeedFetch(token, ev, phaseId); };
+      // re-fetch on phase change（連打の並行実行と unhandled rejection を防ぐ:
+      // fetch-btn と同様にボタン相当をロックし、失敗は showError に流す）。
+      sel.onchange = async () => {
+        phaseId = sel.value;
+        sel.disabled = true;
+        document.getElementById('fetch-btn').disabled = true;
+        try {
+          await performSeedFetch(token, ev, phaseId);
+        } catch (err) {
+          showError(err.message, err.rawError);
+        } finally {
+          sel.disabled = false;
+          document.getElementById('fetch-btn').disabled = false;
+        }
+      };
     } else {
       phaseId = phases[0].id;
     }
@@ -1447,6 +1462,8 @@ document.getElementById('method-tabs').addEventListener('click', e => {
   tab.classList.add('active');
   currentMethod = tab.dataset.method;
   if (APPLIED_ORDER) { APPLIED_ORDER = null; clearSeedOptApplied(); }  // 基準が変わるので適用解除
+  // 被り回避の結果も基準ランキング前提なので破棄（残すと再適用できない死に状態になる）。
+  if (SEEDOPT_RESULT) resetSeedOptResultPanel('基準ランキングが変わったため被り回避の結果をクリアしました。再実行してください。');
   const tbl = TABLE; if (tbl) tbl.setMethod(currentMethod);
 });
 
@@ -1641,7 +1658,7 @@ function renderUpcomingPage() {
       <div class="row-1">
         <span class="ev-date">${formatUpcomingDate(t.start_at)}</span>
         <span class="ev-name">${escapeHtml(t.tournament_name)}</span>
-        <a class="ev-link" href="${ttoUrl}" target="_blank" rel="noopener" title="start.gg で開く" aria-label="start.gg で開く">↗</a>
+        <a class="ev-link" href="${escapeHtml(ttoUrl)}" target="_blank" rel="noopener" title="start.gg で開く" aria-label="start.gg で開く">↗</a>
       </div>
       <div class="row-2">
         ${cityHtml}${onlineHtml}
@@ -1845,7 +1862,10 @@ function showEventPickerInline(tournamentSlug, events) {
   });
   // 被り回避最適化パネル
   document.getElementById('so-run').addEventListener('click', () => {
-    runSeedOptimize().catch(e => { document.getElementById('so-progress').textContent = '⚠ ' + e.message; });
+    runSeedOptimize().catch(e => {
+      document.getElementById('so-progress').textContent = '⚠ ' + e.message;
+      cleanupSeedOptWorker();   // 途中 throw でも実行ボタンを必ず戻す
+    });
   });
   document.getElementById('so-stop').addEventListener('click', stopSeedOptimize);
   document.getElementById('so-apply').addEventListener('click', applySeedOptimize);
@@ -1904,6 +1924,9 @@ function updateIntraToggleState() {
 function initSeedOptPanel() {
   const poolsEl = document.getElementById('so-pools');
   if (!poolsEl) return;
+  // 別イベント/フェーズの取得で呼ばれる。走行中の worker が残っていると
+  // 古い結果が新しいデータの上に done で届いて適用できてしまうため、必ず止める。
+  cleanupSeedOptWorker();
   applyModeDefaults();
   // プール数の既定: start.gg から取得できたプール数 → なければ phase 作成 UI のプール数 → 1。
   const fetched = EVENT_CONTEXT && EVENT_CONTEXT.poolCount;
@@ -1976,17 +1999,21 @@ async function runSeedOptimize() {
   // 地域グルーピングのトグル（南関東 / 兵庫・大阪・京都）。
   const groupMinamiKanto = document.getElementById('so-group-minamikanto').checked;
   const groupKeihanshin = document.getElementById('so-group-keihanshin').checked;
+  // 数値入力: 「0」を有効値として受ける（`|| 既定` だと 0 が黙って既定に化ける）。
+  // 空欄/非数のときだけ既定へ。
+  const numDef = (id, def) => { const v = parseFloat(document.getElementById(id).value); return Number.isFinite(v) ? v : def; };
+  const intDef = (id, def) => { const v = parseInt(document.getElementById(id).value, 10); return Number.isFinite(v) ? v : def; };
   const params = {
     mode: document.getElementById('so-mode').value,
-    restarts: Math.max(1, parseInt(document.getElementById('so-restarts').value, 10) || 8),
-    saCooling: Math.min(0.9999, Math.max(0.5, parseFloat(document.getElementById('so-cooling').value) || 0.995)),
-    maxItersScale: Math.max(10, parseInt(document.getElementById('so-itersscale').value, 10) || 200),
-    rngSeed: parseInt(document.getElementById('so-rngseed').value, 10) || 12345,
+    restarts: Math.max(1, intDef('so-restarts', 15)),
+    saCooling: Math.min(0.9999, Math.max(0.5, numDef('so-cooling', 0.997))),
+    maxItersScale: Math.max(10, intDef('so-itersscale', 1000)),
+    rngSeed: intDef('so-rngseed', 12345),
     avoidRegion, avoidRecent, enableIntra,
-    W_region: parseFloat(document.getElementById('so-wregion').value) || 1.0,
-    W_recent: parseFloat(document.getElementById('so-wrecent').value) || 0.3,
-    W_order: Math.max(0, parseFloat(document.getElementById('so-worder').value) || 0),
-    orderPow: Math.max(1, parseInt(document.getElementById('so-orderpow').value, 10) || 1),
+    W_region: numDef('so-wregion', 1.0),
+    W_recent: numDef('so-wrecent', 0.3),
+    W_order: Math.max(0, numDef('so-worder', 0)),
+    orderPow: Math.max(1, intDef('so-orderpow', 1)),
     prefWeight: document.getElementById('so-prefweight').value,
     roundWeights: csvNums('so-roundweights'),   // undefined→既定
     kInter: csvNums('so-kinter'),
@@ -2025,6 +2052,9 @@ async function runSeedOptimize() {
     bundle = await SeedData.buildSeedData(ranking, {
       prefix: '../',
       regionGroups,
+      // 地域被り回避 OFF のときは居住地データはレポート表示にしか使わないので、
+      // 取得失敗で全体を止めない（meta.prefsError で明示される）。
+      prefsOptional: !avoidRegion,
       params: dataParams,
       onProgress: (p) => {
         if (p.phase === 'fetch') progress.textContent = `選手データ取得中 ${p.done}/${p.total}…`;
@@ -2040,42 +2070,77 @@ async function runSeedOptimize() {
   let note = `居住地特定 ${m.prefIdentified}/${m.attendees} 名`;
   if (m.missing.length) note += ` · DB未登録 ${m.missing.length} 名（対戦履歴なし扱い）`;
   if (m.errors.length) note += ` · ⚠ 取得失敗 ${m.errors.length} 名`;
+  if (m.prefsError) note += ` · ⚠ 居住地データ取得失敗（地域表示なし）`;
 
-  // 2) Worker で最適化。
-  if (SEEDOPT_WORKER) { SEEDOPT_WORKER.terminate(); SEEDOPT_WORKER = null; }
-  SEEDOPT_WORKER = new Worker('../seeding/seed_worker.js');
-  document.getElementById('so-stop').style.display = '';
-  document.getElementById('so-stop').disabled = false;
+  // 2) Worker で最適化。生成/起動の失敗（404, CSP, clone不能など）は onmessage に
+  //    乗らないため、onerror と try/catch の両方で必ず cleanup してボタンを戻す。
+  try {
+    if (SEEDOPT_WORKER) { SEEDOPT_WORKER.terminate(); SEEDOPT_WORKER = null; }
+    SEEDOPT_WORKER = new Worker('../seeding/seed_worker.js');
+    document.getElementById('so-stop').style.display = '';
+    document.getElementById('so-stop').disabled = false;
 
-  SEEDOPT_WORKER.onmessage = (ev) => {
-    const msg = ev.data || {};
-    if (msg.type === 'progress') {
-      progress.textContent = `${note} ｜ 最適化中 (round ${msg.round + 1}/${msg.restarts}, phase ${msg.phase || ''})`;
-    } else if (msg.type === 'checkpoint') {
-      const imp = msg.beforeScore > 0 ? ((1 - msg.bestScore / msg.beforeScore) * 100).toFixed(1) : '0.0';
-      progress.textContent = `${note} ｜ 最適化中 (${msg.round + 1}/${msg.restarts}) 暫定改善 ${imp}%`;
-    } else if (msg.type === 'done') {
-      finishSeedOptimize(msg.result, displayOf, note, ranking);
-    } else if (msg.type === 'error') {
-      progress.textContent = '⚠ 最適化エラー: ' + msg.message;
+    SEEDOPT_WORKER.onerror = (err) => {
+      progress.textContent = '⚠ Worker エラー: ' + (err && err.message ? err.message : 'seed_worker.js の読み込み/実行に失敗しました');
       cleanupSeedOptWorker();
-    }
-  };
-  SEEDOPT_WORKER.postMessage({ type: 'start', input: {
-    poolCount, format, ranking,
-    prefByUid: bundle.prefByUid, prefCounts: bundle.prefCounts,
-    recentPair: bundle.recentPair, recentMeta: bundle.recentMeta,
-    params,
-  } });
+    };
+    SEEDOPT_WORKER.onmessage = (ev) => {
+      const msg = ev.data || {};
+      if (msg.type === 'progress') {
+        progress.textContent = msg.stage === 'stop-requested'
+          ? `${note} ｜ 停止要求受付 — 現在のラウンド完了後に停止します`
+          : `${note} ｜ 最適化中 (round ${msg.round + 1}/${msg.restarts}, phase ${msg.phase || ''})`;
+      } else if (msg.type === 'checkpoint') {
+        const imp = msg.beforeScore > 0 ? ((1 - msg.bestScore / msg.beforeScore) * 100).toFixed(1) : '0.0';
+        progress.textContent = `${note} ｜ 最適化中 (${msg.round + 1}/${msg.restarts}) 暫定改善 ${imp}%`;
+      } else if (msg.type === 'done') {
+        finishSeedOptimize(msg.result, displayOf, note, ranking);
+      } else if (msg.type === 'error') {
+        progress.textContent = '⚠ 最適化エラー: ' + msg.message;
+        cleanupSeedOptWorker();
+      }
+    };
+    SEEDOPT_WORKER.postMessage({ type: 'start', input: {
+      poolCount, format, ranking,
+      prefByUid: bundle.prefByUid, prefCounts: bundle.prefCounts,
+      recentPair: bundle.recentPair, recentMeta: bundle.recentMeta,
+      params,
+    } });
+  } catch (e) {
+    progress.textContent = '⚠ Worker 起動に失敗: ' + e.message;
+    cleanupSeedOptWorker();
+  }
 }
 
 function stopSeedOptimize() {
-  if (SEEDOPT_WORKER) SEEDOPT_WORKER.postMessage({ type: 'stop' });
+  if (!SEEDOPT_WORKER) return;
+  SEEDOPT_WORKER.postMessage({ type: 'stop' });
+  // 停止はリスタート境界でしか効かない（worker 内の optimize は同期実行）。
+  // 二重押し防止とフィードバックのためボタンを無効化して状況を表示する。
+  const stopBtn = document.getElementById('so-stop');
+  if (stopBtn) stopBtn.disabled = true;
+  const progress = document.getElementById('so-progress');
+  if (progress) progress.textContent = '停止要求送信 — 現在の探索ラウンド完了後に停止します…';
+}
+
+// 結果パネルを破棄して初期状態へ（基準ランキング変更時など）。
+function resetSeedOptResultPanel(msg) {
+  SEEDOPT_RESULT = null;
+  const r = document.getElementById('so-report'); if (r) r.innerHTML = '';
+  const a = document.getElementById('so-apply'); if (a) { a.style.display = 'none'; a.disabled = true; }
+  const p = document.getElementById('so-progress'); if (p) p.textContent = msg || '';
 }
 function cleanupSeedOptWorker() {
   document.getElementById('so-run').disabled = false;
   document.getElementById('so-stop').style.display = 'none';
-  if (SEEDOPT_WORKER) { SEEDOPT_WORKER.terminate(); SEEDOPT_WORKER = null; }
+  if (SEEDOPT_WORKER) {
+    // terminate 前にハンドラを外す: キュー済みの done/error が terminate 後に
+    // 届いて古い結果を描画するのを防ぐ。
+    SEEDOPT_WORKER.onmessage = null;
+    SEEDOPT_WORKER.onerror = null;
+    SEEDOPT_WORKER.terminate();
+    SEEDOPT_WORKER = null;
+  }
 }
 
 function finishSeedOptimize(result, displayOf, note, ranking) {
