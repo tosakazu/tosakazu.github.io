@@ -1,8 +1,8 @@
 {
-  "generated_at": 1782993628,
+  "generated_at": 1783004430,
   "country_code": "JP",
   "lookahead_days": 21,
-  "count": 51,
+  "count": 52,
   "tournaments": [
     {
       "tournament_id": 926852,
@@ -14,14 +14,14 @@
       "city": "台東区",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 24,
+      "num_attendees": 26,
       "url": "/tournament/3-493",
       "events": [
         {
           "event_id": 1655651,
           "event_slug": "tournament/3-493/event/on",
           "event_name": "シングルス（１on１トーナメント）",
-          "num_entrants": 23,
+          "num_entrants": 25,
           "type": 1,
           "start_at": 1783065600
         }
@@ -44,7 +44,7 @@
           "event_id": 1655754,
           "event_slug": "tournament/7-68/event/super-smash-bros-ultimate-singles",
           "event_name": "シングルス",
-          "num_entrants": 16,
+          "num_entrants": 15,
           "type": 1,
           "start_at": 1783069200
         }
@@ -206,14 +206,14 @@
       "city": "台東区",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 14,
+      "num_attendees": 15,
       "url": "/tournament/4-494",
       "events": [
         {
           "event_id": 1655652,
           "event_slug": "tournament/4-494/event/on",
           "event_name": "シングルス（１on１トーナメント）",
-          "num_entrants": 14,
+          "num_entrants": 15,
           "type": 1,
           "start_at": 1783134000
         }
@@ -666,14 +666,14 @@
       "city": "大東市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 179,
+      "num_attendees": 182,
       "url": "/tournament/71-sp-1",
       "events": [
         {
           "event_id": 1656228,
           "event_slug": "tournament/71-sp-1/event/1on1",
           "event_name": "予選あり1on1トーナメント",
-          "num_entrants": 179,
+          "num_entrants": 182,
           "type": 1,
           "start_at": 1783734000
         }
@@ -1011,14 +1011,14 @@
       "city": "豊橋市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 21,
+      "num_attendees": 22,
       "url": "/tournament/21-18",
       "events": [
         {
           "event_id": 1654347,
           "event_slug": "tournament/21-18/event/21",
           "event_name": "第21回夢スマ",
-          "num_entrants": 21,
+          "num_entrants": 22,
           "type": 1,
           "start_at": 1784343600
         }
@@ -1190,6 +1190,29 @@
           "num_entrants": 220,
           "type": 1,
           "start_at": 1784512800
+        }
+      ]
+    },
+    {
+      "tournament_id": 928396,
+      "tournament_slug": "tournament/hit-183-maesuma-hit-183",
+      "tournament_name": "マエスマ'HIT#183 / Maesuma'HIT#183",
+      "start_at": 1784800800,
+      "end_at": 1784815200,
+      "is_online": false,
+      "city": "大阪市",
+      "venue_name": "",
+      "country_code": "JP",
+      "num_attendees": 0,
+      "url": "/tournament/hit-183-maesuma-hit-183",
+      "events": [
+        {
+          "event_id": 1658643,
+          "event_slug": "tournament/hit-183-maesuma-hit-183/event/singles-tournament",
+          "event_name": "Singles Tournament",
+          "num_entrants": 0,
+          "type": 1,
+          "start_at": 1784800800
         }
       ]
     }
