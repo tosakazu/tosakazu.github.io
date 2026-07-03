@@ -1,5 +1,5 @@
 {
-  "generated_at": 1783047627,
+  "generated_at": 1783058474,
   "country_code": "JP",
   "lookahead_days": 21,
   "count": 53,
@@ -206,14 +206,14 @@
       "city": "台東区",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 19,
+      "num_attendees": 22,
       "url": "/tournament/4-494",
       "events": [
         {
           "event_id": 1655652,
           "event_slug": "tournament/4-494/event/on",
           "event_name": "シングルス（１on１トーナメント）",
-          "num_entrants": 18,
+          "num_entrants": 21,
           "type": 1,
           "start_at": 1783134000
         }
@@ -275,14 +275,14 @@
       "city": "札幌市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 62,
+      "num_attendees": 60,
       "url": "/tournament/pochisuma-next-patch-4",
       "events": [
         {
           "event_id": 1638445,
           "event_slug": "tournament/pochisuma-next-patch-4/event/ultimate-singles",
           "event_name": "Ultimate Singles",
-          "num_entrants": 62,
+          "num_entrants": 60,
           "type": 1,
           "start_at": 1783206000
         }
@@ -305,7 +305,7 @@
           "event_id": 1620892,
           "event_slug": "tournament/badawi-5/event/badawi",
           "event_name": "Badawi",
-          "num_entrants": 40,
+          "num_entrants": 41,
           "type": 1,
           "start_at": 1783213200
         }
@@ -459,14 +459,14 @@
       "city": "京都市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 2,
+      "num_attendees": 7,
       "url": "/tournament/dsw-58-1",
       "events": [
         {
           "event_id": 1660411,
           "event_slug": "tournament/dsw-58-1/event/singletournament",
           "event_name": "SingleTournament",
-          "num_entrants": 2,
+          "num_entrants": 7,
           "type": 1,
           "start_at": 1783508400
         }
@@ -597,14 +597,14 @@
       "city": "台東区",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 10,
+      "num_attendees": 11,
       "url": "/tournament/10-498",
       "events": [
         {
           "event_id": 1655655,
           "event_slug": "tournament/10-498/event/on",
           "event_name": "シングルス（１on１トーナメント）",
-          "num_entrants": 10,
+          "num_entrants": 11,
           "type": 1,
           "start_at": 1783670400
         }
@@ -689,14 +689,14 @@
       "city": "大東市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 200,
+      "num_attendees": 203,
       "url": "/tournament/71-sp-1",
       "events": [
         {
           "event_id": 1656228,
           "event_slug": "tournament/71-sp-1/event/1on1",
           "event_name": "予選あり1on1トーナメント",
-          "num_entrants": 200,
+          "num_entrants": 203,
           "type": 1,
           "start_at": 1783734000
         }
@@ -1011,7 +1011,7 @@
       "city": "福岡市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 408,
+      "num_attendees": 409,
       "url": "/tournament/kowloon-18",
       "events": [
         {
@@ -1034,7 +1034,7 @@
       "city": "豊橋市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 24,
+      "num_attendees": 25,
       "url": "/tournament/21-18",
       "events": [
         {
@@ -1080,14 +1080,14 @@
       "city": "福岡市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 113,
+      "num_attendees": 112,
       "url": "/tournament/limit-break-3-2",
       "events": [
         {
           "event_id": 1629766,
           "event_slug": "tournament/limit-break-3-2/event/limit-break",
           "event_name": "LIMIT BREAK",
-          "num_entrants": 96,
+          "num_entrants": 95,
           "type": 1,
           "start_at": 1784424600
         }
@@ -1126,14 +1126,14 @@
       "city": "浜松市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 15,
+      "num_attendees": 17,
       "url": "/tournament/sp-mini-tournament-2",
       "events": [
         {
           "event_id": 1652322,
           "event_slug": "tournament/sp-mini-tournament-2/event/1on1",
           "event_name": "1on1",
-          "num_entrants": 15,
+          "num_entrants": 16,
           "type": 1,
           "start_at": 1784426400
         }
@@ -1203,14 +1203,14 @@
       "city": "さいたま市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 224,
+      "num_attendees": 225,
       "url": "/tournament/absolute-smash-1",
       "events": [
         {
           "event_id": 1630488,
           "event_slug": "tournament/absolute-smash-1/event/absolutesmash-1",
           "event_name": "AbsoluteSmash#1（アブスマ）",
-          "num_entrants": 220,
+          "num_entrants": 221,
           "type": 1,
           "start_at": 1784512800
         }
