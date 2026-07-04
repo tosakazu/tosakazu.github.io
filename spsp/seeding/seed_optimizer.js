@@ -76,8 +76,8 @@
     roundWeights: [1.0, 0.6, 0.4, 0.06, 0.02], // R1..; 超過は末尾を使用（R3を強めて3回戦被りを回避）
     reportRecentMaxDays: 182.5,          // レポートに載せる直近対戦の最大経過日数（半年）。スコアには無関係
     // 可動制約（初期順位基準）。null ならデフォルト式。
-    kInter: null,   // (row1based) -> 動けるプール数。default row-1
-    kIntra: null,   // (rank1based, M) -> 動ける順位数。default 上位半分0 / 下位 rank-ceil(M/2)
+    kInter: null,   // (row1based) -> 動けるプール数。default: 1,2位=0固定 / 3位以降 2^(row-3)
+    kIntra: null,   // (rank1based, M) -> 動ける順位数。default: 上位1/4=0固定 / 残り±1
     // 探索
     mode: 'multistart-sa',               // 'hillclimb'|'sa'|'multistart-hillclimb'|'multistart-sa'
     restarts: 15,
@@ -460,6 +460,23 @@
     if (bothActive && !(out.W_region > out.W_recent)) {
       throw new Error('W_region は W_recent より大きくしてください (地域被り優先)。');
     }
+    // 以降は「黙って壊れる」系の退行防止（fail-loud 方針）:
+    // roundWeights が空/非数値だと intra スコアが NaN になり、エラーなしで恒等解が返る。
+    if (!Array.isArray(out.roundWeights) || out.roundWeights.length === 0 ||
+        out.roundWeights.some((w) => typeof w !== 'number' || !isFinite(w) || w < 0)) {
+      throw new Error('roundWeights は 1 要素以上の非負数値配列にしてください。');
+    }
+    // kInter/kIntra 配列に負値/非数があると全 swap が拒否され、無言で入力がそのまま返る。
+    for (const name of ['kInter', 'kIntra']) {
+      const v = out[name];
+      if (Array.isArray(v) && v.some((k) => typeof k !== 'number' || !isFinite(k) || k < 0)) {
+        throw new Error(name + ' 配列の要素は 0 以上の数値にしてください。');
+      }
+    }
+    // 未知 mode は単発 hillclimb に無言降格していたため明示的に弾く。
+    if (out.mode != null && !MODE_DEFAULTS[out.mode]) {
+      throw new Error('未知の mode: ' + out.mode + ' (対応: ' + Object.keys(MODE_DEFAULTS).join(', ') + ')');
+    }
     return out;
   }
 
@@ -494,7 +511,7 @@
     return order;
   }
 
-  function fullReport(seedOrderBefore, seedOrderAfter, P, pp, params, runIntra, recentMeta) {
+  function fullReport(seedOrderBefore, seedOrderAfter, P, pp, params, runIntra, recentPair, recentMeta) {
     const rw = roundWeightFn(params.roundWeights);
     const prefByUid = params._prefByUid || {}, origRank = params._origRank || {};
     const pwFn = prefWeightFn(params.prefWeight);
@@ -504,8 +521,11 @@
     const regionW = useRegion
       ? (a, b) => { const pa = prefByUid[a], pb = prefByUid[b]; return (pa && pb && pa === pb) ? pwFn((params._prefCounts || {})[pa] || 2) : 0; }
       : () => 0;
+    // 直近対戦成分は目的関数と同じ recentPair から読む（recentMeta は表示用メタのみ）。
+    // 以前は recentMeta.penalty を読んでいたため、recentPair だけ渡す呼び出し
+    // (= docs §8.1 の契約どおり) でレポート/リスタート選択から直対成分が消えていた。
     const recentW = useRecent
-      ? (a, b) => { const m = recentMeta && recentMeta[pairKey(a, b)]; return m ? m.penalty : 0; }
+      ? (a, b) => (recentPair && recentPair[pairKey(a, b)]) || 0
       : () => 0;
     // セル別（プール間/内 × 地域/直近）と order 罰則のスコアを計算。
     function poolScores(order) {
@@ -528,8 +548,11 @@
     }
     const before = poolScores(seedOrderBefore);
     const after = poolScores(seedOrderAfter);
-    const improvementPct = before.total > 0
-      ? (1 - after.total / before.total) * 100 : 0;
+    // P==1 は inter(プール所属ペア罰則)が最適化で不変の定数項なので、
+    // 改善率は実際に動かせる intra 成分だけで計算する（total だと希釈される）。
+    const pctBase = P === 1 ? 'intra' : 'total';
+    const improvementPct = before[pctBase] > 0
+      ? (1 - after[pctBase] / before[pctBase]) * 100 : 0;
 
     // 残存懸念を「プール間（誰が同プールか・回戦非依存）」と
     // 「プール内（同プール内で早期回戦に当たるか・DE時のみ）」に分けて報告する。
@@ -570,19 +593,30 @@
           }
           // 直近対戦（レポートには最終対戦が reportRecentMaxDays 以内=半年のものだけ載せる。
           // 最適化のスコアは引き続き全期間(<=cutoff)を使う）。
-          const meta = recentMeta && recentMeta[pairKey(a, b)];
-          const rawRecent = meta ? meta.penalty : 0;
+          // 罰則値は目的関数と同じ recentPair、日付/回数の表示は recentMeta（無ければ省略）。
+          const rawRecent = (recentPair && recentPair[pairKey(a, b)]) || 0;
           if (rawRecent > 0) {
-            const withinReport = meta.lastDeltaDays == null || meta.lastDeltaDays <= reportRecentMaxDays;
+            const meta = recentMeta && recentMeta[pairKey(a, b)];
+            const withinReport = !meta || meta.lastDeltaDays == null || meta.lastDeltaDays <= reportRecentMaxDays;
             if (withinReport) {
-              const item = { a, b, pool: pi, round, recentPenalty: rawRecent, lastDate: meta.lastDate, count: meta.count };
+              const item = { a, b, pool: pi, round, recentPenalty: rawRecent,
+                             lastDate: meta ? meta.lastDate : null, count: meta ? meta.count : null };
               recentInter.push(item);
               if (runIntra && round <= earlyRound) recentIntra.push(item);
             }
           }
         }
     }
-    const byRecency = (x, y) => (y.lastDate && x.lastDate) ? (x.lastDate < y.lastDate ? 1 : -1) : (y.recentPenalty - x.recentPenalty);
+    // 新しい対戦が先。日付ありを日付なしより先に。同日付は罰則の大きい順（一貫比較器）。
+    const byRecency = (x, y) => {
+      if (x.lastDate && y.lastDate) {
+        if (x.lastDate !== y.lastDate) return x.lastDate < y.lastDate ? 1 : -1;
+        return y.recentPenalty - x.recentPenalty;
+      }
+      if (x.lastDate) return -1;
+      if (y.lastDate) return 1;
+      return y.recentPenalty - x.recentPenalty;
+    };
     recentInter.sort(byRecency); recentIntra.sort(byRecency);
     const sum = (obj) => Object.values(obj).reduce((s, v) => s + (Array.isArray(v) ? v.length : v), 0);
 
@@ -704,7 +738,7 @@
       seedOrder = seedOrderFromPools(pools, P, N);
     }
 
-    const report = fullReport(seedOrderBefore, seedOrder, P, pp, params, runIntra, input.recentMeta);
+    const report = fullReport(seedOrderBefore, seedOrder, P, pp, params, runIntra, recentPair, input.recentMeta);
     const poolsOut = poolsFromSeedOrder(seedOrder, P);
 
     return {

@@ -137,14 +137,26 @@
     const attendeeSet = new Set(ranking);
     const decayFn = recentDecayFn(params.recentDecayPoints);
     const sw = sizeWeightFn(params.sizeWeight);
+    // 試合日付は JST のカレンダー日付なので「今日」も JST 基準で数える
+    // （UTC floor だと JST 朝9時まで前日扱いになり decay 境界が1日ずれる）。
+    const JST_OFFSET_MS = 9 * 3600000;
     const todayDays = (params.todayDays != null)
-      ? params.todayDays : Math.floor(Date.now() * EPOCH_DAYS);
+      ? params.todayDays : Math.floor((Date.now() + JST_OFFSET_MS) * EPOCH_DAYS);
 
     // 都道府県（地域グルーピング適用。既定で南関東をまとめる）。
+    // prefsOptional=true（例: 地域被り回避 OFF でレポート表示にしか使わない）のときは
+    // 取得失敗を致命にせず meta.prefsError に積んで続行する。既定(false)は従来どおり throw。
     const regionGroups = opts.regionGroups || DEFAULT_REGION_GROUPS;
-    const prefAll = await fetchers.fetchPrefs();
     const prefByUid = {};
     const prefCounts = {};
+    let prefsError = null;
+    let prefAll = {};
+    try {
+      prefAll = await fetchers.fetchPrefs();
+    } catch (e) {
+      if (opts.prefsOptional === true) prefsError = String(e && e.message || e);
+      else throw e;
+    }
     for (const uid of ranking) {
       const praw = prefAll[String(uid)] || prefAll[uid] || null;
       const p = praw ? (regionGroups[praw] || praw) : null;
@@ -156,9 +168,13 @@
     const { players, missing, errors } = await fetchAllPlayers(
       ranking, fetchers.fetchPlayer, concurrency, onProgress);
 
-    // 直近対戦罰則（疎）。各 a の recent_matches を走査し、a<opp のときだけ加算（二重計上回避）。
+    // 直近対戦罰則（疎）。両方向から走査する: 以前は a<opp の片側だけ集計していたが、
+    // 低 uid 側の JSON が DB 未登録(404)/欠損だと高 uid 側に記録があっても罰則が消え、
+    // どちらが消えるかが uid の大小という偶然で決まっていた。
+    // 同一試合が両者のファイルに載る通常ケースは試合キーで二重計上を防ぐ。
     const recentPair = {};
     const recentMeta = {};
+    const seenMatch = new Set();   // pair|event|phase|round|date（同一試合の両側記録デデュープ）
     for (const uid of ranking) {
       const pj = players[uid];
       if (!pj || !Array.isArray(pj.recent_matches)) continue;
@@ -171,9 +187,13 @@
         const opp = m.opp_uid;
         if (opp == null || opp === uid) continue;
         if (!attendeeSet.has(opp)) continue;
-        if (!(uid < opp)) continue;       // 片側のみ集計
         const dd = m.date ? dateToDays(m.date) : null;
         if (dd == null) continue;
+        const matchKey = pairKey(uid, opp) + '|' + (m.event_id != null ? m.event_id : '') +
+          '|' + (m.phase_name || '') + '|' + (m.round != null ? m.round : '') +
+          '|' + (m.round_text || '') + '|' + m.date;
+        if (seenMatch.has(matchKey)) continue;   // 相手側ファイルで集計済みの同一試合
+        seenMatch.add(matchKey);
         const decay = decayFn(todayDays - dd);
         if (decay <= 0) continue;          // 365日超は罰則0
         const nent = nentOf[m.event_id];
@@ -201,6 +221,7 @@
         missing,                 // DB 未登録 uid（履歴なし扱い）
         errors,                  // 通信エラー（UI で明示すべき）
         prefIdentified: Object.values(prefByUid).filter(Boolean).length,
+        prefsError,              // prefsOptional=true で取得失敗したときのメッセージ（UI で明示）
       },
     };
   }

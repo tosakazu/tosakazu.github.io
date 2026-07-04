@@ -13,7 +13,14 @@ let running = false;
 
 self.onmessage = function (e) {
   const msg = e.data || {};
-  if (msg.type === 'stop') { stopRequested = true; return; }
+  if (msg.type === 'stop') {
+    // 注意: optimize() は同期実行のため、停止が効くのは「現在のリスタート完了後」
+    // （リスタート間の setTimeout イールドでこのハンドラが走る）。restarts=1 の
+    // 単発モードでは実質完走まで止まらない。UI 側はその旨を表示すること。
+    stopRequested = true;
+    self.postMessage({ type: 'progress', stage: 'stop-requested' });
+    return;
+  }
   if (msg.type === 'start') {
     if (running) return;
     run(msg.input).catch((err) => {
@@ -30,7 +37,10 @@ async function run(input) {
   const baseMode = (input.params && input.params.mode) || input.mode || 'multistart-sa';
   const isMulti = baseMode.indexOf('multistart') === 0;
   const innerMode = isMulti ? baseMode.replace('multistart-', '') : baseMode;
-  const restarts = isMulti ? Math.max(1, (input.params && input.params.restarts) || 8) : 1;
+  // restarts 既定は optimizer の MODE_DEFAULTS と揃える（以前は 8 固定でベンチと乖離）。
+  const modeDefaults = (SeedOptimizer.MODE_DEFAULTS || {})[baseMode] || {};
+  const restarts = isMulti
+    ? Math.max(1, (input.params && input.params.restarts) || modeDefaults.restarts || 8) : 1;
   const baseSeed = (input.params && input.params.rngSeed) || 12345;
 
   let best = null;
@@ -55,7 +65,14 @@ async function run(input) {
       running = false;
       return;
     }
-    if (!best || res.report.after.total < best.report.after.total - 1e-12) best = res;
+    // ベスト選択: 分離スコア(after.total)優先、同点なら order 罰則（元順位からのズレ）が
+    // 小さい方。被り全解消(total=0)が複数リスタートで出たとき無駄にシャッフルされた解を
+    // 先勝ちで返さないため。
+    const better = !best ||
+      res.report.after.total < best.report.after.total - 1e-12 ||
+      (Math.abs(res.report.after.total - best.report.after.total) <= 1e-12 &&
+       (res.report.after.order || 0) < (best.report.after.order || 0) - 1e-12);
+    if (better) best = res;
 
     self.postMessage({
       type: 'checkpoint', round: k, restarts,
