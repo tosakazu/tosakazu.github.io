@@ -1,8 +1,8 @@
 {
-  "generated_at": 1783188020,
+  "generated_at": 1783198818,
   "country_code": "JP",
   "lookahead_days": 21,
-  "count": 45,
+  "count": 46,
   "tournaments": [
     {
       "tournament_id": 918423,
@@ -60,14 +60,14 @@
       "city": "台東区",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 10,
+      "num_attendees": 11,
       "url": "/tournament/6-495",
       "events": [
         {
           "event_id": 1655653,
           "event_slug": "tournament/6-495/event/on",
           "event_name": "シングルス（１on１トーナメント）",
-          "num_entrants": 10,
+          "num_entrants": 11,
           "type": 1,
           "start_at": 1783324800
         }
@@ -106,14 +106,14 @@
       "city": "渋谷区",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 3,
+      "num_attendees": 4,
       "url": "/tournament/131-shibuya-tatsu",
       "events": [
         {
           "event_id": 1658321,
           "event_slug": "tournament/131-shibuya-tatsu/event/singles",
           "event_name": "Singles",
-          "num_entrants": 3,
+          "num_entrants": 4,
           "type": 1,
           "start_at": 1783418400
         }
@@ -175,7 +175,7 @@
       "city": "中野区",
       "venue_name": "Red Bull Gaming Sphere Tokyo",
       "country_code": "JP",
-      "num_attendees": 65,
+      "num_attendees": 66,
       "url": "/tournament/weekly-smash-party-237",
       "events": [
         {
@@ -373,6 +373,29 @@
       ]
     },
     {
+      "tournament_id": 927370,
+      "tournament_slug": "tournament/smalab-42",
+      "tournament_name": "Smalab 42",
+      "start_at": 1783674000,
+      "end_at": 1783692000,
+      "is_online": false,
+      "city": "広島市",
+      "venue_name": "",
+      "country_code": "JP",
+      "num_attendees": 0,
+      "url": "/tournament/smalab-42",
+      "events": [
+        {
+          "event_id": 1656629,
+          "event_slug": "tournament/smalab-42/event/ultimate-singles",
+          "event_name": "Ultimate Singles",
+          "num_entrants": 2,
+          "type": 1,
+          "start_at": 1783674000
+        }
+      ]
+    },
+    {
       "tournament_id": 929656,
       "tournament_slug": "tournament/8-68",
       "tournament_name": "もびすまっ！#8",
@@ -451,14 +474,14 @@
       "city": "大東市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 216,
+      "num_attendees": 221,
       "url": "/tournament/71-sp-1",
       "events": [
         {
           "event_id": 1656228,
           "event_slug": "tournament/71-sp-1/event/1on1",
           "event_name": "予選あり1on1トーナメント",
-          "num_entrants": 216,
+          "num_entrants": 221,
           "type": 1,
           "start_at": 1783734000
         }
@@ -796,14 +819,14 @@
       "city": "豊橋市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 27,
+      "num_attendees": 28,
       "url": "/tournament/21-18",
       "events": [
         {
           "event_id": 1654347,
           "event_slug": "tournament/21-18/event/21",
           "event_name": "第21回夢スマ",
-          "num_entrants": 26,
+          "num_entrants": 27,
           "type": 1,
           "start_at": 1784343600
         }
@@ -957,7 +980,7 @@
       "city": "堺市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 33,
+      "num_attendees": 34,
       "url": "/tournament/2-5-r1600",
       "events": [
         {
@@ -972,7 +995,7 @@
           "event_id": 1651040,
           "event_slug": "tournament/2-5-r1600/event/1600-limit1600",
           "event_name": "レート1600制限トーナメント(Limit1600)",
-          "num_entrants": 13,
+          "num_entrants": 14,
           "type": 1,
           "start_at": 1784505600
         }
@@ -1034,14 +1057,14 @@
       "city": "富山市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 76,
+      "num_attendees": 77,
       "url": "/tournament/badawi-6",
       "events": [
         {
           "event_id": 1629767,
           "event_slug": "tournament/badawi-6/event/badawi",
           "event_name": "Badawi",
-          "num_entrants": 76,
+          "num_entrants": 77,
           "type": 1,
           "start_at": 1784941200
         }
