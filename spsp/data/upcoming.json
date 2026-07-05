@@ -1,5 +1,5 @@
 {
-  "generated_at": 1783231272,
+  "generated_at": 1783242021,
   "country_code": "JP",
   "lookahead_days": 21,
   "count": 43,
@@ -37,14 +37,14 @@
       "city": "大阪市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 5,
+      "num_attendees": 8,
       "url": "/tournament/hit-179-maesuma-hit-179",
       "events": [
         {
           "event_id": 1658496,
           "event_slug": "tournament/hit-179-maesuma-hit-179/event/singles-tournament",
           "event_name": "Singles Tournament",
-          "num_entrants": 5,
+          "num_entrants": 8,
           "type": 1,
           "start_at": 1783332000
         }
@@ -129,7 +129,7 @@
       "city": "中野区",
       "venue_name": "Red Bull Gaming Sphere Tokyo",
       "country_code": "JP",
-      "num_attendees": 70,
+      "num_attendees": 72,
       "url": "/tournament/weekly-smash-party-237",
       "events": [
         {
@@ -152,14 +152,14 @@
       "city": "京都市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 15,
+      "num_attendees": 18,
       "url": "/tournament/dsw-58-1",
       "events": [
         {
           "event_id": 1660411,
           "event_slug": "tournament/dsw-58-1/event/singletournament",
           "event_name": "SingleTournament",
-          "num_entrants": 15,
+          "num_entrants": 18,
           "type": 1,
           "start_at": 1783508400
         }
@@ -267,14 +267,14 @@
       "city": "厚木市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 11,
+      "num_attendees": 12,
       "url": "/tournament/2-194",
       "events": [
         {
           "event_id": 1646462,
           "event_slug": "tournament/2-194/event/1on1",
           "event_name": "1on1メイントーナメント",
-          "num_entrants": 11,
+          "num_entrants": 12,
           "type": 1,
           "start_at": 1781276400
         }
@@ -589,14 +589,14 @@
       "city": "大阪市",
       "venue_name": "クレオ大阪南 (Creo Osaka South)",
       "country_code": "JP",
-      "num_attendees": 15,
+      "num_attendees": 16,
       "url": "/tournament/masterhand73",
       "events": [
         {
           "event_id": 1649090,
           "event_slug": "tournament/masterhand73/event/sp-ultimate-singles",
           "event_name": "SP シングルス / Ultimate Singles",
-          "num_entrants": 8,
+          "num_entrants": 9,
           "type": 1,
           "start_at": 1783821600
         }
@@ -727,14 +727,14 @@
       "city": "福岡市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 409,
+      "num_attendees": 406,
       "url": "/tournament/kowloon-18",
       "events": [
         {
           "event_id": 1622014,
           "event_slug": "tournament/kowloon-18/event/kowloon_sp",
           "event_name": "KOWLOON_SP",
-          "num_entrants": 409,
+          "num_entrants": 406,
           "type": 1,
           "start_at": 1784338200
         }
@@ -810,29 +810,6 @@
       ]
     },
     {
-      "tournament_id": 925205,
-      "tournament_slug": "tournament/sp-mini-tournament-2",
-      "tournament_name": "りぷぶらSP Mini Tournament#2",
-      "start_at": 1784426400,
-      "end_at": 1784458800,
-      "is_online": false,
-      "city": "浜松市",
-      "venue_name": "",
-      "country_code": "JP",
-      "num_attendees": 17,
-      "url": "/tournament/sp-mini-tournament-2",
-      "events": [
-        {
-          "event_id": 1652322,
-          "event_slug": "tournament/sp-mini-tournament-2/event/1on1",
-          "event_name": "1on1",
-          "num_entrants": 16,
-          "type": 1,
-          "start_at": 1784426400
-        }
-      ]
-    },
-    {
       "tournament_id": 926869,
       "tournament_slug": "tournament/18-14",
       "tournament_name": "真・スマのみや#18",
@@ -856,6 +833,29 @@
       ]
     },
     {
+      "tournament_id": 925205,
+      "tournament_slug": "tournament/sp-mini-tournament-2",
+      "tournament_name": "りぷぶらSP Mini Tournament#2",
+      "start_at": 1784426400,
+      "end_at": 1784458800,
+      "is_online": false,
+      "city": "浜松市",
+      "venue_name": "",
+      "country_code": "JP",
+      "num_attendees": 18,
+      "url": "/tournament/sp-mini-tournament-2",
+      "events": [
+        {
+          "event_id": 1652322,
+          "event_slug": "tournament/sp-mini-tournament-2/event/1on1",
+          "event_name": "1on1",
+          "num_entrants": 17,
+          "type": 1,
+          "start_at": 1784426400
+        }
+      ]
+    },
+    {
       "tournament_id": 929340,
       "tournament_slug": "tournament/quattro-4",
       "tournament_name": "四闘-Quattro-#4",
@@ -865,7 +865,7 @@
       "city": "四日市市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 14,
+      "num_attendees": 15,
       "url": "/tournament/quattro-4",
       "events": [
         {
