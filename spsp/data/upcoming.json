@@ -1,8 +1,8 @@
 {
-  "generated_at": 1783242021,
+  "generated_at": 1783252820,
   "country_code": "JP",
   "lookahead_days": 21,
-  "count": 43,
+  "count": 45,
   "tournaments": [
     {
       "tournament_id": 926854,
@@ -14,7 +14,7 @@
       "city": "台東区",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 17,
+      "num_attendees": 18,
       "url": "/tournament/6-495",
       "events": [
         {
@@ -129,7 +129,7 @@
       "city": "中野区",
       "venue_name": "Red Bull Gaming Sphere Tokyo",
       "country_code": "JP",
-      "num_attendees": 72,
+      "num_attendees": 73,
       "url": "/tournament/weekly-smash-party-237",
       "events": [
         {
@@ -336,14 +336,14 @@
       "city": "川崎市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 3,
+      "num_attendees": 4,
       "url": "/tournament/8-68",
       "events": [
         {
           "event_id": 1661087,
           "event_slug": "tournament/8-68/event/super-smash-bros-ultimate-singles",
           "event_name": "シングルス",
-          "num_entrants": 2,
+          "num_entrants": 3,
           "type": 1,
           "start_at": 1783674000
         }
@@ -998,6 +998,52 @@
           "num_entrants": 77,
           "type": 1,
           "start_at": 1784941200
+        }
+      ]
+    },
+    {
+      "tournament_id": 928516,
+      "tournament_slug": "tournament/acd-2",
+      "tournament_name": "【お昼食えます】第４回ACDオフスマ",
+      "start_at": 1785033000,
+      "end_at": 1785060000,
+      "is_online": false,
+      "city": "台東区",
+      "venue_name": "",
+      "country_code": "JP",
+      "num_attendees": 1,
+      "url": "/tournament/acd-2",
+      "events": [
+        {
+          "event_id": 1658888,
+          "event_slug": "tournament/acd-2/event/acd-4",
+          "event_name": "【お昼食えます】ACDオフスマ#4",
+          "num_entrants": 1,
+          "type": 1,
+          "start_at": 1785033000
+        }
+      ]
+    },
+    {
+      "tournament_id": 924511,
+      "tournament_slug": "tournament/sen-smash-5",
+      "tournament_name": "千スマ / Sen Smash #5",
+      "start_at": 1785034800,
+      "end_at": 1785063600,
+      "is_online": false,
+      "city": "柏市",
+      "venue_name": "",
+      "country_code": "JP",
+      "num_attendees": 4,
+      "url": "/tournament/sen-smash-5",
+      "events": [
+        {
+          "event_id": 1650858,
+          "event_slug": "tournament/sen-smash-5/event/singles",
+          "event_name": "シングルス / Singles",
+          "num_entrants": 4,
+          "type": 1,
+          "start_at": 1785034800
         }
       ]
     }
