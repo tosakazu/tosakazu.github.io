@@ -1,55 +1,9 @@
 {
-  "generated_at": 1783198818,
+  "generated_at": 1783209617,
   "country_code": "JP",
   "lookahead_days": 21,
-  "count": 46,
+  "count": 43,
   "tournaments": [
-    {
-      "tournament_id": 918423,
-      "tournament_slug": "tournament/pochisuma-next-patch-4",
-      "tournament_name": "ポチスマ/Pochisuma NEXT PATCH #4",
-      "start_at": 1783206000,
-      "end_at": 1783260000,
-      "is_online": false,
-      "city": "札幌市",
-      "venue_name": "",
-      "country_code": "JP",
-      "num_attendees": 61,
-      "url": "/tournament/pochisuma-next-patch-4",
-      "events": [
-        {
-          "event_id": 1638445,
-          "event_slug": "tournament/pochisuma-next-patch-4/event/ultimate-singles",
-          "event_name": "Ultimate Singles",
-          "num_entrants": 61,
-          "type": 1,
-          "start_at": 1783206000
-        }
-      ]
-    },
-    {
-      "tournament_id": 909652,
-      "tournament_slug": "tournament/badawi-5",
-      "tournament_name": "Badawi#5",
-      "start_at": 1783213200,
-      "end_at": 1783249200,
-      "is_online": false,
-      "city": "奈良市",
-      "venue_name": "",
-      "country_code": "JP",
-      "num_attendees": 40,
-      "url": "/tournament/badawi-5",
-      "events": [
-        {
-          "event_id": 1620892,
-          "event_slug": "tournament/badawi-5/event/badawi",
-          "event_name": "Badawi",
-          "num_entrants": 40,
-          "type": 1,
-          "start_at": 1783213200
-        }
-      ]
-    },
     {
       "tournament_id": 926854,
       "tournament_slug": "tournament/6-495",
@@ -83,14 +37,14 @@
       "city": "大阪市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 2,
+      "num_attendees": 3,
       "url": "/tournament/hit-179-maesuma-hit-179",
       "events": [
         {
           "event_id": 1658496,
           "event_slug": "tournament/hit-179-maesuma-hit-179/event/singles-tournament",
           "event_name": "Singles Tournament",
-          "num_entrants": 2,
+          "num_entrants": 3,
           "type": 1,
           "start_at": 1783332000
         }
@@ -198,14 +152,14 @@
       "city": "京都市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 12,
+      "num_attendees": 14,
       "url": "/tournament/dsw-58-1",
       "events": [
         {
           "event_id": 1660411,
           "event_slug": "tournament/dsw-58-1/event/singletournament",
           "event_name": "SingleTournament",
-          "num_entrants": 12,
+          "num_entrants": 14,
           "type": 1,
           "start_at": 1783508400
         }
@@ -373,29 +327,6 @@
       ]
     },
     {
-      "tournament_id": 927370,
-      "tournament_slug": "tournament/smalab-42",
-      "tournament_name": "Smalab 42",
-      "start_at": 1783674000,
-      "end_at": 1783692000,
-      "is_online": false,
-      "city": "広島市",
-      "venue_name": "",
-      "country_code": "JP",
-      "num_attendees": 0,
-      "url": "/tournament/smalab-42",
-      "events": [
-        {
-          "event_id": 1656629,
-          "event_slug": "tournament/smalab-42/event/ultimate-singles",
-          "event_name": "Ultimate Singles",
-          "num_entrants": 2,
-          "type": 1,
-          "start_at": 1783674000
-        }
-      ]
-    },
-    {
       "tournament_id": 929656,
       "tournament_slug": "tournament/8-68",
       "tournament_name": "もびすまっ！#8",
@@ -405,14 +336,14 @@
       "city": "川崎市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 1,
+      "num_attendees": 2,
       "url": "/tournament/8-68",
       "events": [
         {
           "event_id": 1661087,
           "event_slug": "tournament/8-68/event/super-smash-bros-ultimate-singles",
           "event_name": "シングルス",
-          "num_entrants": 0,
+          "num_entrants": 1,
           "type": 1,
           "start_at": 1783674000
         }
@@ -474,14 +405,14 @@
       "city": "大東市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 221,
+      "num_attendees": 223,
       "url": "/tournament/71-sp-1",
       "events": [
         {
           "event_id": 1656228,
           "event_slug": "tournament/71-sp-1/event/1on1",
           "event_name": "予選あり1on1トーナメント",
-          "num_entrants": 221,
+          "num_entrants": 223,
           "type": 1,
           "start_at": 1783734000
         }
