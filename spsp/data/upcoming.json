@@ -1,5 +1,5 @@
 {
-  "generated_at": 1783274419,
+  "generated_at": 1783285218,
   "country_code": "JP",
   "lookahead_days": 21,
   "count": 45,
@@ -14,7 +14,7 @@
       "city": "台東区",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 19,
+      "num_attendees": 20,
       "url": "/tournament/6-495",
       "events": [
         {
@@ -37,14 +37,14 @@
       "city": "大阪市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 8,
+      "num_attendees": 9,
       "url": "/tournament/hit-179-maesuma-hit-179",
       "events": [
         {
           "event_id": 1658496,
           "event_slug": "tournament/hit-179-maesuma-hit-179/event/singles-tournament",
           "event_name": "Singles Tournament",
-          "num_entrants": 8,
+          "num_entrants": 9,
           "type": 1,
           "start_at": 1783332000
         }
@@ -405,14 +405,14 @@
       "city": "大東市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 228,
+      "num_attendees": 229,
       "url": "/tournament/71-sp-1",
       "events": [
         {
           "event_id": 1656228,
           "event_slug": "tournament/71-sp-1/event/1on1",
           "event_name": "予選あり1on1トーナメント",
-          "num_entrants": 228,
+          "num_entrants": 229,
           "type": 1,
           "start_at": 1783734000
         }
@@ -727,14 +727,14 @@
       "city": "福岡市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 405,
+      "num_attendees": 404,
       "url": "/tournament/kowloon-18",
       "events": [
         {
           "event_id": 1622014,
           "event_slug": "tournament/kowloon-18/event/kowloon_sp",
           "event_name": "KOWLOON_SP",
-          "num_entrants": 405,
+          "num_entrants": 404,
           "type": 1,
           "start_at": 1784338200
         }
@@ -865,7 +865,7 @@
       "city": "四日市市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 15,
+      "num_attendees": 16,
       "url": "/tournament/quattro-4",
       "events": [
         {
