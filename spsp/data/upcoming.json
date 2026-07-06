@@ -1,32 +1,9 @@
 {
-  "generated_at": 1783328409,
+  "generated_at": 1783339207,
   "country_code": "JP",
   "lookahead_days": 21,
-  "count": 47,
+  "count": 46,
   "tournaments": [
-    {
-      "tournament_id": 928336,
-      "tournament_slug": "tournament/hit-179-maesuma-hit-179",
-      "tournament_name": "マエスマ'HIT#179 / Maesuma'HIT#179",
-      "start_at": 1783332000,
-      "end_at": 1783346400,
-      "is_online": false,
-      "city": "大阪市",
-      "venue_name": "",
-      "country_code": "JP",
-      "num_attendees": 13,
-      "url": "/tournament/hit-179-maesuma-hit-179",
-      "events": [
-        {
-          "event_id": 1658496,
-          "event_slug": "tournament/hit-179-maesuma-hit-179/event/singles-tournament",
-          "event_name": "Singles Tournament",
-          "num_entrants": 13,
-          "type": 1,
-          "start_at": 1783332000
-        }
-      ]
-    },
     {
       "tournament_id": 928243,
       "tournament_slug": "tournament/131-shibuya-tatsu",
@@ -405,7 +382,7 @@
       "city": "Kochi",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 31,
+      "num_attendees": 32,
       "url": "/tournament/-2995",
       "events": [
         {
