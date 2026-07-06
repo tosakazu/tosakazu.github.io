@@ -1,5 +1,5 @@
 {
-  "generated_at": 1783252820,
+  "generated_at": 1783263618,
   "country_code": "JP",
   "lookahead_days": 21,
   "count": 45,
@@ -97,29 +97,6 @@
       ]
     },
     {
-      "tournament_id": 928659,
-      "tournament_slug": "tournament/26-13",
-      "tournament_name": "雷影杯#26",
-      "start_at": 1783501200,
-      "end_at": 1783517400,
-      "is_online": false,
-      "city": "川崎市",
-      "venue_name": "",
-      "country_code": "JP",
-      "num_attendees": 5,
-      "url": "/tournament/26-13",
-      "events": [
-        {
-          "event_id": 1659111,
-          "event_slug": "tournament/26-13/event/super-smash-bros-ultimate-singles",
-          "event_name": "雷影杯",
-          "num_entrants": 4,
-          "type": 1,
-          "start_at": 1783501200
-        }
-      ]
-    },
-    {
       "tournament_id": 928664,
       "tournament_slug": "tournament/weekly-smash-party-237",
       "tournament_name": "Weekly Smash Party ～スマパ～ #237",
@@ -137,6 +114,29 @@
           "event_slug": "tournament/weekly-smash-party-237/event/special-1on1-ultimate-singles",
           "event_name": "SPECIAL 1on1/ Ultimate Singles",
           "num_entrants": 64,
+          "type": 1,
+          "start_at": 1783501200
+        }
+      ]
+    },
+    {
+      "tournament_id": 928659,
+      "tournament_slug": "tournament/26-13",
+      "tournament_name": "雷影杯#26",
+      "start_at": 1783501200,
+      "end_at": 1783517400,
+      "is_online": false,
+      "city": "川崎市",
+      "venue_name": "",
+      "country_code": "JP",
+      "num_attendees": 6,
+      "url": "/tournament/26-13",
+      "events": [
+        {
+          "event_id": 1659111,
+          "event_slug": "tournament/26-13/event/super-smash-bros-ultimate-singles",
+          "event_name": "雷影杯",
+          "num_entrants": 5,
           "type": 1,
           "start_at": 1783501200
         }
@@ -988,14 +988,14 @@
       "city": "富山市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 77,
+      "num_attendees": 78,
       "url": "/tournament/badawi-6",
       "events": [
         {
           "event_id": 1629767,
           "event_slug": "tournament/badawi-6/event/badawi",
           "event_name": "Badawi",
-          "num_entrants": 77,
+          "num_entrants": 78,
           "type": 1,
           "start_at": 1784941200
         }
