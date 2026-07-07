@@ -1,5 +1,5 @@
 {
-  "generated_at": 1783350009,
+  "generated_at": 1783360808,
   "country_code": "JP",
   "lookahead_days": 21,
   "count": 47,
@@ -14,14 +14,14 @@
       "city": "渋谷区",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 15,
+      "num_attendees": 17,
       "url": "/tournament/131-shibuya-tatsu",
       "events": [
         {
           "event_id": 1658321,
           "event_slug": "tournament/131-shibuya-tatsu/event/singles",
           "event_name": "Singles",
-          "num_entrants": 15,
+          "num_entrants": 17,
           "type": 1,
           "start_at": 1783418400
         }
@@ -405,14 +405,14 @@
       "city": "大東市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 239,
+      "num_attendees": 240,
       "url": "/tournament/71-sp-1",
       "events": [
         {
           "event_id": 1656228,
           "event_slug": "tournament/71-sp-1/event/1on1",
           "event_name": "予選あり1on1トーナメント",
-          "num_entrants": 239,
+          "num_entrants": 240,
           "type": 1,
           "start_at": 1783734000
         }
@@ -965,14 +965,14 @@
       "city": "さいたま市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 227,
+      "num_attendees": 228,
       "url": "/tournament/absolute-smash-1",
       "events": [
         {
           "event_id": 1630488,
           "event_slug": "tournament/absolute-smash-1/event/absolutesmash-1",
           "event_name": "AbsoluteSmash#1（アブスマ）",
-          "num_entrants": 223,
+          "num_entrants": 224,
           "type": 1,
           "start_at": 1784512800
         }
