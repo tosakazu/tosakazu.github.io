@@ -1,5 +1,5 @@
 {
-  "generated_at": 1783360808,
+  "generated_at": 1783371606,
   "country_code": "JP",
   "lookahead_days": 21,
   "count": 47,
@@ -14,14 +14,14 @@
       "city": "渋谷区",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 17,
+      "num_attendees": 19,
       "url": "/tournament/131-shibuya-tatsu",
       "events": [
         {
           "event_id": 1658321,
           "event_slug": "tournament/131-shibuya-tatsu/event/singles",
           "event_name": "Singles",
-          "num_entrants": 17,
+          "num_entrants": 19,
           "type": 1,
           "start_at": 1783418400
         }
@@ -51,29 +51,6 @@
       ]
     },
     {
-      "tournament_id": 928664,
-      "tournament_slug": "tournament/weekly-smash-party-237",
-      "tournament_name": "Weekly Smash Party ～スマパ～ #237",
-      "start_at": 1783501200,
-      "end_at": 1783517400,
-      "is_online": false,
-      "city": "中野区",
-      "venue_name": "Red Bull Gaming Sphere Tokyo",
-      "country_code": "JP",
-      "num_attendees": 78,
-      "url": "/tournament/weekly-smash-party-237",
-      "events": [
-        {
-          "event_id": 1659119,
-          "event_slug": "tournament/weekly-smash-party-237/event/special-1on1-ultimate-singles",
-          "event_name": "SPECIAL 1on1/ Ultimate Singles",
-          "num_entrants": 64,
-          "type": 1,
-          "start_at": 1783501200
-        }
-      ]
-    },
-    {
       "tournament_id": 928659,
       "tournament_slug": "tournament/26-13",
       "tournament_name": "雷影杯#26",
@@ -97,6 +74,29 @@
       ]
     },
     {
+      "tournament_id": 928664,
+      "tournament_slug": "tournament/weekly-smash-party-237",
+      "tournament_name": "Weekly Smash Party ～スマパ～ #237",
+      "start_at": 1783501200,
+      "end_at": 1783517400,
+      "is_online": false,
+      "city": "中野区",
+      "venue_name": "Red Bull Gaming Sphere Tokyo",
+      "country_code": "JP",
+      "num_attendees": 81,
+      "url": "/tournament/weekly-smash-party-237",
+      "events": [
+        {
+          "event_id": 1659119,
+          "event_slug": "tournament/weekly-smash-party-237/event/special-1on1-ultimate-singles",
+          "event_name": "SPECIAL 1on1/ Ultimate Singles",
+          "num_entrants": 64,
+          "type": 1,
+          "start_at": 1783501200
+        }
+      ]
+    },
+    {
       "tournament_id": 929307,
       "tournament_slug": "tournament/dsw-58-1",
       "tournament_name": "新京都DSW#58",
@@ -106,14 +106,14 @@
       "city": "京都市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 22,
+      "num_attendees": 23,
       "url": "/tournament/dsw-58-1",
       "events": [
         {
           "event_id": 1660411,
           "event_slug": "tournament/dsw-58-1/event/singletournament",
           "event_name": "SingleTournament",
-          "num_entrants": 22,
+          "num_entrants": 23,
           "type": 1,
           "start_at": 1783508400
         }
@@ -129,14 +129,14 @@
       "city": "台東区",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 3,
+      "num_attendees": 4,
       "url": "/tournament/9-497",
       "events": [
         {
           "event_id": 1655654,
           "event_slug": "tournament/9-497/event/on",
           "event_name": "シングルス（１on１トーナメント）",
-          "num_entrants": 3,
+          "num_entrants": 4,
           "type": 1,
           "start_at": 1783584000
         }
@@ -175,14 +175,14 @@
       "city": "渋谷区",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 4,
+      "num_attendees": 5,
       "url": "/tournament/shibuya-g-g-smash-weekly-70",
       "events": [
         {
           "event_id": 1659833,
           "event_slug": "tournament/shibuya-g-g-smash-weekly-70/event/singles",
           "event_name": "Singles",
-          "num_entrants": 4,
+          "num_entrants": 5,
           "type": 1,
           "start_at": 1783594800
         }
@@ -244,14 +244,14 @@
       "city": "台東区",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 16,
+      "num_attendees": 17,
       "url": "/tournament/10-498",
       "events": [
         {
           "event_id": 1655655,
           "event_slug": "tournament/10-498/event/on",
           "event_name": "シングルス（１on１トーナメント）",
-          "num_entrants": 15,
+          "num_entrants": 16,
           "type": 1,
           "start_at": 1783670400
         }
@@ -267,14 +267,14 @@
       "city": "立川市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 4,
+      "num_attendees": 5,
       "url": "/tournament/sumao2026-13",
       "events": [
         {
           "event_id": 1658522,
           "event_slug": "tournament/sumao2026-13/event/sp-1on1",
           "event_name": "スマブラSP 1on1",
-          "num_entrants": 4,
+          "num_entrants": 5,
           "type": 1,
           "start_at": 1783672200
         }
@@ -405,14 +405,14 @@
       "city": "大東市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 240,
+      "num_attendees": 242,
       "url": "/tournament/71-sp-1",
       "events": [
         {
           "event_id": 1656228,
           "event_slug": "tournament/71-sp-1/event/1on1",
           "event_name": "予選あり1on1トーナメント",
-          "num_entrants": 240,
+          "num_entrants": 242,
           "type": 1,
           "start_at": 1783734000
         }
@@ -543,14 +543,14 @@
       "city": "練馬区",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 317,
+      "num_attendees": 315,
       "url": "/tournament/seibugeki",
       "events": [
         {
           "event_id": 1643603,
           "event_slug": "tournament/seibugeki/event/singles",
           "event_name": "シングルストーナメント/Singles",
-          "num_entrants": 317,
+          "num_entrants": 315,
           "type": 1,
           "start_at": 1783814400
         }
@@ -681,14 +681,14 @@
       "city": "横浜市",
       "venue_name": "おださがプラザ",
       "country_code": "JP",
-      "num_attendees": 141,
+      "num_attendees": 142,
       "url": "/tournament/52-kurobra52",
       "events": [
         {
           "event_id": 1640297,
           "event_slug": "tournament/52-kurobra52/event/sp-1on1",
           "event_name": "SP 1on1トーナメント",
-          "num_entrants": 133,
+          "num_entrants": 134,
           "type": 1,
           "start_at": 1784332800
         }
@@ -965,14 +965,14 @@
       "city": "さいたま市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 228,
+      "num_attendees": 229,
       "url": "/tournament/absolute-smash-1",
       "events": [
         {
           "event_id": 1630488,
           "event_slug": "tournament/absolute-smash-1/event/absolutesmash-1",
           "event_name": "AbsoluteSmash#1（アブスマ）",
-          "num_entrants": 224,
+          "num_entrants": 225,
           "type": 1,
           "start_at": 1784512800
         }
