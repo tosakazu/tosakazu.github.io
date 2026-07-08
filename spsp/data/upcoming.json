@@ -1,32 +1,9 @@
 {
-  "generated_at": 1783501214,
+  "generated_at": 1783512015,
   "country_code": "JP",
   "lookahead_days": 21,
-  "count": 47,
+  "count": 46,
   "tournaments": [
-    {
-      "tournament_id": 929307,
-      "tournament_slug": "tournament/dsw-58-1",
-      "tournament_name": "新京都DSW#58",
-      "start_at": 1783508400,
-      "end_at": 1783519200,
-      "is_online": false,
-      "city": "京都市",
-      "venue_name": "",
-      "country_code": "JP",
-      "num_attendees": 28,
-      "url": "/tournament/dsw-58-1",
-      "events": [
-        {
-          "event_id": 1660411,
-          "event_slug": "tournament/dsw-58-1/event/singletournament",
-          "event_name": "SingleTournament",
-          "num_entrants": 28,
-          "type": 1,
-          "start_at": 1783508400
-        }
-      ]
-    },
     {
       "tournament_id": 926855,
       "tournament_slug": "tournament/9-497",
@@ -106,14 +83,14 @@
       "city": "大阪市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 27,
+      "num_attendees": 30,
       "url": "/tournament/hit-180-maesuma-hit-180",
       "events": [
         {
           "event_id": 1658621,
           "event_slug": "tournament/hit-180-maesuma-hit-180/event/singles-tournament",
           "event_name": "Singles Tournament",
-          "num_entrants": 27,
+          "num_entrants": 30,
           "type": 1,
           "start_at": 1783591200
         }
@@ -221,14 +198,14 @@
       "city": "福岡市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 6,
+      "num_attendees": 8,
       "url": "/tournament/smash-144-2",
       "events": [
         {
           "event_id": 1662385,
           "event_slug": "tournament/smash-144-2/event/1on1",
           "event_name": "1on1トーナメント",
-          "num_entrants": 6,
+          "num_entrants": 8,
           "type": 1,
           "start_at": 1783679400
         }
@@ -359,14 +336,14 @@
       "city": "台東区",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 14,
+      "num_attendees": 15,
       "url": "/tournament/11-499",
       "events": [
         {
           "event_id": 1655656,
           "event_slug": "tournament/11-499/event/on",
           "event_name": "シングルス（１on１トーナメント）",
-          "num_entrants": 14,
+          "num_entrants": 15,
           "type": 1,
           "start_at": 1783738800
         }
@@ -965,14 +942,14 @@
       "city": "さいたま市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 230,
+      "num_attendees": 231,
       "url": "/tournament/absolute-smash-1",
       "events": [
         {
           "event_id": 1630488,
           "event_slug": "tournament/absolute-smash-1/event/absolutesmash-1",
           "event_name": "AbsoluteSmash#1（アブスマ）",
-          "num_entrants": 226,
+          "num_entrants": 227,
           "type": 1,
           "start_at": 1784512800
         }
