@@ -1,5 +1,5 @@
 {
-  "generated_at": 1783447210,
+  "generated_at": 1783458012,
   "country_code": "JP",
   "lookahead_days": 21,
   "count": 47,
@@ -37,14 +37,14 @@
       "city": "川崎市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 12,
+      "num_attendees": 16,
       "url": "/tournament/26-13",
       "events": [
         {
           "event_id": 1659111,
           "event_slug": "tournament/26-13/event/super-smash-bros-ultimate-singles",
           "event_name": "雷影杯",
-          "num_entrants": 9,
+          "num_entrants": 15,
           "type": 1,
           "start_at": 1783501200
         }
@@ -83,14 +83,14 @@
       "city": "台東区",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 8,
+      "num_attendees": 9,
       "url": "/tournament/9-497",
       "events": [
         {
           "event_id": 1655654,
           "event_slug": "tournament/9-497/event/on",
           "event_name": "シングルス（１on１トーナメント）",
-          "num_entrants": 8,
+          "num_entrants": 9,
           "type": 1,
           "start_at": 1783584000
         }
@@ -152,14 +152,14 @@
       "city": "大阪市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 12,
+      "num_attendees": 15,
       "url": "/tournament/hit-180-maesuma-hit-180",
       "events": [
         {
           "event_id": 1658621,
           "event_slug": "tournament/hit-180-maesuma-hit-180/event/singles-tournament",
           "event_name": "Singles Tournament",
-          "num_entrants": 12,
+          "num_entrants": 15,
           "type": 1,
           "start_at": 1783591200
         }
@@ -405,14 +405,14 @@
       "city": "台東区",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 12,
+      "num_attendees": 13,
       "url": "/tournament/11-499",
       "events": [
         {
           "event_id": 1655656,
           "event_slug": "tournament/11-499/event/on",
           "event_name": "シングルス（１on１トーナメント）",
-          "num_entrants": 12,
+          "num_entrants": 13,
           "type": 1,
           "start_at": 1783738800
         }
@@ -497,14 +497,14 @@
       "city": "練馬区",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 319,
+      "num_attendees": 318,
       "url": "/tournament/seibugeki",
       "events": [
         {
           "event_id": 1643603,
           "event_slug": "tournament/seibugeki/event/singles",
           "event_name": "シングルストーナメント/Singles",
-          "num_entrants": 319,
+          "num_entrants": 318,
           "type": 1,
           "start_at": 1783814400
         }
@@ -704,7 +704,7 @@
       "city": "名古屋市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 8,
+      "num_attendees": 5,
       "url": "/tournament/7-gamer-s",
       "events": [
         {
@@ -773,14 +773,14 @@
       "city": "京都市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 48,
+      "num_attendees": 49,
       "url": "/tournament/15-30",
       "events": [
         {
           "event_id": 1662268,
           "event_slug": "tournament/15-30/event/ultmate-singles",
           "event_name": "Ultmate Singles",
-          "num_entrants": 48,
+          "num_entrants": 49,
           "type": 1,
           "start_at": 1784347200
         }
