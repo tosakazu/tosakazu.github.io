@@ -1,5 +1,5 @@
 {
-  "generated_at": 1783436411,
+  "generated_at": 1783447210,
   "country_code": "JP",
   "lookahead_days": 21,
   "count": 47,
@@ -14,7 +14,7 @@
       "city": "中野区",
       "venue_name": "Red Bull Gaming Sphere Tokyo",
       "country_code": "JP",
-      "num_attendees": 82,
+      "num_attendees": 81,
       "url": "/tournament/weekly-smash-party-237",
       "events": [
         {
@@ -37,7 +37,7 @@
       "city": "川崎市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 11,
+      "num_attendees": 12,
       "url": "/tournament/26-13",
       "events": [
         {
@@ -60,14 +60,14 @@
       "city": "京都市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 27,
+      "num_attendees": 28,
       "url": "/tournament/dsw-58-1",
       "events": [
         {
           "event_id": 1660411,
           "event_slug": "tournament/dsw-58-1/event/singletournament",
           "event_name": "SingleTournament",
-          "num_entrants": 27,
+          "num_entrants": 28,
           "type": 1,
           "start_at": 1783508400
         }
@@ -152,14 +152,14 @@
       "city": "大阪市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 10,
+      "num_attendees": 12,
       "url": "/tournament/hit-180-maesuma-hit-180",
       "events": [
         {
           "event_id": 1658621,
           "event_slug": "tournament/hit-180-maesuma-hit-180/event/singles-tournament",
           "event_name": "Singles Tournament",
-          "num_entrants": 10,
+          "num_entrants": 12,
           "type": 1,
           "start_at": 1783591200
         }
@@ -221,14 +221,14 @@
       "city": "立川市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 5,
+      "num_attendees": 7,
       "url": "/tournament/sumao2026-13",
       "events": [
         {
           "event_id": 1658522,
           "event_slug": "tournament/sumao2026-13/event/sp-1on1",
           "event_name": "スマブラSP 1on1",
-          "num_entrants": 5,
+          "num_entrants": 7,
           "type": 1,
           "start_at": 1783672200
         }
@@ -497,14 +497,14 @@
       "city": "練馬区",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 318,
+      "num_attendees": 319,
       "url": "/tournament/seibugeki",
       "events": [
         {
           "event_id": 1643603,
           "event_slug": "tournament/seibugeki/event/singles",
           "event_name": "シングルストーナメント/Singles",
-          "num_entrants": 318,
+          "num_entrants": 319,
           "type": 1,
           "start_at": 1783814400
         }
@@ -711,7 +711,7 @@
           "event_id": 1651528,
           "event_slug": "tournament/7-gamer-s/event/1on1",
           "event_name": "1on1 トーナメント",
-          "num_entrants": 8,
+          "num_entrants": 5,
           "type": 1,
           "start_at": 1784347200
         }
@@ -727,14 +727,14 @@
       "city": "福岡市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 406,
+      "num_attendees": 400,
       "url": "/tournament/kowloon-18",
       "events": [
         {
           "event_id": 1622014,
           "event_slug": "tournament/kowloon-18/event/kowloon_sp",
           "event_name": "KOWLOON_SP",
-          "num_entrants": 406,
+          "num_entrants": 400,
           "type": 1,
           "start_at": 1784338200
         }
@@ -865,14 +865,14 @@
       "city": "浜松市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 21,
+      "num_attendees": 22,
       "url": "/tournament/sp-mini-tournament-2",
       "events": [
         {
           "event_id": 1652322,
           "event_slug": "tournament/sp-mini-tournament-2/event/1on1",
           "event_name": "1on1",
-          "num_entrants": 20,
+          "num_entrants": 21,
           "type": 1,
           "start_at": 1784426400
         }
