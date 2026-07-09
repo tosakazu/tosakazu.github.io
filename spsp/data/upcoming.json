@@ -1,55 +1,9 @@
 {
-  "generated_at": 1783587614,
+  "generated_at": 1783598414,
   "country_code": "JP",
   "lookahead_days": 21,
-  "count": 48,
+  "count": 46,
   "tournaments": [
-    {
-      "tournament_id": 929036,
-      "tournament_slug": "tournament/shibuya-g-g-smash-weekly-70",
-      "tournament_name": "Shibuya G.G.Smash Weekly 70",
-      "start_at": 1783589400,
-      "end_at": 1783603800,
-      "is_online": false,
-      "city": "渋谷区",
-      "venue_name": "",
-      "country_code": "JP",
-      "num_attendees": 10,
-      "url": "/tournament/shibuya-g-g-smash-weekly-70",
-      "events": [
-        {
-          "event_id": 1659833,
-          "event_slug": "tournament/shibuya-g-g-smash-weekly-70/event/singles",
-          "event_name": "Singles",
-          "num_entrants": 10,
-          "type": 1,
-          "start_at": 1783594800
-        }
-      ]
-    },
-    {
-      "tournament_id": 928385,
-      "tournament_slug": "tournament/hit-180-maesuma-hit-180",
-      "tournament_name": "マエスマ'HIT#180 / Maesuma'HIT#180",
-      "start_at": 1783591200,
-      "end_at": 1783605600,
-      "is_online": false,
-      "city": "大阪市",
-      "venue_name": "",
-      "country_code": "JP",
-      "num_attendees": 39,
-      "url": "/tournament/hit-180-maesuma-hit-180",
-      "events": [
-        {
-          "event_id": 1658621,
-          "event_slug": "tournament/hit-180-maesuma-hit-180/event/singles-tournament",
-          "event_name": "Singles Tournament",
-          "num_entrants": 39,
-          "type": 1,
-          "start_at": 1783591200
-        }
-      ]
-    },
     {
       "tournament_id": 922351,
       "tournament_slug": "tournament/2-194",
@@ -658,14 +612,14 @@
       "city": "渋谷区",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 1,
+      "num_attendees": 2,
       "url": "/tournament/shibuya-g-g-smash-weekly-71",
       "events": [
         {
           "event_id": 1664816,
           "event_slug": "tournament/shibuya-g-g-smash-weekly-71/event/singles",
           "event_name": "Singles",
-          "num_entrants": 1,
+          "num_entrants": 2,
           "type": 1,
           "start_at": 1784197800
         }
@@ -704,14 +658,14 @@
       "city": "横浜市",
       "venue_name": "おださがプラザ",
       "country_code": "JP",
-      "num_attendees": 150,
+      "num_attendees": 151,
       "url": "/tournament/52-kurobra52",
       "events": [
         {
           "event_id": 1640297,
           "event_slug": "tournament/52-kurobra52/event/sp-1on1",
           "event_name": "SP 1on1トーナメント",
-          "num_entrants": 143,
+          "num_entrants": 144,
           "type": 1,
           "start_at": 1784332800
         }
