@@ -1,5 +1,5 @@
 {
-  "generated_at": 1783512015,
+  "generated_at": 1783522812,
   "country_code": "JP",
   "lookahead_days": 21,
   "count": 46,
@@ -106,7 +106,7 @@
       "city": "厚木市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 15,
+      "num_attendees": 16,
       "url": "/tournament/2-194",
       "events": [
         {
@@ -129,14 +129,14 @@
       "city": "台東区",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 22,
+      "num_attendees": 24,
       "url": "/tournament/10-498",
       "events": [
         {
           "event_id": 1655655,
           "event_slug": "tournament/10-498/event/on",
           "event_name": "シングルス（１on１トーナメント）",
-          "num_entrants": 22,
+          "num_entrants": 24,
           "type": 1,
           "start_at": 1783670400
         }
@@ -290,14 +290,14 @@
       "city": "大東市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 251,
+      "num_attendees": 250,
       "url": "/tournament/71-sp-1",
       "events": [
         {
           "event_id": 1656228,
           "event_slug": "tournament/71-sp-1/event/1on1",
           "event_name": "予選あり1on1トーナメント",
-          "num_entrants": 251,
+          "num_entrants": 250,
           "type": 1,
           "start_at": 1783734000
         }
@@ -336,14 +336,14 @@
       "city": "台東区",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 15,
+      "num_attendees": 17,
       "url": "/tournament/11-499",
       "events": [
         {
           "event_id": 1655656,
           "event_slug": "tournament/11-499/event/on",
           "event_name": "シングルス（１on１トーナメント）",
-          "num_entrants": 15,
+          "num_entrants": 17,
           "type": 1,
           "start_at": 1783738800
         }
@@ -520,14 +520,14 @@
       "city": "台東区",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 2,
+      "num_attendees": 3,
       "url": "/tournament/13-500",
       "events": [
         {
           "event_id": 1655657,
           "event_slug": "tournament/13-500/event/on",
           "event_name": "シングルス（１on１トーナメント）",
-          "num_entrants": 2,
+          "num_entrants": 3,
           "type": 1,
           "start_at": 1783929600
         }
@@ -566,14 +566,14 @@
       "city": "渋谷区",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 1,
+      "num_attendees": 2,
       "url": "/tournament/132-shibuya-tatsu",
       "events": [
         {
           "event_id": 1663322,
           "event_slug": "tournament/132-shibuya-tatsu/event/singles",
           "event_name": "Singles",
-          "num_entrants": 1,
+          "num_entrants": 2,
           "type": 1,
           "start_at": 1784023200
         }
@@ -704,14 +704,14 @@
       "city": "福岡市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 399,
+      "num_attendees": 398,
       "url": "/tournament/kowloon-18",
       "events": [
         {
           "event_id": 1622014,
           "event_slug": "tournament/kowloon-18/event/kowloon_sp",
           "event_name": "KOWLOON_SP",
-          "num_entrants": 399,
+          "num_entrants": 398,
           "type": 1,
           "start_at": 1784338200
         }
@@ -988,14 +988,14 @@
       "city": "富山市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 78,
+      "num_attendees": 79,
       "url": "/tournament/badawi-6",
       "events": [
         {
           "event_id": 1629767,
           "event_slug": "tournament/badawi-6/event/badawi",
           "event_name": "Badawi",
-          "num_entrants": 78,
+          "num_entrants": 79,
           "type": 1,
           "start_at": 1784941200
         }
