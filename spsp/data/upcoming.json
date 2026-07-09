@@ -1,8 +1,8 @@
 {
-  "generated_at": 1783555210,
+  "generated_at": 1783566013,
   "country_code": "JP",
   "lookahead_days": 21,
-  "count": 47,
+  "count": 48,
   "tournaments": [
     {
       "tournament_id": 926855,
@@ -14,14 +14,14 @@
       "city": "台東区",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 14,
+      "num_attendees": 15,
       "url": "/tournament/9-497",
       "events": [
         {
           "event_id": 1655654,
           "event_slug": "tournament/9-497/event/on",
           "event_name": "シングルス（１on１トーナメント）",
-          "num_entrants": 13,
+          "num_entrants": 15,
           "type": 1,
           "start_at": 1783584000
         }
@@ -129,7 +129,7 @@
       "city": "台東区",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 30,
+      "num_attendees": 33,
       "url": "/tournament/10-498",
       "events": [
         {
@@ -175,14 +175,14 @@
       "city": "川崎市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 11,
+      "num_attendees": 12,
       "url": "/tournament/8-68",
       "events": [
         {
           "event_id": 1661087,
           "event_slug": "tournament/8-68/event/super-smash-bros-ultimate-singles",
           "event_name": "シングルス",
-          "num_entrants": 10,
+          "num_entrants": 11,
           "type": 1,
           "start_at": 1783674000
         }
@@ -198,14 +198,14 @@
       "city": "福岡市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 11,
+      "num_attendees": 12,
       "url": "/tournament/smash-144-2",
       "events": [
         {
           "event_id": 1662385,
           "event_slug": "tournament/smash-144-2/event/1on1",
           "event_name": "1on1トーナメント",
-          "num_entrants": 11,
+          "num_entrants": 12,
           "type": 1,
           "start_at": 1783679400
         }
@@ -313,14 +313,14 @@
       "city": "福岡市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 52,
+      "num_attendees": 55,
       "url": "/tournament/revival-14",
       "events": [
         {
           "event_id": 1647071,
           "event_slug": "tournament/revival-14/event/1on1",
           "event_name": "1on1トーナメント",
-          "num_entrants": 51,
+          "num_entrants": 54,
           "type": 1,
           "start_at": 1783735200
         }
@@ -405,14 +405,14 @@
       "city": "熊谷市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 32,
+      "num_attendees": 33,
       "url": "/tournament/flyhigh-27-96",
       "events": [
         {
           "event_id": 1639012,
           "event_slug": "tournament/flyhigh-27-96/event/fly-high-96",
           "event_name": "Fly High!! 96人トーナメント 埼玉県熊谷市スマブラ大会",
-          "num_entrants": 32,
+          "num_entrants": 33,
           "type": 1,
           "start_at": 1783782000
         }
@@ -428,14 +428,14 @@
       "city": "練馬区",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 322,
+      "num_attendees": 315,
       "url": "/tournament/seibugeki",
       "events": [
         {
           "event_id": 1643603,
           "event_slug": "tournament/seibugeki/event/singles",
           "event_name": "シングルストーナメント/Singles",
-          "num_entrants": 322,
+          "num_entrants": 315,
           "type": 1,
           "start_at": 1783814400
         }
@@ -474,14 +474,14 @@
       "city": "大阪市",
       "venue_name": "クレオ大阪南 (Creo Osaka South)",
       "country_code": "JP",
-      "num_attendees": 18,
+      "num_attendees": 17,
       "url": "/tournament/masterhand73",
       "events": [
         {
           "event_id": 1649090,
           "event_slug": "tournament/masterhand73/event/sp-ultimate-singles",
           "event_name": "SP シングルス / Ultimate Singles",
-          "num_entrants": 10,
+          "num_entrants": 9,
           "type": 1,
           "start_at": 1783821600
         }
@@ -530,6 +530,29 @@
           "num_entrants": 3,
           "type": 1,
           "start_at": 1783929600
+        }
+      ]
+    },
+    {
+      "tournament_id": 931475,
+      "tournament_slug": "tournament/gg-5-kannai-gg",
+      "tournament_name": "関内GG #5 / kannai-gg",
+      "start_at": 1783933200,
+      "end_at": 1783945800,
+      "is_online": false,
+      "city": "横浜市",
+      "venue_name": "おださがプラザ",
+      "country_code": "JP",
+      "num_attendees": 0,
+      "url": "/tournament/gg-5-kannai-gg",
+      "events": [
+        {
+          "event_id": 1664755,
+          "event_slug": "tournament/gg-5-kannai-gg/event/sp-1on1",
+          "event_name": "スマブラSP 1on1",
+          "num_entrants": 0,
+          "type": 1,
+          "start_at": 1783933200
         }
       ]
     },
@@ -773,14 +796,14 @@
       "city": "京都市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 50,
+      "num_attendees": 51,
       "url": "/tournament/15-30",
       "events": [
         {
           "event_id": 1662268,
           "event_slug": "tournament/15-30/event/ultmate-singles",
           "event_name": "Ultmate Singles",
-          "num_entrants": 50,
+          "num_entrants": 51,
           "type": 1,
           "start_at": 1784347200
         }
@@ -965,14 +988,14 @@
       "city": "さいたま市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 233,
+      "num_attendees": 231,
       "url": "/tournament/absolute-smash-1",
       "events": [
         {
           "event_id": 1630488,
           "event_slug": "tournament/absolute-smash-1/event/absolutesmash-1",
           "event_name": "AbsoluteSmash#1（アブスマ）",
-          "num_entrants": 229,
+          "num_entrants": 227,
           "type": 1,
           "start_at": 1784512800
         }
@@ -1057,14 +1080,14 @@
       "city": "柏市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 9,
+      "num_attendees": 10,
       "url": "/tournament/sen-smash-5",
       "events": [
         {
           "event_id": 1650858,
           "event_slug": "tournament/sen-smash-5/event/singles",
           "event_name": "シングルス / Singles",
-          "num_entrants": 9,
+          "num_entrants": 10,
           "type": 1,
           "start_at": 1785034800
         }
