@@ -1,32 +1,9 @@
 {
-  "generated_at": 1783630814,
+  "generated_at": 1783641611,
   "country_code": "JP",
   "lookahead_days": 21,
   "count": 47,
   "tournaments": [
-    {
-      "tournament_id": 922351,
-      "tournament_slug": "tournament/2-194",
-      "tournament_name": "快進会#2",
-      "start_at": 1783663200,
-      "end_at": 1783688400,
-      "is_online": false,
-      "city": "厚木市",
-      "venue_name": "",
-      "country_code": "JP",
-      "num_attendees": 15,
-      "url": "/tournament/2-194",
-      "events": [
-        {
-          "event_id": 1646462,
-          "event_slug": "tournament/2-194/event/1on1",
-          "event_name": "1on1メイントーナメント",
-          "num_entrants": 14,
-          "type": 1,
-          "start_at": 1781276400
-        }
-      ]
-    },
     {
       "tournament_id": 926856,
       "tournament_slug": "tournament/10-498",
@@ -37,7 +14,7 @@
       "city": "台東区",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 37,
+      "num_attendees": 42,
       "url": "/tournament/10-498",
       "events": [
         {
@@ -60,14 +37,14 @@
       "city": "立川市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 11,
+      "num_attendees": 12,
       "url": "/tournament/sumao2026-13",
       "events": [
         {
           "event_id": 1658522,
           "event_slug": "tournament/sumao2026-13/event/sp-1on1",
           "event_name": "スマブラSP 1on1",
-          "num_entrants": 11,
+          "num_entrants": 12,
           "type": 1,
           "start_at": 1783672200
         }
@@ -83,14 +60,14 @@
       "city": "川崎市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 15,
+      "num_attendees": 16,
       "url": "/tournament/8-68",
       "events": [
         {
           "event_id": 1661087,
           "event_slug": "tournament/8-68/event/super-smash-bros-ultimate-singles",
           "event_name": "シングルス",
-          "num_entrants": 14,
+          "num_entrants": 15,
           "type": 1,
           "start_at": 1783674000
         }
@@ -106,14 +83,14 @@
       "city": "福岡市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 19,
+      "num_attendees": 23,
       "url": "/tournament/smash-144-2",
       "events": [
         {
           "event_id": 1662385,
           "event_slug": "tournament/smash-144-2/event/1on1",
           "event_name": "1on1トーナメント",
-          "num_entrants": 19,
+          "num_entrants": 24,
           "type": 1,
           "start_at": 1783679400
         }
@@ -129,14 +106,14 @@
       "city": "大阪市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 10,
+      "num_attendees": 16,
       "url": "/tournament/341-act-1",
       "events": [
         {
           "event_id": 1662470,
           "event_slug": "tournament/341-act-1/event/ultimate-singles",
           "event_name": "Ultimate singles",
-          "num_entrants": 11,
+          "num_entrants": 16,
           "type": 1,
           "start_at": 1783680000
         }
@@ -405,14 +382,14 @@
       "city": "京都市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 4,
+      "num_attendees": 5,
       "url": "/tournament/dsw-59",
       "events": [
         {
           "event_id": 1663231,
           "event_slug": "tournament/dsw-59/event/singletournament",
           "event_name": "SingleTournament",
-          "num_entrants": 4,
+          "num_entrants": 5,
           "type": 1,
           "start_at": 1783828800
         }
@@ -711,7 +688,7 @@
           "event_id": 1622014,
           "event_slug": "tournament/kowloon-18/event/kowloon_sp",
           "event_name": "KOWLOON_SP",
-          "num_entrants": 394,
+          "num_entrants": 395,
           "type": 1,
           "start_at": 1784338200
         }
@@ -842,14 +819,14 @@
       "city": "浜松市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 22,
+      "num_attendees": 23,
       "url": "/tournament/sp-mini-tournament-2",
       "events": [
         {
           "event_id": 1652322,
           "event_slug": "tournament/sp-mini-tournament-2/event/1on1",
           "event_name": "1on1",
-          "num_entrants": 21,
+          "num_entrants": 22,
           "type": 1,
           "start_at": 1784426400
         }
@@ -952,6 +929,29 @@
           "num_entrants": 227,
           "type": 1,
           "start_at": 1784512800
+        }
+      ]
+    },
+    {
+      "tournament_id": 931794,
+      "tournament_slug": "tournament/gg-6-kannai-gg",
+      "tournament_name": "関内GG #6 / kannai-gg",
+      "start_at": 1784527200,
+      "end_at": 1784550600,
+      "is_online": false,
+      "city": "横浜市",
+      "venue_name": "おださがプラザ",
+      "country_code": "JP",
+      "num_attendees": 0,
+      "url": "/tournament/gg-6-kannai-gg",
+      "events": [
+        {
+          "event_id": 1665405,
+          "event_slug": "tournament/gg-6-kannai-gg/event/sp-1on1",
+          "event_name": "スマブラSP 1on1",
+          "num_entrants": 0,
+          "type": 1,
+          "start_at": 1784527200
         }
       ]
     },
