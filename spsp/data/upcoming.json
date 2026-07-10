@@ -1,55 +1,9 @@
 {
-  "generated_at": 1783674012,
+  "generated_at": 1783684812,
   "country_code": "JP",
   "lookahead_days": 21,
-  "count": 44,
+  "count": 42,
   "tournaments": [
-    {
-      "tournament_id": 930294,
-      "tournament_slug": "tournament/smash-144-2",
-      "tournament_name": "Smash薬院#144",
-      "start_at": 1783679400,
-      "end_at": 1783692000,
-      "is_online": false,
-      "city": "福岡市",
-      "venue_name": "",
-      "country_code": "JP",
-      "num_attendees": 26,
-      "url": "/tournament/smash-144-2",
-      "events": [
-        {
-          "event_id": 1662385,
-          "event_slug": "tournament/smash-144-2/event/1on1",
-          "event_name": "1on1トーナメント",
-          "num_entrants": 26,
-          "type": 1,
-          "start_at": 1783679400
-        }
-      ]
-    },
-    {
-      "tournament_id": 930338,
-      "tournament_slug": "tournament/341-act-1",
-      "tournament_name": "【第341回】スマACT",
-      "start_at": 1783680000,
-      "end_at": 1783692000,
-      "is_online": false,
-      "city": "大阪市",
-      "venue_name": "",
-      "country_code": "JP",
-      "num_attendees": 16,
-      "url": "/tournament/341-act-1",
-      "events": [
-        {
-          "event_id": 1662470,
-          "event_slug": "tournament/341-act-1/event/ultimate-singles",
-          "event_name": "Ultimate singles",
-          "num_entrants": 16,
-          "type": 1,
-          "start_at": 1783680000
-        }
-      ]
-    },
     {
       "tournament_id": 920995,
       "tournament_slug": "tournament/-3108",
@@ -152,14 +106,14 @@
       "city": "台東区",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 43,
+      "num_attendees": 44,
       "url": "/tournament/11-499",
       "events": [
         {
           "event_id": 1655656,
           "event_slug": "tournament/11-499/event/on",
           "event_name": "シングルス（１on１トーナメント）",
-          "num_entrants": 43,
+          "num_entrants": 44,
           "type": 1,
           "start_at": 1783738800
         }
@@ -474,14 +428,14 @@
       "city": "中野区",
       "venue_name": "Red Bull Gaming Sphere Tokyo",
       "country_code": "JP",
-      "num_attendees": 1,
+      "num_attendees": 2,
       "url": "/tournament/weekly-smash-party-238",
       "events": [
         {
           "event_id": 1664911,
           "event_slug": "tournament/weekly-smash-party-238/event/special-1on1-ultimate-singles",
           "event_name": "SPECIAL 1on1/ Ultimate Singles",
-          "num_entrants": 1,
+          "num_entrants": 2,
           "type": 1,
           "start_at": 1784106000
         }
@@ -850,14 +804,14 @@
       "city": "さいたま市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 228,
+      "num_attendees": 229,
       "url": "/tournament/absolute-smash-1",
       "events": [
         {
           "event_id": 1630488,
           "event_slug": "tournament/absolute-smash-1/event/absolutesmash-1",
           "event_name": "AbsoluteSmash#1（アブスマ）",
-          "num_entrants": 224,
+          "num_entrants": 225,
           "type": 1,
           "start_at": 1784512800
         }
