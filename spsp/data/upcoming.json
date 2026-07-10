@@ -1,78 +1,9 @@
 {
-  "generated_at": 1783663276,
+  "generated_at": 1783674012,
   "country_code": "JP",
   "lookahead_days": 21,
-  "count": 47,
+  "count": 44,
   "tournaments": [
-    {
-      "tournament_id": 926856,
-      "tournament_slug": "tournament/10-498",
-      "tournament_name": "10(金)上野スマコミ#498(オープン)",
-      "start_at": 1783670400,
-      "end_at": 1783692000,
-      "is_online": false,
-      "city": "台東区",
-      "venue_name": "",
-      "country_code": "JP",
-      "num_attendees": 39,
-      "url": "/tournament/10-498",
-      "events": [
-        {
-          "event_id": 1655655,
-          "event_slug": "tournament/10-498/event/on",
-          "event_name": "シングルス（１on１トーナメント）",
-          "num_entrants": 38,
-          "type": 1,
-          "start_at": 1783670400
-        }
-      ]
-    },
-    {
-      "tournament_id": 928353,
-      "tournament_slug": "tournament/sumao2026-13",
-      "tournament_name": "スマ王/SumaO2026 #13",
-      "start_at": 1783672200,
-      "end_at": 1783688400,
-      "is_online": false,
-      "city": "立川市",
-      "venue_name": "",
-      "country_code": "JP",
-      "num_attendees": 12,
-      "url": "/tournament/sumao2026-13",
-      "events": [
-        {
-          "event_id": 1658522,
-          "event_slug": "tournament/sumao2026-13/event/sp-1on1",
-          "event_name": "スマブラSP 1on1",
-          "num_entrants": 12,
-          "type": 1,
-          "start_at": 1783672200
-        }
-      ]
-    },
-    {
-      "tournament_id": 929656,
-      "tournament_slug": "tournament/8-68",
-      "tournament_name": "もびすまっ！#8",
-      "start_at": 1783674000,
-      "end_at": 1783692000,
-      "is_online": false,
-      "city": "川崎市",
-      "venue_name": "",
-      "country_code": "JP",
-      "num_attendees": 16,
-      "url": "/tournament/8-68",
-      "events": [
-        {
-          "event_id": 1661087,
-          "event_slug": "tournament/8-68/event/super-smash-bros-ultimate-singles",
-          "event_name": "シングルス",
-          "num_entrants": 16,
-          "type": 1,
-          "start_at": 1783674000
-        }
-      ]
-    },
     {
       "tournament_id": 930294,
       "tournament_slug": "tournament/smash-144-2",
@@ -221,14 +152,14 @@
       "city": "台東区",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 42,
+      "num_attendees": 43,
       "url": "/tournament/11-499",
       "events": [
         {
           "event_id": 1655656,
           "event_slug": "tournament/11-499/event/on",
           "event_name": "シングルス（１on１トーナメント）",
-          "num_entrants": 42,
+          "num_entrants": 43,
           "type": 1,
           "start_at": 1783738800
         }
@@ -405,7 +336,7 @@
       "city": "台東区",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 3,
+      "num_attendees": 4,
       "url": "/tournament/13-500",
       "events": [
         {
@@ -497,14 +428,14 @@
       "city": "札幌市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 9,
+      "num_attendees": 10,
       "url": "/tournament/pochisuma-last-update",
       "events": [
         {
           "event_id": 1663996,
           "event_slug": "tournament/pochisuma-last-update/event/ultimate-singles",
           "event_name": "Ultimate Singles",
-          "num_entrants": 9,
+          "num_entrants": 10,
           "type": 1,
           "start_at": 1784025000
         }
