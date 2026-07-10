@@ -1,5 +1,5 @@
 {
-  "generated_at": 1783620012,
+  "generated_at": 1783630814,
   "country_code": "JP",
   "lookahead_days": 21,
   "count": 47,
@@ -44,7 +44,7 @@
           "event_id": 1655655,
           "event_slug": "tournament/10-498/event/on",
           "event_name": "シングルス（１on１トーナメント）",
-          "num_entrants": 35,
+          "num_entrants": 36,
           "type": 1,
           "start_at": 1783670400
         }
@@ -60,14 +60,14 @@
       "city": "立川市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 9,
+      "num_attendees": 11,
       "url": "/tournament/sumao2026-13",
       "events": [
         {
           "event_id": 1658522,
           "event_slug": "tournament/sumao2026-13/event/sp-1on1",
           "event_name": "スマブラSP 1on1",
-          "num_entrants": 9,
+          "num_entrants": 11,
           "type": 1,
           "start_at": 1783672200
         }
@@ -106,14 +106,14 @@
       "city": "福岡市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 15,
+      "num_attendees": 19,
       "url": "/tournament/smash-144-2",
       "events": [
         {
           "event_id": 1662385,
           "event_slug": "tournament/smash-144-2/event/1on1",
           "event_name": "1on1トーナメント",
-          "num_entrants": 15,
+          "num_entrants": 19,
           "type": 1,
           "start_at": 1783679400
         }
@@ -129,14 +129,14 @@
       "city": "大阪市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 9,
+      "num_attendees": 10,
       "url": "/tournament/341-act-1",
       "events": [
         {
           "event_id": 1662470,
           "event_slug": "tournament/341-act-1/event/ultimate-singles",
           "event_name": "Ultimate singles",
-          "num_entrants": 9,
+          "num_entrants": 11,
           "type": 1,
           "start_at": 1783680000
         }
@@ -244,14 +244,14 @@
       "city": "台東区",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 29,
+      "num_attendees": 30,
       "url": "/tournament/11-499",
       "events": [
         {
           "event_id": 1655656,
           "event_slug": "tournament/11-499/event/on",
           "event_name": "シングルス（１on１トーナメント）",
-          "num_entrants": 29,
+          "num_entrants": 30,
           "type": 1,
           "start_at": 1783738800
         }
@@ -658,14 +658,14 @@
       "city": "横浜市",
       "venue_name": "おださがプラザ",
       "country_code": "JP",
-      "num_attendees": 151,
+      "num_attendees": 153,
       "url": "/tournament/52-kurobra52",
       "events": [
         {
           "event_id": 1640297,
           "event_slug": "tournament/52-kurobra52/event/sp-1on1",
           "event_name": "SP 1on1トーナメント",
-          "num_entrants": 144,
+          "num_entrants": 146,
           "type": 1,
           "start_at": 1784332800
         }
@@ -727,14 +727,14 @@
       "city": "豊橋市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 30,
+      "num_attendees": 31,
       "url": "/tournament/21-18",
       "events": [
         {
           "event_id": 1654347,
           "event_slug": "tournament/21-18/event/21",
           "event_name": "第21回夢スマ",
-          "num_entrants": 29,
+          "num_entrants": 30,
           "type": 1,
           "start_at": 1784343600
         }
