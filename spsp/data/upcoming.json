@@ -1,8 +1,8 @@
 {
-  "generated_at": 1783695611,
+  "generated_at": 1783706411,
   "country_code": "JP",
   "lookahead_days": 21,
-  "count": 42,
+  "count": 43,
   "tournaments": [
     {
       "tournament_id": 920995,
@@ -106,14 +106,14 @@
       "city": "台東区",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 44,
+      "num_attendees": 50,
       "url": "/tournament/11-499",
       "events": [
         {
           "event_id": 1655656,
           "event_slug": "tournament/11-499/event/on",
           "event_name": "シングルス（１on１トーナメント）",
-          "num_entrants": 44,
+          "num_entrants": 47,
           "type": 1,
           "start_at": 1783738800
         }
@@ -465,6 +465,29 @@
       ]
     },
     {
+      "tournament_id": 932045,
+      "tournament_slug": "tournament/16-502-3",
+      "tournament_name": "16(木)上野スマコミ#502(オープン)",
+      "start_at": 1784188800,
+      "end_at": 1784210400,
+      "is_online": false,
+      "city": "台東区",
+      "venue_name": "",
+      "country_code": "JP",
+      "num_attendees": 1,
+      "url": "/tournament/16-502-3",
+      "events": [
+        {
+          "event_id": 1665889,
+          "event_slug": "tournament/16-502-3/event/on",
+          "event_name": "シングルス（１on１トーナメント）",
+          "num_entrants": 1,
+          "type": 1,
+          "start_at": 1784188800
+        }
+      ]
+    },
+    {
       "tournament_id": 931518,
       "tournament_slug": "tournament/shibuya-g-g-smash-weekly-71",
       "tournament_name": "Shibuya G.G.Smash Weekly 71",
@@ -527,7 +550,7 @@
           "event_id": 1640297,
           "event_slug": "tournament/52-kurobra52/event/sp-1on1",
           "event_name": "SP 1on1トーナメント",
-          "num_entrants": 147,
+          "num_entrants": 149,
           "type": 1,
           "start_at": 1784332800
         }
