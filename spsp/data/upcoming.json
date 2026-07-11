@@ -1,5 +1,5 @@
 {
-  "generated_at": 1783754065,
+  "generated_at": 1783754999,
   "country_code": "JP",
   "lookahead_days": 21,
   "count": 39,
@@ -313,14 +313,14 @@
       "city": "中野区",
       "venue_name": "Red Bull Gaming Sphere Tokyo",
       "country_code": "JP",
-      "num_attendees": 57,
+      "num_attendees": 58,
       "url": "/tournament/weekly-smash-party-238",
       "events": [
         {
           "event_id": 1664911,
           "event_slug": "tournament/weekly-smash-party-238/event/special-1on1-ultimate-singles",
           "event_name": "SPECIAL 1on1/ Ultimate Singles",
-          "num_entrants": 57,
+          "num_entrants": 58,
           "type": 1,
           "start_at": 1784106000
         }
