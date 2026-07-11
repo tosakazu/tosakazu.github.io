@@ -1,5 +1,5 @@
 {
-  "generated_at": 1783684812,
+  "generated_at": 1783695611,
   "country_code": "JP",
   "lookahead_days": 21,
   "count": 42,
@@ -520,7 +520,7 @@
       "city": "横浜市",
       "venue_name": "おださがプラザ",
       "country_code": "JP",
-      "num_attendees": 154,
+      "num_attendees": 155,
       "url": "/tournament/52-kurobra52",
       "events": [
         {
