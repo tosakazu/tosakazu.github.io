@@ -84,7 +84,7 @@
     maxIters: null,                      // null なら状態サイズ×maxItersScale
     maxItersScale: 1000,                 // maxIters = max(500, stateSize*scale)。既定=参加人数×1000
     saT0: null,                          // null なら自動推定
-    saCooling: 0.999,
+    saCooling: 0.997,
     saMinT: 1e-4,
     rngSeed: 12345,
   };
@@ -93,9 +93,9 @@
   // 多点系は restarts/scale を上げて分離精度を優先（~10-20s。実大会ベンチで R1-3 を大幅削減）。
   const MODE_DEFAULTS = {
     'hillclimb':            { restarts: 1, maxItersScale: 1500 },           // 単発: 反復多め
-    'sa':                   { restarts: 1, saCooling: 0.999, maxItersScale: 1000 },
+    'sa':                   { restarts: 1, saCooling: 0.997, maxItersScale: 1000 },
     'multistart-hillclimb': { restarts: 15, maxItersScale: 1000 },
-    'multistart-sa':        { restarts: 15, saCooling: 0.999, maxItersScale: 1000 },
+    'multistart-sa':        { restarts: 15, saCooling: 0.997, maxItersScale: 1000 },
   };
 
   function prefWeightFn(kind) {
@@ -298,7 +298,7 @@
 
   // ───────────────────────── intra 最適化（プール単位） ─────────────────────────
   // poolUids: within-pool seed 順の uid 配列。プール内でのみ swap。
-  function intraOptimizePool(poolUids, pp, params, rng, ctx, poolLabel, orderOf, globalSeeds) {
+  function intraOptimizePool(poolUids, pp, params, rng, ctx, poolLabel, orderOf, globalSeeds, fixedUids) {
     const M = poolUids.length;
     if (M < 2) return { state: poolUids.slice(), score: 0, iters: 0 };
     const rw = roundWeightFn(params.roundWeights);
@@ -313,10 +313,8 @@
 
     function swapAllowed(order, i, j) {
       const A = order[i], B2 = order[j];
-      // プール間移動した選手も他と同じ ±k 制約で動ける。
-      // （旧実装は移動者を intra 固定していたが、実データ検証で参加者の約8割が
-      //   固定され再対戦回避の主なボトルネックになっていたため撤廃。合成変位は
-      //   inter 行内(P-1) + intra ±1行(P) の加算で最大 2P-1 に収まる。）
+      // プール間移動したプレイヤーはプール内移動不可（どちらかが該当なら交換禁止）。
+      if (fixedUids && (fixedUids.has(A) || fixedUids.has(B2))) return false;
       // 交換後の rank（=index+1）が各自の初期 rank ±k 内か。
       if (Math.abs((j + 1) - initRank[A]) > kIntra(initRank[A], M)) return false;
       if (Math.abs((i + 1) - initRank[B2]) > kIntra(initRank[B2], M)) return false;
@@ -708,6 +706,10 @@
     const globalSeedsByPool = [];
     for (let p = 0; p < P; p++) globalSeedsByPool.push([]);
     for (let s = 0; s < N; s++) globalSeedsByPool[poolOfSeed(s, P)].push(s);
+    // 各 uid の初期プール（プール間移動の判定用）。
+    const initPoolByUid = {};
+    ranking.forEach((u, s) => { initPoolByUid[u] = poolOfSeed(s, P); });
+
     const seedOrderBefore = ranking.slice();
     let seedOrder = ranking.slice();
     let stoppedEarly = false;
@@ -727,7 +729,9 @@
       for (let pi = 0; pi < pools.length; pi++) {
         if (ctx.shouldStop && ctx.shouldStop()) { stoppedEarly = true; break; }
         if (ctx.onProgress) ctx.onProgress({ phase: 'intra', pool: pi, stage: 'start' });
-        const r = intraOptimizePool(pools[pi], pp, params, rng, ctx, String(pi), orderOf, globalSeedsByPool[pi]);
+        // プール間移動でこのプールに来た（または出た）選手は intra で固定する。
+        const fixedUids = new Set(pools[pi].filter((u) => initPoolByUid[u] !== pi));
+        const r = intraOptimizePool(pools[pi], pp, params, rng, ctx, String(pi), orderOf, globalSeedsByPool[pi], fixedUids);
         if (r) pools[pi] = r.state;
         if (ctx.onCheckpoint) ctx.onCheckpoint({ phase: 'intra', pool: pi });
       }
