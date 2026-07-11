@@ -1,5 +1,5 @@
 {
-  "generated_at": 1783728041,
+  "generated_at": 1783739030,
   "country_code": "JP",
   "lookahead_days": 21,
   "count": 39,
@@ -313,14 +313,14 @@
       "city": "中野区",
       "venue_name": "Red Bull Gaming Sphere Tokyo",
       "country_code": "JP",
-      "num_attendees": 3,
+      "num_attendees": 6,
       "url": "/tournament/weekly-smash-party-238",
       "events": [
         {
           "event_id": 1664911,
           "event_slug": "tournament/weekly-smash-party-238/event/special-1on1-ultimate-singles",
           "event_name": "SPECIAL 1on1/ Ultimate Singles",
-          "num_entrants": 3,
+          "num_entrants": 10,
           "type": 1,
           "start_at": 1784106000
         }
@@ -566,14 +566,14 @@
       "city": "茅野市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 8,
+      "num_attendees": 9,
       "url": "/tournament/-3110",
       "events": [
         {
           "event_id": 1646508,
           "event_slug": "tournament/-3110/event/super-smash-bros-ultimate-singles",
           "event_name": "凶華彗月　本戦トーナメント",
-          "num_entrants": 8,
+          "num_entrants": 9,
           "type": 1,
           "start_at": 1784419200
         }
@@ -804,14 +804,14 @@
       "city": "富山市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 80,
+      "num_attendees": 81,
       "url": "/tournament/badawi-6",
       "events": [
         {
           "event_id": 1629767,
           "event_slug": "tournament/badawi-6/event/badawi",
           "event_name": "Badawi",
-          "num_entrants": 80,
+          "num_entrants": 81,
           "type": 1,
           "start_at": 1784941200
         }
