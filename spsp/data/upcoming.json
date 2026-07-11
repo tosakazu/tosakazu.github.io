@@ -1,5 +1,5 @@
 {
-  "generated_at": 1783739030,
+  "generated_at": 1783749653,
   "country_code": "JP",
   "lookahead_days": 21,
   "count": 39,
@@ -221,14 +221,14 @@
       "city": "大阪市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 0,
+      "num_attendees": 6,
       "url": "/tournament/hit-181-maesuma-hit-181",
       "events": [
         {
           "event_id": 1658641,
           "event_slug": "tournament/hit-181-maesuma-hit-181/event/singles-tournament",
           "event_name": "Singles Tournament",
-          "num_entrants": 0,
+          "num_entrants": 6,
           "type": 1,
           "start_at": 1783936800
         }
@@ -244,14 +244,14 @@
       "city": "渋谷区",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 2,
+      "num_attendees": 3,
       "url": "/tournament/132-shibuya-tatsu",
       "events": [
         {
           "event_id": 1663322,
           "event_slug": "tournament/132-shibuya-tatsu/event/singles",
           "event_name": "Singles",
-          "num_entrants": 2,
+          "num_entrants": 3,
           "type": 1,
           "start_at": 1784023200
         }
@@ -313,14 +313,14 @@
       "city": "中野区",
       "venue_name": "Red Bull Gaming Sphere Tokyo",
       "country_code": "JP",
-      "num_attendees": 6,
+      "num_attendees": 53,
       "url": "/tournament/weekly-smash-party-238",
       "events": [
         {
           "event_id": 1664911,
           "event_slug": "tournament/weekly-smash-party-238/event/special-1on1-ultimate-singles",
           "event_name": "SPECIAL 1on1/ Ultimate Singles",
-          "num_entrants": 10,
+          "num_entrants": 53,
           "type": 1,
           "start_at": 1784106000
         }
@@ -428,14 +428,14 @@
       "city": "川崎市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 2,
+      "num_attendees": 4,
       "url": "/tournament/9-56",
       "events": [
         {
           "event_id": 1665921,
           "event_slug": "tournament/9-56/event/super-smash-bros-ultimate-singles",
           "event_name": "シングルス",
-          "num_entrants": 2,
+          "num_entrants": 4,
           "type": 1,
           "start_at": 1784278800
         }
@@ -451,14 +451,14 @@
       "city": "横浜市",
       "venue_name": "おださがプラザ",
       "country_code": "JP",
-      "num_attendees": 157,
+      "num_attendees": 159,
       "url": "/tournament/52-kurobra52",
       "events": [
         {
           "event_id": 1640297,
           "event_slug": "tournament/52-kurobra52/event/sp-1on1",
           "event_name": "SP 1on1トーナメント",
-          "num_entrants": 149,
+          "num_entrants": 151,
           "type": 1,
           "start_at": 1784332800
         }
@@ -497,14 +497,14 @@
       "city": "福岡市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 393,
+      "num_attendees": 391,
       "url": "/tournament/kowloon-18",
       "events": [
         {
           "event_id": 1622014,
           "event_slug": "tournament/kowloon-18/event/kowloon_sp",
           "event_name": "KOWLOON_SP",
-          "num_entrants": 393,
+          "num_entrants": 391,
           "type": 1,
           "start_at": 1784338200
         }
@@ -566,14 +566,14 @@
       "city": "茅野市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 9,
+      "num_attendees": 11,
       "url": "/tournament/-3110",
       "events": [
         {
           "event_id": 1646508,
           "event_slug": "tournament/-3110/event/super-smash-bros-ultimate-singles",
           "event_name": "凶華彗月　本戦トーナメント",
-          "num_entrants": 9,
+          "num_entrants": 11,
           "type": 1,
           "start_at": 1784419200
         }
@@ -804,14 +804,14 @@
       "city": "富山市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 81,
+      "num_attendees": 82,
       "url": "/tournament/badawi-6",
       "events": [
         {
           "event_id": 1629767,
           "event_slug": "tournament/badawi-6/event/badawi",
           "event_name": "Badawi",
-          "num_entrants": 81,
+          "num_entrants": 82,
           "type": 1,
           "start_at": 1784941200
         }
