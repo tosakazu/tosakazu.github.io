@@ -564,7 +564,7 @@
               </select>
             </label>
             <label>多点数<input type="number" id="so-restarts" value="15" min="1" max="100" style="display:block;width:64px;padding:4px;border:1px solid #d1d5db;border-radius:5px;font-size:12px"></label>
-            <label>SA冷却率<input type="number" id="so-cooling" value="0.997" step="0.001" min="0.5" max="0.9999" style="display:block;width:72px;padding:4px;border:1px solid #d1d5db;border-radius:5px;font-size:12px"></label>
+            <label>SA冷却率<input type="number" id="so-cooling" value="0.999" step="0.001" min="0.5" max="0.9999" style="display:block;width:72px;padding:4px;border:1px solid #d1d5db;border-radius:5px;font-size:12px"></label>
             <label title="反復回数 = max(500, 状態数×この値)。大きいほど高精度・低速">反復係数<input type="number" id="so-itersscale" value="1000" min="10" max="2000" step="10" style="display:block;width:72px;padding:4px;border:1px solid #d1d5db;border-radius:5px;font-size:12px"></label>
             <label>乱数シード<input type="number" id="so-rngseed" value="12345" style="display:block;width:84px;padding:4px;border:1px solid #d1d5db;border-radius:5px;font-size:12px"></label>
           </div>
@@ -603,8 +603,8 @@
           <div style="font-weight:600;color:#374151;margin:8px 0 2px">プール内・可動制約（CSV / 空欄＝既定）</div>
           <div style="display:flex;gap:12px;flex-wrap:wrap;align-items:flex-end">
             <label>回戦重み<input type="text" id="so-roundweights" placeholder="1,0.6,0.4,0.06,0.02" style="display:block;width:160px;padding:4px;border:1px solid #d1d5db;border-radius:5px;font-size:12px"></label>
-            <label title="プール内順位ごとに動かせるプール数。空欄＝既定(0,1,2,…)">プール間可動 k_inter<input type="text" id="so-kinter" placeholder="既定: 0,1,2,3,…" style="display:block;width:160px;padding:4px;border:1px solid #d1d5db;border-radius:5px;font-size:12px"></label>
-            <label title="プール内順位ごとに動かせる順位数。空欄＝既定(上位1/4固定+下位ほど大きく動く凸ランプ)">プール内可動 k_intra<input type="text" id="so-kintra" placeholder="既定: 上位1/4固定+凸ランプ" style="display:block;width:160px;padding:4px;border:1px solid #d1d5db;border-radius:5px;font-size:12px"></label>
+            <label title="プール内順位ごとに動かせるプール数。空欄＝既定(1・2位固定、以降1,2,4,8,…と倍々)">プール間可動 k_inter<input type="text" id="so-kinter" placeholder="既定: 0,0,1,2,4,…" style="display:block;width:160px;padding:4px;border:1px solid #d1d5db;border-radius:5px;font-size:12px"></label>
+            <label title="プール内順位ごとに動かせる順位数。空欄＝既定(上位1/4固定・残り±1。プール間移動した選手も同じ窓)">プール内可動 k_intra<input type="text" id="so-kintra" placeholder="既定: 上位1/4固定・残り±1" style="display:block;width:160px;padding:4px;border:1px solid #d1d5db;border-radius:5px;font-size:12px"></label>
           </div>
         </div>
       </details>
@@ -629,7 +629,7 @@
 </div>
 
 <div class="footer" id="footer-info"></div>
-<div class="footer" style="margin-top:-12px"><span class="site-version" style="font-size:11px;color:#9ca3af">v 6d7a7d3 · 2026-07-11 15:07 UTC</span></div>
+<div class="footer" style="margin-top:-12px"><span class="site-version" style="font-size:11px;color:#9ca3af">v 6736e6f · 2026-07-11 15:34 UTC</span></div>
 
 <!-- Chart.js (lazy load on first graph use) -->
 <script>
@@ -2006,7 +2006,7 @@ async function runSeedOptimize() {
   const params = {
     mode: document.getElementById('so-mode').value,
     restarts: Math.max(1, intDef('so-restarts', 15)),
-    saCooling: Math.min(0.9999, Math.max(0.5, numDef('so-cooling', 0.997))),
+    saCooling: Math.min(0.9999, Math.max(0.5, numDef('so-cooling', 0.999))),
     maxItersScale: Math.max(10, intDef('so-itersscale', 1000)),
     rngSeed: intDef('so-rngseed', 12345),
     avoidRegion, avoidRecent, enableIntra,
