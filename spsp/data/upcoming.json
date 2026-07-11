@@ -1,8 +1,8 @@
 {
-  "generated_at": 1783706411,
+  "generated_at": 1783717211,
   "country_code": "JP",
   "lookahead_days": 21,
-  "count": 43,
+  "count": 44,
   "tournaments": [
     {
       "tournament_id": 920995,
@@ -106,7 +106,7 @@
       "city": "台東区",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 50,
+      "num_attendees": 49,
       "url": "/tournament/11-499",
       "events": [
         {
@@ -534,6 +534,29 @@
       ]
     },
     {
+      "tournament_id": 932061,
+      "tournament_slug": "tournament/9-56",
+      "tournament_name": "もびすまっ！#9",
+      "start_at": 1784278800,
+      "end_at": 1784296800,
+      "is_online": false,
+      "city": "川崎市",
+      "venue_name": "",
+      "country_code": "JP",
+      "num_attendees": 2,
+      "url": "/tournament/9-56",
+      "events": [
+        {
+          "event_id": 1665921,
+          "event_slug": "tournament/9-56/event/super-smash-bros-ultimate-singles",
+          "event_name": "シングルス",
+          "num_entrants": 2,
+          "type": 1,
+          "start_at": 1784278800
+        }
+      ]
+    },
+    {
       "tournament_id": 919380,
       "tournament_slug": "tournament/52-kurobra52",
       "tournament_name": "第52回クロブラ/神奈川スマブラ対戦会クロブラ/Kurobra52",
@@ -543,7 +566,7 @@
       "city": "横浜市",
       "venue_name": "おださがプラザ",
       "country_code": "JP",
-      "num_attendees": 155,
+      "num_attendees": 156,
       "url": "/tournament/52-kurobra52",
       "events": [
         {
@@ -589,14 +612,14 @@
       "city": "福岡市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 392,
+      "num_attendees": 393,
       "url": "/tournament/kowloon-18",
       "events": [
         {
           "event_id": 1622014,
           "event_slug": "tournament/kowloon-18/event/kowloon_sp",
           "event_name": "KOWLOON_SP",
-          "num_entrants": 392,
+          "num_entrants": 393,
           "type": 1,
           "start_at": 1784338200
         }
