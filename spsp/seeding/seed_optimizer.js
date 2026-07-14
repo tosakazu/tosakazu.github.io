@@ -69,15 +69,19 @@
     avoidRecent: true,                   // 直近の再対戦を避けるか
     enableIntra: true,                   // プール内変動（intra 最適化）を行うか（P>=2 のときのみ有効）
     W_region: 1.0,
-    W_recent: 0.3,                       // 必ず < W_region（両方有効なときのみ）
+    W_recent: 0.3,                       // 直近対戦の重み（W_region との大小は自由）
     W_order: 0.001,                      // 元ランキングからのシードズレ罰則(タイブレーカー級, 分離は不悪化)。0で無効
-    orderPow: 1,                         // ズレ罰則の指数（1=線形, 2=2乗で大きなズレを強く罰）
+    orderPow: 2,                         // ズレ罰則の指数（1=線形, 2=2乗で大きなズレを強く罰）。既定2=大移動を選択的に抑制
     prefWeight: 'inv_sqrt',              // 県別出場人数 count → 重み（人数が少ない県ほど大きい）
     roundWeights: [1.0, 0.6, 0.4, 0.06, 0.02], // R1..; 超過は末尾を使用（R3を強めて3回戦被りを回避）
     reportRecentMaxDays: 182.5,          // レポートに載せる直近対戦の最大経過日数（半年）。スコアには無関係
     // 可動制約（初期順位基準）。null ならデフォルト式。
     kInter: null,   // (row1based) -> 動けるプール数。default: 1,2位=0固定 / 3位以降 2^(row-3)
     kIntra: null,   // (rank1based, M) -> 動ける順位数。default: 上位1/4=0固定 / 残り±1
+    // 最終シード番号が元順位から動ける最大数（inter/intra 合成後）。null=無制限。
+    // k_inter/k_intra はプール/順位単位で snake 番号上は最大 2P-1 動き得るため、
+    // 「シード番号でどれだけ動いたか」を直接キャップしたいときに使う。
+    maxSeedShift: null,
     // 探索
     mode: 'multistart-sa',               // 'hillclimb'|'sa'|'multistart-hillclimb'|'multistart-sa'
     restarts: 15,
@@ -228,12 +232,19 @@
     }
 
     // 1 swap の制約チェック: seed i,j(同 row,別 pool)を交換しても両者が初期プール±k 内か。
+    // maxSeedShift 指定時はシード番号ベースの変位（元順位比）も両者ともキャップ内か。
+    const maxShift = params.maxSeedShift != null ? params.maxSeedShift : null;
+    const origRank = params._origRank || {};
     function swapAllowed(order, i, j) {
       const pi = poolOfSeed(i, P), pj = poolOfSeed(j, P);
       const X = order[i], Y = order[j];
       const rowX = rowOfSeed(i, P) + 1, rowY = rowOfSeed(j, P) + 1; // 同じはず
       if (Math.abs(pj - initPool[X]) > kInter(rowX)) return false;   // X→pool pj
       if (Math.abs(pi - initPool[Y]) > kInter(rowY)) return false;   // Y→pool pi
+      if (maxShift != null) {
+        if (Math.abs((j + 1) - (origRank[X] || (j + 1))) > maxShift) return false; // X→seed j+1
+        if (Math.abs((i + 1) - (origRank[Y] || (i + 1))) > maxShift) return false; // Y→seed i+1
+      }
       return true;
     }
 
@@ -308,8 +319,10 @@
     // 初期 within-pool rank（1始まり）を uid ごとに記録。
     const initRank = {};
     for (let i = 0; i < M; i++) initRank[poolUids[i]] = i + 1;
-    // order 罰則: 位置 k の uid は globalSeeds[k]+1 のシードに座る。
-    const gs1 = orderOf && globalSeeds ? globalSeeds.map((s) => s + 1) : null;
+    // 位置 k の uid は globalSeeds[k]+1 のシードに座る（order 罰則と maxSeedShift 判定に使用）。
+    const gs1 = globalSeeds ? globalSeeds.map((s) => s + 1) : null;
+    const maxShift = params.maxSeedShift != null ? params.maxSeedShift : null;
+    const origRank = params._origRank || {};
 
     function swapAllowed(order, i, j) {
       const A = order[i], B2 = order[j];
@@ -320,6 +333,11 @@
       // 交換後の rank（=index+1）が各自の初期 rank ±k 内か。
       if (Math.abs((j + 1) - initRank[A]) > kIntra(initRank[A], M)) return false;
       if (Math.abs((i + 1) - initRank[B2]) > kIntra(initRank[B2], M)) return false;
+      // maxSeedShift: 交換後のグローバルシード番号が元順位 ±maxShift 内か（inter 変位との合成後）。
+      if (maxShift != null && gs1) {
+        if (Math.abs(gs1[j] - (origRank[A] || gs1[j])) > maxShift) return false;
+        if (Math.abs(gs1[i] - (origRank[B2] || gs1[i])) > maxShift) return false;
+      }
       return true;
     }
 
@@ -337,13 +355,13 @@
         // B: 旧 slotJ → 新 slotI
         d += (rw(earliestMeetRound(slotI, slotK)) - rw(earliestMeetRound(slotJ, slotK))) * pp(Bp, C);
       }
-      if (gs1) {  // A→位置 j のシード, B→位置 i のシード
+      if (orderOf && gs1) {  // A→位置 j のシード, B→位置 i のシード
         d += (orderOf(A, gs1[j]) + orderOf(Bp, gs1[i])) - (orderOf(A, gs1[i]) + orderOf(Bp, gs1[j]));
       }
       return d; // (A,B) ペアは slot 入替でも最早回戦が対称ゆえ不変
     }
     function intraOrderTotal(order) {
-      if (!gs1) return 0;
+      if (!orderOf || !gs1) return 0;
       let t = 0;
       for (let k = 0; k < M; k++) t += orderOf(order[k], gs1[k]);
       return t;
@@ -456,13 +474,9 @@
   // ───────────────────────── トップレベル ─────────────────────────
   function resolveParams(p) {
     const out = Object.assign({}, DEFAULT_PARAMS, p || {});
-    // 地域被り優先の不変条件は「両方の罰則が有効」なときのみ要求する。
-    // どちらかを無効化した場合は重み比較に意味がないので課さない。
-    const bothActive = (out.avoidRegion !== false) && (out.avoidRecent !== false);
-    if (bothActive && !(out.W_region > out.W_recent)) {
-      throw new Error('W_region は W_recent より大きくしてください (地域被り優先)。');
-    }
-    // 以降は「黙って壊れる」系の退行防止（fail-loud 方針）:
+    // W_region と W_recent の大小は自由（どちらを優先するかは運用判断。
+    // 以前は W_region > W_recent を強制していたが 2026-07 に撤廃）。
+    // 以下は「黙って壊れる」系の退行防止（fail-loud 方針）:
     // roundWeights が空/非数値だと intra スコアが NaN になり、エラーなしで恒等解が返る。
     if (!Array.isArray(out.roundWeights) || out.roundWeights.length === 0 ||
         out.roundWeights.some((w) => typeof w !== 'number' || !isFinite(w) || w < 0)) {
@@ -474,6 +488,11 @@
       if (Array.isArray(v) && v.some((k) => typeof k !== 'number' || !isFinite(k) || k < 0)) {
         throw new Error(name + ' 配列の要素は 0 以上の数値にしてください。');
       }
+    }
+    // maxSeedShift が負/非数だと全 swap が拒否され、無言で入力がそのまま返る。
+    if (out.maxSeedShift != null &&
+        (typeof out.maxSeedShift !== 'number' || !isFinite(out.maxSeedShift) || out.maxSeedShift < 0)) {
+      throw new Error('maxSeedShift は 0 以上の数値または null にしてください。');
     }
     // 未知 mode は単発 hillclimb に無言降格していたため明示的に弾く。
     if (out.mode != null && !MODE_DEFAULTS[out.mode]) {
@@ -513,7 +532,10 @@
     return order;
   }
 
-  function fullReport(seedOrderBefore, seedOrderAfter, P, pp, params, runIntra, recentPair, recentMeta) {
+  // runIntra: intra 最適化を実行したか（スコアの回戦重み付けに使用）。
+  // reportIntra: プール内（早期回戦）レポートを出すか。DE なら intra 最適化を
+  //   オフにしていても既定ブラケット順の当たりは確定しているので出せる。
+  function fullReport(seedOrderBefore, seedOrderAfter, P, pp, params, runIntra, reportIntra, recentPair, recentMeta) {
     const rw = roundWeightFn(params.roundWeights);
     const prefByUid = params._prefByUid || {}, origRank = params._origRank || {};
     const pwFn = prefWeightFn(params.prefWeight);
@@ -578,7 +600,7 @@
       for (let i = 0; i < pool.length; i++)
         for (let j = i + 1; j < pool.length; j++) {
           const a = pool[i], b = pool[j];
-          const round = runIntra ? earliestMeetRound(slotOf[i + 1], slotOf[j + 1]) : null;
+          const round = reportIntra ? earliestMeetRound(slotOf[i + 1], slotOf[j + 1]) : null;
           // 地域（プール間：同プール被り）
           const pa = params._prefByUid[a], pb = params._prefByUid[b];
           if (pa && pb && pa === pb) {
@@ -589,7 +611,7 @@
               majByPref[pa] = (majByPref[pa] || 0) + 1;
             }
             // プール内：早期回戦(<=earlyRound)で当たる同地域ペアを列挙（最多地域は除外）。
-            if (runIntra && round <= earlyRound && pa !== mostPopRegion) {
+            if (reportIntra && round <= earlyRound && pa !== mostPopRegion) {
               intraEarlyMatchups.push({ a, b, pool: pi, round, region: pa, prefCount: cnt });
             }
           }
@@ -606,7 +628,7 @@
                              lastTournament: (meta && meta.lastTournament) || null,
                              lastNent: (meta && meta.lastNent != null) ? meta.lastNent : null };
               recentInter.push(item);
-              if (runIntra && round <= earlyRound) recentIntra.push(item);
+              if (reportIntra && round <= earlyRound) recentIntra.push(item);
             }
           }
         }
@@ -655,8 +677,9 @@
           },
           recent: { pairs: recentInter.length, top: recentInter.slice(0, 10) },
         },
-        // プール内（同プール内で早期回戦に当たるか）。DE 時のみ。
-        intra: runIntra ? {
+        // プール内（同プール内で早期回戦に当たるか）。DE 時のみ
+        // （intra 最適化オフでも既定ブラケット順の当たりとして報告する）。
+        intra: reportIntra ? {
           earlyRound,
           region: {
             // 早期回戦で当たる同地域ペア（最多地域は除外）。回戦が早い順。
@@ -736,7 +759,7 @@
       seedOrder = seedOrderFromPools(pools, P, N);
     }
 
-    const report = fullReport(seedOrderBefore, seedOrder, P, pp, params, runIntra, recentPair, input.recentMeta);
+    const report = fullReport(seedOrderBefore, seedOrder, P, pp, params, runIntra, gate.runIntra, recentPair, input.recentMeta);
     const poolsOut = poolsFromSeedOrder(seedOrder, P);
 
     return {

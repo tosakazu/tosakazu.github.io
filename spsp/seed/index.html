@@ -630,7 +630,7 @@
 </div>
 
 <div class="footer" id="footer-info"></div>
-<div class="footer" style="margin-top:-12px"><span class="site-version" style="font-size:11px;color:#9ca3af">v 39169dc · 2026-07-14 12:07 UTC</span></div>
+<div class="footer" style="margin-top:-12px"><span class="site-version" style="font-size:11px;color:#9ca3af">v 93f022e · 2026-07-14 15:07 UTC</span></div>
 
 <!-- Chart.js (lazy load on first graph use) -->
 <script>
@@ -2052,11 +2052,6 @@ async function runSeedOptimize() {
   }
   const sizeWeight = document.getElementById('so-sizeweight').value;
   const recentAgg = document.getElementById('so-recentagg').value;
-  // 不変条件は両方の罰則が有効なときだけ要求（どちらか OFF なら重み比較に意味なし）。
-  if (avoidRegion && avoidRecent && !(params.W_region > params.W_recent)) {
-    progress.textContent = '⚠ 地域重みは直近重みより大きくしてください（地域被り優先）。';
-    return;
-  }
 
   document.getElementById('so-run').disabled = true;
   progress.textContent = `データ取得中… (${ranking.length} 名の居住地・対戦履歴)`;
