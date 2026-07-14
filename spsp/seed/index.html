@@ -630,7 +630,7 @@
 </div>
 
 <div class="footer" id="footer-info"></div>
-<div class="footer" style="margin-top:-12px"><span class="site-version" style="font-size:11px;color:#9ca3af">v 93f022e · 2026-07-14 15:07 UTC</span></div>
+<div class="footer" style="margin-top:-12px"><span class="site-version" style="font-size:11px;color:#9ca3af">v b3d0bdf · 2026-07-14 15:51 UTC</span></div>
 
 <!-- Chart.js (lazy load on first graph use) -->
 <script>
@@ -2290,22 +2290,38 @@ function finishSeedOptimize(result, displayOf, note, ranking) {
     const P = result.pools.length;
     const origRank = {};
     ranking.forEach((u, i) => { origRank[u] = i + 1; });
+    // DE 想定順位 (1,2,3,4,5,5,7,7,9,9,9,9,13,…): シード番号を1つの DE ブラケットと
+    // 見なしたときの「シードどおりなら何位で終わるか」。シード番号の ± が実質的な
+    // 順位変化を伴うかどうかがここで分かる (同じタイ帯内の移動なら想定順位は不変)。
+    const dePlace = (s) => (window.SeedOptimizer ? SeedOptimizer.dePlaceOfSeed(s) : s);
     const rows = result.seedOrder.map((u, i) => {
       const seed = i + 1, orig = origRank[u] || null;
       const delta = orig != null ? (seed - orig) : null;   // +は元より下のシードへ
       const pool = (window.SeedOptimizer ? SeedOptimizer.poolOfSeed(i, P) : 0) + 1;
-      return { u, seed, orig, delta, pool };
+      const origDe = orig != null ? dePlace(orig) : null;
+      const newDe = dePlace(seed);
+      return { u, seed, orig, delta, pool, origDe, newDe };
     });
     const moved = rows.filter(r => r.delta != null && r.delta !== 0).length;
     const maxAbs = rows.reduce((m, r) => Math.max(m, Math.abs(r.delta || 0)), 0);
+    const deMoved = rows.filter(r => r.origDe != null && r.origDe !== r.newDe).length;
     let t = `<details style="margin-top:6px"><summary style="cursor:pointer;font-weight:600;color:#374151">🔄 最適化前後の順位比較</summary>`;
-    t += `<div style="font-size:10px;color:#9ca3af">元ランキング順位 → 最適化後のシード順位（${moved}名が移動・最大±${maxAbs}）</div>`;
+    t += `<div style="font-size:10px;color:#9ca3af">元ランキング順位 → 最適化後のシード順位（${moved}名が移動・最大±${maxAbs}、うち DE 想定順位が変わるのは ${deMoved}名）</div>`;
     t += `<table style="margin-top:4px;border-collapse:collapse;font-size:11px;width:100%"><thead><tr style="color:#6b7280;text-align:left">`;
-    t += `<th style="padding:2px 6px">シード</th><th style="padding:2px 6px">P</th><th style="padding:2px 6px">プレイヤー</th><th style="padding:2px 6px">元順位</th><th style="padding:2px 6px">差分</th></tr></thead><tbody>`;
+    t += `<th style="padding:2px 6px">シード</th><th style="padding:2px 6px">P</th><th style="padding:2px 6px">プレイヤー</th><th style="padding:2px 6px">元順位</th><th style="padding:2px 6px">差分</th><th style="padding:2px 6px" title="シード番号を1つのダブルイリミネーションブラケットとして見たときの想定順位 (1,2,3,4,5,5,7,7,9,…)。同じタイ帯内の移動なら実質的な順位は変わらない">DE想定順位</th></tr></thead><tbody>`;
     for (const r of rows) {
       const dcol = r.delta > 0 ? '#b91c1c' : (r.delta < 0 ? '#2563eb' : '#9ca3af');
       const dtxt = r.delta == null ? '—' : (r.delta > 0 ? '↓+' + r.delta : (r.delta < 0 ? '↑' + r.delta : '0'));
-      t += `<tr><td style="padding:2px 6px">${r.seed}</td><td style="padding:2px 6px;color:#9ca3af">${r.pool}</td><td style="padding:2px 6px">${escHtml((displayOf[r.u] || r.u))}</td><td style="padding:2px 6px">${r.orig == null ? '—' : r.orig}</td><td style="padding:2px 6px;color:${dcol}">${dtxt}</td></tr>`;
+      let deTxt;
+      if (r.origDe == null) {
+        deTxt = `<span style="color:#9ca3af">${r.newDe}位</span>`;
+      } else if (r.origDe === r.newDe) {
+        deTxt = `<span style="color:#9ca3af">${r.newDe}位のまま</span>`;
+      } else {
+        const deCol = r.newDe > r.origDe ? '#b91c1c' : '#2563eb';
+        deTxt = `<span style="color:${deCol};font-weight:600">${r.origDe}位 → ${r.newDe}位</span>`;
+      }
+      t += `<tr><td style="padding:2px 6px">${r.seed}</td><td style="padding:2px 6px;color:#9ca3af">${r.pool}</td><td style="padding:2px 6px">${escHtml((displayOf[r.u] || r.u))}</td><td style="padding:2px 6px">${r.orig == null ? '—' : r.orig}</td><td style="padding:2px 6px;color:${dcol}">${dtxt}</td><td style="padding:2px 6px">${deTxt}</td></tr>`;
     }
     t += `</tbody></table></details>`;
     html += t;
