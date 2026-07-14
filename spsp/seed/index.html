@@ -629,7 +629,7 @@
 </div>
 
 <div class="footer" id="footer-info"></div>
-<div class="footer" style="margin-top:-12px"><span class="site-version" style="font-size:11px;color:#9ca3af">v 2792fa2 · 2026-07-14 09:07 UTC</span></div>
+<div class="footer" style="margin-top:-12px"><span class="site-version" style="font-size:11px;color:#9ca3af">v 9569bb7 · 2026-07-14 10:01 UTC</span></div>
 
 <!-- Chart.js (lazy load on first graph use) -->
 <script>
@@ -663,6 +663,17 @@ let filterText = '';
 // MASTER は (uid → record) Map にキャッシュ
 let MASTER_MAP = null;
 let MASTER_META = null;
+// 複数 start.gg アカウント統合表 (old uid → 正規 uid)。site/data/user_merges.json
+// (= build/user_merges.py から生成) を loadMasterData で取得。旧アカウントで
+// エントリーされてもランキング参照・再対戦履歴が正規 uid で引けるようにする。
+let USER_MERGES_MAP = null;
+
+// start.gg から取った user_id を正規 uid に変換 (統合対象でなければそのまま)。
+function canonicalUserId(uid) {
+  if (uid == null || !USER_MERGES_MAP) return uid;
+  const c = USER_MERGES_MAP.get(uid);
+  return c != null ? c : uid;
+}
 // 直近フェッチした event 情報 (phaseId, eventName, entrant list, etc.)
 let EVENT_CONTEXT = null;
 // 被り回避最適化を「適用」した場合のシード順 (= uid 配列)。null なら currentMethod 順。
@@ -729,12 +740,17 @@ async function loadMasterData() {
   const t0 = performance.now();
   // no-cache: デプロイ直後に新 meta と旧 jsonl の混在キャッシュを掴まないよう再検証させる
   // （upcoming.json と同方針。304 で済むので実コストは小さい）。
-  const [metaRes, jsonlRes] = await Promise.all([
+  const [metaRes, jsonlRes, mergesRes] = await Promise.all([
     fetch('../meta.json', { cache: 'no-cache' }),
     fetch('../latest_tjpr_full.jsonl', { cache: 'no-cache' }),
+    fetch('../data/user_merges.json', { cache: 'no-cache' }),
   ]);
   if (!metaRes.ok) throw new Error('meta.json 取得失敗');
   if (!jsonlRes.ok) throw new Error('latest_tjpr_full.jsonl 取得失敗');
+  if (!mergesRes.ok) throw new Error('user_merges.json 取得失敗');
+  const mergesRaw = await mergesRes.json();
+  USER_MERGES_MAP = new Map(
+    Object.entries(mergesRaw).map(([k, v]) => [Number(k), Number(v)]));
   MASTER_META = await metaRes.json();
   META = MASTER_META;  // alias for downstream code
   document.getElementById('footer-info').innerHTML =
@@ -989,7 +1005,7 @@ function entrantNodeToInfo(node) {
     }
   }
   const display = prefix ? (prefix + ' | ' + gamerTag) : gamerTag;
-  return { seedId: null, originalSeed: null, userId: uid, display, entrantId: ent.id != null ? Number(ent.id) : null };
+  return { seedId: null, originalSeed: null, userId: canonicalUserId(uid), display, entrantId: ent.id != null ? Number(ent.id) : null };
 }
 
 function seedNodeToInfo(seedNode) {
@@ -1007,7 +1023,7 @@ function seedNodeToInfo(seedNode) {
     }
   }
   const display = prefix ? (prefix + ' | ' + gamerTag) : gamerTag;
-  return { seedId: sid, originalSeed: sn, userId: uid, display, entrantId: ent.id != null ? Number(ent.id) : null };
+  return { seedId: sid, originalSeed: sn, userId: canonicalUserId(uid), display, entrantId: ent.id != null ? Number(ent.id) : null };
 }
 
 function filterAndRerank(seedInfos) {

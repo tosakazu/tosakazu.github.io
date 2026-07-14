@@ -1,5 +1,5 @@
 {
-  "generated_at": 1783987225,
+  "generated_at": 1783990480,
   "country_code": "JP",
   "lookahead_days": 21,
   "count": 48,
@@ -14,14 +14,14 @@
       "city": "渋谷区",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 15,
+      "num_attendees": 18,
       "url": "/tournament/132-shibuya-tatsu",
       "events": [
         {
           "event_id": 1663322,
           "event_slug": "tournament/132-shibuya-tatsu/event/singles",
           "event_name": "Singles",
-          "num_entrants": 15,
+          "num_entrants": 18,
           "type": 1,
           "start_at": 1784023200
         }
@@ -37,14 +37,14 @@
       "city": "札幌市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 21,
+      "num_attendees": 20,
       "url": "/tournament/pochisuma-last-update",
       "events": [
         {
           "event_id": 1663996,
           "event_slug": "tournament/pochisuma-last-update/event/ultimate-singles",
           "event_name": "Ultimate Singles",
-          "num_entrants": 21,
+          "num_entrants": 20,
           "type": 1,
           "start_at": 1784025000
         }
@@ -152,14 +152,14 @@
       "city": "台東区",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 3,
+      "num_attendees": 4,
       "url": "/tournament/16-502-3",
       "events": [
         {
           "event_id": 1665889,
           "event_slug": "tournament/16-502-3/event/on",
           "event_name": "シングルス（１on１トーナメント）",
-          "num_entrants": 3,
+          "num_entrants": 5,
           "type": 1,
           "start_at": 1784188800
         }
@@ -221,14 +221,14 @@
       "city": "台東区",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 4,
+      "num_attendees": 5,
       "url": "/tournament/17-503",
       "events": [
         {
           "event_id": 1665890,
           "event_slug": "tournament/17-503/event/on",
           "event_name": "シングルス（１on１トーナメント）",
-          "num_entrants": 4,
+          "num_entrants": 5,
           "type": 1,
           "start_at": 1784275200
         }
@@ -366,7 +366,7 @@
           "event_id": 1622014,
           "event_slug": "tournament/kowloon-18/event/kowloon_sp",
           "event_name": "KOWLOON_SP",
-          "num_entrants": 386,
+          "num_entrants": 387,
           "type": 1,
           "start_at": 1784338200
         }
@@ -1088,14 +1088,14 @@
       "city": "宇部市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 0,
+      "num_attendees": 2,
       "url": "/tournament/35-3",
       "events": [
         {
           "event_id": 1668068,
           "event_slug": "tournament/35-3/event/sp-1on1",
           "event_name": "スマブラSP 1on1",
-          "num_entrants": 0,
+          "num_entrants": 2,
           "type": 1,
           "start_at": 1785643200
         }
