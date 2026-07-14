@@ -204,10 +204,17 @@
         recentPair[key] = useMax
           ? Math.max(recentPair[key] || 0, val)
           : (recentPair[key] || 0) + val;
-        const meta = recentMeta[key] || (recentMeta[key] = { penalty: 0, count: 0, lastDate: null, lastDeltaDays: null });
+        const meta = recentMeta[key] || (recentMeta[key] = {
+          penalty: 0, count: 0, lastDate: null, lastDeltaDays: null,
+          lastTournament: null, lastNent: null,
+        });
         meta.penalty = useMax ? Math.max(meta.penalty, val) : meta.penalty + val;
         meta.count += 1;
-        if (!meta.lastDate || m.date > meta.lastDate) meta.lastDate = m.date;
+        if (!meta.lastDate || m.date > meta.lastDate) {
+          meta.lastDate = m.date;
+          meta.lastTournament = m.tournament_name || null;
+          meta.lastNent = (nent != null) ? nent : null;
+        }
         const delta = todayDays - dd;
         if (meta.lastDeltaDays == null || delta < meta.lastDeltaDays) meta.lastDeltaDays = delta;
       }

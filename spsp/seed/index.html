@@ -629,7 +629,7 @@
 </div>
 
 <div class="footer" id="footer-info"></div>
-<div class="footer" style="margin-top:-12px"><span class="site-version" style="font-size:11px;color:#9ca3af">v d1c848a · 2026-07-11 18:07 UTC</span></div>
+<div class="footer" style="margin-top:-12px"><span class="site-version" style="font-size:11px;color:#9ca3af">v 2792fa2 · 2026-07-14 09:07 UTC</span></div>
 
 <!-- Chart.js (lazy load on first graph use) -->
 <script>
@@ -2200,7 +2200,13 @@ function finishSeedOptimize(result, displayOf, note, ranking) {
   // 直近対戦セルの描画。
   function recentCell(recent, withRound) {
     let h = `<div style="margin-top:5px;font-size:11px;color:#374151">同プールに残る直近対戦: <strong>${recent.pairs}</strong> 組${recent.top.length ? '（上位）' : ''}</div>`;
-    h += ul(recent.top.map(c => `${dn(c.a)} × ${dn(c.b)}（P${c.pool + 1}${withRound ? ' / ' + c.round + '回戦' : ''} / ${c.count}回, 最終${c.lastDate}）`));
+    h += ul(recent.top.map(c => {
+      // 最終対戦の大会名と規模（データが無い古いペアは日付のみ）。
+      const t = c.lastTournament
+        ? ` ${escHtml(c.lastTournament)}${c.lastNent != null ? `〈${c.lastNent}人〉` : ''}`
+        : '';
+      return `${dn(c.a)} × ${dn(c.b)}（P${c.pool + 1}${withRound ? ' / ' + c.round + '回戦' : ''} / ${c.count}回, 最終${c.lastDate}${t}）`;
+    }));
     return h;
   }
 
