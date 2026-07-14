@@ -62,6 +62,20 @@
     return t;
   }
 
+  // シード s(1始まり) のダブルイリミネーション想定順位 (= 全試合シードどおりに
+  // 決まった場合の最終順位)。1,2,3,4 の後はタイ帯 5,5 / 7,7 / 9×4 / 13×4 /
+  // 17×8 / 25×8 / 33×16 … (帯幅は2段ごとに倍) で並ぶ。
+  function dePlaceOfSeed(seed1) {
+    if (seed1 <= 4) return seed1;
+    let start = 5, size = 2, step = 0;
+    while (seed1 >= start + size) {
+      start += size;
+      step++;
+      if (step % 2 === 0) size *= 2;
+    }
+    return start;
+  }
+
   // ───────────────────────── デフォルトパラメータ ─────────────────────────
   const DEFAULT_PARAMS = {
     // 罰則のオンオフ（UI トグル対応）。false で該当罰則を完全に無効化する。
@@ -777,6 +791,7 @@
     // 個別関数（テスト・再利用）
     makeRng, randInt,
     poolOfSeed, rowOfSeed, seedSlotOrder, slotOfSeedMap, earliestMeetRound, nextPow2,
+    dePlaceOfSeed,
     buildPairPenalty, derivePrefCounts, prefWeightFn, roundWeightFn, pairKey,
     scoreInterFull, scoreIntraPoolFull,
     poolsFromSeedOrder, seedOrderFromPools, gateFormat,
