@@ -633,7 +633,7 @@
 </div>
 
 <div class="footer" id="footer-info"></div>
-<div class="footer" style="margin-top:-12px"><span class="site-version" style="font-size:11px;color:#9ca3af">v 839751e · 2026-07-15 11:38 UTC</span></div>
+<div class="footer" style="margin-top:-12px"><span class="site-version" style="font-size:11px;color:#9ca3af">v 3ac410f · 2026-07-15 11:45 UTC</span></div>
 
 <!-- Chart.js (lazy load on first graph use) -->
 <script>
@@ -2325,20 +2325,20 @@ function finishSeedOptimize(result, displayOf, note, ranking) {
     for (const r of rows) {
       const dcol = r.delta > 0 ? '#b91c1c' : (r.delta < 0 ? '#2563eb' : '#9ca3af');
       const dtxt = r.delta == null ? '—' : (r.delta > 0 ? '↓+' + r.delta : (r.delta < 0 ? '↑' + r.delta : '0'));
+      // 表記は数値のみ（「位」「番手」は書かない）。不変はグレー数値、変動は色付き矢印。
       let deTxt;
-      if (r.origDe == null) {
-        deTxt = `<span style="color:#9ca3af">${r.newDe}位</span>`;
-      } else if (r.origDe === r.newDe) {
-        deTxt = `<span style="color:#9ca3af">${r.newDe}位</span>`;
+      if (r.origDe == null || r.origDe === r.newDe) {
+        deTxt = `<span style="color:#9ca3af">${r.newDe}</span>`;
       } else {
         const deCol = r.newDe > r.origDe ? '#b91c1c' : '#2563eb';
-        deTxt = `<span style="color:${deCol};font-weight:600">${r.origDe}位 → ${r.newDe}位</span>`;
+        deTxt = `<span style="color:${deCol};font-weight:600">${r.origDe} → ${r.newDe}</span>`;
       }
-      // プール内順位が動いた人だけ矢印表示（不変・不明は空欄。番手の定常表示はしない）。
-      let prTxt = '';
-      if (r.origPr != null && r.origPr !== r.newPr) {
+      let prTxt;
+      if (r.origPr == null || r.origPr === r.newPr) {
+        prTxt = `<span style="color:#9ca3af">${r.newPr}</span>`;
+      } else {
         const prCol = r.newPr > r.origPr ? '#b91c1c' : '#2563eb';
-        prTxt = `<span style="color:${prCol};font-weight:600">${r.origPr}番手 → ${r.newPr}番手</span>`;
+        prTxt = `<span style="color:${prCol};font-weight:600">${r.origPr} → ${r.newPr}</span>`;
       }
       t += `<tr><td style="padding:2px 6px">${r.seed}</td><td style="padding:2px 6px;color:#9ca3af">${r.pool}</td><td style="padding:2px 6px">${escHtml((displayOf[r.u] || r.u))}</td><td style="padding:2px 6px">${r.orig == null ? '—' : r.orig}</td><td style="padding:2px 6px;color:${dcol}">${dtxt}</td><td style="padding:2px 6px">${deTxt}</td><td style="padding:2px 6px">${prTxt}</td></tr>`;
     }
