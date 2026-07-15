@@ -160,10 +160,11 @@
       const lvBadge = _lv > 0
         ? `<span class="lv-badge lv-${_lv}">Lv${_lv}${_lvsfx}</span>`
         : '<span style="opacity:0.4">−</span>';
-      // 実質平日 = 実暦は土日祝だが計算上は平日扱い (プレ大会 / 大菊月等の特定シリーズ)
+      // 実質平日 = 実暦は土日祝だが計算上は平日扱いの特定シリーズ (大菊月等)。
+      // プレ大会も計算上は平日扱いだが、タグは従来どおり 平日 + プレ大会 で表す。
       const dayTag = t.is_weekend
         ? '<span class="tag-wk">休日</span>'
-        : (t.is_weekend_real
+        : (t.is_weekend_real && !t.is_pre
           ? '<span class="tag-wd" title="土日祝の開催ですが、ランキング計算上は平日大会として扱われます">実質平日</span>'
           : '<span class="tag-wd">平日</span>');
       const smTag = '';

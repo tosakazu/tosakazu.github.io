@@ -526,7 +526,7 @@
 </div>
 
 <div class="footer" id="footer-info"></div>
-<div class="footer" style="margin-top:-12px"><span class="site-version" style="font-size:11px;color:#9ca3af">v 560df3d · 2026-07-15 09:36 UTC</span></div>
+<div class="footer" style="margin-top:-12px"><span class="site-version" style="font-size:11px;color:#9ca3af">v dd5fc2c · 2026-07-15 09:44 UTC</span></div>
 
 <button id="scroll-top" aria-label="ページの一番上へ戻る" title="一番上へ" hidden>↑</button>
 
@@ -587,7 +587,7 @@ async function loadData() {
     }
     // ヘッダ (nav bar) に「最終更新時刻 · バージョン」を表示
     const genTime = (META.generated_at || META.eval_date || '').split('.')[0].replace('T', ' ');
-    const SITE_VERSION_FULL = 'v 560df3d · 2026-07-15 09:36 UTC';
+    const SITE_VERSION_FULL = 'v dd5fc2c · 2026-07-15 09:44 UTC';
     const versionShort = SITE_VERSION_FULL.split(' · ')[0] || SITE_VERSION_FULL;
     const navMeta = document.getElementById('meta-info');
     if (navMeta) navMeta.textContent = `最終更新 ${genTime} · ${versionShort}`;
@@ -1114,7 +1114,7 @@ async function renderChart(rec, chartType, container) {
                   `順位: ${t.place || '?'} / ${t.nent}`,
                 ];
                 if (t.is_weekend !== undefined) {
-                  const tags = [t.is_weekend ? '休日' : (t.is_weekend_real ? '実質平日' : '平日')];
+                  const tags = [t.is_weekend ? '休日' : (t.is_weekend_real && !t.is_pre ? '実質平日' : '平日')];
                   if (t.is_smapa) tags.push('スマパ');
                   if (t.is_pre) tags.push('プレ大会');
                   if (t.is_restricted) tags.push('制限大会');
