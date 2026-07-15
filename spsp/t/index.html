@@ -435,7 +435,7 @@
   </div>
 
   <div class="footer" id="footer-info">
-    <span class="site-version" style="font-size:11px;color:#9ca3af">v e2604fa · 2026-07-15 06:07 UTC</span>
+    <span class="site-version" style="font-size:11px;color:#9ca3af">v 00803ae · 2026-07-15 09:07 UTC</span>
   </div>
 </main>
 
@@ -557,9 +557,12 @@ function render() {
   // 暫定順位のみ)。決勝が報告され次第、再取得で正式集計される。
   if (TOURNEY.is_gf_missing)
     chips.push('<span class="chip gf" title="決勝(Grand Finals)が未報告のため暫定順位のみ。ポイントは未反映で、結果確定後に集計されます">未完了</span>');
+  // 実質平日 = 実暦は土日祝だが計算上は平日扱い (プレ大会 / 大菊月等の特定シリーズ)
   chips.push(TOURNEY.is_weekend
     ? '<span class="chip wk">休日</span>'
-    : '<span class="chip wd">平日</span>');
+    : (TOURNEY.is_weekend_real
+      ? '<span class="chip wd" title="土日祝の開催ですが、ランキング計算上は平日大会として扱われます">実質平日</span>'
+      : '<span class="chip wd">平日</span>'));
   if (TOURNEY.is_pre) chips.push('<span class="chip pre">プレ大会</span>');
   if (TOURNEY.is_restricted) chips.push('<span class="chip res">制限</span>');
   if (TOURNEY.is_lower_class) chips.push('<span class="chip lc">下位クラス</span>');
