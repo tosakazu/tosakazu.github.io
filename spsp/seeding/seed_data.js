@@ -79,6 +79,11 @@
     //   'max'(既定): そのペアの最も重い1試合だけ採用（対戦回数に依らず横並び）。
     //   'sum'       : 全対戦の罰則を合算（頻度の高い常連カードほど重く＝強く分離）。
     recentAgg: 'max',
+    // true なら平日扱いの大会 (is_weekend=false = 平日開催 + 実質平日 + プレ大会) での
+    // 対戦を直近対戦罰則の集計から除外する。休日/平日の判定は出場者全員の
+    // tournaments[] から作る event_id→is_weekend 表による。表に無い大会（is_weekend
+    // 不明）は除外しない（= 保守的に再対戦回避の対象に残す。件数は meta で明示）。
+    excludeWeekday: false,
   };
 
   // ── デフォルト fetch（ブラウザ用）。prefix は seed ページからの相対パス基準。
@@ -175,6 +180,20 @@
     const recentPair = {};
     const recentMeta = {};
     const seenMatch = new Set();   // pair|event|phase|round|date（同一試合の両側記録デデュープ）
+    // excludeWeekday 用: event_id → is_weekend（計算上の休日扱い）。出場者全員の
+    // tournaments[] を先に走査して作る（片側の JSON にしか大会情報が無くても
+    // どちらの選手から処理しても同じ判定になる = 対称）。
+    const weekendOf = {};
+    if (params.excludeWeekday) {
+      for (const uid of ranking) {
+        const pj = players[uid];
+        if (!pj || !Array.isArray(pj.tournaments)) continue;
+        for (const t of pj.tournaments) {
+          if (t && t.event_id != null && typeof t.is_weekend === 'boolean') weekendOf[t.event_id] = t.is_weekend;
+        }
+      }
+    }
+    let weekdayExcludedMatches = 0;   // excludeWeekday で除外した試合数（UI 明示用）
     for (const uid of ranking) {
       const pj = players[uid];
       if (!pj || !Array.isArray(pj.recent_matches)) continue;
@@ -194,6 +213,10 @@
           '|' + (m.round_text || '') + '|' + m.date;
         if (seenMatch.has(matchKey)) continue;   // 相手側ファイルで集計済みの同一試合
         seenMatch.add(matchKey);
+        if (params.excludeWeekday && m.event_id != null && weekendOf[m.event_id] === false) {
+          weekdayExcludedMatches++;   // ユニーク試合単位（dedup 後）でカウント
+          continue;   // 平日扱いの大会（実質平日・プレ含む）は考慮しない
+        }
         const decay = decayFn(todayDays - dd);
         if (decay <= 0) continue;          // 365日超は罰則0
         const nent = nentOf[m.event_id];
@@ -229,6 +252,7 @@
         errors,                  // 通信エラー（UI で明示すべき）
         prefIdentified: Object.values(prefByUid).filter(Boolean).length,
         prefsError,              // prefsOptional=true で取得失敗したときのメッセージ（UI で明示）
+        weekdayExcludedMatches,  // excludeWeekday=true で除外したユニーク試合数（false なら 0）
       },
     };
   }

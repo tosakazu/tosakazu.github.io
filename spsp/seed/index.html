@@ -546,6 +546,9 @@
       <label title="地域被り（同じ都道府県/地域の選手が同じプールに固まる）を避ける"><input type="checkbox" id="so-avoid-region" checked> 地域被りを避ける</label>
       <label title="直近に対戦した相手と再び早期に当たるのを避ける"><input type="checkbox" id="so-avoid-recent" checked> 直近対戦を避ける</label>
       <span style="color:#d1d5db">｜</span>
+      <label title="全員のダブルイリミネーション想定順位（1,2,3,4,5,5,7,7,9,9,9,9,…のタイ帯）が元シードから変わらない範囲でのみ入れ替える"><input type="checkbox" id="so-keep-deplace"> DE想定順位を変えない</label>
+      <label title="平日扱いの大会（平日開催・実質平日・プレ大会）での対戦を「直近対戦」の考慮対象から除く"><input type="checkbox" id="so-exclude-weekday"> 平日大会の対戦を除く</label>
+      <span style="color:#d1d5db">｜</span>
       <label title="東京・神奈川・埼玉・千葉を同一地域(南関東)として扱う"><input type="checkbox" id="so-group-minamikanto" checked> 東京・神奈川・埼玉・千葉をまとめる</label>
       <label title="兵庫・大阪・京都を同一地域(京阪神)として扱う"><input type="checkbox" id="so-group-keihanshin"> 兵庫・大阪・京都をまとめる</label>
     </div>
@@ -630,7 +633,7 @@
 </div>
 
 <div class="footer" id="footer-info"></div>
-<div class="footer" style="margin-top:-12px"><span class="site-version" style="font-size:11px;color:#9ca3af">v dd5fc2c · 2026-07-15 09:44 UTC</span></div>
+<div class="footer" style="margin-top:-12px"><span class="site-version" style="font-size:11px;color:#9ca3af">v f2f4692 · 2026-07-15 10:48 UTC</span></div>
 
 <!-- Chart.js (lazy load on first graph use) -->
 <script>
@@ -2013,6 +2016,9 @@ async function runSeedOptimize() {
   const avoidRegion = document.getElementById('so-avoid-region').checked;
   const avoidRecent = document.getElementById('so-avoid-recent').checked;
   const enableIntra = document.getElementById('so-enable-intra').checked;
+  // 追加制約トグル: DE 想定順位不変 / 平日大会（実質平日・プレ含む）の対戦を考慮しない。
+  const keepDePlace = document.getElementById('so-keep-deplace').checked;
+  const excludeWeekday = document.getElementById('so-exclude-weekday').checked;
   // 地域グルーピングのトグル（南関東 / 兵庫・大阪・京都）。
   const groupMinamiKanto = document.getElementById('so-group-minamikanto').checked;
   const groupKeihanshin = document.getElementById('so-group-keihanshin').checked;
@@ -2026,7 +2032,7 @@ async function runSeedOptimize() {
     saCooling: Math.min(0.9999, Math.max(0.5, numDef('so-cooling', 0.999))),
     maxItersScale: Math.max(10, intDef('so-itersscale', 1000)),
     rngSeed: intDef('so-rngseed', 12345),
-    avoidRegion, avoidRecent, enableIntra,
+    avoidRegion, avoidRecent, enableIntra, keepDePlace,
     W_region: numDef('so-wregion', 1.0),
     W_recent: numDef('so-wrecent', 0.3),
     W_order: Math.max(0, numDef('so-worder', 0)),
@@ -2059,7 +2065,7 @@ async function runSeedOptimize() {
   // 1) 取得・集計（メインスレッド。fetch はここだけ）。
   let bundle;
   try {
-    const dataParams = { sizeWeight, recentAgg };
+    const dataParams = { sizeWeight, recentAgg, excludeWeekday };
     if (recentDecayPoints) dataParams.recentDecayPoints = recentDecayPoints;  // 空欄なら既定を使う
     // 地域グルーピング表をトグルから構築（避けない地域があっても prefByUid 計算は行い、罰則側で無効化）。
     const regionGroups = SeedData.buildRegionGroups({ minamiKanto: groupMinamiKanto, keihanshin: groupKeihanshin });
@@ -2082,6 +2088,7 @@ async function runSeedOptimize() {
   // 取得状況（同意なきフォールバック禁止 → missing/errors を明示）。
   const m = bundle.meta;
   let note = `居住地特定 ${m.prefIdentified}/${m.attendees} 名`;
+  if (excludeWeekday) note += ` · 平日大会の対戦 ${m.weekdayExcludedMatches || 0} 試合を考慮外`;
   if (m.missing.length) note += ` · DB未登録 ${m.missing.length} 名（対戦履歴なし扱い）`;
   if (m.errors.length) note += ` · ⚠ 取得失敗 ${m.errors.length} 名`;
   if (m.prefsError) note += ` · ⚠ 居住地データ取得失敗（地域表示なし）`;

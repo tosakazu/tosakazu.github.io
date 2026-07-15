@@ -96,6 +96,9 @@
     // k_inter/k_intra はプール/順位単位で snake 番号上は最大 2P-1 動き得るため、
     // 「シード番号でどれだけ動いたか」を直接キャップしたいときに使う。
     maxSeedShift: null,
+    // true なら DE 想定順位 (dePlaceOfSeed: 1,2,3,4,5,5,7,7,9×4,…) が全員
+    // 元シードから不変になる範囲でのみ入れ替える（同タイ帯内の移動のみ許可）。
+    keepDePlace: false,
     // 探索
     mode: 'multistart-sa',               // 'hillclimb'|'sa'|'multistart-hillclimb'|'multistart-sa'
     restarts: 15,
@@ -247,7 +250,9 @@
 
     // 1 swap の制約チェック: seed i,j(同 row,別 pool)を交換しても両者が初期プール±k 内か。
     // maxSeedShift 指定時はシード番号ベースの変位（元順位比）も両者ともキャップ内か。
+    // keepDePlace 指定時は DE 想定順位（タイ帯）が元シードから不変か。
     const maxShift = params.maxSeedShift != null ? params.maxSeedShift : null;
+    const keepDe = params.keepDePlace === true;
     const origRank = params._origRank || {};
     function swapAllowed(order, i, j) {
       const pi = poolOfSeed(i, P), pj = poolOfSeed(j, P);
@@ -258,6 +263,10 @@
       if (maxShift != null) {
         if (Math.abs((j + 1) - (origRank[X] || (j + 1))) > maxShift) return false; // X→seed j+1
         if (Math.abs((i + 1) - (origRank[Y] || (i + 1))) > maxShift) return false; // Y→seed i+1
+      }
+      if (keepDe) {
+        if (dePlaceOfSeed(j + 1) !== dePlaceOfSeed(origRank[X] || (j + 1))) return false;
+        if (dePlaceOfSeed(i + 1) !== dePlaceOfSeed(origRank[Y] || (i + 1))) return false;
       }
       return true;
     }
@@ -336,6 +345,7 @@
     // 位置 k の uid は globalSeeds[k]+1 のシードに座る（order 罰則と maxSeedShift 判定に使用）。
     const gs1 = globalSeeds ? globalSeeds.map((s) => s + 1) : null;
     const maxShift = params.maxSeedShift != null ? params.maxSeedShift : null;
+    const keepDe = params.keepDePlace === true;
     const origRank = params._origRank || {};
 
     function swapAllowed(order, i, j) {
@@ -351,6 +361,11 @@
       if (maxShift != null && gs1) {
         if (Math.abs(gs1[j] - (origRank[A] || gs1[j])) > maxShift) return false;
         if (Math.abs(gs1[i] - (origRank[B2] || gs1[i])) > maxShift) return false;
+      }
+      // keepDePlace: 交換後のグローバルシードの DE 想定順位が元シードと同じタイ帯か。
+      if (keepDe && gs1) {
+        if (dePlaceOfSeed(gs1[j]) !== dePlaceOfSeed(origRank[A] || gs1[j])) return false;
+        if (dePlaceOfSeed(gs1[i]) !== dePlaceOfSeed(origRank[B2] || gs1[i])) return false;
       }
       return true;
     }
@@ -508,6 +523,8 @@
         (typeof out.maxSeedShift !== 'number' || !isFinite(out.maxSeedShift) || out.maxSeedShift < 0)) {
       throw new Error('maxSeedShift は 0 以上の数値または null にしてください。');
     }
+    // keepDePlace は truthy 文字列等が「無言で無効」にならないよう boolean に正規化。
+    out.keepDePlace = !!out.keepDePlace;
     // 未知 mode は単発 hillclimb に無言降格していたため明示的に弾く。
     if (out.mode != null && !MODE_DEFAULTS[out.mode]) {
       throw new Error('未知の mode: ' + out.mode + ' (対応: ' + Object.keys(MODE_DEFAULTS).join(', ') + ')');
