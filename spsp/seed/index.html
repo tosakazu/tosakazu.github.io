@@ -633,7 +633,7 @@
 </div>
 
 <div class="footer" id="footer-info"></div>
-<div class="footer" style="margin-top:-12px"><span class="site-version" style="font-size:11px;color:#9ca3af">v 3ac410f · 2026-07-15 11:45 UTC</span></div>
+<div class="footer" style="margin-top:-12px"><span class="site-version" style="font-size:11px;color:#9ca3af">v 483d2b9 · 2026-07-15 12:04 UTC</span></div>
 
 <!-- Chart.js (lazy load on first graph use) -->
 <script>
@@ -2221,13 +2221,23 @@ function finishSeedOptimize(result, displayOf, note, ranking) {
   // 直近対戦セルの描画。
   function recentCell(recent, withRound) {
     let h = `<div style="margin-top:5px;font-size:11px;color:#374151">同プールに残る直近対戦: <strong>${recent.pairs}</strong> 組${recent.top.length ? '（上位）' : ''}</div>`;
-    h += ul(recent.top.map(c => {
-      // 最終対戦の大会名と規模（データが無い古いペアは日付のみ）。
+    if (!recent.top.length) return h;
+    // 各ペアはタップで過去の対戦履歴（日付・大会名・規模）を展開できる <details>。
+    h += `<div style="margin:3px 0 0;padding-left:6px;font-size:11px;color:#374151">`;
+    h += recent.top.map(c => {
       const t = c.lastTournament
         ? ` ${escHtml(c.lastTournament)}${c.lastNent != null ? `〈${c.lastNent}人〉` : ''}`
         : '';
-      return `${dn(c.a)} × ${dn(c.b)}（P${c.pool + 1}${withRound ? ' / ' + c.round + '回戦' : ''} / ${c.count}回, 最終${c.lastDate}${t}）`;
-    }));
+      const line = `${dn(c.a)} × ${dn(c.b)}（P${c.pool + 1}${withRound ? ' / ' + c.round + '回戦' : ''} / ${c.count}回, 最終${c.lastDate}${t}）`;
+      const ms = Array.isArray(c.matches) ? c.matches : [];
+      if (!ms.length) return `<div style="padding:1px 0 1px 12px">${line}</div>`;
+      const hist = ms.map(m =>
+        `<div>${escHtml(m.date || '?')} ${m.tournament ? escHtml(m.tournament) : '（大会名不明）'}${m.nent != null ? `〈${m.nent}人〉` : ''}</div>`
+      ).join('');
+      return `<details style="padding:1px 0"><summary style="cursor:pointer">${line}</summary>` +
+        `<div style="margin:2px 0 4px 18px;color:#6b7280">${hist}</div></details>`;
+    }).join('');
+    h += `</div>`;
     return h;
   }
 

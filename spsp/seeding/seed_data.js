@@ -230,9 +230,15 @@
         const meta = recentMeta[key] || (recentMeta[key] = {
           penalty: 0, count: 0, lastDate: null, lastDeltaDays: null,
           lastTournament: null, lastNent: null,
+          matches: [],   // 個別対戦履歴（レポートのペア展開表示用）。decay>0 の期間内のみ
         });
         meta.penalty = useMax ? Math.max(meta.penalty, val) : meta.penalty + val;
         meta.count += 1;
+        meta.matches.push({
+          date: m.date,
+          tournament: m.tournament_name || null,
+          nent: (nent != null) ? nent : null,
+        });
         if (!meta.lastDate || m.date > meta.lastDate) {
           meta.lastDate = m.date;
           meta.lastTournament = m.tournament_name || null;
@@ -241,6 +247,10 @@
         const delta = todayDays - dd;
         if (meta.lastDeltaDays == null || delta < meta.lastDeltaDays) meta.lastDeltaDays = delta;
       }
+    }
+    // ペアごとの対戦履歴を新しい順に整列（表示用）。
+    for (const key in recentMeta) {
+      recentMeta[key].matches.sort((x, y) => (x.date < y.date ? 1 : (x.date > y.date ? -1 : 0)));
     }
 
     return {

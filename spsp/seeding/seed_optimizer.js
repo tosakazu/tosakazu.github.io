@@ -657,7 +657,9 @@
               const item = { a, b, pool: pi, round, recentPenalty: rawRecent,
                              lastDate: meta ? meta.lastDate : null, count: meta ? meta.count : null,
                              lastTournament: (meta && meta.lastTournament) || null,
-                             lastNent: (meta && meta.lastNent != null) ? meta.lastNent : null };
+                             lastNent: (meta && meta.lastNent != null) ? meta.lastNent : null,
+                             // 個別対戦履歴（UI のペア展開表示用。recentMeta に無い古い形式では null）
+                             matches: (meta && Array.isArray(meta.matches)) ? meta.matches : null };
               recentInter.push(item);
               if (reportIntra && round <= earlyRound) recentIntra.push(item);
             }
