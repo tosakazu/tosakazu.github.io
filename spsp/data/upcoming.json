@@ -1,5 +1,5 @@
 {
-  "generated_at": 1784073638,
+  "generated_at": 1784075376,
   "country_code": "JP",
   "lookahead_days": 21,
   "count": 49,
@@ -37,14 +37,14 @@
       "city": "中野区",
       "venue_name": "Red Bull Gaming Sphere Tokyo",
       "country_code": "JP",
-      "num_attendees": 75,
+      "num_attendees": 74,
       "url": "/tournament/weekly-smash-party-238",
       "events": [
         {
           "event_id": 1664911,
           "event_slug": "tournament/weekly-smash-party-238/event/special-1on1-ultimate-singles",
           "event_name": "SPECIAL 1on1/ Ultimate Singles",
-          "num_entrants": 62,
+          "num_entrants": 63,
           "type": 1,
           "start_at": 1784106000
         }
@@ -175,14 +175,14 @@
       "city": "福岡市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 5,
+      "num_attendees": 6,
       "url": "/tournament/5-103",
       "events": [
         {
           "event_id": 1668069,
           "event_slug": "tournament/5-103/event/super-smash-bros-ultimate-singles",
           "event_name": "あざスマ",
-          "num_entrants": 5,
+          "num_entrants": 6,
           "type": 1,
           "start_at": 1784257200
         }
@@ -336,7 +336,7 @@
       "city": "福岡市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 390,
+      "num_attendees": 391,
       "url": "/tournament/kowloon-18",
       "events": [
         {
@@ -405,14 +405,14 @@
       "city": "茅野市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 19,
+      "num_attendees": 20,
       "url": "/tournament/-3110",
       "events": [
         {
           "event_id": 1646508,
           "event_slug": "tournament/-3110/event/super-smash-bros-ultimate-singles",
           "event_name": "凶華彗月　本戦トーナメント",
-          "num_entrants": 19,
+          "num_entrants": 21,
           "type": 1,
           "start_at": 1784419200
         }
@@ -1111,14 +1111,14 @@
       "city": "宇部市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 4,
+      "num_attendees": 5,
       "url": "/tournament/35-3",
       "events": [
         {
           "event_id": 1668068,
           "event_slug": "tournament/35-3/event/sp-1on1",
           "event_name": "スマブラSP 1on1",
-          "num_entrants": 4,
+          "num_entrants": 5,
           "type": 1,
           "start_at": 1785643200
         }

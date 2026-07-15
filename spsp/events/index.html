@@ -321,7 +321,7 @@ function render() {
       const tags = [];
       if (e.is_gf_missing) tags.push('<span class="tag tag-gf" title="決勝(Grand Finals)が未報告のため暫定順位のみ。ポイントは未反映で、結果確定後に集計されます">未完了</span>');
       if (e.is_weekend) tags.push('<span class="tag tag-wk">休日</span>');
-      else if (e.is_weekend_real) tags.push('<span class="tag tag-wd" title="土日祝の開催ですが、ランキング計算上は平日大会として扱われます">実質平日</span>');
+      else if (e.is_weekend_real && !e.is_pre) tags.push('<span class="tag tag-wd" title="土日祝の開催ですが、ランキング計算上は平日大会として扱われます">実質平日</span>');
       else tags.push('<span class="tag tag-wd">平日</span>');
       if (e.is_pre) tags.push('<span class="tag tag-pre">プレ大会</span>');
       if (e.is_restricted) tags.push('<span class="tag tag-restr">制限</span>');
