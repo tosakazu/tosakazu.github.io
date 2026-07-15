@@ -546,7 +546,7 @@
       <label title="地域被り（同じ都道府県/地域の選手が同じプールに固まる）を避ける"><input type="checkbox" id="so-avoid-region" checked> 地域被りを避ける</label>
       <label title="直近に対戦した相手と再び早期に当たるのを避ける"><input type="checkbox" id="so-avoid-recent" checked> 直近対戦を避ける</label>
       <span style="color:#d1d5db">｜</span>
-      <label title="全員のダブルイリミネーション想定順位（1,2,3,4,5,5,7,7,9,9,9,9,…のタイ帯）が元シードから変わらない範囲でのみ入れ替える"><input type="checkbox" id="so-keep-deplace"> DE想定順位を変えない</label>
+      <label title="全員のダブルイリミネーション想定順位（1,2,3,4,5,5,7,7,9,9,9,9,…のタイ帯）が元シードから変わらない範囲でのみ入れ替える"><input type="checkbox" id="so-keep-deplace" checked> DE想定順位を変えない</label>
       <label title="平日扱いの大会（平日開催・実質平日・プレ大会）での対戦を「直近対戦」の考慮対象から除く"><input type="checkbox" id="so-exclude-weekday"> 平日大会の対戦を除く</label>
       <span style="color:#d1d5db">｜</span>
       <label title="東京・神奈川・埼玉・千葉を同一地域(南関東)として扱う"><input type="checkbox" id="so-group-minamikanto" checked> 東京・神奈川・埼玉・千葉をまとめる</label>
@@ -633,7 +633,7 @@
 </div>
 
 <div class="footer" id="footer-info"></div>
-<div class="footer" style="margin-top:-12px"><span class="site-version" style="font-size:11px;color:#9ca3af">v f2f4692 · 2026-07-15 10:48 UTC</span></div>
+<div class="footer" style="margin-top:-12px"><span class="site-version" style="font-size:11px;color:#9ca3af">v c1f8dba · 2026-07-15 10:59 UTC</span></div>
 
 <!-- Chart.js (lazy load on first graph use) -->
 <script>
@@ -2323,7 +2323,7 @@ function finishSeedOptimize(result, displayOf, note, ranking) {
       if (r.origDe == null) {
         deTxt = `<span style="color:#9ca3af">${r.newDe}位</span>`;
       } else if (r.origDe === r.newDe) {
-        deTxt = `<span style="color:#9ca3af">${r.newDe}位のまま</span>`;
+        deTxt = `<span style="color:#9ca3af">${r.newDe}位</span>`;
       } else {
         const deCol = r.newDe > r.origDe ? '#b91c1c' : '#2563eb';
         deTxt = `<span style="color:${deCol};font-weight:600">${r.origDe}位 → ${r.newDe}位</span>`;
