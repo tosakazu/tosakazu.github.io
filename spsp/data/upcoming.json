@@ -1,55 +1,9 @@
 {
-  "generated_at": 1784106033,
+  "generated_at": 1784116830,
   "country_code": "JP",
   "lookahead_days": 21,
-  "count": 48,
+  "count": 46,
   "tournaments": [
-    {
-      "tournament_id": 932697,
-      "tournament_slug": "tournament/encore-3-1",
-      "tournament_name": "こくブラEncore#3",
-      "start_at": 1784110500,
-      "end_at": 1784120400,
-      "is_online": false,
-      "city": "北九州市",
-      "venue_name": "",
-      "country_code": "JP",
-      "num_attendees": 14,
-      "url": "/tournament/encore-3-1",
-      "events": [
-        {
-          "event_id": 1667162,
-          "event_slug": "tournament/encore-3-1/event/1on1",
-          "event_name": "1on1トーナメント",
-          "num_entrants": 14,
-          "type": 1,
-          "start_at": 1784110500
-        }
-      ]
-    },
-    {
-      "tournament_id": 931459,
-      "tournament_slug": "tournament/dsw-60-1",
-      "tournament_name": "新京都DSW#60",
-      "start_at": 1784113200,
-      "end_at": 1784124000,
-      "is_online": false,
-      "city": "京都市",
-      "venue_name": "",
-      "country_code": "JP",
-      "num_attendees": 17,
-      "url": "/tournament/dsw-60-1",
-      "events": [
-        {
-          "event_id": 1664718,
-          "event_slug": "tournament/dsw-60-1/event/singletournament",
-          "event_name": "SingleTournament",
-          "num_entrants": 17,
-          "type": 1,
-          "start_at": 1784113200
-        }
-      ]
-    },
     {
       "tournament_id": 932045,
       "tournament_slug": "tournament/16-502-3",
@@ -106,14 +60,14 @@
       "city": "大阪市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 14,
+      "num_attendees": 15,
       "url": "/tournament/hit-182-maesuma-hit-182",
       "events": [
         {
           "event_id": 1658642,
           "event_slug": "tournament/hit-182-maesuma-hit-182/event/singles-tournament",
           "event_name": "Singles Tournament",
-          "num_entrants": 14,
+          "num_entrants": 15,
           "type": 1,
           "start_at": 1784196000
         }
@@ -290,7 +244,7 @@
       "city": "福岡市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 389,
+      "num_attendees": 391,
       "url": "/tournament/kowloon-18",
       "events": [
         {
@@ -520,14 +474,14 @@
       "city": "堺市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 43,
+      "num_attendees": 44,
       "url": "/tournament/2-5-r1600",
       "events": [
         {
           "event_id": 1651029,
           "event_slug": "tournament/2-5-r1600/event/non-limit",
           "event_name": "通常トーナメント(Non Limit)",
-          "num_entrants": 28,
+          "num_entrants": 29,
           "type": 1,
           "start_at": 1784505600
         },
