@@ -1,5 +1,5 @@
 {
-  "generated_at": 1784116830,
+  "generated_at": 1784127637,
   "country_code": "JP",
   "lookahead_days": 21,
   "count": 46,
@@ -60,14 +60,14 @@
       "city": "大阪市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 15,
+      "num_attendees": 16,
       "url": "/tournament/hit-182-maesuma-hit-182",
       "events": [
         {
           "event_id": 1658642,
           "event_slug": "tournament/hit-182-maesuma-hit-182/event/singles-tournament",
           "event_name": "Singles Tournament",
-          "num_entrants": 15,
+          "num_entrants": 16,
           "type": 1,
           "start_at": 1784196000
         }
@@ -244,7 +244,7 @@
       "city": "福岡市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 391,
+      "num_attendees": 392,
       "url": "/tournament/kowloon-18",
       "events": [
         {
