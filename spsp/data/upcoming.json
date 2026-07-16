@@ -1,55 +1,9 @@
 {
-  "generated_at": 1784181661,
+  "generated_at": 1784192432,
   "country_code": "JP",
   "lookahead_days": 21,
-  "count": 48,
+  "count": 46,
   "tournaments": [
-    {
-      "tournament_id": 932045,
-      "tournament_slug": "tournament/16-502-3",
-      "tournament_name": "16(木)上野スマコミ#502(オープン)",
-      "start_at": 1784188800,
-      "end_at": 1784210400,
-      "is_online": false,
-      "city": "台東区",
-      "venue_name": "",
-      "country_code": "JP",
-      "num_attendees": 18,
-      "url": "/tournament/16-502-3",
-      "events": [
-        {
-          "event_id": 1665889,
-          "event_slug": "tournament/16-502-3/event/on",
-          "event_name": "シングルス（１on１トーナメント）",
-          "num_entrants": 18,
-          "type": 1,
-          "start_at": 1784188800
-        }
-      ]
-    },
-    {
-      "tournament_id": 931518,
-      "tournament_slug": "tournament/shibuya-g-g-smash-weekly-71",
-      "tournament_name": "Shibuya G.G.Smash Weekly 71",
-      "start_at": 1784192400,
-      "end_at": 1784208600,
-      "is_online": false,
-      "city": "渋谷区",
-      "venue_name": "",
-      "country_code": "JP",
-      "num_attendees": 18,
-      "url": "/tournament/shibuya-g-g-smash-weekly-71",
-      "events": [
-        {
-          "event_id": 1664816,
-          "event_slug": "tournament/shibuya-g-g-smash-weekly-71/event/singles",
-          "event_name": "Singles",
-          "num_entrants": 18,
-          "type": 1,
-          "start_at": 1784197800
-        }
-      ]
-    },
     {
       "tournament_id": 928395,
       "tournament_slug": "tournament/hit-182-maesuma-hit-182",
@@ -175,14 +129,14 @@
       "city": "大阪市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 7,
+      "num_attendees": 8,
       "url": "/tournament/342-act",
       "events": [
         {
           "event_id": 1667210,
           "event_slug": "tournament/342-act/event/ultimate-singles",
           "event_name": "Ultimate singles",
-          "num_entrants": 7,
+          "num_entrants": 8,
           "type": 1,
           "start_at": 1784284800
         }
@@ -382,14 +336,14 @@
       "city": "浜松市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 26,
+      "num_attendees": 23,
       "url": "/tournament/sp-mini-tournament-2",
       "events": [
         {
           "event_id": 1652322,
           "event_slug": "tournament/sp-mini-tournament-2/event/1on1",
           "event_name": "1on1",
-          "num_entrants": 25,
+          "num_entrants": 22,
           "type": 1,
           "start_at": 1784426400
         }
@@ -405,14 +359,14 @@
       "city": "四日市市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 17,
+      "num_attendees": 18,
       "url": "/tournament/quattro-4",
       "events": [
         {
           "event_id": 1660474,
           "event_slug": "tournament/quattro-4/event/quattro",
           "event_name": "四闘-Quattro-",
-          "num_entrants": 8,
+          "num_entrants": 9,
           "type": 1,
           "start_at": 1784433600
         }
@@ -474,14 +428,14 @@
       "city": "堺市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 48,
+      "num_attendees": 47,
       "url": "/tournament/2-5-r1600",
       "events": [
         {
           "event_id": 1651029,
           "event_slug": "tournament/2-5-r1600/event/non-limit",
           "event_name": "通常トーナメント(Non Limit)",
-          "num_entrants": 31,
+          "num_entrants": 30,
           "type": 1,
           "start_at": 1784505600
         },
@@ -643,14 +597,14 @@
       "city": "渋谷区",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 0,
+      "num_attendees": 3,
       "url": "/tournament/shibuya-g-g-smash-weekly-72",
       "events": [
         {
           "event_id": 1669528,
           "event_slug": "tournament/shibuya-g-g-smash-weekly-72/event/singles",
           "event_name": "Singles",
-          "num_entrants": 0,
+          "num_entrants": 3,
           "type": 1,
           "start_at": 1784804400
         }
@@ -758,14 +712,14 @@
       "city": "岡山市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 18,
+      "num_attendees": 19,
       "url": "/tournament/60-3",
       "events": [
         {
           "event_id": 1666766,
           "event_slug": "tournament/60-3/event/60",
           "event_name": "第60回 晴れスマ",
-          "num_entrants": 18,
+          "num_entrants": 19,
           "type": 1,
           "start_at": 1784984400
         }
@@ -850,7 +804,7 @@
       "city": "台東区",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 2,
+      "num_attendees": 3,
       "url": "/tournament/acd-2",
       "events": [
         {
@@ -1011,14 +965,14 @@
       "city": "札幌市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 72,
+      "num_attendees": 73,
       "url": "/tournament/15-kyokkan-15",
       "events": [
         {
           "event_id": 1649479,
           "event_slug": "tournament/15-kyokkan-15/event/kyokkan",
           "event_name": "極冠/Kyokkan",
-          "num_entrants": 69,
+          "num_entrants": 70,
           "type": 1,
           "start_at": 1785549600
         }
@@ -1057,14 +1011,14 @@
       "city": "町田市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 202,
+      "num_attendees": 199,
       "url": "/tournament/impact-major-4",
       "events": [
         {
           "event_id": 1656500,
           "event_slug": "tournament/impact-major-4/event/singles-tournament",
           "event_name": "Singles Tournament",
-          "num_entrants": 176,
+          "num_entrants": 175,
           "type": 1,
           "start_at": 1785632400
         },
@@ -1072,7 +1026,7 @@
           "event_id": 1664756,
           "event_slug": "tournament/impact-major-4/event/waiting-for-competitors-slots",
           "event_name": "Waiting for competitors' slots",
-          "num_entrants": 26,
+          "num_entrants": 24,
           "type": 1,
           "start_at": 1785632400
         }
