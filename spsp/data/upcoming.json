@@ -1,32 +1,9 @@
 {
-  "generated_at": 1784192432,
+  "generated_at": 1784203233,
   "country_code": "JP",
   "lookahead_days": 21,
-  "count": 46,
+  "count": 45,
   "tournaments": [
-    {
-      "tournament_id": 928395,
-      "tournament_slug": "tournament/hit-182-maesuma-hit-182",
-      "tournament_name": "マエスマ'HIT#182 / Maesuma'HIT#182",
-      "start_at": 1784196000,
-      "end_at": 1784210400,
-      "is_online": false,
-      "city": "大阪市",
-      "venue_name": "",
-      "country_code": "JP",
-      "num_attendees": 27,
-      "url": "/tournament/hit-182-maesuma-hit-182",
-      "events": [
-        {
-          "event_id": 1658642,
-          "event_slug": "tournament/hit-182-maesuma-hit-182/event/singles-tournament",
-          "event_name": "Singles Tournament",
-          "num_entrants": 27,
-          "type": 1,
-          "start_at": 1784196000
-        }
-      ]
-    },
     {
       "tournament_id": 933137,
       "tournament_slug": "tournament/5-103",
@@ -60,7 +37,7 @@
       "city": "台東区",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 14,
+      "num_attendees": 16,
       "url": "/tournament/17-503",
       "events": [
         {
