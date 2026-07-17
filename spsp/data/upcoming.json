@@ -1,5 +1,5 @@
 {
-  "generated_at": 1784214041,
+  "generated_at": 1784224833,
   "country_code": "JP",
   "lookahead_days": 21,
   "count": 45,
@@ -37,14 +37,14 @@
       "city": "台東区",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 17,
+      "num_attendees": 19,
       "url": "/tournament/17-503",
       "events": [
         {
           "event_id": 1665890,
           "event_slug": "tournament/17-503/event/on",
           "event_name": "シングルス（１on１トーナメント）",
-          "num_entrants": 16,
+          "num_entrants": 19,
           "type": 1,
           "start_at": 1784275200
         }
@@ -129,14 +129,14 @@
       "city": "横浜市",
       "venue_name": "おださがプラザ",
       "country_code": "JP",
-      "num_attendees": 156,
+      "num_attendees": 155,
       "url": "/tournament/52-kurobra52",
       "events": [
         {
           "event_id": 1640297,
           "event_slug": "tournament/52-kurobra52/event/sp-1on1",
           "event_name": "SP 1on1トーナメント",
-          "num_entrants": 147,
+          "num_entrants": 146,
           "type": 1,
           "start_at": 1784332800
         }
@@ -689,14 +689,14 @@
       "city": "岡山市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 19,
+      "num_attendees": 20,
       "url": "/tournament/60-3",
       "events": [
         {
           "event_id": 1666766,
           "event_slug": "tournament/60-3/event/60",
           "event_name": "第60回 晴れスマ",
-          "num_entrants": 19,
+          "num_entrants": 20,
           "type": 1,
           "start_at": 1784984400
         }
