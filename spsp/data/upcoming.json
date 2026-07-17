@@ -1,55 +1,9 @@
 {
-  "generated_at": 1784278875,
+  "generated_at": 1784289634,
   "country_code": "JP",
   "lookahead_days": 21,
-  "count": 43,
+  "count": 41,
   "tournaments": [
-    {
-      "tournament_id": 930293,
-      "tournament_slug": "tournament/smash-145-1",
-      "tournament_name": "Smash薬院#145",
-      "start_at": 1784282400,
-      "end_at": 1784296800,
-      "is_online": false,
-      "city": "福岡市",
-      "venue_name": "",
-      "country_code": "JP",
-      "num_attendees": 65,
-      "url": "/tournament/smash-145-1",
-      "events": [
-        {
-          "event_id": 1662384,
-          "event_slug": "tournament/smash-145-1/event/1on1",
-          "event_name": "1on1トーナメント",
-          "num_entrants": 65,
-          "type": 1,
-          "start_at": 1784282400
-        }
-      ]
-    },
-    {
-      "tournament_id": 932715,
-      "tournament_slug": "tournament/342-act",
-      "tournament_name": "【第342回】スマACT",
-      "start_at": 1784284800,
-      "end_at": 1784296800,
-      "is_online": false,
-      "city": "大阪市",
-      "venue_name": "",
-      "country_code": "JP",
-      "num_attendees": 14,
-      "url": "/tournament/342-act",
-      "events": [
-        {
-          "event_id": 1667210,
-          "event_slug": "tournament/342-act/event/ultimate-singles",
-          "event_name": "Ultimate singles",
-          "num_entrants": 14,
-          "type": 1,
-          "start_at": 1784284800
-        }
-      ]
-    },
     {
       "tournament_id": 919380,
       "tournament_slug": "tournament/52-kurobra52",
@@ -60,7 +14,7 @@
       "city": "横浜市",
       "venue_name": "おださがプラザ",
       "country_code": "JP",
-      "num_attendees": 155,
+      "num_attendees": 156,
       "url": "/tournament/52-kurobra52",
       "events": [
         {
