@@ -1,5 +1,5 @@
 {
-  "generated_at": 1784203233,
+  "generated_at": 1784214041,
   "country_code": "JP",
   "lookahead_days": 21,
   "count": 45,
@@ -37,14 +37,14 @@
       "city": "台東区",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 16,
+      "num_attendees": 17,
       "url": "/tournament/17-503",
       "events": [
         {
           "event_id": 1665890,
           "event_slug": "tournament/17-503/event/on",
           "event_name": "シングルス（１on１トーナメント）",
-          "num_entrants": 13,
+          "num_entrants": 16,
           "type": 1,
           "start_at": 1784275200
         }
@@ -106,14 +106,14 @@
       "city": "大阪市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 8,
+      "num_attendees": 9,
       "url": "/tournament/342-act",
       "events": [
         {
           "event_id": 1667210,
           "event_slug": "tournament/342-act/event/ultimate-singles",
           "event_name": "Ultimate singles",
-          "num_entrants": 8,
+          "num_entrants": 9,
           "type": 1,
           "start_at": 1784284800
         }
@@ -129,14 +129,14 @@
       "city": "横浜市",
       "venue_name": "おださがプラザ",
       "country_code": "JP",
-      "num_attendees": 157,
+      "num_attendees": 156,
       "url": "/tournament/52-kurobra52",
       "events": [
         {
           "event_id": 1640297,
           "event_slug": "tournament/52-kurobra52/event/sp-1on1",
           "event_name": "SP 1on1トーナメント",
-          "num_entrants": 148,
+          "num_entrants": 147,
           "type": 1,
           "start_at": 1784332800
         }
@@ -313,14 +313,14 @@
       "city": "浜松市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 23,
+      "num_attendees": 24,
       "url": "/tournament/sp-mini-tournament-2",
       "events": [
         {
           "event_id": 1652322,
           "event_slug": "tournament/sp-mini-tournament-2/event/1on1",
           "event_name": "1on1",
-          "num_entrants": 22,
+          "num_entrants": 23,
           "type": 1,
           "start_at": 1784426400
         }
@@ -336,14 +336,14 @@
       "city": "四日市市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 18,
+      "num_attendees": 19,
       "url": "/tournament/quattro-4",
       "events": [
         {
           "event_id": 1660474,
           "event_slug": "tournament/quattro-4/event/quattro",
           "event_name": "四闘-Quattro-",
-          "num_entrants": 9,
+          "num_entrants": 10,
           "type": 1,
           "start_at": 1784433600
         }
@@ -405,7 +405,7 @@
       "city": "堺市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 47,
+      "num_attendees": 48,
       "url": "/tournament/2-5-r1600",
       "events": [
         {
@@ -420,7 +420,7 @@
           "event_id": 1651040,
           "event_slug": "tournament/2-5-r1600/event/1600-limit1600",
           "event_name": "レート1600制限トーナメント(Limit1600)",
-          "num_entrants": 17,
+          "num_entrants": 18,
           "type": 1,
           "start_at": 1784505600
         }
@@ -436,14 +436,14 @@
       "city": "さいたま市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 226,
+      "num_attendees": 225,
       "url": "/tournament/absolute-smash-1",
       "events": [
         {
           "event_id": 1630488,
           "event_slug": "tournament/absolute-smash-1/event/absolutesmash-1",
           "event_name": "AbsoluteSmash#1（アブスマ）",
-          "num_entrants": 220,
+          "num_entrants": 219,
           "type": 1,
           "start_at": 1784512800
         }
@@ -643,14 +643,14 @@
       "city": "立川市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 8,
+      "num_attendees": 9,
       "url": "/tournament/sumao2026-14",
       "events": [
         {
           "event_id": 1668286,
           "event_slug": "tournament/sumao2026-14/event/sp-1on1",
           "event_name": "スマブラSP 1on1",
-          "num_entrants": 8,
+          "num_entrants": 9,
           "type": 1,
           "start_at": 1784881800
         }
