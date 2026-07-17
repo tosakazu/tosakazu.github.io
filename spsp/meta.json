@@ -1,8 +1,8 @@
 {
   "eval_date": "2026-07-17",
-  "generated_at": "2026-07-17T18:06:18.899016",
-  "computation_time_s": 57.9,
-  "n_tournaments_total": 4893,
+  "generated_at": "2026-07-17T21:06:39.548209",
+  "computation_time_s": 58.1,
+  "n_tournaments_total": 4894,
   "n_tournaments_small": 100,
   "min_entrants_for_ranking": 5,
   "n_players": 21880,
