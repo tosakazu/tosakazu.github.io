@@ -1,5 +1,5 @@
 {
-  "generated_at": 1784289634,
+  "generated_at": 1784300433,
   "country_code": "JP",
   "lookahead_days": 21,
   "count": 41,
@@ -14,7 +14,7 @@
       "city": "横浜市",
       "venue_name": "おださがプラザ",
       "country_code": "JP",
-      "num_attendees": 156,
+      "num_attendees": 157,
       "url": "/tournament/52-kurobra52",
       "events": [
         {
@@ -152,7 +152,7 @@
       "city": "福岡市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 110,
+      "num_attendees": 111,
       "url": "/tournament/limit-break-3-2",
       "events": [
         {
@@ -850,14 +850,14 @@
       "city": "札幌市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 74,
+      "num_attendees": 73,
       "url": "/tournament/15-kyokkan-15",
       "events": [
         {
           "event_id": 1649479,
           "event_slug": "tournament/15-kyokkan-15/event/kyokkan",
           "event_name": "極冠/Kyokkan",
-          "num_entrants": 71,
+          "num_entrants": 70,
           "type": 1,
           "start_at": 1785549600
         }
