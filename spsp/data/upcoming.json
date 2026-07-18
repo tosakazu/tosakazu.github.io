@@ -1,5 +1,5 @@
 {
-  "generated_at": 1784332831,
+  "generated_at": 1784343962,
   "country_code": "JP",
   "lookahead_days": 21,
   "count": 37,
@@ -37,14 +37,14 @@
       "city": "福岡市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 112,
+      "num_attendees": 110,
       "url": "/tournament/limit-break-3-2",
       "events": [
         {
           "event_id": 1629766,
           "event_slug": "tournament/limit-break-3-2/event/limit-break",
           "event_name": "LIMIT BREAK",
-          "num_entrants": 95,
+          "num_entrants": 94,
           "type": 1,
           "start_at": 1784424600
         }
@@ -106,14 +106,14 @@
       "city": "四日市市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 20,
+      "num_attendees": 21,
       "url": "/tournament/quattro-4",
       "events": [
         {
           "event_id": 1660474,
           "event_slug": "tournament/quattro-4/event/quattro",
           "event_name": "四闘-Quattro-",
-          "num_entrants": 11,
+          "num_entrants": 12,
           "type": 1,
           "start_at": 1784433600
         }
@@ -275,14 +275,14 @@
       "city": "渋谷区",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 2,
+      "num_attendees": 3,
       "url": "/tournament/133-shibuya-tatsu",
       "events": [
         {
           "event_id": 1668118,
           "event_slug": "tournament/133-shibuya-tatsu/event/singles",
           "event_name": "Singles",
-          "num_entrants": 2,
+          "num_entrants": 3,
           "type": 1,
           "start_at": 1784628000
         }
@@ -367,14 +367,14 @@
       "city": "渋谷区",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 3,
+      "num_attendees": 4,
       "url": "/tournament/shibuya-g-g-smash-weekly-72",
       "events": [
         {
           "event_id": 1669528,
           "event_slug": "tournament/shibuya-g-g-smash-weekly-72/event/singles",
           "event_name": "Singles",
-          "num_entrants": 3,
+          "num_entrants": 4,
           "type": 1,
           "start_at": 1784804400
         }
@@ -482,14 +482,14 @@
       "city": "渋谷区",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 2,
+      "num_attendees": 18,
       "url": "/tournament/to-win-11",
       "events": [
         {
           "event_id": 1670075,
           "event_slug": "tournament/to-win-11/event/singles",
           "event_name": "Singles",
-          "num_entrants": 2,
+          "num_entrants": 19,
           "type": 1,
           "start_at": 1784941200
         }
@@ -505,14 +505,14 @@
       "city": "岡山市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 23,
+      "num_attendees": 25,
       "url": "/tournament/60-3",
       "events": [
         {
           "event_id": 1666766,
           "event_slug": "tournament/60-3/event/60",
           "event_name": "第60回 晴れスマ",
-          "num_entrants": 23,
+          "num_entrants": 25,
           "type": 1,
           "start_at": 1784984400
         }
@@ -758,14 +758,14 @@
       "city": "札幌市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 73,
+      "num_attendees": 74,
       "url": "/tournament/15-kyokkan-15",
       "events": [
         {
           "event_id": 1649479,
           "event_slug": "tournament/15-kyokkan-15/event/kyokkan",
           "event_name": "極冠/Kyokkan",
-          "num_entrants": 70,
+          "num_entrants": 71,
           "type": 1,
           "start_at": 1785549600
         }
