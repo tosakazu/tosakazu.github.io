@@ -1,5 +1,5 @@
 {
-  "generated_at": 1784311231,
+  "generated_at": 1784322033,
   "country_code": "JP",
   "lookahead_days": 21,
   "count": 42,
@@ -14,7 +14,7 @@
       "city": "横浜市",
       "venue_name": "おださがプラザ",
       "country_code": "JP",
-      "num_attendees": 157,
+      "num_attendees": 158,
       "url": "/tournament/52-kurobra52",
       "events": [
         {
@@ -37,14 +37,14 @@
       "city": "名古屋市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 7,
+      "num_attendees": 8,
       "url": "/tournament/7-gamer-s",
       "events": [
         {
           "event_id": 1651528,
           "event_slug": "tournament/7-gamer-s/event/1on1",
           "event_name": "1on1 トーナメント",
-          "num_entrants": 7,
+          "num_entrants": 8,
           "type": 1,
           "start_at": 1784347200
         }
@@ -83,14 +83,14 @@
       "city": "豊橋市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 41,
+      "num_attendees": 42,
       "url": "/tournament/21-18",
       "events": [
         {
           "event_id": 1654347,
           "event_slug": "tournament/21-18/event/21",
           "event_name": "第21回夢スマ",
-          "num_entrants": 40,
+          "num_entrants": 41,
           "type": 1,
           "start_at": 1784343600
         }
@@ -159,7 +159,7 @@
           "event_id": 1629766,
           "event_slug": "tournament/limit-break-3-2/event/limit-break",
           "event_name": "LIMIT BREAK",
-          "num_entrants": 94,
+          "num_entrants": 95,
           "type": 1,
           "start_at": 1784424600
         }
@@ -290,14 +290,14 @@
       "city": "大分市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 3,
+      "num_attendees": 4,
       "url": "/tournament/dive-re-boot-3",
       "events": [
         {
           "event_id": 1670468,
           "event_slug": "tournament/dive-re-boot-3/event/dive-re-boot-3",
           "event_name": "DIVE Re:Boot #3",
-          "num_entrants": 3,
+          "num_entrants": 4,
           "type": 1,
           "start_at": 1784451600
         }
@@ -919,7 +919,7 @@
       "city": "町田市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 200,
+      "num_attendees": 201,
       "url": "/tournament/impact-major-4",
       "events": [
         {
@@ -934,7 +934,7 @@
           "event_id": 1664756,
           "event_slug": "tournament/impact-major-4/event/waiting-for-competitors-slots",
           "event_name": "Waiting for competitors' slots",
-          "num_entrants": 25,
+          "num_entrants": 26,
           "type": 1,
           "start_at": 1785632400
         }
