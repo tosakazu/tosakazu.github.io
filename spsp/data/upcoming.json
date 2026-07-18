@@ -1,5 +1,5 @@
 {
-  "generated_at": 1784354440,
+  "generated_at": 1784365239,
   "country_code": "JP",
   "lookahead_days": 21,
   "count": 37,
@@ -37,14 +37,14 @@
       "city": "福岡市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 106,
+      "num_attendees": 107,
       "url": "/tournament/limit-break-3-2",
       "events": [
         {
           "event_id": 1629766,
           "event_slug": "tournament/limit-break-3-2/event/limit-break",
           "event_name": "LIMIT BREAK",
-          "num_entrants": 90,
+          "num_entrants": 91,
           "type": 1,
           "start_at": 1784424600
         }
@@ -321,14 +321,14 @@
       "city": "京都市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 5,
+      "num_attendees": 6,
       "url": "/tournament/dsw-61",
       "events": [
         {
           "event_id": 1669399,
           "event_slug": "tournament/dsw-61/event/singletournament",
           "event_name": "SingleTournament",
-          "num_entrants": 5,
+          "num_entrants": 6,
           "type": 1,
           "start_at": 1784718000
         }
@@ -482,14 +482,14 @@
       "city": "渋谷区",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 24,
+      "num_attendees": 25,
       "url": "/tournament/to-win-11",
       "events": [
         {
           "event_id": 1670075,
           "event_slug": "tournament/to-win-11/event/singles",
           "event_name": "Singles",
-          "num_entrants": 23,
+          "num_entrants": 25,
           "type": 1,
           "start_at": 1784941200
         }
@@ -758,14 +758,14 @@
       "city": "札幌市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 75,
+      "num_attendees": 77,
       "url": "/tournament/15-kyokkan-15",
       "events": [
         {
           "event_id": 1649479,
           "event_slug": "tournament/15-kyokkan-15/event/kyokkan",
           "event_name": "極冠/Kyokkan",
-          "num_entrants": 72,
+          "num_entrants": 74,
           "type": 1,
           "start_at": 1785549600
         }
