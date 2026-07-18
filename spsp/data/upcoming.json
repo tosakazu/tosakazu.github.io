@@ -1,8 +1,8 @@
 {
-  "generated_at": 1784300433,
+  "generated_at": 1784311231,
   "country_code": "JP",
   "lookahead_days": 21,
-  "count": 41,
+  "count": 42,
   "tournaments": [
     {
       "tournament_id": 919380,
@@ -37,14 +37,14 @@
       "city": "名古屋市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 8,
+      "num_attendees": 7,
       "url": "/tournament/7-gamer-s",
       "events": [
         {
           "event_id": 1651528,
           "event_slug": "tournament/7-gamer-s/event/1on1",
           "event_name": "1on1 トーナメント",
-          "num_entrants": 8,
+          "num_entrants": 7,
           "type": 1,
           "start_at": 1784347200
         }
@@ -281,6 +281,29 @@
       ]
     },
     {
+      "tournament_id": 934324,
+      "tournament_slug": "tournament/dive-re-boot-3",
+      "tournament_name": "DIVE Re:Boot#3",
+      "start_at": 1784451600,
+      "end_at": 1784462400,
+      "is_online": false,
+      "city": "大分市",
+      "venue_name": "",
+      "country_code": "JP",
+      "num_attendees": 3,
+      "url": "/tournament/dive-re-boot-3",
+      "events": [
+        {
+          "event_id": 1670468,
+          "event_slug": "tournament/dive-re-boot-3/event/dive-re-boot-3",
+          "event_name": "DIVE Re:Boot #3",
+          "num_entrants": 3,
+          "type": 1,
+          "start_at": 1784451600
+        }
+      ]
+    },
+    {
       "tournament_id": 924566,
       "tournament_slug": "tournament/2-5-r1600",
       "tournament_name": "第2.5回スマフェス(通常トナメ＆R1600制限トナメの同時開催)",
@@ -290,7 +313,7 @@
       "city": "堺市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 51,
+      "num_attendees": 52,
       "url": "/tournament/2-5-r1600",
       "events": [
         {
