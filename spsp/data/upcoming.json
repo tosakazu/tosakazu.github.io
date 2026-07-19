@@ -1,8 +1,8 @@
 {
-  "generated_at": 1784451658,
+  "generated_at": 1784462459,
   "country_code": "JP",
   "lookahead_days": 21,
-  "count": 34,
+  "count": 36,
   "tournaments": [
     {
       "tournament_id": 924566,
@@ -137,14 +137,14 @@
       "city": "京都市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 8,
+      "num_attendees": 10,
       "url": "/tournament/dsw-61",
       "events": [
         {
           "event_id": 1669399,
           "event_slug": "tournament/dsw-61/event/singletournament",
           "event_name": "SingleTournament",
-          "num_entrants": 8,
+          "num_entrants": 10,
           "type": 1,
           "start_at": 1784718000
         }
@@ -397,7 +397,7 @@
           "event_id": 1646267,
           "event_slug": "tournament/2-1700/event/sp-1on1",
           "event_name": "スマブラSP 1on1 トーナメント",
-          "num_entrants": 32,
+          "num_entrants": 33,
           "type": 1,
           "start_at": 1785027600
         }
@@ -643,14 +643,14 @@
       "city": "札幌市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 81,
+      "num_attendees": 82,
       "url": "/tournament/15-kyokkan-15",
       "events": [
         {
           "event_id": 1649479,
           "event_slug": "tournament/15-kyokkan-15/event/kyokkan",
           "event_name": "極冠/Kyokkan",
-          "num_entrants": 77,
+          "num_entrants": 78,
           "type": 1,
           "start_at": 1785549600
         }
@@ -689,14 +689,14 @@
       "city": "町田市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 203,
+      "num_attendees": 200,
       "url": "/tournament/impact-major-4",
       "events": [
         {
           "event_id": 1656500,
           "event_slug": "tournament/impact-major-4/event/singles-tournament",
           "event_name": "Singles Tournament",
-          "num_entrants": 176,
+          "num_entrants": 175,
           "type": 1,
           "start_at": 1785632400
         },
@@ -704,7 +704,7 @@
           "event_id": 1664756,
           "event_slug": "tournament/impact-major-4/event/waiting-for-competitors-slots",
           "event_name": "Waiting for competitors' slots",
-          "num_entrants": 27,
+          "num_entrants": 25,
           "type": 1,
           "start_at": 1785632400
         }
@@ -766,14 +766,14 @@
       "city": "浜松市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 15,
+      "num_attendees": 16,
       "url": "/tournament/sp15-2",
       "events": [
         {
           "event_id": 1666584,
           "event_slug": "tournament/sp15-2/event/1on1",
           "event_name": "1on1",
-          "num_entrants": 13,
+          "num_entrants": 14,
           "type": 1,
           "start_at": 1786154400
         }
@@ -799,6 +799,52 @@
           "num_entrants": 12,
           "type": 1,
           "start_at": 1786161600
+        }
+      ]
+    },
+    {
+      "tournament_id": 910685,
+      "tournament_slug": "tournament/victoire-1",
+      "tournament_name": "Victoire #1",
+      "start_at": 1786240800,
+      "end_at": 1786273200,
+      "is_online": false,
+      "city": "北名古屋市",
+      "venue_name": "",
+      "country_code": "JP",
+      "num_attendees": 48,
+      "url": "/tournament/victoire-1",
+      "events": [
+        {
+          "event_id": 1628310,
+          "event_slug": "tournament/victoire-1/event/singles-tournament",
+          "event_name": "singles tournament",
+          "num_entrants": 48,
+          "type": 1,
+          "start_at": 1786240800
+        }
+      ]
+    },
+    {
+      "tournament_id": 926877,
+      "tournament_slug": "tournament/19-13",
+      "tournament_name": "真・スマのみや#19",
+      "start_at": 1786240800,
+      "end_at": 1786269600,
+      "is_online": false,
+      "city": "宇都宮市",
+      "venue_name": "",
+      "country_code": "JP",
+      "num_attendees": 1,
+      "url": "/tournament/19-13",
+      "events": [
+        {
+          "event_id": 1655684,
+          "event_slug": "tournament/19-13/event/super-smash-bros-ultimate-singles",
+          "event_name": "大会",
+          "num_entrants": 1,
+          "type": 1,
+          "start_at": 1786240800
         }
       ]
     }
