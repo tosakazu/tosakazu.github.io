@@ -1,5 +1,5 @@
 {
-  "generated_at": 1784386840,
+  "generated_at": 1784397635,
   "country_code": "JP",
   "lookahead_days": 21,
   "count": 38,
@@ -489,7 +489,7 @@
           "event_id": 1670075,
           "event_slug": "tournament/to-win-11/event/singles",
           "event_name": "Singles",
-          "num_entrants": 25,
+          "num_entrants": 26,
           "type": 1,
           "start_at": 1784941200
         }
@@ -535,7 +535,7 @@
           "event_id": 1658339,
           "event_slug": "tournament/3-147/event/1on1-tournament",
           "event_name": "シングルス/1on1 tournament",
-          "num_entrants": 33,
+          "num_entrants": 34,
           "type": 1,
           "start_at": 1784944800
         }
