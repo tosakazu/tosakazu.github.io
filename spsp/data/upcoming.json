@@ -1,32 +1,9 @@
 {
-  "generated_at": 1784440861,
+  "generated_at": 1784451658,
   "country_code": "JP",
   "lookahead_days": 21,
-  "count": 35,
+  "count": 34,
   "tournaments": [
-    {
-      "tournament_id": 934324,
-      "tournament_slug": "tournament/dive-re-boot-3",
-      "tournament_name": "DIVE Re:Boot#3",
-      "start_at": 1784451600,
-      "end_at": 1784462400,
-      "is_online": false,
-      "city": "大分市",
-      "venue_name": "",
-      "country_code": "JP",
-      "num_attendees": 5,
-      "url": "/tournament/dive-re-boot-3",
-      "events": [
-        {
-          "event_id": 1670468,
-          "event_slug": "tournament/dive-re-boot-3/event/dive-re-boot-3",
-          "event_name": "DIVE Re:Boot #3",
-          "num_entrants": 5,
-          "type": 1,
-          "start_at": 1784451600
-        }
-      ]
-    },
     {
       "tournament_id": 924566,
       "tournament_slug": "tournament/2-5-r1600",
@@ -91,7 +68,7 @@
       "city": "横浜市",
       "venue_name": "おださがプラザ",
       "country_code": "JP",
-      "num_attendees": 5,
+      "num_attendees": 4,
       "url": "/tournament/gg-6-kannai-gg",
       "events": [
         {
@@ -390,14 +367,14 @@
       "city": "大分市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 2,
+      "num_attendees": 3,
       "url": "/tournament/7-72",
       "events": [
         {
           "event_id": 1671129,
           "event_slug": "tournament/7-72/event/1on1",
           "event_name": "1on1トーナメント",
-          "num_entrants": 2,
+          "num_entrants": 3,
           "type": 1,
           "start_at": 1784973600
         }
@@ -436,14 +413,14 @@
       "city": "広島市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 47,
+      "num_attendees": 48,
       "url": "/tournament/10-moon",
       "events": [
         {
           "event_id": 1662397,
           "event_slug": "tournament/10-moon/event/1on1-tournament",
           "event_name": "シングルス/1on1 tournament",
-          "num_entrants": 45,
+          "num_entrants": 46,
           "type": 1,
           "start_at": 1785031200
         }
@@ -643,14 +620,14 @@
       "city": "宜野湾市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 3,
+      "num_attendees": 4,
       "url": "/tournament/2-hakumei-2",
       "events": [
         {
           "event_id": 1670083,
           "event_slug": "tournament/2-hakumei-2/event/1on1-smash-tournament",
           "event_name": "1on1 Smash Tournament",
-          "num_entrants": 3,
+          "num_entrants": 4,
           "type": 1,
           "start_at": 1785546000
         }
@@ -689,14 +666,14 @@
       "city": "北九州市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 8,
+      "num_attendees": 9,
       "url": "/tournament/13-31",
       "events": [
         {
           "event_id": 1660544,
           "event_slug": "tournament/13-31/event/1on1",
           "event_name": "1on1トーナメント",
-          "num_entrants": 8,
+          "num_entrants": 9,
           "type": 1,
           "start_at": 1785553200
         }
@@ -789,14 +766,14 @@
       "city": "浜松市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 12,
+      "num_attendees": 15,
       "url": "/tournament/sp15-2",
       "events": [
         {
           "event_id": 1666584,
           "event_slug": "tournament/sp15-2/event/1on1",
           "event_name": "1on1",
-          "num_entrants": 10,
+          "num_entrants": 13,
           "type": 1,
           "start_at": 1786154400
         }
