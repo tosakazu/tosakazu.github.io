@@ -1,170 +1,9 @@
 {
-  "generated_at": 1784408434,
+  "generated_at": 1784419233,
   "country_code": "JP",
   "lookahead_days": 21,
-  "count": 38,
+  "count": 32,
   "tournaments": [
-    {
-      "tournament_id": 922381,
-      "tournament_slug": "tournament/-3110",
-      "tournament_name": "第３回　凶華水月",
-      "start_at": 1784419200,
-      "end_at": 1784462400,
-      "is_online": false,
-      "city": "茅野市",
-      "venue_name": "",
-      "country_code": "JP",
-      "num_attendees": 22,
-      "url": "/tournament/-3110",
-      "events": [
-        {
-          "event_id": 1646508,
-          "event_slug": "tournament/-3110/event/super-smash-bros-ultimate-singles",
-          "event_name": "凶華彗月　本戦トーナメント",
-          "num_entrants": 22,
-          "type": 1,
-          "start_at": 1784419200
-        }
-      ]
-    },
-    {
-      "tournament_id": 914057,
-      "tournament_slug": "tournament/limit-break-3-2",
-      "tournament_name": "九龍LIMIT BREAK#3",
-      "start_at": 1784424600,
-      "end_at": 1784455200,
-      "is_online": false,
-      "city": "福岡市",
-      "venue_name": "",
-      "country_code": "JP",
-      "num_attendees": 107,
-      "url": "/tournament/limit-break-3-2",
-      "events": [
-        {
-          "event_id": 1629766,
-          "event_slug": "tournament/limit-break-3-2/event/limit-break",
-          "event_name": "LIMIT BREAK",
-          "num_entrants": 91,
-          "type": 1,
-          "start_at": 1784424600
-        }
-      ]
-    },
-    {
-      "tournament_id": 926869,
-      "tournament_slug": "tournament/18-14",
-      "tournament_name": "真・スマのみや#18",
-      "start_at": 1784426400,
-      "end_at": 1784455200,
-      "is_online": false,
-      "city": "宇都宮市",
-      "venue_name": "",
-      "country_code": "JP",
-      "num_attendees": 10,
-      "url": "/tournament/18-14",
-      "events": [
-        {
-          "event_id": 1655672,
-          "event_slug": "tournament/18-14/event/super-smash-bros-ultimate-singles",
-          "event_name": "大会",
-          "num_entrants": 10,
-          "type": 1,
-          "start_at": 1784426400
-        }
-      ]
-    },
-    {
-      "tournament_id": 925205,
-      "tournament_slug": "tournament/sp-mini-tournament-2",
-      "tournament_name": "りぷぶらSP Mini Tournament#2",
-      "start_at": 1784426400,
-      "end_at": 1784458800,
-      "is_online": false,
-      "city": "浜松市",
-      "venue_name": "",
-      "country_code": "JP",
-      "num_attendees": 28,
-      "url": "/tournament/sp-mini-tournament-2",
-      "events": [
-        {
-          "event_id": 1652322,
-          "event_slug": "tournament/sp-mini-tournament-2/event/1on1",
-          "event_name": "1on1",
-          "num_entrants": 27,
-          "type": 1,
-          "start_at": 1784426400
-        }
-      ]
-    },
-    {
-      "tournament_id": 929340,
-      "tournament_slug": "tournament/quattro-4",
-      "tournament_name": "四闘-Quattro-#4",
-      "start_at": 1784433600,
-      "end_at": 1784466000,
-      "is_online": false,
-      "city": "四日市市",
-      "venue_name": "",
-      "country_code": "JP",
-      "num_attendees": 21,
-      "url": "/tournament/quattro-4",
-      "events": [
-        {
-          "event_id": 1660474,
-          "event_slug": "tournament/quattro-4/event/quattro",
-          "event_name": "四闘-Quattro-",
-          "num_entrants": 21,
-          "type": 1,
-          "start_at": 1784433600
-        }
-      ]
-    },
-    {
-      "tournament_id": 921269,
-      "tournament_slug": "tournament/sp2-3",
-      "tournament_name": "ばんスマSP2",
-      "start_at": 1784433600,
-      "end_at": 1784455200,
-      "is_online": false,
-      "city": "帯広市",
-      "venue_name": "",
-      "country_code": "JP",
-      "num_attendees": 8,
-      "url": "/tournament/sp2-3",
-      "events": [
-        {
-          "event_id": 1644359,
-          "event_slug": "tournament/sp2-3/event/sp-1on1",
-          "event_name": "スマブラSP 1on1",
-          "num_entrants": 8,
-          "type": 1,
-          "start_at": 1784433600
-        }
-      ]
-    },
-    {
-      "tournament_id": 930643,
-      "tournament_slug": "tournament/3-148",
-      "tournament_name": "きとスマ！#3",
-      "start_at": 1784437200,
-      "end_at": 1784455200,
-      "is_online": false,
-      "city": "京都市",
-      "venue_name": "",
-      "country_code": "JP",
-      "num_attendees": 13,
-      "url": "/tournament/3-148",
-      "events": [
-        {
-          "event_id": 1663069,
-          "event_slug": "tournament/3-148/event/ultimate-singles",
-          "event_name": "Ultimate Singles",
-          "num_entrants": 13,
-          "type": 1,
-          "start_at": 1784437200
-        }
-      ]
-    },
     {
       "tournament_id": 934324,
       "tournament_slug": "tournament/dive-re-boot-3",
@@ -175,14 +14,14 @@
       "city": "大分市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 4,
+      "num_attendees": 5,
       "url": "/tournament/dive-re-boot-3",
       "events": [
         {
           "event_id": 1670468,
           "event_slug": "tournament/dive-re-boot-3/event/dive-re-boot-3",
           "event_name": "DIVE Re:Boot #3",
-          "num_entrants": 4,
+          "num_entrants": 5,
           "type": 1,
           "start_at": 1784451600
         }
@@ -298,14 +137,14 @@
       "city": "川崎市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 3,
+      "num_attendees": 4,
       "url": "/tournament/28-10",
       "events": [
         {
           "event_id": 1668834,
           "event_slug": "tournament/28-10/event/super-smash-bros-ultimate-singles",
           "event_name": "雷影杯",
-          "num_entrants": 3,
+          "num_entrants": 4,
           "type": 1,
           "start_at": 1784710800
         }
@@ -459,14 +298,14 @@
       "city": "富山市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 85,
+      "num_attendees": 86,
       "url": "/tournament/badawi-6",
       "events": [
         {
           "event_id": 1629767,
           "event_slug": "tournament/badawi-6/event/badawi",
           "event_name": "Badawi",
-          "num_entrants": 85,
+          "num_entrants": 86,
           "type": 1,
           "start_at": 1784941200
         }
@@ -482,14 +321,14 @@
       "city": "渋谷区",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 28,
+      "num_attendees": 29,
       "url": "/tournament/to-win-11",
       "events": [
         {
           "event_id": 1670075,
           "event_slug": "tournament/to-win-11/event/singles",
           "event_name": "Singles",
-          "num_entrants": 28,
+          "num_entrants": 29,
           "type": 1,
           "start_at": 1784941200
         }
@@ -868,6 +707,29 @@
           "num_entrants": 54,
           "type": 1,
           "start_at": 1785724200
+        }
+      ]
+    },
+    {
+      "tournament_id": 932393,
+      "tournament_slug": "tournament/sp15-2",
+      "tournament_name": "りぷぶらSP15",
+      "start_at": 1786154400,
+      "end_at": 1786190400,
+      "is_online": false,
+      "city": "浜松市",
+      "venue_name": "",
+      "country_code": "JP",
+      "num_attendees": 0,
+      "url": "/tournament/sp15-2",
+      "events": [
+        {
+          "event_id": 1666584,
+          "event_slug": "tournament/sp15-2/event/1on1",
+          "event_name": "1on1",
+          "num_entrants": 0,
+          "type": 1,
+          "start_at": 1786154400
         }
       ]
     },
