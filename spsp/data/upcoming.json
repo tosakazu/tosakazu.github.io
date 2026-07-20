@@ -1,5 +1,5 @@
 {
-  "generated_at": 1784527258,
+  "generated_at": 1784538025,
   "country_code": "JP",
   "lookahead_days": 21,
   "count": 35,
@@ -635,14 +635,14 @@
       "city": "北九州市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 12,
+      "num_attendees": 13,
       "url": "/tournament/13-31",
       "events": [
         {
           "event_id": 1660544,
           "event_slug": "tournament/13-31/event/1on1",
           "event_name": "1on1トーナメント",
-          "num_entrants": 12,
+          "num_entrants": 13,
           "type": 1,
           "start_at": 1785553200
         }
