@@ -1,5 +1,5 @@
 {
-  "generated_at": 1784462459,
+  "generated_at": 1784473260,
   "country_code": "JP",
   "lookahead_days": 21,
   "count": 36,
@@ -14,7 +14,7 @@
       "city": "堺市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 54,
+      "num_attendees": 55,
       "url": "/tournament/2-5-r1600",
       "events": [
         {
@@ -137,14 +137,14 @@
       "city": "京都市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 10,
+      "num_attendees": 11,
       "url": "/tournament/dsw-61",
       "events": [
         {
           "event_id": 1669399,
           "event_slug": "tournament/dsw-61/event/singletournament",
           "event_name": "SingleTournament",
-          "num_entrants": 10,
+          "num_entrants": 11,
           "type": 1,
           "start_at": 1784718000
         }
@@ -390,7 +390,7 @@
       "city": "大阪市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 36,
+      "num_attendees": 37,
       "url": "/tournament/2-1700",
       "events": [
         {
@@ -620,14 +620,14 @@
       "city": "宜野湾市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 4,
+      "num_attendees": 5,
       "url": "/tournament/2-hakumei-2",
       "events": [
         {
           "event_id": 1670083,
           "event_slug": "tournament/2-hakumei-2/event/1on1-smash-tournament",
           "event_name": "1on1 Smash Tournament",
-          "num_entrants": 4,
+          "num_entrants": 5,
           "type": 1,
           "start_at": 1785546000
         }
@@ -696,7 +696,7 @@
           "event_id": 1656500,
           "event_slug": "tournament/impact-major-4/event/singles-tournament",
           "event_name": "Singles Tournament",
-          "num_entrants": 175,
+          "num_entrants": 176,
           "type": 1,
           "start_at": 1785632400
         },
@@ -704,7 +704,7 @@
           "event_id": 1664756,
           "event_slug": "tournament/impact-major-4/event/waiting-for-competitors-slots",
           "event_name": "Waiting for competitors' slots",
-          "num_entrants": 25,
+          "num_entrants": 24,
           "type": 1,
           "start_at": 1785632400
         }
