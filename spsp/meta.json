@@ -1,7 +1,7 @@
 {
   "eval_date": "2026-07-20",
-  "generated_at": "2026-07-20T15:06:40.110225",
-  "computation_time_s": 58.8,
+  "generated_at": "2026-07-20T18:06:24.905668",
+  "computation_time_s": 57.9,
   "n_tournaments_total": 4919,
   "n_tournaments_small": 100,
   "min_entrants_for_ranking": 5,
@@ -76,7 +76,7 @@
     "bt_gated_elo_max": 2760.792169595493,
     "tjpr_elo_offset": 44.0,
     "bt_gated_elo_floor": 250.0,
-    "tjpr_n_ranked": 14606,
+    "tjpr_n_ranked": 14607,
     "tjpr_radar_alpha": 8.0,
     "bt_n_ranked": 21932,
     "spr_upper_max": 2.5,
