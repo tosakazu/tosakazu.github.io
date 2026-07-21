@@ -133,9 +133,6 @@
 .yn-no  { color: #dc2626; opacity: 0.7; }
 
 .rank-frac { color: #6b7280; font-size: 11px; }
-/* rankCaretExpand: 順位セルの簡易戦績展開トリガー (▼)。小さく灰色で控えめに.
-   順位数字と同じ行に置く (改行させない)。 */
-.expand-caret { color: #9ca3af; font-size: 7px; margin-left: 2px; user-select: none; vertical-align: 2px; }
 .global-rank-badge { color: #9ca3af; font-size: 10px; margin-left: 6px; }
 
 /* 海外上位 / 全一 バッジ. padding を gate-pill より詰めて 2px 6px に.
@@ -212,8 +209,6 @@
     align-self: center; min-width: 28px;
   }
   .rank-frac { display: block; font-size: 9px; color: #9ca3af; font-weight: 400; line-height: 1.1; }
-  /* ▼ は順位数字と同じ行 (inline のまま)。数字 18px に合わせ少し持ち上げる. */
-  .expand-caret { font-size: 7px; vertical-align: 3px; }
   #ranktable td.col-display {
     grid-column: 2; grid-row: 1 / span 2;
     align-self: center;
