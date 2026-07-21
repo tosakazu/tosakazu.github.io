@@ -43,8 +43,9 @@
     const arr = ts.slice();
     if (tourSortMode === 'contribution') {
       arr.sort((a, b) => {
-        // 影響順 = 当時その大会で獲得した raw pt の大きい順.
-        const aw = a.tjpr_pts_at || 0, bw = b.tjpr_pts_at || 0;
+        // 影響順 = 現在の減衰後寄与 (tjpr_w) の大きい順 (= 表示中の順位評価pt と同じ値、
+        // p/ ページの「影響の大きい大会」と同順)。
+        const aw = a.tjpr_w || 0, bw = b.tjpr_w || 0;
         if (bw !== aw) return bw - aw;
         return (b.date || '').localeCompare(a.date || '');
       });
