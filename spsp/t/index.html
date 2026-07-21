@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>大会詳細 — SPSP</title>
-<meta name="description" content="SPSP 大会詳細ページ。全順位表、アップセット/計上ポイント/シード超え/直対上昇/順位上昇ランキング。日本のスマブラSP大会データ。">
+<meta name="description" content="SPSP 大会詳細ページ。全順位表、アップセット/順位評価上昇/シード超え/直対上昇/順位上昇ランキング。日本のスマブラSP大会データ。">
 <meta property="og:type" content="article">
 <meta property="og:site_name" content="SPSP">
 <meta property="og:locale" content="ja_JP">
@@ -379,7 +379,7 @@
     </div>
 
     <div class="section">
-      <h2>💎 計上ポイントランキング</h2>
+      <h2>💎 順位評価上昇ランキング</h2>
       <div class="pager" id="top-points-pager" style="display:none"></div>
       <div id="top-points"></div>
     </div>
@@ -435,7 +435,7 @@
   </div>
 
   <div class="footer" id="footer-info">
-    <span class="site-version" style="font-size:11px;color:#9ca3af">v 1902b12 · 2026-07-21 09:52 UTC</span>
+    <span class="site-version" style="font-size:11px;color:#9ca3af">__SITE_VERSION__</span>
   </div>
 </main>
 
@@ -675,9 +675,14 @@ function render() {
 
   setupPaginated(hl.top_match_upsets, 'top-upsets', 'top-upsets-pager',
     renderMatchUpsets, 'アップセットなし');
-  setupPaginated(hl.top_contrib_points, 'top-points', 'top-points-pager',
-    arr => renderHl(arr, p => `+${((p.tjpr_raw || 0) * TJPR_SCALE).toFixed(1)}<span class="frac">pt</span>`, 'ポイント獲得者なし'),
-    '計上ポイント獲得者なし');
+  // 順位評価上昇 = 当時この大会でのスコア上昇分 (tjpr_pts_at)。
+  // 旧ビルドの JSON は tjpr_raw 順のままなのでクライアント側でも sort し直す。
+  const tjprGains = (hl.top_contrib_points || [])
+    .filter(p => (p.tjpr_pts_at || 0) > 0)
+    .slice().sort((a, b) => (b.tjpr_pts_at || 0) - (a.tjpr_pts_at || 0));
+  setupPaginated(tjprGains, 'top-points', 'top-points-pager',
+    arr => renderHl(arr, p => `+${((p.tjpr_pts_at || 0) * TJPR_SCALE).toFixed(1)}<span class="frac">pt</span>`, '順位評価上昇者なし'),
+    '順位評価上昇者なし');
   setupPaginated(hl.top_spr_gains, 'top-spr', 'top-spr-pager',
     arr => renderHl(arr, p => `+${p.spr}<span class="frac">SPR</span>`, 'シード超えなし'),
     'シード超えなし');
