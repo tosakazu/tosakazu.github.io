@@ -155,10 +155,12 @@
         const total = ctx.totalForRankFrac;
         if (r === Infinity) return '–';
         // rankCaretExpand 時: 順位セルだけが簡易戦績の展開トリガーになるので ▼ で明示.
+        // ▼ は順位数字の直後に置く (= rank-frac より前)。モバイルでは rank-frac が
+        // block になるため、後ろに置くと ▼ だけ改行されてしまう。
         const caret = ctx.rankCaretExpand
-          ? ' <span class="expand-caret" title="簡易戦績を展開">▼</span>'
+          ? '<span class="expand-caret" title="簡易戦績を展開">▼</span>'
           : '';
-        return `${r} <span class="rank-frac">/ ${total}</span>${caret}`;
+        return `${r}${caret} <span class="rank-frac">/ ${total}</span>`;
       },
     },
     display: {
