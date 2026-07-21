@@ -184,11 +184,18 @@
         : '<span style="opacity:0.4">−</span>';
       const oppHtml = renderMainOpponents(t.event_id);
       const oppRowCls = `tour-opp-row ${cls}`.trim();
-      // 順位評価: 当時その大会で獲得した raw pt (tjpr_pts_at). null = 当時の計上対象外.
-      const ptsAt = t.tjpr_pts_at;
-      const ptCell = ptsAt == null
-        ? '<span style="opacity:0.4">−</span>'
-        : `${(ptsAt * scale).toFixed(2)}`;
+      // 順位評価: プレイヤーページ (p/) の chip と同じ値に統一 —
+      // 主値 = tjpr_w × scale (現在の減衰後寄与)、灰色 ( ) = tjpr_raw × scale (減衰前ベース pt)。
+      // 直対評価セルの「主値 (内部値)」表記と同じスタイル。
+      // (旧実装は tjpr_pts_at (当時のスコア上昇分) を出しており p/ と数値が食い違っていた)
+      const ptW = (t.tjpr_w || 0) * scale;
+      const ptBase = (t.tjpr_raw || 0) * scale;
+      const rawPtStr = ptBase > 0.05
+        ? ` <span style="color:#9ca3af;font-size:10px" title="減衰前のベースポイント">(${ptBase.toFixed(1)})</span>`
+        : '';
+      const ptCell = ptW > 0.05
+        ? `+${ptW.toFixed(1)}${rawPtStr}`
+        : `<span style="opacity:0.4">±0</span>${rawPtStr}`;
       return `
         <tr class="${cls} tour-main-row">
           <td>${t.date}</td>

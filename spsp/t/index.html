@@ -435,7 +435,7 @@
   </div>
 
   <div class="footer" id="footer-info">
-    <span class="site-version" style="font-size:11px;color:#9ca3af">v 483d2b9 · 2026-07-21 08:51 UTC</span>
+    <span class="site-version" style="font-size:11px;color:#9ca3af">v 1902b12 · 2026-07-21 09:52 UTC</span>
   </div>
 </main>
 
@@ -761,7 +761,11 @@ function renderStandings() {
       const v = ptsAt * TJPR_SCALE;
       tjprValHtml = v > 0.05 ? `<span class="val pos">+${v.toFixed(1)}</span>` : `<span class="val dim">±0</span>`;
     }
-    const tjprChip = `<div class="chip"><span class="lbl">順位評価</span>${tjprValHtml}${subBlank}</div>`;
+    // sub 行の ( ) は減衰前のベース pt (= tjpr_raw)。直対評価 chip の sub 表記と同スタイル。
+    const tjprSubHtml = (ptsAt != null && p.tjpr_raw > 0)
+      ? `<span class="sub" title="減衰前のベースポイント">(${(p.tjpr_raw * TJPR_SCALE).toFixed(1)})</span>`
+      : subBlank;
+    const tjprChip = `<div class="chip"><span class="lbl">順位評価</span>${tjprValHtml}${tjprSubHtml}</div>`;
     // 直対評価 chip: 当時の BT レート変動 (時系列の bt_d=peak180 主 / bt_internal_d を ( )).
     // bt_used=false (= 当時その大会で BT が更新されなかった) は "−".
     const peakD = (p.bt_d || 0) * ELO_PER_UNIT;

@@ -153,7 +153,12 @@
       cell: (rec, ctx) => {
         const r = getDisplayRank(rec, ctx.method);
         const total = ctx.totalForRankFrac;
-        return r === Infinity ? '–' : `${r} <span class="rank-frac">/ ${total}</span>`;
+        if (r === Infinity) return '–';
+        // rankCaretExpand 時: 順位セルだけが簡易戦績の展開トリガーになるので ▼ で明示.
+        const caret = ctx.rankCaretExpand
+          ? ' <span class="expand-caret" title="簡易戦績を展開">▼</span>'
+          : '';
+        return `${r} <span class="rank-frac">/ ${total}</span>${caret}`;
       },
     },
     display: {
@@ -343,6 +348,9 @@
 
       // Row click mode: 'expand' | 'select' | 'none' | callback
       this.rowClick = opts.rowClick || 'none';
+      // rankCaretExpand: 順位セル (▼ 付き) のクリックのみ rowClick (= 簡易戦績の展開) を
+      // 呼び、それ以外の場所のクリックはプレイヤーページへ遷移させる (スマホ/PC 共通)。
+      this.rankCaretExpand = !!opts.rankCaretExpand;
       this.selectedUids = new Set();
       this._listeners = {};
 
@@ -575,6 +583,7 @@
         showGlobalRank: this.showGlobalRank,
         showLocalExtras: this.showLocalExtras,
         btWeekdayStyle: this.btWeekdayStyle,
+        rankCaretExpand: this.rankCaretExpand,
       };
     }
 
@@ -582,6 +591,16 @@
       // emit first; allow external handlers to intercept
       this.emit('row-click', { rec, tr, ev });
       if (rec == null) return;
+
+      // rankCaretExpand: 順位セル以外のクリックはプレイヤーページへ遷移.
+      // (プレイヤー名リンクは stopPropagation 付き <a> なのでここには来ない)
+      if (this.rankCaretExpand && !rec.unranked) {
+        const td = ev && ev.target && ev.target.closest ? ev.target.closest('td') : null;
+        if (td && !td.classList.contains('col-rank')) {
+          window.location.href = `${this.playerHrefPrefix}p/?uid=${rec.user_id}`;
+          return;
+        }
+      }
 
       const mode = this.rowClick;
       if (typeof mode === 'function') {

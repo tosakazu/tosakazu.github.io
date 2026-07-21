@@ -526,7 +526,7 @@
 </div>
 
 <div class="footer" id="footer-info"></div>
-<div class="footer" style="margin-top:-12px"><span class="site-version" style="font-size:11px;color:#9ca3af">v 483d2b9 · 2026-07-21 08:51 UTC</span></div>
+<div class="footer" style="margin-top:-12px"><span class="site-version" style="font-size:11px;color:#9ca3af">v 1902b12 · 2026-07-21 09:52 UTC</span></div>
 
 <button id="scroll-top" aria-label="ページの一番上へ戻る" title="一番上へ" hidden>↑</button>
 
@@ -587,7 +587,7 @@ async function loadData() {
     }
     // ヘッダ (nav bar) に「最終更新時刻 · バージョン」を表示
     const genTime = (META.generated_at || META.eval_date || '').split('.')[0].replace('T', ' ');
-    const SITE_VERSION_FULL = 'v 483d2b9 · 2026-07-21 08:51 UTC';
+    const SITE_VERSION_FULL = 'v 1902b12 · 2026-07-21 09:52 UTC';
     const versionShort = SITE_VERSION_FULL.split(' · ')[0] || SITE_VERSION_FULL;
     const navMeta = document.getElementById('meta-info');
     if (navMeta) navMeta.textContent = `最終更新 ${genTime} · ${versionShort}`;
@@ -696,6 +696,7 @@ function ensureTable() {
     infiniteScroll: true,
     totalForRankFrac: 'meta',         // 分母 = META.n_players
     playerHrefPrefix: '',             // ルート直下
+    rankCaretExpand: true,            // 順位セル(▼)のみ簡易戦績展開、他はプレイヤーページへ
     showTopTours: true,
     showDisplayBadges: true,
     btWeekdayStyle: 'pill',
