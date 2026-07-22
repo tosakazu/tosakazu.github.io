@@ -1,5 +1,5 @@
 {
-  "generated_at": 1784699051,
+  "generated_at": 1784700032,
   "country_code": "JP",
   "lookahead_days": 21,
   "count": 41,
@@ -212,29 +212,6 @@
       ]
     },
     {
-      "tournament_id": 914058,
-      "tournament_slug": "tournament/badawi-6",
-      "tournament_name": "Badawi#6",
-      "start_at": 1784941200,
-      "end_at": 1784980800,
-      "is_online": false,
-      "city": "富山市",
-      "venue_name": "",
-      "country_code": "JP",
-      "num_attendees": 86,
-      "url": "/tournament/badawi-6",
-      "events": [
-        {
-          "event_id": 1629767,
-          "event_slug": "tournament/badawi-6/event/badawi",
-          "event_name": "Badawi",
-          "num_entrants": 86,
-          "type": 1,
-          "start_at": 1784941200
-        }
-      ]
-    },
-    {
       "tournament_id": 934161,
       "tournament_slug": "tournament/to-win-11",
       "tournament_name": "TO WIN#11",
@@ -252,6 +229,29 @@
           "event_slug": "tournament/to-win-11/event/singles",
           "event_name": "Singles",
           "num_entrants": 44,
+          "type": 1,
+          "start_at": 1784941200
+        }
+      ]
+    },
+    {
+      "tournament_id": 914058,
+      "tournament_slug": "tournament/badawi-6",
+      "tournament_name": "Badawi#6",
+      "start_at": 1784941200,
+      "end_at": 1784980800,
+      "is_online": false,
+      "city": "富山市",
+      "venue_name": "",
+      "country_code": "JP",
+      "num_attendees": 87,
+      "url": "/tournament/badawi-6",
+      "events": [
+        {
+          "event_id": 1629767,
+          "event_slug": "tournament/badawi-6/event/badawi",
+          "event_name": "Badawi",
+          "num_entrants": 87,
           "type": 1,
           "start_at": 1784941200
         }
