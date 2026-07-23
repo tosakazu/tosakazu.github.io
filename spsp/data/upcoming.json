@@ -1,55 +1,9 @@
 {
-  "generated_at": 1784797231,
+  "generated_at": 1784808026,
   "country_code": "JP",
   "lookahead_days": 21,
-  "count": 39,
+  "count": 38,
   "tournaments": [
-    {
-      "tournament_id": 933900,
-      "tournament_slug": "tournament/shibuya-g-g-smash-weekly-72",
-      "tournament_name": "Shibuya G.G.Smash Weekly 72",
-      "start_at": 1784799000,
-      "end_at": 1784813400,
-      "is_online": false,
-      "city": "渋谷区",
-      "venue_name": "",
-      "country_code": "JP",
-      "num_attendees": 32,
-      "url": "/tournament/shibuya-g-g-smash-weekly-72",
-      "events": [
-        {
-          "event_id": 1669528,
-          "event_slug": "tournament/shibuya-g-g-smash-weekly-72/event/singles",
-          "event_name": "Singles",
-          "num_entrants": 32,
-          "type": 1,
-          "start_at": 1784804400
-        }
-      ]
-    },
-    {
-      "tournament_id": 928396,
-      "tournament_slug": "tournament/hit-183-maesuma-hit-183",
-      "tournament_name": "マエスマ'HIT#183 / Maesuma'HIT#183",
-      "start_at": 1784800800,
-      "end_at": 1784815200,
-      "is_online": false,
-      "city": "大阪市",
-      "venue_name": "",
-      "country_code": "JP",
-      "num_attendees": 38,
-      "url": "/tournament/hit-183-maesuma-hit-183",
-      "events": [
-        {
-          "event_id": 1658643,
-          "event_slug": "tournament/hit-183-maesuma-hit-183/event/singles-tournament",
-          "event_name": "Singles Tournament",
-          "num_entrants": 38,
-          "type": 1,
-          "start_at": 1784800800
-        }
-      ]
-    },
     {
       "tournament_id": 932410,
       "tournament_slug": "tournament/24-508",
@@ -60,7 +14,7 @@
       "city": "台東区",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 33,
+      "num_attendees": 34,
       "url": "/tournament/24-508",
       "events": [
         {
@@ -175,14 +129,14 @@
       "city": "渋谷区",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 44,
+      "num_attendees": 45,
       "url": "/tournament/to-win-11",
       "events": [
         {
           "event_id": 1670075,
           "event_slug": "tournament/to-win-11/event/singles",
           "event_name": "Singles",
-          "num_entrants": 44,
+          "num_entrants": 45,
           "type": 1,
           "start_at": 1784941200
         }
@@ -906,6 +860,29 @@
           "num_entrants": 0,
           "type": 1,
           "start_at": 1786420800
+        }
+      ]
+    },
+    {
+      "tournament_id": 935694,
+      "tournament_slug": "tournament/innosuma-26",
+      "tournament_name": "INNOSUMA!!#26",
+      "start_at": 1786593600,
+      "end_at": 1786615200,
+      "is_online": false,
+      "city": "和泉市",
+      "venue_name": "",
+      "country_code": "JP",
+      "num_attendees": 2,
+      "url": "/tournament/innosuma-26",
+      "events": [
+        {
+          "event_id": 1673154,
+          "event_slug": "tournament/innosuma-26/event/sp-1on1",
+          "event_name": "スマブラSP 1on1 トーナメント",
+          "num_entrants": 2,
+          "type": 1,
+          "start_at": 1786593600
         }
       ]
     }
