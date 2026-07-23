@@ -1,32 +1,9 @@
 {
-  "generated_at": 1784786468,
+  "generated_at": 1784797231,
   "country_code": "JP",
   "lookahead_days": 21,
-  "count": 40,
+  "count": 39,
   "tournaments": [
-    {
-      "tournament_id": 932409,
-      "tournament_slug": "tournament/23-507",
-      "tournament_name": "23(木)上野スマコミ#507(オープン)",
-      "start_at": 1784793600,
-      "end_at": 1784815200,
-      "is_online": false,
-      "city": "台東区",
-      "venue_name": "",
-      "country_code": "JP",
-      "num_attendees": 39,
-      "url": "/tournament/23-507",
-      "events": [
-        {
-          "event_id": 1666611,
-          "event_slug": "tournament/23-507/event/on",
-          "event_name": "シングルス（１on１トーナメント）",
-          "num_entrants": 38,
-          "type": 1,
-          "start_at": 1784793600
-        }
-      ]
-    },
     {
       "tournament_id": 933900,
       "tournament_slug": "tournament/shibuya-g-g-smash-weekly-72",
@@ -83,14 +60,14 @@
       "city": "台東区",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 29,
+      "num_attendees": 33,
       "url": "/tournament/24-508",
       "events": [
         {
           "event_id": 1666612,
           "event_slug": "tournament/24-508/event/on",
           "event_name": "シングルス（１on１トーナメント）",
-          "num_entrants": 20,
+          "num_entrants": 28,
           "type": 1,
           "start_at": 1784880000
         }
@@ -166,29 +143,6 @@
       ]
     },
     {
-      "tournament_id": 934161,
-      "tournament_slug": "tournament/to-win-11",
-      "tournament_name": "TO WIN#11",
-      "start_at": 1784941200,
-      "end_at": 1784977200,
-      "is_online": false,
-      "city": "渋谷区",
-      "venue_name": "",
-      "country_code": "JP",
-      "num_attendees": 42,
-      "url": "/tournament/to-win-11",
-      "events": [
-        {
-          "event_id": 1670075,
-          "event_slug": "tournament/to-win-11/event/singles",
-          "event_name": "Singles",
-          "num_entrants": 42,
-          "type": 1,
-          "start_at": 1784941200
-        }
-      ]
-    },
-    {
       "tournament_id": 914058,
       "tournament_slug": "tournament/badawi-6",
       "tournament_name": "Badawi#6",
@@ -206,6 +160,29 @@
           "event_slug": "tournament/badawi-6/event/badawi",
           "event_name": "Badawi",
           "num_entrants": 90,
+          "type": 1,
+          "start_at": 1784941200
+        }
+      ]
+    },
+    {
+      "tournament_id": 934161,
+      "tournament_slug": "tournament/to-win-11",
+      "tournament_name": "TO WIN#11",
+      "start_at": 1784941200,
+      "end_at": 1784977200,
+      "is_online": false,
+      "city": "渋谷区",
+      "venue_name": "",
+      "country_code": "JP",
+      "num_attendees": 44,
+      "url": "/tournament/to-win-11",
+      "events": [
+        {
+          "event_id": 1670075,
+          "event_slug": "tournament/to-win-11/event/singles",
+          "event_name": "Singles",
+          "num_entrants": 44,
           "type": 1,
           "start_at": 1784941200
         }
@@ -313,14 +290,14 @@
       "city": "広島市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 48,
+      "num_attendees": 49,
       "url": "/tournament/10-moon",
       "events": [
         {
           "event_id": 1662397,
           "event_slug": "tournament/10-moon/event/1on1-tournament",
           "event_name": "シングルス/1on1 tournament",
-          "num_entrants": 45,
+          "num_entrants": 46,
           "type": 1,
           "start_at": 1785031200
         }
@@ -543,14 +520,14 @@
       "city": "渋谷区",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 0,
+      "num_attendees": 1,
       "url": "/tournament/shibuya-g-g-smash-weekly-73",
       "events": [
         {
           "event_id": 1673994,
           "event_slug": "tournament/shibuya-g-g-smash-weekly-73/event/singles",
           "event_name": "Singles",
-          "num_entrants": 0,
+          "num_entrants": 1,
           "type": 1,
           "start_at": 1785407400
         }
