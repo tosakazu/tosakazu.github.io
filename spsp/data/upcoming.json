@@ -1,5 +1,5 @@
 {
-  "generated_at": 1784732434,
+  "generated_at": 1784743232,
   "country_code": "JP",
   "lookahead_days": 21,
   "count": 39,
@@ -14,7 +14,7 @@
       "city": "台東区",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 36,
+      "num_attendees": 37,
       "url": "/tournament/23-507",
       "events": [
         {
@@ -37,14 +37,14 @@
       "city": "渋谷区",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 29,
+      "num_attendees": 31,
       "url": "/tournament/shibuya-g-g-smash-weekly-72",
       "events": [
         {
           "event_id": 1669528,
           "event_slug": "tournament/shibuya-g-g-smash-weekly-72/event/singles",
           "event_name": "Singles",
-          "num_entrants": 29,
+          "num_entrants": 31,
           "type": 1,
           "start_at": 1784804400
         }
@@ -60,14 +60,14 @@
       "city": "大阪市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 30,
+      "num_attendees": 34,
       "url": "/tournament/hit-183-maesuma-hit-183",
       "events": [
         {
           "event_id": 1658643,
           "event_slug": "tournament/hit-183-maesuma-hit-183/event/singles-tournament",
           "event_name": "Singles Tournament",
-          "num_entrants": 30,
+          "num_entrants": 34,
           "type": 1,
           "start_at": 1784800800
         }
@@ -83,14 +83,14 @@
       "city": "台東区",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 16,
+      "num_attendees": 18,
       "url": "/tournament/24-508",
       "events": [
         {
           "event_id": 1666612,
           "event_slug": "tournament/24-508/event/on",
           "event_name": "シングルス（１on１トーナメント）",
-          "num_entrants": 15,
+          "num_entrants": 17,
           "type": 1,
           "start_at": 1784880000
         }
@@ -129,14 +129,14 @@
       "city": "福岡市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 4,
+      "num_attendees": 7,
       "url": "/tournament/smash-146-1",
       "events": [
         {
           "event_id": 1671730,
           "event_slug": "tournament/smash-146-1/event/1on1",
           "event_name": "1on1トーナメント",
-          "num_entrants": 4,
+          "num_entrants": 7,
           "type": 1,
           "start_at": 1784889000
         }
@@ -166,29 +166,6 @@
       ]
     },
     {
-      "tournament_id": 914058,
-      "tournament_slug": "tournament/badawi-6",
-      "tournament_name": "Badawi#6",
-      "start_at": 1784941200,
-      "end_at": 1784980800,
-      "is_online": false,
-      "city": "富山市",
-      "venue_name": "",
-      "country_code": "JP",
-      "num_attendees": 88,
-      "url": "/tournament/badawi-6",
-      "events": [
-        {
-          "event_id": 1629767,
-          "event_slug": "tournament/badawi-6/event/badawi",
-          "event_name": "Badawi",
-          "num_entrants": 88,
-          "type": 1,
-          "start_at": 1784941200
-        }
-      ]
-    },
-    {
       "tournament_id": 934161,
       "tournament_slug": "tournament/to-win-11",
       "tournament_name": "TO WIN#11",
@@ -206,6 +183,29 @@
           "event_slug": "tournament/to-win-11/event/singles",
           "event_name": "Singles",
           "num_entrants": 43,
+          "type": 1,
+          "start_at": 1784941200
+        }
+      ]
+    },
+    {
+      "tournament_id": 914058,
+      "tournament_slug": "tournament/badawi-6",
+      "tournament_name": "Badawi#6",
+      "start_at": 1784941200,
+      "end_at": 1784980800,
+      "is_online": false,
+      "city": "富山市",
+      "venue_name": "",
+      "country_code": "JP",
+      "num_attendees": 89,
+      "url": "/tournament/badawi-6",
+      "events": [
+        {
+          "event_id": 1629767,
+          "event_slug": "tournament/badawi-6/event/badawi",
+          "event_name": "Badawi",
+          "num_entrants": 89,
           "type": 1,
           "start_at": 1784941200
         }
@@ -359,14 +359,14 @@
       "city": "柏市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 20,
+      "num_attendees": 21,
       "url": "/tournament/sen-smash-5",
       "events": [
         {
           "event_id": 1650858,
           "event_slug": "tournament/sen-smash-5/event/singles",
           "event_name": "シングルス / Singles",
-          "num_entrants": 20,
+          "num_entrants": 21,
           "type": 1,
           "start_at": 1785034800
         }
