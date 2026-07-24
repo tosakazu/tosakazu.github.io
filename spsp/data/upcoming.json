@@ -1,5 +1,5 @@
 {
-  "generated_at": 1784862034,
+  "generated_at": 1784872869,
   "country_code": "JP",
   "lookahead_days": 21,
   "count": 39,
@@ -244,14 +244,14 @@
       "city": "広島市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 49,
+      "num_attendees": 48,
       "url": "/tournament/10-moon",
       "events": [
         {
           "event_id": 1662397,
           "event_slug": "tournament/10-moon/event/1on1-tournament",
           "event_name": "シングルス/1on1 tournament",
-          "num_entrants": 46,
+          "num_entrants": 45,
           "type": 1,
           "start_at": 1785031200
         }
@@ -267,14 +267,14 @@
       "city": "台東区",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 4,
+      "num_attendees": 3,
       "url": "/tournament/acd-2",
       "events": [
         {
           "event_id": 1658888,
           "event_slug": "tournament/acd-2/event/acd-4",
           "event_name": "【お昼食えます】ACDオフスマ#4",
-          "num_entrants": 4,
+          "num_entrants": 3,
           "type": 1,
           "start_at": 1785033000
         }
@@ -543,14 +543,14 @@
       "city": "四日市市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 5,
+      "num_attendees": 10,
       "url": "/tournament/quattro",
       "events": [
         {
           "event_id": 1674508,
           "event_slug": "tournament/quattro/event/quattro",
           "event_name": "四闘-Quattro-",
-          "num_entrants": 5,
+          "num_entrants": 10,
           "type": 1,
           "start_at": 1785513600
         }
@@ -612,7 +612,7 @@
       "city": "札幌市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 88,
+      "num_attendees": 89,
       "url": "/tournament/15-kyokkan-15",
       "events": [
         {
@@ -658,7 +658,7 @@
       "city": "町田市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 210,
+      "num_attendees": 211,
       "url": "/tournament/impact-major-4",
       "events": [
         {
@@ -673,7 +673,7 @@
           "event_id": 1664756,
           "event_slug": "tournament/impact-major-4/event/waiting-for-competitors-slots",
           "event_name": "Waiting for competitors' slots",
-          "num_entrants": 18,
+          "num_entrants": 19,
           "type": 1,
           "start_at": 1785632400
         }
@@ -735,7 +735,7 @@
       "city": "大阪市",
       "venue_name": "クレオ大阪南 (Creo Osaka South)",
       "country_code": "JP",
-      "num_attendees": 5,
+      "num_attendees": 6,
       "url": "/tournament/masterhand74",
       "events": [
         {
@@ -758,14 +758,14 @@
       "city": "浜松市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 44,
+      "num_attendees": 46,
       "url": "/tournament/sp15-2",
       "events": [
         {
           "event_id": 1666584,
           "event_slug": "tournament/sp15-2/event/1on1",
           "event_name": "1on1",
-          "num_entrants": 42,
+          "num_entrants": 44,
           "type": 1,
           "start_at": 1786154400
         }
@@ -873,14 +873,14 @@
       "city": "岐阜市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 0,
+      "num_attendees": 2,
       "url": "/tournament/12-55",
       "events": [
         {
           "event_id": 1666986,
           "event_slug": "tournament/12-55/event/super-smash-bros-ultimate-singles",
           "event_name": "ぐーすま",
-          "num_entrants": 0,
+          "num_entrants": 2,
           "type": 1,
           "start_at": 1786420800
         }
