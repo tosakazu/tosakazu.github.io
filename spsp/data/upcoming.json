@@ -1,5 +1,5 @@
 {
-  "generated_at": 1784818827,
+  "generated_at": 1784829628,
   "country_code": "JP",
   "lookahead_days": 21,
   "count": 38,
@@ -14,14 +14,14 @@
       "city": "台東区",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 37,
+      "num_attendees": 39,
       "url": "/tournament/24-508",
       "events": [
         {
           "event_id": 1666612,
           "event_slug": "tournament/24-508/event/on",
           "event_name": "シングルス（１on１トーナメント）",
-          "num_entrants": 28,
+          "num_entrants": 37,
           "type": 1,
           "start_at": 1784880000
         }
@@ -60,14 +60,14 @@
       "city": "福岡市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 10,
+      "num_attendees": 9,
       "url": "/tournament/smash-146-1",
       "events": [
         {
           "event_id": 1671730,
           "event_slug": "tournament/smash-146-1/event/1on1",
           "event_name": "1on1トーナメント",
-          "num_entrants": 10,
+          "num_entrants": 9,
           "type": 1,
           "start_at": 1784889000
         }
@@ -129,14 +129,14 @@
       "city": "渋谷区",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 45,
+      "num_attendees": 47,
       "url": "/tournament/to-win-11",
       "events": [
         {
           "event_id": 1670075,
           "event_slug": "tournament/to-win-11/event/singles",
           "event_name": "Singles",
-          "num_entrants": 45,
+          "num_entrants": 47,
           "type": 1,
           "start_at": 1784941200
         }
@@ -428,14 +428,14 @@
       "city": "京都市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 3,
+      "num_attendees": 4,
       "url": "/tournament/dsw-62",
       "events": [
         {
           "event_id": 1673936,
           "event_slug": "tournament/dsw-62/event/singletournament",
           "event_name": "SingleTournament",
-          "num_entrants": 3,
+          "num_entrants": 4,
           "type": 1,
           "start_at": 1785322800
         }
@@ -635,7 +635,7 @@
       "city": "町田市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 211,
+      "num_attendees": 210,
       "url": "/tournament/impact-major-4",
       "events": [
         {
@@ -650,7 +650,7 @@
           "event_id": 1664756,
           "event_slug": "tournament/impact-major-4/event/waiting-for-competitors-slots",
           "event_name": "Waiting for competitors' slots",
-          "num_entrants": 19,
+          "num_entrants": 18,
           "type": 1,
           "start_at": 1785632400
         }
@@ -735,14 +735,14 @@
       "city": "浜松市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 39,
+      "num_attendees": 41,
       "url": "/tournament/sp15-2",
       "events": [
         {
           "event_id": 1666584,
           "event_slug": "tournament/sp15-2/event/1on1",
           "event_name": "1on1",
-          "num_entrants": 37,
+          "num_entrants": 39,
           "type": 1,
           "start_at": 1786154400
         }
@@ -873,14 +873,14 @@
       "city": "和泉市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 3,
+      "num_attendees": 2,
       "url": "/tournament/innosuma-26",
       "events": [
         {
           "event_id": 1673154,
           "event_slug": "tournament/innosuma-26/event/sp-1on1",
           "event_name": "スマブラSP 1on1 トーナメント",
-          "num_entrants": 3,
+          "num_entrants": 2,
           "type": 1,
           "start_at": 1786593600
         }
