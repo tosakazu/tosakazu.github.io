@@ -1,55 +1,9 @@
 {
-  "generated_at": 1784883617,
+  "generated_at": 1784894414,
   "country_code": "JP",
   "lookahead_days": 21,
-  "count": 37,
+  "count": 35,
   "tournaments": [
-    {
-      "tournament_id": 934957,
-      "tournament_slug": "tournament/smash-146-1",
-      "tournament_name": "Smash薬院#146",
-      "start_at": 1784889000,
-      "end_at": 1784901600,
-      "is_online": false,
-      "city": "福岡市",
-      "venue_name": "",
-      "country_code": "JP",
-      "num_attendees": 19,
-      "url": "/tournament/smash-146-1",
-      "events": [
-        {
-          "event_id": 1671730,
-          "event_slug": "tournament/smash-146-1/event/1on1",
-          "event_name": "1on1トーナメント",
-          "num_entrants": 19,
-          "type": 1,
-          "start_at": 1784889000
-        }
-      ]
-    },
-    {
-      "tournament_id": 934947,
-      "tournament_slug": "tournament/343-act",
-      "tournament_name": "【第343回】スマACT",
-      "start_at": 1784889600,
-      "end_at": 1784901600,
-      "is_online": false,
-      "city": "大阪市",
-      "venue_name": "",
-      "country_code": "JP",
-      "num_attendees": 16,
-      "url": "/tournament/343-act",
-      "events": [
-        {
-          "event_id": 1671715,
-          "event_slug": "tournament/343-act/event/ultimate-singles",
-          "event_name": "Ultimate singles",
-          "num_entrants": 16,
-          "type": 1,
-          "start_at": 1784889600
-        }
-      ]
-    },
     {
       "tournament_id": 914058,
       "tournament_slug": "tournament/badawi-6",
@@ -267,14 +221,14 @@
       "city": "台東区",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 4,
+      "num_attendees": 5,
       "url": "/tournament/27-509",
       "events": [
         {
           "event_id": 1667226,
           "event_slug": "tournament/27-509/event/on",
           "event_name": "シングルス（１on１トーナメント）",
-          "num_entrants": 4,
+          "num_entrants": 5,
           "type": 1,
           "start_at": 1785139200
         }
