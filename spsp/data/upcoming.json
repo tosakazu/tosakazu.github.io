@@ -1,5 +1,5 @@
 {
-  "generated_at": 1784840428,
+  "generated_at": 1784851221,
   "country_code": "JP",
   "lookahead_days": 21,
   "count": 38,
@@ -14,14 +14,14 @@
       "city": "台東区",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 48,
+      "num_attendees": 47,
       "url": "/tournament/24-508",
       "events": [
         {
           "event_id": 1666612,
           "event_slug": "tournament/24-508/event/on",
           "event_name": "シングルス（１on１トーナメント）",
-          "num_entrants": 37,
+          "num_entrants": 45,
           "type": 1,
           "start_at": 1784880000
         }
@@ -60,14 +60,14 @@
       "city": "福岡市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 12,
+      "num_attendees": 18,
       "url": "/tournament/smash-146-1",
       "events": [
         {
           "event_id": 1671730,
           "event_slug": "tournament/smash-146-1/event/1on1",
           "event_name": "1on1トーナメント",
-          "num_entrants": 12,
+          "num_entrants": 19,
           "type": 1,
           "start_at": 1784889000
         }
@@ -83,14 +83,14 @@
       "city": "大阪市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 15,
+      "num_attendees": 18,
       "url": "/tournament/343-act",
       "events": [
         {
           "event_id": 1671715,
           "event_slug": "tournament/343-act/event/ultimate-singles",
           "event_name": "Ultimate singles",
-          "num_entrants": 15,
+          "num_entrants": 18,
           "type": 1,
           "start_at": 1784889600
         }
@@ -589,14 +589,14 @@
       "city": "札幌市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 87,
+      "num_attendees": 88,
       "url": "/tournament/15-kyokkan-15",
       "events": [
         {
           "event_id": 1649479,
           "event_slug": "tournament/15-kyokkan-15/event/kyokkan",
           "event_name": "極冠/Kyokkan",
-          "num_entrants": 82,
+          "num_entrants": 83,
           "type": 1,
           "start_at": 1785549600
         }
@@ -666,14 +666,14 @@
       "city": "宇部市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 10,
+      "num_attendees": 11,
       "url": "/tournament/35-3",
       "events": [
         {
           "event_id": 1668068,
           "event_slug": "tournament/35-3/event/sp-1on1",
           "event_name": "スマブラSP 1on1",
-          "num_entrants": 10,
+          "num_entrants": 11,
           "type": 1,
           "start_at": 1785643200
         }
