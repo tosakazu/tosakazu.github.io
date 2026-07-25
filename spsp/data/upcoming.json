@@ -1,5 +1,5 @@
 {
-  "generated_at": 1784937616,
+  "generated_at": 1784948506,
   "country_code": "JP",
   "lookahead_days": 21,
   "count": 34,
@@ -60,14 +60,14 @@
       "city": "広島市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 49,
+      "num_attendees": 50,
       "url": "/tournament/10-moon",
       "events": [
         {
           "event_id": 1662397,
           "event_slug": "tournament/10-moon/event/1on1-tournament",
           "event_name": "シングルス/1on1 tournament",
-          "num_entrants": 46,
+          "num_entrants": 47,
           "type": 1,
           "start_at": 1785031200
         }
@@ -106,14 +106,14 @@
       "city": "柏市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 23,
+      "num_attendees": 24,
       "url": "/tournament/sen-smash-5",
       "events": [
         {
           "event_id": 1650858,
           "event_slug": "tournament/sen-smash-5/event/singles",
           "event_name": "シングルス / Singles",
-          "num_entrants": 23,
+          "num_entrants": 24,
           "type": 1,
           "start_at": 1785034800
         }
@@ -244,14 +244,14 @@
       "city": "中野区",
       "venue_name": "Red Bull Gaming Sphere Tokyo",
       "country_code": "JP",
-      "num_attendees": 3,
+      "num_attendees": 4,
       "url": "/tournament/weekly-smash-party-239",
       "events": [
         {
           "event_id": 1675026,
           "event_slug": "tournament/weekly-smash-party-239/event/special-1on1-ultimate-singles",
           "event_name": "SPECIAL 1on1/ Ultimate Singles",
-          "num_entrants": 3,
+          "num_entrants": 5,
           "type": 1,
           "start_at": 1785315600
         }
@@ -382,14 +382,14 @@
       "city": "川崎市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 1,
+      "num_attendees": 3,
       "url": "/tournament/10-69",
       "events": [
         {
           "event_id": 1675008,
           "event_slug": "tournament/10-69/event/super-smash-bros-ultimate-singles",
           "event_name": "シングルス",
-          "num_entrants": 2,
+          "num_entrants": 3,
           "type": 1,
           "start_at": 1785488400
         }
@@ -405,14 +405,14 @@
       "city": "四日市市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 13,
+      "num_attendees": 15,
       "url": "/tournament/quattro",
       "events": [
         {
           "event_id": 1674508,
           "event_slug": "tournament/quattro/event/quattro",
           "event_name": "四闘-Quattro-",
-          "num_entrants": 13,
+          "num_entrants": 15,
           "type": 1,
           "start_at": 1785513600
         }
@@ -474,14 +474,14 @@
       "city": "札幌市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 91,
+      "num_attendees": 95,
       "url": "/tournament/15-kyokkan-15",
       "events": [
         {
           "event_id": 1649479,
           "event_slug": "tournament/15-kyokkan-15/event/kyokkan",
           "event_name": "極冠/Kyokkan",
-          "num_entrants": 85,
+          "num_entrants": 89,
           "type": 1,
           "start_at": 1785549600
         }
@@ -643,14 +643,14 @@
       "city": "富山市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 13,
+      "num_attendees": 15,
       "url": "/tournament/tsurugi-4",
       "events": [
         {
           "event_id": 1640470,
           "event_slug": "tournament/tsurugi-4/event/singles",
           "event_name": "Singles",
-          "num_entrants": 13,
+          "num_entrants": 15,
           "type": 1,
           "start_at": 1786161600
         }
@@ -666,14 +666,14 @@
       "city": "岡山市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 1,
+      "num_attendees": 2,
       "url": "/tournament/8-66",
       "events": [
         {
           "event_id": 1656293,
           "event_slug": "tournament/8-66/event/super-smash-bros-ultimate-singles",
           "event_name": "ももブラ",
-          "num_entrants": 1,
+          "num_entrants": 2,
           "type": 1,
           "start_at": 1783823400
         }
@@ -735,14 +735,14 @@
       "city": "中野区",
       "venue_name": "Pio, Tokyo",
       "country_code": "JP",
-      "num_attendees": 8,
+      "num_attendees": 10,
       "url": "/tournament/5-104",
       "events": [
         {
           "event_id": 1670065,
           "event_slug": "tournament/5-104/event/singles-ssqm",
           "event_name": "シングルス / Singles(SSQM)",
-          "num_entrants": 8,
+          "num_entrants": 10,
           "type": 1,
           "start_at": 1786374000
         }
@@ -758,14 +758,14 @@
       "city": "岐阜市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 6,
+      "num_attendees": 8,
       "url": "/tournament/12-55",
       "events": [
         {
           "event_id": 1666986,
           "event_slug": "tournament/12-55/event/super-smash-bros-ultimate-singles",
           "event_name": "ぐーすま",
-          "num_entrants": 6,
+          "num_entrants": 8,
           "type": 1,
           "start_at": 1786420800
         }
@@ -781,14 +781,14 @@
       "city": "和泉市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 7,
+      "num_attendees": 8,
       "url": "/tournament/innosuma-26",
       "events": [
         {
           "event_id": 1673154,
           "event_slug": "tournament/innosuma-26/event/sp-1on1",
           "event_name": "スマブラSP 1on1 トーナメント",
-          "num_entrants": 7,
+          "num_entrants": 8,
           "type": 1,
           "start_at": 1786593600
         }
