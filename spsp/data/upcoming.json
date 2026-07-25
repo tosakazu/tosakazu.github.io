@@ -1,5 +1,5 @@
 {
-  "generated_at": 1784894414,
+  "generated_at": 1784905214,
   "country_code": "JP",
   "lookahead_days": 21,
   "count": 35,
@@ -566,7 +566,7 @@
       "city": "町田市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 211,
+      "num_attendees": 212,
       "url": "/tournament/impact-major-4",
       "events": [
         {
@@ -804,14 +804,14 @@
       "city": "和泉市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 4,
+      "num_attendees": 5,
       "url": "/tournament/innosuma-26",
       "events": [
         {
           "event_id": 1673154,
           "event_slug": "tournament/innosuma-26/event/sp-1on1",
           "event_name": "スマブラSP 1on1 トーナメント",
-          "num_entrants": 4,
+          "num_entrants": 5,
           "type": 1,
           "start_at": 1786593600
         }
