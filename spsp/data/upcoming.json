@@ -1,8 +1,8 @@
 {
-  "generated_at": 1785002417,
+  "generated_at": 1785006359,
   "country_code": "JP",
   "lookahead_days": 21,
-  "count": 38,
+  "count": 39,
   "tournaments": [
     {
       "tournament_id": 922246,
@@ -106,14 +106,14 @@
       "city": "台東区",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 7,
+      "num_attendees": 10,
       "url": "/tournament/27-509",
       "events": [
         {
           "event_id": 1667226,
           "event_slug": "tournament/27-509/event/on",
           "event_name": "シングルス（１on１トーナメント）",
-          "num_entrants": 6,
+          "num_entrants": 9,
           "type": 1,
           "start_at": 1785139200
         }
@@ -152,14 +152,14 @@
       "city": "大阪市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 2,
+      "num_attendees": 3,
       "url": "/tournament/hit-184-maesuma-hit-184",
       "events": [
         {
           "event_id": 1658644,
           "event_slug": "tournament/hit-184-maesuma-hit-184/event/singles-tournament",
           "event_name": "Singles Tournament",
-          "num_entrants": 2,
+          "num_entrants": 3,
           "type": 1,
           "start_at": 1785146400
         }
@@ -428,14 +428,14 @@
       "city": "福岡市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 15,
+      "num_attendees": 16,
       "url": "/tournament/revival-14-5",
       "events": [
         {
           "event_id": 1672554,
           "event_slug": "tournament/revival-14-5/event/1on1",
           "event_name": "1on1トーナメント",
-          "num_entrants": 15,
+          "num_entrants": 16,
           "type": 1,
           "start_at": 1785547800
         }
@@ -597,14 +597,14 @@
       "city": "浜松市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 52,
+      "num_attendees": 53,
       "url": "/tournament/sp15-2",
       "events": [
         {
           "event_id": 1666584,
           "event_slug": "tournament/sp15-2/event/1on1",
           "event_name": "1on1",
-          "num_entrants": 50,
+          "num_entrants": 51,
           "type": 1,
           "start_at": 1786154400
         }
@@ -620,14 +620,14 @@
       "city": "富山市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 17,
+      "num_attendees": 18,
       "url": "/tournament/tsurugi-4",
       "events": [
         {
           "event_id": 1640470,
           "event_slug": "tournament/tsurugi-4/event/singles",
           "event_name": "Singles",
-          "num_entrants": 17,
+          "num_entrants": 18,
           "type": 1,
           "start_at": 1786161600
         }
@@ -699,6 +699,29 @@
           "num_entrants": 9,
           "type": 1,
           "start_at": 1786240800
+        }
+      ]
+    },
+    {
+      "tournament_id": 936807,
+      "tournament_slug": "tournament/28-11",
+      "tournament_name": "第28回ベルスマトナメ",
+      "start_at": 1786330800,
+      "end_at": 1786356000,
+      "is_online": false,
+      "city": "松阪市",
+      "venue_name": "",
+      "country_code": "JP",
+      "num_attendees": 0,
+      "url": "/tournament/28-11",
+      "events": [
+        {
+          "event_id": 1675365,
+          "event_slug": "tournament/28-11/event/sp-1on1",
+          "event_name": "スマブラSP 1on1トーナメント",
+          "num_entrants": 0,
+          "type": 1,
+          "start_at": 1786330800
         }
       ]
     },
