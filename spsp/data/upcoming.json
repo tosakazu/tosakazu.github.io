@@ -1,101 +1,9 @@
 {
-  "generated_at": 1785013213,
+  "generated_at": 1785024033,
   "country_code": "JP",
   "lookahead_days": 21,
-  "count": 39,
+  "count": 35,
   "tournaments": [
-    {
-      "tournament_id": 922246,
-      "tournament_slug": "tournament/2-1700",
-      "tournament_name": "風雲 #2 (1700未満制限大会)",
-      "start_at": 1785027600,
-      "end_at": 1785052800,
-      "is_online": false,
-      "city": "大阪市",
-      "venue_name": "",
-      "country_code": "JP",
-      "num_attendees": 39,
-      "url": "/tournament/2-1700",
-      "events": [
-        {
-          "event_id": 1646267,
-          "event_slug": "tournament/2-1700/event/sp-1on1",
-          "event_name": "スマブラSP 1on1 トーナメント",
-          "num_entrants": 36,
-          "type": 1,
-          "start_at": 1785027600
-        }
-      ]
-    },
-    {
-      "tournament_id": 930300,
-      "tournament_slug": "tournament/10-moon",
-      "tournament_name": "【第10回】Moon!",
-      "start_at": 1785031200,
-      "end_at": 1785067200,
-      "is_online": false,
-      "city": "広島市",
-      "venue_name": "",
-      "country_code": "JP",
-      "num_attendees": 49,
-      "url": "/tournament/10-moon",
-      "events": [
-        {
-          "event_id": 1662397,
-          "event_slug": "tournament/10-moon/event/1on1-tournament",
-          "event_name": "シングルス/1on1 tournament",
-          "num_entrants": 47,
-          "type": 1,
-          "start_at": 1785031200
-        }
-      ]
-    },
-    {
-      "tournament_id": 928516,
-      "tournament_slug": "tournament/acd-2",
-      "tournament_name": "【お昼食えます】第４回ACDオフスマ",
-      "start_at": 1785033000,
-      "end_at": 1785060000,
-      "is_online": false,
-      "city": "台東区",
-      "venue_name": "",
-      "country_code": "JP",
-      "num_attendees": 7,
-      "url": "/tournament/acd-2",
-      "events": [
-        {
-          "event_id": 1658888,
-          "event_slug": "tournament/acd-2/event/acd-4",
-          "event_name": "【お昼食えます】ACDオフスマ#4",
-          "num_entrants": 7,
-          "type": 1,
-          "start_at": 1785033000
-        }
-      ]
-    },
-    {
-      "tournament_id": 924511,
-      "tournament_slug": "tournament/sen-smash-5",
-      "tournament_name": "千スマ / Sen Smash #5",
-      "start_at": 1785034800,
-      "end_at": 1785063600,
-      "is_online": false,
-      "city": "柏市",
-      "venue_name": "",
-      "country_code": "JP",
-      "num_attendees": 24,
-      "url": "/tournament/sen-smash-5",
-      "events": [
-        {
-          "event_id": 1650858,
-          "event_slug": "tournament/sen-smash-5/event/singles",
-          "event_name": "シングルス / Singles",
-          "num_entrants": 24,
-          "type": 1,
-          "start_at": 1785034800
-        }
-      ]
-    },
     {
       "tournament_id": 932721,
       "tournament_slug": "tournament/27-509",
@@ -106,7 +14,7 @@
       "city": "台東区",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 13,
+      "num_attendees": 14,
       "url": "/tournament/27-509",
       "events": [
         {
@@ -152,14 +60,14 @@
       "city": "大阪市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 3,
+      "num_attendees": 4,
       "url": "/tournament/hit-184-maesuma-hit-184",
       "events": [
         {
           "event_id": 1658644,
           "event_slug": "tournament/hit-184-maesuma-hit-184/event/singles-tournament",
           "event_name": "Singles Tournament",
-          "num_entrants": 3,
+          "num_entrants": 4,
           "type": 1,
           "start_at": 1785146400
         }
@@ -221,7 +129,7 @@
       "city": "中野区",
       "venue_name": "Red Bull Gaming Sphere Tokyo",
       "country_code": "JP",
-      "num_attendees": 76,
+      "num_attendees": 78,
       "url": "/tournament/weekly-smash-party-239",
       "events": [
         {
@@ -359,14 +267,14 @@
       "city": "川崎市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 3,
+      "num_attendees": 4,
       "url": "/tournament/10-69",
       "events": [
         {
           "event_id": 1675008,
           "event_slug": "tournament/10-69/event/super-smash-bros-ultimate-singles",
           "event_name": "シングルス",
-          "num_entrants": 3,
+          "num_entrants": 4,
           "type": 1,
           "start_at": 1785488400
         }
@@ -451,14 +359,14 @@
       "city": "札幌市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 98,
+      "num_attendees": 99,
       "url": "/tournament/15-kyokkan-15",
       "events": [
         {
           "event_id": 1649479,
           "event_slug": "tournament/15-kyokkan-15/event/kyokkan",
           "event_name": "極冠/Kyokkan",
-          "num_entrants": 91,
+          "num_entrants": 92,
           "type": 1,
           "start_at": 1785549600
         }
@@ -528,14 +436,14 @@
       "city": "宇部市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 11,
+      "num_attendees": 12,
       "url": "/tournament/35-3",
       "events": [
         {
           "event_id": 1668068,
           "event_slug": "tournament/35-3/event/sp-1on1",
           "event_name": "スマブラSP 1on1",
-          "num_entrants": 11,
+          "num_entrants": 12,
           "type": 1,
           "start_at": 1785643200
         }
@@ -597,14 +505,14 @@
       "city": "浜松市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 53,
+      "num_attendees": 55,
       "url": "/tournament/sp15-2",
       "events": [
         {
           "event_id": 1666584,
           "event_slug": "tournament/sp15-2/event/1on1",
           "event_name": "1on1",
-          "num_entrants": 51,
+          "num_entrants": 53,
           "type": 1,
           "start_at": 1786154400
         }
