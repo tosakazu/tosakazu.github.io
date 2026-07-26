@@ -1,5 +1,5 @@
 {
-  "generated_at": 1785056435,
+  "generated_at": 1785067235,
   "country_code": "JP",
   "lookahead_days": 21,
   "count": 37,
@@ -129,7 +129,7 @@
       "city": "中野区",
       "venue_name": "Red Bull Gaming Sphere Tokyo",
       "country_code": "JP",
-      "num_attendees": 80,
+      "num_attendees": 81,
       "url": "/tournament/weekly-smash-party-239",
       "events": [
         {
@@ -551,14 +551,14 @@
       "city": "浜松市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 62,
+      "num_attendees": 63,
       "url": "/tournament/sp15-2",
       "events": [
         {
           "event_id": 1666584,
           "event_slug": "tournament/sp15-2/event/1on1",
           "event_name": "1on1",
-          "num_entrants": 60,
+          "num_entrants": 61,
           "type": 1,
           "start_at": 1786154400
         }
@@ -758,14 +758,14 @@
       "city": "名古屋市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 53,
+      "num_attendees": 54,
       "url": "/tournament/growup_6",
       "events": [
         {
           "event_id": 1675058,
           "event_slug": "tournament/growup_6/event/1on1-tournament",
           "event_name": "1on1 tournament",
-          "num_entrants": 53,
+          "num_entrants": 54,
           "type": 1,
           "start_at": 1786672800
         }
