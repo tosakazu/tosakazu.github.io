@@ -539,6 +539,11 @@
     </div>
     </div><!-- /#share-top -->
 
+    <!-- ポイント予想 (ドラフト): /b/ プレビュー配信時のみ表示 (本番 gh-pages では非表示) -->
+    <div class="section" id="yosou-section" style="display:none">
+      <a id="yosou-link" href="#" style="display:block;text-align:center;padding:8px;border:1px solid #dc2626;border-radius:8px;color:#dc2626;font-weight:600;text-decoration:none;font-size:13px">🔮 ポイント予想 (β)</a>
+    </div>
+
     <div class="section">
       <h2>📊 プレイヤー分析 <span style="font-size:11px;color:#9ca3af;font-weight:400">(直近 5 大会)</span></h2>
       <div class="radar-wrap">
@@ -614,7 +619,7 @@
   </div>
 
   <div class="footer" id="footer-info">
-    <span class="site-version" style="font-size:11px;color:#9ca3af">v 887733b · 2026-07-27 09:07 UTC</span>
+    <span class="site-version" style="font-size:11px;color:#9ca3af">v 9b66d54 · 2026-07-27 12:07 UTC</span>
   </div>
 </main>
 
@@ -626,6 +631,12 @@
 
 const params = new URLSearchParams(location.search);
 const UID = parseInt(params.get('uid') || location.hash.replace(/^#/, '') || '0');
+
+// ポイント予想 (ドラフト) へのリンク: /b/ プレビュー配信時のみ表示
+if (location.pathname.indexOf('/b/') === 0 && UID) {
+  document.getElementById('yosou-section').style.display = '';
+  document.getElementById('yosou-link').href = '/b/yosou/?uid=' + UID;
+}
 
 let META = null;
 let PLAYER = null;     // detail JSON (players/<uid>.json)
