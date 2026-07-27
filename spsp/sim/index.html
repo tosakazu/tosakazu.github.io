@@ -1,0 +1,876 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ポイントシミュレーション — SPSP</title>
+
+<style>
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Hiragino Sans", sans-serif;
+    background: #ffffff; color: #111827; font-size: 14px;
+    -webkit-text-size-adjust: 100%;
+  }
+  .page-title { font-size: 18px; font-weight: 700; margin: 2px 0 12px; }
+  main { max-width: 440px; margin: 0 auto; padding: 16px; }
+
+  /* プレイヤーページの #share-card / rank-hero / subranks と同デザイン */
+  #sim-card {
+    background: linear-gradient(180deg, #fafafa 0%, #ffffff 30%, #ffffff 100%);
+    border: 1px solid #e5e7eb; border-radius: 12px; padding: 16px 14px;
+  }
+  .hero .display { font-size: 22px; font-weight: 700; line-height: 1.25; word-break: break-word; }
+  .hero .display a { color: #dc2626; text-decoration: none; }
+  .hero .display a:hover { text-decoration: underline; }
+  .hero .display .lv-pill { vertical-align: 4px; margin-left: 6px; }
+  .rank-hero {
+    text-align: center; background: #f9fafb; border-radius: 10px;
+    padding: 12px 8px; margin: 12px -2px; border: 1px solid #f3f4f6;
+  }
+  .rank-hero .label { font-size: 11px; color: #6b7280; letter-spacing: 0.1em; }
+  .rank-hero .big {
+    font-size: 48px; font-weight: 800; color: #dc2626; line-height: 1;
+    margin: 4px 0 2px; font-variant-numeric: tabular-nums;
+    text-shadow: 0 0 24px rgba(220, 38, 38, 0.20);
+  }
+  .rank-hero .big .hash { font-size: 28px; color: #dc2626aa; vertical-align: 7px; margin-right: 2px; }
+  .subranks { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin: 6px 0 0; }
+  .subrank-card {
+    background: #f9fafb; border: 1px solid #f3f4f6; border-radius: 8px; padding: 8px 10px;
+  }
+  .subrank-card .label { font-size: 10px; color: #6b7280; letter-spacing: 0.06em; }
+  .subrank-card .value { font-size: 18px; color: #111827; font-weight: 600; margin-top: 2px; font-variant-numeric: tabular-nums; }
+  .subrank-card .subscore { font-size: 11px; color: #dc2626; margin-top: 2px; font-variant-numeric: tabular-nums; }
+  .lv-pill {
+    display: inline-block; padding: 1px 7px; border-radius: 10px;
+    font-size: 11px; font-weight: 700; background: #e5e7eb; color: #6b7280;
+  }
+  .lv-pill.lv-5 { background: #fef3c7; color: #92400e; }
+  .lv-pill.lv-4 { background: #ede9fe; color: #6b21a8; }
+  .lv-pill.lv-3 { background: #dbeafe; color: #1d4ed8; }
+  .lv-pill.lv-2 { background: #dcfce7; color: #15803d; }
+  .lv-pill.lv-1 { background: #f3f4f6; color: #6b7280; }
+
+  .section { margin-top: 14px; }
+  .section h2 {
+    font-size: 12px; color: #374151; text-transform: uppercase; letter-spacing: 0.08em;
+    margin: 0 0 8px; font-weight: 600;
+  }
+  .muted { color: #6b7280; font-size: 12px; }
+
+  /* 検索 */
+  .search-wrap { position: relative; margin-top: 8px; }
+  .search-wrap input, .opp-wrap input {
+    width: 100%; padding: 8px 10px; font-size: 14px;
+    border: 1px solid #d1d5db; border-radius: 8px;
+  }
+  .suggest {
+    position: absolute; left: 0; right: 0; top: 100%; z-index: 20;
+    background: #fff; border: 1px solid #d1d5db; border-radius: 8px;
+    max-height: 240px; overflow-y: auto; box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    display: none;
+  }
+  .suggest.open { display: block; }
+  .suggest .item { padding: 7px 10px; cursor: pointer; display: flex; justify-content: space-between; gap: 8px; }
+  .suggest .item:hover, .suggest .item.active { background: #f3f4f6; }
+  .suggest .item .meta { color: #9ca3af; font-size: 11px; white-space: nowrap; }
+
+  /* 大会ブロック (プレイヤーページ同様のフラットなセクション) */
+  .tour-card { margin-bottom: 12px; }
+  .tour-card .t-name { font-weight: 600; font-size: 14px; }
+  .tour-card .t-meta { font-size: 12px; color: #6b7280; margin-top: 2px; }
+  .badge {
+    display: inline-block; font-size: 10px; font-weight: 600; border-radius: 8px;
+    padding: 1px 6px; margin-left: 4px; vertical-align: 1px;
+  }
+  .badge.ok { background: #dcfce7; color: #15803d; }
+  .badge.ng { background: #fee2e2; color: #b91c1c; }
+  .badge.wk { background: #dbeafe; color: #1d4ed8; }
+  .badge.wd { background: #f3f4f6; color: #6b7280; }
+  .panel { margin-top: 10px; border-top: 1px solid #f3f4f6; padding-top: 10px; }
+  .panel h3 {
+    font-size: 11px; color: #6b7280; letter-spacing: 0.06em; font-weight: 600;
+    margin: 0 0 6px;
+  }
+  .place-sel {
+    width: 100%; padding: 8px 10px; font-size: 14px;
+    border: 1px solid #d1d5db; border-radius: 8px; background: #fff;
+  }
+  .detail-box {
+    margin-top: 8px; background: #f9fafb; border: 1px solid #f3f4f6; border-radius: 8px;
+    padding: 10px; font-size: 12px; line-height: 1.7; display: none;
+  }
+  .detail-box.show { display: block; }
+  .detail-box b { color: #dc2626; font-variant-numeric: tabular-nums; }
+  .detail-box .dim { color: #6b7280; }
+
+  /* 直対シミュ */
+  .opp-wrap { position: relative; margin-top: 6px; }
+  .sim-list { margin-top: 8px; }
+  .sim-row {
+    display: flex; align-items: center; gap: 6px; padding: 6px 8px;
+    border: 1px solid #f3f4f6; border-radius: 8px; margin-bottom: 4px;
+    background: #f9fafb; font-size: 12px;
+  }
+  .sim-row .who { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .sim-row .wlseg { display: inline-flex; flex-shrink: 0; }
+  .sim-row .wlseg button {
+    border: 1px solid #d1d5db; background: #fff; color: #9ca3af;
+    font-size: 11px; font-weight: 700; padding: 2px 8px; cursor: pointer;
+    line-height: 1.5; white-space: nowrap;
+  }
+  .sim-row .wlseg button:first-child { border-radius: 6px 0 0 6px; }
+  .sim-row .wlseg button:last-child { border-radius: 0 6px 6px 0; margin-left: -1px; }
+  .sim-row .wlseg button.on.win { background: #f0fdf4; color: #16a34a; border-color: #86efac; z-index: 1; }
+  .sim-row .wlseg button.on.loss { background: #eff6ff; color: #2563eb; border-color: #93c5fd; z-index: 1; }
+  .sim-row .delta { font-variant-numeric: tabular-nums; color: #374151; }
+  .sim-row .rm {
+    background: none; border: none; color: #9ca3af; cursor: pointer; font-size: 14px; padding: 0 4px;
+  }
+  .sim-row .rm:hover { color: #dc2626; }
+  .sim-result {
+    margin-top: 8px; background: #f9fafb; border: 1px solid #f3f4f6; border-radius: 8px;
+    padding: 10px; font-size: 12px; line-height: 1.8;
+  }
+  .sim-result b { font-variant-numeric: tabular-nums; }
+  .sim-result .up { color: #16a34a; }
+  .sim-result .down { color: #2563eb; }
+  .note {
+    margin-top: 16px; font-size: 11px; color: #9ca3af; line-height: 1.6;
+    border-top: 1px solid #f3f4f6; padding-top: 10px;
+  }
+  #loading { text-align: center; color: #6b7280; padding: 40px 0; }
+</style>
+</head>
+<body>
+<div id="nav-root"></div>
+<script src="../nav.js"></script>
+<main>
+  <div class="page-title">🔮 ポイントシミュレーション</div>
+  <div id="loading">読み込み中… (プレイヤーデータ 約2MB)</div>
+  <div id="content" style="display:none">
+    <div id="sim-card">
+      <div class="hero">
+        <div class="display"><a id="display" href="#" title="プレイヤーページを開く"></a><span id="lv-slot"></span></div>
+      </div>
+      <div class="rank-hero">
+        <div class="label">総合評価</div>
+        <div class="big"><span class="hash">#</span><span id="cur-ens">—</span></div>
+      </div>
+      <div class="subranks">
+        <div class="subrank-card">
+          <div class="label">順位評価</div>
+          <div class="value">#<span id="cur-tjpr">—</span></div>
+          <div class="subscore" id="cur-tjpr-s"></div>
+        </div>
+        <div class="subrank-card">
+          <div class="label">直対評価</div>
+          <div class="value">#<span id="cur-bt">—</span></div>
+          <div class="subscore" id="cur-bt-s"></div>
+        </div>
+      </div>
+    </div>
+    <div class="search-wrap">
+      <input id="psearch" type="search" placeholder="他のプレイヤーを検索 (名前 / UID)…" autocomplete="off">
+      <div class="suggest" id="psearch-suggest"></div>
+    </div>
+
+    <div class="section" id="tours-section">
+      <h2>📅 シミュレーション対象の大会</h2>
+      <div id="tours"></div>
+      <div class="search-wrap">
+        <input id="tsearch" type="search" placeholder="他の開催予定大会を選ぶ…" autocomplete="off">
+        <div class="suggest" id="tsearch-suggest"></div>
+      </div>
+      <div class="muted" id="fresh" style="font-size:10px;margin-top:6px;color:#9ca3af"></div>
+    </div>
+
+  </div>
+</main>
+
+<script src="./calc.js"></script>
+<script>
+(function () {
+  'use strict';
+  var C = window.SPSPCalc;
+  var DATA_BASE = '../';
+  var params = new URLSearchParams(location.search);
+  var UID = parseInt(params.get('uid') || location.hash.replace(/^#/, '') || '0', 10);
+
+  var MASTER = new Map();     // uid -> {display, tjpr_score, bt_gated_elo, bt_internal_elo, lv, gray, tjpr_rank, bt_rank}
+  var OVERSEAS = new Set();
+  var UPCOMING = null;        // upcoming_entrants.json
+  var PLAYER = null;          // players/<uid>.json
+  var tjprArr = [];           // 自分以外 [{score, gray}] 降順
+  var btArr = [];
+  var oppCache = new Map();   // uid -> players json (直対シミュ用 rd)
+  var ENS = null;             // 総合評価予測器
+  var ENS_CUR_RAW = 0;        // 現在値での raw 予測 (アンカー用)
+
+  function esc(s) {
+    return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) {
+      return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
+    });
+  }
+  function fmt1(x) { return (Math.round(x * 10) / 10).toLocaleString('ja-JP', { minimumFractionDigits: 1, maximumFractionDigits: 1 }); }
+  function fmt0(x) { return Math.round(x).toLocaleString('ja-JP'); }
+  function signed(x, digits) {
+    var v = digits === 0 ? Math.round(x) : Math.round(x * 10) / 10;
+    var s = v.toLocaleString('ja-JP', digits === 0 ? {} : { minimumFractionDigits: 1, maximumFractionDigits: 1 });
+    return (v >= 0 ? '+' : '') + s;
+  }
+  function dateStr(ts) {
+    var d = new Date(ts * 1000);
+    var wd = ['日', '月', '火', '水', '木', '金', '土'][d.getDay()];
+    return (d.getMonth() + 1) + '/' + d.getDate() + '(' + wd + ')';
+  }
+
+  // サジェストを閉じる処理は document に 1 個だけ委譲登録する
+  // (大会切替のたびにリスナーが蓄積しないように)
+  document.addEventListener('click', function (e) {
+    document.querySelectorAll('.suggest.open').forEach(function (s) {
+      var wrap = s.parentNode;
+      if (!wrap || !wrap.contains(e.target)) s.classList.remove('open');
+    });
+  });
+
+  // サジェストのキーボード操作 (↑↓ で選択、Enter 確定、Esc で閉じる)
+  function attachSuggestNav(input, sug, pick) {
+    input.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape') { sug.classList.remove('open'); return; }
+      if (!sug.classList.contains('open')) return;
+      var items = Array.prototype.filter.call(sug.querySelectorAll('.item'), function (it) {
+        return it.dataset.i !== undefined || it.dataset.uid !== undefined || it.dataset.eid !== undefined;
+      });
+      if (!items.length) return;
+      var idx = items.findIndex(function (it) { return it.classList.contains('active'); });
+      if (e.key === 'ArrowDown') { e.preventDefault(); idx = (idx + 1) % items.length; }
+      else if (e.key === 'ArrowUp') { e.preventDefault(); idx = (idx - 1 + items.length) % items.length; }
+      else if (e.key === 'Enter') { if (idx >= 0) { e.preventDefault(); pick(items[idx]); } return; }
+      else return;
+      items.forEach(function (it, i) { it.classList.toggle('active', i === idx); });
+      items[idx].scrollIntoView({ block: 'nearest' });
+    });
+  }
+
+  // ---- データロード ----
+  function loadJsonl(url) {
+    return fetch(url).then(function (r) {
+      if (!r.ok) throw new Error('jsonl ' + r.status);
+      return r.text();
+    }).then(function (text) {
+      var lines = text.split('\n');
+      for (var i = 0; i < lines.length; i++) {
+        if (!lines[i]) continue;
+        var rec;
+        try { rec = JSON.parse(lines[i]); } catch (e) { continue; }
+        var sc = rec.scores || {};
+        MASTER.set(rec.user_id, {
+          display: rec.display,
+          tjpr_score: sc.tjpr_score || 0,
+          bt_gated_elo: sc.bt_gated_elo || 0,
+          bt_internal_elo: sc.bt_internal_elo || 0,
+          lv: sc.shared_cascade_lv || 0,
+          gray: !!(rec.metadata && rec.metadata.provisional),
+          tjpr_rank: rec.ranks ? rec.ranks.tjpr : 0,
+          bt_rank: rec.ranks ? rec.ranks.bt_gated : 0,
+        });
+      }
+    });
+  }
+
+  Promise.all([
+    // overseas は表示のグレー化にしか使わないので、取得失敗しても degrade して続行
+    fetch(DATA_BASE + 'data/overseas.json')
+      .then(function (r) { return r.ok ? r.json() : { uids: [] }; })
+      .catch(function () { return { uids: [] }; }),
+    fetch('../data/upcoming_entrants.json').then(function (r) {
+      if (!r.ok) throw new Error('大会データの取得に失敗 (' + r.status + ')');
+      return r.json();
+    }),
+    UID ? fetch(DATA_BASE + 'players/' + UID + '.json')
+            .then(function (r) { return r.ok ? r.json() : null; })
+            .catch(function () { return null; })
+        : Promise.resolve(null),
+    loadJsonl(DATA_BASE + 'latest_tjpr_full.jsonl'),
+  ]).then(function (res) {
+    (res[0].uids || []).forEach(function (u) { OVERSEAS.add(u); });
+    UPCOMING = res[1];
+    PLAYER = res[2];
+    MASTER.forEach(function (v, uid) { if (OVERSEAS.has(uid)) v.gray = true; });
+    if (PLAYER) buildRankArrays();
+    render();
+  }).catch(function (e) {
+    document.getElementById('loading').textContent =
+      'データの読み込みに失敗しました: ' + e.message;
+  });
+
+  function buildRankArrays() {
+    tjprArr = []; btArr = [];
+    MASTER.forEach(function (v, uid) {
+      if (uid === UID) return;
+      tjprArr.push({ score: v.tjpr_score, gray: v.gray, uid: uid });
+      if (v.bt_gated_elo > 0) btArr.push({ score: v.bt_gated_elo, gray: v.gray, uid: uid });
+    });
+    tjprArr.sort(function (a, b) { return b.score - a.score; });
+    btArr.sort(function (a, b) { return b.score - a.score; });
+    var others = [];
+    MASTER.forEach(function (v, uid) {
+      if (uid === UID) return;
+      others.push({ lv: v.lv, tj: v.tjpr_score, bt: v.bt_gated_elo, gray: v.gray });
+    });
+    ENS = C.createEnsemblePredictor(others, PLAYER.scores.shared_cascade_lv || 1);
+    ENS_CUR_RAW = ENS.predictRaw(PLAYER.scores.tjpr_score || 0, PLAYER.scores.bt_gated_elo || 0);
+  }
+
+  // 総合評価の暫定順位 (現在順位にアンカーして差分適用)
+  function updateEns(panel, state) {
+    var wrap = panel.querySelector('.ens-wrap');
+    if (!wrap) return;
+    if (state.tjpr == null && state.bt == null) { wrap.style.display = 'none'; return; }
+    var tj = state.tjpr != null ? state.tjpr : (PLAYER.scores.tjpr_score || 0);
+    var bt = state.bt != null ? state.bt : (PLAYER.scores.bt_gated_elo || 0);
+    var cur = (PLAYER.ranks || {}).ensemble || 0;
+    var nr = Math.max(1, cur + ENS.predictRaw(tj, bt) - ENS_CUR_RAW);
+    var d = cur ? cur - nr : 0;
+    wrap.style.display = '';
+    wrap.querySelector('.ens-box').innerHTML =
+      '<div>総合評価 暫定順位 ' + (cur ? '#' + cur : '–') + ' → <b>#' + nr + '</b>' +
+      (d > 0 ? ' <span class="up">(↑' + d + ')</span>' : d < 0 ? ' <span class="down">(↓' + (-d) + ')</span>' : '') +
+      '</div>';
+  }
+
+  // 最終参加日 (エンジンの last_seen 相当): レートが動かなかった大会への参加も含めるため
+  // bt_timeline の最終日と tournaments[] の最終 ts の大きい方を使う
+  function lastSeenOf(pj) {
+    var tl = pj.bt_timeline_g2 || [];
+    var last = tl.length ? new Date(tl[tl.length - 1].date + 'T00:00:00+09:00').getTime() / 1000 : null;
+    var ts = (pj.tournaments || []).reduce(function (m, t) {
+      return t.ts && t.ts > m ? t.ts : m;
+    }, 0);
+    if (ts > (last || 0)) last = ts;
+    return last;
+  }
+
+  // ---- 自分の状態 ----
+  function selfState() {
+    var sc = PLAYER.scores;
+    var lv = sc.shared_cascade_lv || 1;
+    var entries = C.extractEntries(PLAYER);
+    var rating = sc.bt_internal_elo > 0 ? sc.bt_internal_elo : 1500;
+    var tl = PLAYER.bt_timeline_g2 || [];
+    var rd = tl.length ? tl[tl.length - 1].rd : 350;
+    var history = tl.map(function (x) {
+      return { ts: new Date(x.date + 'T00:00:00+09:00').getTime() / 1000, rating: x.rating };
+    });
+    return { lv: lv, entries: entries, rating: rating, rd: rd,
+             lastSeenTs: lastSeenOf(PLAYER), history: history };
+  }
+
+  // ---- 描画 ----
+  function render() {
+    document.getElementById('loading').style.display = 'none';
+    document.getElementById('content').style.display = '';
+    if (!PLAYER) {
+      // プレイヤー未指定 (または未収録): 検索だけ出す
+      document.getElementById('sim-card').style.display = 'none';
+      document.getElementById('tours-section').style.display = 'none';
+      var ps = document.getElementById('psearch');
+      if (UID) {
+        var msg = document.createElement('div');
+        msg.className = 'muted';
+        msg.style.margin = '4px 0 8px';
+        msg.textContent = 'uid ' + UID + ' のプレイヤーが見つかりませんでした。名前で検索してください。';
+        ps.parentNode.before(msg);
+      }
+      ps.placeholder = 'プレイヤーを検索 (名前 / UID)…';
+      ps.focus();
+      setupPlayerSearch();
+      return;
+    }
+    var sc = PLAYER.scores, rk = PLAYER.ranks || {};
+    var name = (MASTER.get(UID) || {}).display || ('uid:' + UID);
+    document.title = name + ' のポイントシミュレーション — SPSP';
+    var nameLink = document.getElementById('display');
+    nameLink.textContent = name;
+    nameLink.href = DATA_BASE + 'p/?uid=' + UID;
+    var lv = sc.shared_cascade_lv || 0;
+    document.getElementById('lv-slot').innerHTML =
+      '<span class="lv-pill lv-' + lv + '">Lv' + lv + '</span>';
+    document.getElementById('cur-ens').textContent = rk.ensemble || '—';
+    document.getElementById('cur-tjpr').textContent = rk.tjpr || '—';
+    document.getElementById('cur-tjpr-s').textContent =
+      'スコア ' + (sc.tjpr_elo != null ? sc.tjpr_elo.toFixed(2) : '—');
+    document.getElementById('cur-bt').textContent = rk.bt_gated || '—';
+    document.getElementById('cur-bt-s').innerHTML =
+      'スコア ' + (sc.bt_gated_elo != null ? sc.bt_gated_elo.toFixed(2) : '—') +
+      ' <span style="color:#9ca3af;font-size:10px">(' +
+      (sc.bt_internal_elo != null ? sc.bt_internal_elo.toFixed(2) : '—') + ')</span>';
+    renderTours();
+    setupPlayerSearch();
+    setupTourSearch();
+    var fresh = document.getElementById('fresh');
+    if (fresh && UPCOMING.generated_at) {
+      var gd = new Date(UPCOMING.generated_at * 1000);
+      fresh.textContent = 'エントラント情報: ' + (gd.getMonth() + 1) + '/' + gd.getDate() + ' ' +
+        gd.getHours() + ':' + String(gd.getMinutes()).padStart(2, '0') + ' 時点';
+    }
+  }
+
+  function renderTours() {
+    // 一番近い「参加登録中かつ集計対象」の大会だけ初期表示 (無ければ空)。
+    // events に無い eid や開催後 24h 超の大会は除外
+    var st = selfState();
+    var now = Date.now() / 1000;
+    var eids = (UPCOMING.by_uid[String(UID)] || []).map(String)
+      .filter(function (eid) {
+        var ev = UPCOMING.events[eid];
+        return ev && ev.start_at && ev.start_at + 86400 > now;
+      })
+      .sort(function (a, b) { return UPCOMING.events[a].start_at - UPCOMING.events[b].start_at; });
+    for (var i = 0; i < eids.length; i++) {
+      if (gateInfo(UPCOMING.events[eids[i]], st.lv).pass) { addTourCard(eids[i]); return; }
+    }
+  }
+
+  // nent は登録者数 (num_entrants) を優先 (annotate 側・エンジンの standings 数に近い方)
+  function nentOf(ev) {
+    return ev.num_entrants || (ev.entrants && ev.entrants.length) || 0;
+  }
+
+  function gateInfo(ev, lv) {
+    var nent = nentOf(ev);
+    var meta = {
+      nent: nent,
+      isWeekend: !!ev.is_weekend,
+      isCapped: !!(ev.is_restricted || ev.is_lower_class),
+    };
+    // エンジン全体の除外 (Lv 問わず): 特殊ルール大会 / 5 名未満
+    if (ev.is_non_serious) {
+      return { pass: false, reason: '特殊ルール大会は集計されません', meta: meta };
+    }
+    if (nent < 5) {
+      return { pass: false, reason: '5 名未満の大会は集計されません', meta: meta };
+    }
+    var pass = C.tournamentPassesLv(lv, meta);
+    var reason = '';
+    if (!pass) {
+      // 落ちた条件を全部列挙する (満たしている条件は書かない)
+      var f = C.LV_FILTERS[lv] || {};
+      var conds = [];
+      if (f.minNentGt !== undefined && meta.nent <= f.minNentGt) conds.push((f.minNentGt + 1) + ' 名以上');
+      if (f.weekendOnly && !meta.isWeekend) conds.push('休日開催');
+      if (f.excludeCapped && meta.isCapped) conds.push('制限/下位クラス以外');
+      reason = 'Lv' + lv + ' は ' + conds.join('・') + ' の大会のみ集計';
+    }
+    return { pass: pass, reason: reason, meta: meta };
+  }
+
+  function addTourCard(eid) {
+    eid = String(eid);
+    var ev = UPCOMING.events[eid];
+    if (!ev) return;
+    document.getElementById('tours').innerHTML = '';  // 常に 1 大会だけ表示 (置き換え)
+    var st = selfState();
+    var g = gateInfo(ev, st.lv);
+    var nent = nentOf(ev);
+    var entered = (UPCOMING.by_uid[String(UID)] || []).map(String).indexOf(eid) >= 0;
+    var card = document.createElement('div');
+    card.className = 'tour-card';
+    card.innerHTML =
+      '<div class="t-name">' + esc(ev.tournament_name) + '</div>' +
+      '<div class="t-meta">' + dateStr(ev.start_at) + ' ・ ' + nent + '人' +
+      (ev.is_weekend ? '<span class="badge wk">休日</span>' : '<span class="badge wd">平日</span>') +
+      (entered ? '<span class="badge wk">参加予定</span>' : '') +
+      (g.pass ? '<span class="badge ok">集計対象</span>'
+              : '<span class="badge ng">集計対象外</span> <span class="muted">' + esc(g.reason) + '</span>') +
+      '</div>' +
+      '<div class="panel"></div>';
+    document.getElementById('tours').appendChild(card);
+    buildPanel(card.querySelector('.panel'), ev, g, { tjpr: null, bt: null });
+  }
+
+  // ---- 順位評価予想 ----
+  function tjprPrediction(ev, g) {
+    var st = selfState();
+    var ratings = ev.entrants.map(function (e) {
+      if (e.uid && MASTER.has(e.uid)) {
+        var m = MASTER.get(e.uid);
+        return m.bt_internal_elo > 0 ? m.bt_internal_elo : 1500;
+      }
+      return 1500;
+    });
+    var nent = nentOf(ev) || ratings.length;
+    var bz = C.buildBanzuke(ratings, nent);
+    var maxTier = C.placementToTier(bz.n);
+    var rows = [];
+    var curScore = PLAYER.scores.tjpr_score || 0;
+    var curRank = (PLAYER.ranks || {}).tjpr || 0;
+    var baseAgg = C.aggregateEntries(st.entries, st.lv);
+    for (var tier = 0; tier <= maxTier; tier++) {
+      var place = C.tierBestPlace(tier);
+      if (place > nent) break;
+      var raw = 0, delta = 0, newScore = curScore;
+      if (g.pass) {
+        raw = C.tjprRawForPlace(bz, st.lv, place);
+        var agg2 = C.aggregateEntries(st.entries.concat([raw]), st.lv);
+        delta = agg2 - baseAgg;
+        newScore = curScore + delta;
+      }
+      var newRank = C.provisionalRank(tjprArr, newScore, UID);
+      rows.push({
+        place: place, topx: tier === 0 ? '優勝' : (tier === 1 ? '準優勝' : place + '位'),
+        raw: raw, delta: delta, newScore: newScore,
+        newElo: newScore * C.TJPR_ELO_SCALE, newRank: newRank,
+        curScore: curScore, curRank: curRank,
+      });
+    }
+    return rows;
+  }
+
+  function buildPanel(panel, ev, g, state) {
+    var st = selfState();
+    // --- 順位評価 ---
+    var h = '<h3>🏅 順位評価</h3>';
+    if (!g.pass) {
+      h += '<div class="muted">この大会は集計対象外のため、スコアは変動しません。</div>';
+    } else {
+      h += '<select class="place-sel"><option value="">順位を選ぶ…</option></select>' +
+           '<div class="detail-box"></div>';
+    }
+    // --- 直対 ---
+    h += '<h3 style="margin-top:14px">⚔️ 直対評価</h3>';
+    if (g.pass) {
+      h += '<div class="opp-wrap"><input type="search" placeholder="相手を検索して勝敗を追加…" autocomplete="off">' +
+           '<div class="suggest"></div></div>' +
+           '<div class="sim-list"></div><div class="sim-result" style="display:none"></div>' +
+           '<div class="ens-wrap" style="display:none"><h3 style="margin-top:14px">🏆 総合評価</h3>' +
+           '<div class="sim-result ens-box" style="display:block"></div></div>';
+    }
+    panel.innerHTML = h;
+
+    if (g.pass) {
+      buildTjprSelect(panel, ev, g, state);
+      buildBtSim(panel, ev, g, st, state);
+    }
+  }
+
+  function buildTjprSelect(panel, ev, g, state) {
+    var rows = tjprPrediction(ev, g);
+    var sel = panel.querySelector('.place-sel');
+    var detail = panel.querySelector('.detail-box');
+    var nent = nentOf(ev);
+    if (!rows.length) {
+      // エントラント情報が無い/極端に少ない場合は select ごと隠して説明を出す
+      sel.style.display = 'none';
+      var m = document.createElement('div');
+      m.className = 'muted';
+      m.textContent = '参加者情報が不足しているためシミュレーションできません。';
+      sel.before(m);
+      return;
+    }
+    rows.forEach(function (r, i) {
+      var tier = C.placementToTier(r.place);
+      var next = C.tierBestPlace(tier + 1) - 1;
+      var hi = Math.min(next, nent);
+      var label = tier === 0 ? '優勝' : tier === 1 ? '準優勝' :
+                  (hi > r.place ? r.place + '〜' + hi + '位' : r.place + '位');
+      r.label = label;
+      var opt = document.createElement('option');
+      opt.value = String(i);
+      opt.textContent = label + ' (' + signed(r.newElo - r.curScore * C.TJPR_ELO_SCALE) + ')';
+      sel.appendChild(opt);
+    });
+    sel.addEventListener('change', function () {
+      if (sel.value === '') {
+        detail.classList.remove('show');
+        state.tjpr = null;
+        updateEns(panel, state);
+        return;
+      }
+      showDetail(rows[parseInt(sel.value, 10)]);
+    });
+    function showDetail(r) {
+      var curElo = r.curScore * C.TJPR_ELO_SCALE;
+      var rankDiff = r.curRank ? r.curRank - r.newRank : 0;
+      detail.innerHTML =
+        '<div><b>' + esc(r.label) + '</b> ・ 素点 ' + fmt1(r.raw * C.TJPR_ELO_SCALE) + 'pt' +
+        (r.delta < 0.005 && r.raw > 0 ? ' <span class="dim">(上位3大会外のためほぼ反映なし)</span>' : '') + '</div>' +
+        '<div>スコア ' + fmt1(curElo) + ' → <b>' + fmt1(r.newElo) + '</b> <span class="dim">(' + signed(r.newElo - curElo) + ')</span></div>' +
+        '<div>順位評価 暫定順位 ' + (r.curRank ? '#' + r.curRank : '–') + ' → <b>#' + r.newRank + '</b>' +
+        (rankDiff > 0 ? ' <span class="dim">(↑' + rankDiff + ')</span>' : rankDiff < 0 ? ' <span class="dim">(↓' + (-rankDiff) + ')</span>' : '') + '</div>';
+      detail.classList.add('show');
+      state.tjpr = r.newScore;
+      updateEns(panel, state);
+    }
+  }
+
+  // ---- 直対シミュ ----
+  function buildBtSim(panel, ev, g, st, state) {
+    var input = panel.querySelector('.opp-wrap input');
+    var sug = panel.querySelector('.opp-wrap .suggest');
+    var listBox = panel.querySelector('.sim-list');
+    var resBox = panel.querySelector('.sim-result');
+    var results = [];   // {uid, tag, won}
+    var seq = 0;        // recompute の世代 (古い fetch 完了が新しい状態を上書きしないように)
+
+    var entrants = ev.entrants.filter(function (e) { return e.uid !== UID; });
+
+    function oppLabel(e) {
+      var m = e.uid ? MASTER.get(e.uid) : null;
+      return m ? m.display : e.tag;
+    }
+    function oppMeta(e) {
+      var m = e.uid ? MASTER.get(e.uid) : null;
+      if (!m) return '未収録 (1500)';
+      return 'レート ' + fmt0(m.bt_internal_elo > 0 ? m.bt_internal_elo : 1500) + (m.bt_rank ? ' / 直対#' + m.bt_rank : '');
+    }
+
+    function renderSuggest() {
+      var q = input.value.trim().toLowerCase();
+      function oppRating(e) {
+        var m = e.uid ? MASTER.get(e.uid) : null;
+        return m && m.bt_internal_elo > 0 ? m.bt_internal_elo : 1500;
+      }
+      var hits = entrants.filter(function (e) {
+        if (!q) return true;
+        var m = e.uid ? MASTER.get(e.uid) : null;
+        return (e.tag || '').toLowerCase().indexOf(q) >= 0 ||
+               (m && m.display.toLowerCase().indexOf(q) >= 0) ||
+               String(e.uid).indexOf(q) >= 0;
+      }).sort(function (a, b) { return oppRating(b) - oppRating(a); });
+      sug.innerHTML = hits.slice(0, 50).map(function (e, i) {
+        return '<div class="item" data-i="' + entrants.indexOf(e) + '">' +
+          '<span>' + esc(oppLabel(e)) + '</span><span class="meta">' + esc(oppMeta(e)) + '</span></div>';
+      }).join('') || '<div class="item"><span class="meta">該当なし</span></div>';
+      sug.classList.add('open');
+    }
+    input.addEventListener('focus', renderSuggest);
+    input.addEventListener('input', renderSuggest);
+    function pickOpp(item) {
+      var opp = entrants[parseInt(item.dataset.i, 10)];
+      if (!opp) return;
+      sug.classList.remove('open');
+      input.value = '';
+      // デフォルト勝ちで即追加。勝敗は行内トグルで切り替える
+      results.push({ uid: opp.uid, tag: oppLabel(opp), won: true });
+      recompute();
+    }
+    sug.addEventListener('click', function (e2) {
+      var item = e2.target.closest('.item');
+      if (!item || item.dataset.i === undefined) return;
+      pickOpp(item);
+    });
+    attachSuggestNav(input, sug, pickOpp);
+
+    function oppInit(uid) {
+      // 相手の rating/rd を用意 (players json を lazy fetch)。
+      // Promise を cache して同一 uid の並行二重 fetch を防ぐ
+      var m = uid ? MASTER.get(uid) : null;
+      var rating = m && m.bt_internal_elo > 0 ? m.bt_internal_elo : 1500;
+      var base = { rating: rating, rd: 350, lastTs: null };
+      if (!uid || !m) return Promise.resolve(base);
+      if (oppCache.has(uid)) return oppCache.get(uid);
+      var p = fetch(DATA_BASE + 'players/' + uid + '.json').then(function (r) {
+        if (!r.ok) throw new Error();
+        return r.json();
+      }).then(function (pj) {
+        var tl = pj.bt_timeline_g2 || [];
+        return {
+          rating: rating,
+          rd: tl.length ? tl[tl.length - 1].rd : 350,
+          lastTs: lastSeenOf(pj),
+        };
+      }).catch(function () { return base; });
+      oppCache.set(uid, p);
+      return p;
+    }
+
+    // 行の描画。deltas=null は計算中 (…) 表示。
+    // 変更操作のたびに同期で再描画することで、fetch 中の古い data-i による誤操作を防ぐ
+    function renderRows(deltas) {
+      listBox.innerHTML = results.map(function (r, i) {
+        return '<div class="sim-row">' +
+          '<span class="wlseg">' +
+          '<button class="win' + (r.won ? ' on' : '') + '" data-i="' + i + '" data-won="1">勝ち</button>' +
+          '<button class="loss' + (r.won ? '' : ' on') + '" data-i="' + i + '" data-won="0">負け</button>' +
+          '</span>' +
+          '<span class="who">' + esc(r.tag) + '</span>' +
+          '<span class="delta">' + (deltas ? signed(deltas[i]) : '…') + '</span>' +
+          '<button class="rm" data-i="' + i + '">✕</button></div>';
+      }).join('');
+      listBox.querySelectorAll('.wlseg button').forEach(function (b) {
+        b.addEventListener('click', function () {
+          var r = results[parseInt(b.dataset.i, 10)];
+          if (!r) return;
+          var won = b.dataset.won === '1';
+          if (r.won !== won) { r.won = won; recompute(); }
+        });
+      });
+      listBox.querySelectorAll('.rm').forEach(function (b) {
+        b.addEventListener('click', function () {
+          results.splice(parseInt(b.dataset.i, 10), 1);
+          recompute();
+        });
+      });
+    }
+
+    function recompute() {
+      var my = ++seq;
+      renderRows(null);  // 同期再描画 (stale index 防止)
+      var uids = [];
+      results.forEach(function (r) { if (r.uid && uids.indexOf(r.uid) < 0) uids.push(r.uid); });
+      Promise.all(uids.map(oppInit)).then(function (inits) {
+        if (my !== seq) return;  // より新しい recompute が居るので破棄
+        var oppState = new Map();
+        uids.forEach(function (u, i) { oppState.set(u, inits[i]); });
+        simulate(oppState);
+      });
+    }
+
+    function simulate(oppState) {
+      var ts = ev.start_at;
+      var me = new C.G2Player(st.rating, st.rd, 0.06);
+      if (st.lastSeenTs) C.applyInactivity(me, (ts - st.lastSeenTs) / 86400);
+      var opps = new Map();
+      oppState.forEach(function (o, uid) {
+        var p = new C.G2Player(o.rating, o.rd, 0.06);
+        if (o.lastTs) C.applyInactivity(p, (ts - o.lastTs) / 86400);
+        opps.set(uid, p);
+      });
+      var beforeRating = me.rating();
+      var oppMeta2 = { nent: nentOf(ev), isWeekend: !!ev.is_weekend, isCapped: !!(ev.is_restricted || ev.is_lower_class) };
+      var deltas = [];
+      results.forEach(function (r) {
+        // uid 不明の相手も tag 単位で状態を保持 (同一相手 2 回目は 1 回目の結果を引き継ぐ)
+        var key = r.uid || ('tag:' + r.tag);
+        var opp = opps.get(key);
+        if (!opp) { opp = new C.G2Player(1500, 350, 0.06); opps.set(key, opp); }
+        var oppM = r.uid ? MASTER.get(r.uid) : null;
+        var oppLv = oppM ? oppM.lv : 1;
+        var meUpd = g.pass; // 自分の gating (大会単位)
+        var oppUpd = C.tournamentPassesLv(oppLv, oppMeta2);
+        var mr = me.rating(), mrd = me.rd(), or_ = opp.rating(), ord_ = opp.rd();
+        var before = me.rating();
+        if (meUpd) me.update([or_], [ord_], [r.won ? 1 : 0]);
+        if (oppUpd) opp.update([mr], [mrd], [r.won ? 0 : 1]);
+        deltas.push(me.rating() - before);
+      });
+      var afterRating = me.rating();
+      // 直対評価スコア (180d peak): 大会時点の窓 + 大会後レート
+      var curBtElo = PLAYER.scores.bt_gated_elo || 0;
+      // 試合前の大会日時点ピーク (窓スライドで現在値より下がることがある)
+      var basePeak = C.peakAt(st.history, ts, beforeRating);
+      var windowDrop = curBtElo - basePeak;
+      // 大会時点の 180 日窓ピーク + シミュ後レートの max
+      var peakAfter = Math.max(C.peakAt(st.history, ts, afterRating), afterRating);
+      var newBtRank = C.provisionalRank(btArr, peakAfter, UID);
+      var curBtRank = (PLAYER.ranks || {}).bt_gated || 0;
+
+      renderRows(deltas);
+
+      state.bt = results.length ? peakAfter : null;
+      updateEns(panel, state);
+      if (!results.length) { resBox.style.display = 'none'; return; }
+      var dInt = afterRating - beforeRating;
+      var dPeak = peakAfter - curBtElo;
+      var dMatch = peakAfter - basePeak;
+      var rankDiff = curBtRank ? curBtRank - newBtRank : 0;
+      resBox.style.display = '';
+      resBox.innerHTML =
+        '<div>内部レート ' + fmt1(beforeRating) + ' → <b>' + fmt1(afterRating) + '</b> ' +
+        '<span class="' + (dInt >= 0 ? 'up' : 'down') + '">(' + signed(dInt) + ')</span></div>' +
+        '<div>直対評価スコア ' + fmt1(curBtElo) + ' → <b>' + fmt1(peakAfter) + '</b> ' +
+        '<span class="' + (dPeak >= 0 ? 'up' : 'down') + '">(' + signed(dPeak) + ')</span>' +
+        (windowDrop > 0.05 ? ' <span class="muted">窓落ち' + signed(-windowDrop) + '込み・対戦分' + signed(dMatch) + '</span>' : '') + '</div>' +
+        '<div>直対評価 暫定順位 ' + (curBtRank ? '#' + curBtRank : '–') + ' → <b>#' + newBtRank + '</b>' +
+        (rankDiff > 0 ? ' <span class="up">(↑' + rankDiff + ')</span>' : rankDiff < 0 ? ' <span class="down">(↓' + (-rankDiff) + ')</span>' : '') + '</div>';
+    }
+  }
+
+  // ---- プレイヤー検索 ----
+  function setupPlayerSearch() {
+    var input = document.getElementById('psearch');
+    var sug = document.getElementById('psearch-suggest');
+    var all = null;
+    function ensureAll() {
+      if (all) return all;
+      all = [];
+      MASTER.forEach(function (v, uid) { all.push({ uid: uid, display: v.display, rank: v.tjpr_rank }); });
+      return all;
+    }
+    input.addEventListener('input', function () {
+      var q = input.value.trim().toLowerCase();
+      if (!q) { sug.classList.remove('open'); return; }
+      var hits = ensureAll().filter(function (p) {
+        return p.display.toLowerCase().indexOf(q) >= 0 || String(p.uid).indexOf(q) >= 0;
+      }).slice(0, 20);
+      sug.innerHTML = hits.map(function (p) {
+        return '<div class="item" data-uid="' + esc(p.uid) + '"><span>' + esc(p.display) + '</span>' +
+          '<span class="meta">uid ' + esc(p.uid) + '</span></div>';
+      }).join('') || '<div class="item"><span class="meta">該当なし</span></div>';
+      sug.classList.add('open');
+    });
+    function pickPlayer(item) {
+      location.search = '?uid=' + encodeURIComponent(item.dataset.uid);
+    }
+    sug.addEventListener('click', function (e) {
+      var item = e.target.closest('.item');
+      if (!item || !item.dataset.uid) return;
+      pickPlayer(item);
+    });
+    attachSuggestNav(input, sug, pickPlayer);
+  }
+
+  // ---- 大会検索 (任意の大会を追加) ----
+  function setupTourSearch() {
+    var input = document.getElementById('tsearch');
+    var sug = document.getElementById('tsearch-suggest');
+    function renderSug() {
+      var q = input.value.trim().toLowerCase();
+      var st = selfState();
+      var myEids = (UPCOMING.by_uid[String(UID)] || []).map(String);
+      var now = Date.now() / 1000;
+      var evs = Object.keys(UPCOMING.events).filter(function (eid) {
+        var ev = UPCOMING.events[eid];
+        return ev && ev.start_at && ev.start_at + 86400 > now;  // 開催後24h超は出さない
+      }).map(function (eid) {
+        var ev = UPCOMING.events[eid];
+        var entered = myEids.indexOf(eid) >= 0;
+        var pass = gateInfo(ev, st.lv).pass;
+        // 表示順: 参加予定∧集計対象 → 集計対象 → 参加予定 → その他 (各グループ内は開催日順)
+        var group = entered && pass ? 0 : pass ? 1 : entered ? 2 : 3;
+        return { eid: eid, ev: ev, entered: entered, pass: pass, group: group };
+      }).filter(function (x) {
+        return !q || (x.ev.tournament_name || '').toLowerCase().indexOf(q) >= 0;
+      }).sort(function (a, b) {
+        return a.group - b.group || a.ev.start_at - b.ev.start_at;
+      });
+      sug.innerHTML = evs.slice(0, 40).map(function (x) {
+        var tags = (x.entered ? '<span class="badge wk">参加予定</span>' : '') +
+                   (x.pass ? '<span class="badge ok">集計対象</span>' : '<span class="badge ng">集計対象外</span>');
+        return '<div class="item" data-eid="' + esc(x.eid) + '"><span>' + esc(x.ev.tournament_name) + tags + '</span>' +
+          '<span class="meta">' + dateStr(x.ev.start_at) + ' ' + nentOf(x.ev) + '人</span></div>';
+      }).join('') || '<div class="item"><span class="meta">該当なし</span></div>';
+      sug.classList.add('open');
+    }
+    input.addEventListener('focus', renderSug);
+    input.addEventListener('input', renderSug);
+    function pickTour(item) {
+      sug.classList.remove('open');
+      input.value = '';
+      addTourCard(item.dataset.eid);
+    }
+    sug.addEventListener('click', function (e) {
+      var item = e.target.closest('.item');
+      if (!item || !item.dataset.eid) return;
+      pickTour(item);
+    });
+    attachSuggestNav(input, sug, pickTour);
+  }
+})();
+</script>
+</body>
+</html>

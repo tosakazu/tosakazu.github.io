@@ -1,32 +1,9 @@
 {
-  "generated_at": 1785142838,
+  "generated_at": 1785152298,
   "country_code": "JP",
   "lookahead_days": 21,
-  "count": 46,
+  "count": 45,
   "tournaments": [
-    {
-      "tournament_id": 928397,
-      "tournament_slug": "tournament/hit-184-maesuma-hit-184",
-      "tournament_name": "マエスマ'HIT#184 / Maesuma'HIT#184",
-      "start_at": 1785146400,
-      "end_at": 1785160800,
-      "is_online": false,
-      "city": "大阪市",
-      "venue_name": "",
-      "country_code": "JP",
-      "num_attendees": 24,
-      "url": "/tournament/hit-184-maesuma-hit-184",
-      "events": [
-        {
-          "event_id": 1658644,
-          "event_slug": "tournament/hit-184-maesuma-hit-184/event/singles-tournament",
-          "event_name": "Singles Tournament",
-          "num_entrants": 24,
-          "type": 1,
-          "start_at": 1785146400
-        }
-      ]
-    },
     {
       "tournament_id": 935399,
       "tournament_slug": "tournament/134-shibuya-tatsu",
@@ -129,14 +106,14 @@
       "city": "台東区",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 7,
+      "num_attendees": 8,
       "url": "/tournament/30-512",
       "events": [
         {
           "event_id": 1667229,
           "event_slug": "tournament/30-512/event/on",
           "event_name": "シングルス（１on１トーナメント）",
-          "num_entrants": 7,
+          "num_entrants": 8,
           "type": 1,
           "start_at": 1785398400
         }
@@ -198,14 +175,14 @@
       "city": "台東区",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 10,
+      "num_attendees": 11,
       "url": "/tournament/31-513",
       "events": [
         {
           "event_id": 1667234,
           "event_slug": "tournament/31-513/event/on",
           "event_name": "シングルス（１on１トーナメント）",
-          "num_entrants": 10,
+          "num_entrants": 11,
           "type": 1,
           "start_at": 1785484800
         }
@@ -1057,14 +1034,14 @@
       "city": "草加市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 28,
+      "num_attendees": 29,
       "url": "/tournament/aya-9",
       "events": [
         {
           "event_id": 1652189,
           "event_slug": "tournament/aya-9/event/ultimate-singles",
           "event_name": "Ultimate Singles",
-          "num_entrants": 28,
+          "num_entrants": 29,
           "type": 1,
           "start_at": 1786845600
         }

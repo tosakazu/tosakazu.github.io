@@ -72,13 +72,14 @@
     if (/\/pref\/ranking\.html$/.test(p)) return 'pref-ranking';
     if (/\/pref\//.test(p))          return 'pref-list';
     if (/\/events\//.test(p))        return 'events';
+    if (/\/sim\//.test(p))           return 'sim';
     if (/\/news\//.test(p))          return 'news';
     if (/\/p\//.test(p))             return 'player';
     if (/\/t\//.test(p))             return 'tournament';
     return 'ranking';
   }
   const cur = currentPage();
-  const isRanking = cur === 'ranking' || cur === 'local-series' || cur === 'local-ranking' || cur === 'char-list' || cur === 'char-ranking' || cur === 'pref-list' || cur === 'pref-ranking' || cur === 'events';
+  const isRanking = cur === 'ranking' || cur === 'local-series' || cur === 'local-ranking' || cur === 'char-list' || cur === 'char-ranking' || cur === 'pref-list' || cur === 'pref-ranking' || cur === 'events' || cur === 'sim';
   const isSeeding = cur === 'seed' || cur === 'seed-upload';
   const isMethod  = ['overview', 'details', 'eval', 'math'].includes(cur);
 
@@ -93,6 +94,7 @@
           <a href="${prefix}c/"${cur === 'char-list' || cur === 'char-ranking' ? ' class="current"' : ''} role="menuitem">使い手ランキング</a>
           <a href="${prefix}pref/"${cur === 'pref-list' || cur === 'pref-ranking' ? ' class="current"' : ''} role="menuitem">都道府県別ランキング</a>
           <a href="${prefix}events/"${cur === 'events' ? ' class="current"' : ''} role="menuitem">大会一覧</a>
+          <a href="${prefix}sim/"${cur === 'sim' ? ' class="current"' : ''} role="menuitem">ポイントシミュレーション</a>
         </div>
       </div>
       <div class="nav-dropdown${isSeeding ? ' has-current' : ''}">

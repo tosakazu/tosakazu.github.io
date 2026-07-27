@@ -539,7 +539,7 @@
     </div>
     </div><!-- /#share-top -->
 
-    <!-- ポイントシミュレーション (ドラフト): /b/ プレビュー配信時のみ表示 (本番 gh-pages では非表示) -->
+    <!-- ポイントシミュレーション: 次回出場予定の集計対象大会 + シミュレーションボタン -->
     <div class="section" id="yosou-section" style="display:none">
       <h2 id="yosou-head" style="display:none">📅 次に出場予定の集計対象大会</h2>
       <div id="yosou-tour" style="display:none;font-size:13px;color:#374151;margin-bottom:8px"></div>
@@ -621,7 +621,7 @@
   </div>
 
   <div class="footer" id="footer-info">
-    <span class="site-version" style="font-size:11px;color:#9ca3af">v 276cd49 · 2026-07-27 18:07 UTC</span>
+    <span class="site-version" style="font-size:11px;color:#9ca3af">v a35288a · 2026-07-27 20:46 UTC</span>
   </div>
 </main>
 
@@ -634,19 +634,21 @@
 const params = new URLSearchParams(location.search);
 const UID = parseInt(params.get('uid') || location.hash.replace(/^#/, '') || '0');
 
-// ポイントシミュレーション (ドラフト): /b/ プレビュー配信時のみ表示。
-// 次に出場予定の集計対象大会 (エントラント登録済 & 現 Lv の加算対象) を出す。
+// ポイントシミュレーション: 次に出場予定の集計対象大会
+// (エントラント登録済 & 現 Lv の加算対象) を出す。
 async function buildYosouSection() {
-  if (location.pathname.indexOf('/b/') !== 0 || !UID) return;
-  document.getElementById('yosou-link').href = '/b/sim/?uid=' + UID;
+  if (!UID) return;
+  document.getElementById('yosou-link').href = '../sim/?uid=' + UID;
   document.getElementById('yosou-section').style.display = '';
   try {
-    const up = await fetch('/b/sim/data/upcoming_entrants.json', { cache: 'no-cache' })
-      .then(r => r.json());
+    const up = await fetch('../data/upcoming_entrants.json', { cache: 'no-cache' })
+      .then(r => { if (!r.ok) throw new Error(r.status); return r.json(); });
     const lv = (PLAYER && PLAYER.scores && PLAYER.scores.shared_cascade_lv) || 1;
-    const MIN_NENT_GT = [0, 0, 8, 24, 32, 48];  // 本番 LV_DEFS (env 適用後)
+    // ⚠️ /b/sim/calc.js の LV_FILTERS と同期して更新すること (本番 LV_DEFS, env 適用後)
+    const MIN_NENT_GT = [0, 0, 8, 24, 32, 48];
     const passes = ev => {
-      const nent = (ev.entrants && ev.entrants.length) || ev.num_entrants || 0;
+      const nent = ev.num_entrants || (ev.entrants && ev.entrants.length) || 0;
+      if (ev.is_non_serious || nent < 5) return false;  // 全 Lv 共通の除外
       if (lv >= 2 && nent <= MIN_NENT_GT[lv]) return false;
       if (lv >= 3 && (!ev.is_weekend || ev.is_restricted || ev.is_lower_class)) return false;
       return true;
