@@ -539,9 +539,11 @@
     </div>
     </div><!-- /#share-top -->
 
-    <!-- ポイント予想 (ドラフト): /b/ プレビュー配信時のみ表示 (本番 gh-pages では非表示) -->
+    <!-- ポイントシミュレーション (ドラフト): /b/ プレビュー配信時のみ表示 (本番 gh-pages では非表示) -->
     <div class="section" id="yosou-section" style="display:none">
-      <a id="yosou-link" href="#" style="display:block;text-align:center;padding:8px;border:1px solid #dc2626;border-radius:8px;color:#dc2626;font-weight:600;text-decoration:none;font-size:13px">🔮 ポイント予想 (β)</a>
+      <h2 id="yosou-head" style="display:none">📅 次に出場予定の集計対象大会</h2>
+      <div id="yosou-tour" style="display:none;font-size:13px;color:#374151;margin-bottom:8px"></div>
+      <a id="yosou-link" href="#" style="display:block;text-align:center;padding:8px;border:1px solid #dc2626;border-radius:8px;color:#dc2626;font-weight:600;text-decoration:none;font-size:13px">🔮 獲得ポイントをシミュレーションする</a>
     </div>
 
     <div class="section">
@@ -619,7 +621,7 @@
   </div>
 
   <div class="footer" id="footer-info">
-    <span class="site-version" style="font-size:11px;color:#9ca3af">v 9b66d54 · 2026-07-27 12:07 UTC</span>
+    <span class="site-version" style="font-size:11px;color:#9ca3af">v 276cd49 · 2026-07-27 15:07 UTC</span>
   </div>
 </main>
 
@@ -632,10 +634,36 @@
 const params = new URLSearchParams(location.search);
 const UID = parseInt(params.get('uid') || location.hash.replace(/^#/, '') || '0');
 
-// ポイント予想 (ドラフト) へのリンク: /b/ プレビュー配信時のみ表示
-if (location.pathname.indexOf('/b/') === 0 && UID) {
+// ポイントシミュレーション (ドラフト): /b/ プレビュー配信時のみ表示。
+// 次に出場予定の集計対象大会 (エントラント登録済 & 現 Lv の加算対象) を出す。
+async function buildYosouSection() {
+  if (location.pathname.indexOf('/b/') !== 0 || !UID) return;
+  document.getElementById('yosou-link').href = '/b/sim/?uid=' + UID;
   document.getElementById('yosou-section').style.display = '';
-  document.getElementById('yosou-link').href = '/b/yosou/?uid=' + UID;
+  try {
+    const up = await fetch('/b/sim/data/upcoming_entrants.json', { cache: 'no-cache' })
+      .then(r => r.json());
+    const lv = (PLAYER && PLAYER.scores && PLAYER.scores.shared_cascade_lv) || 1;
+    const MIN_NENT_GT = [0, 0, 8, 24, 32, 48];  // 本番 LV_DEFS (env 適用後)
+    const passes = ev => {
+      const nent = (ev.entrants && ev.entrants.length) || ev.num_entrants || 0;
+      if (lv >= 2 && nent <= MIN_NENT_GT[lv]) return false;
+      if (lv >= 3 && (!ev.is_weekend || ev.is_restricted || ev.is_lower_class)) return false;
+      return true;
+    };
+    const eids = (up.by_uid[String(UID)] || []).map(String)
+      .filter(eid => up.events[eid] && up.events[eid].start_at * 1000 > Date.now() && passes(up.events[eid]))
+      .sort((a, b) => up.events[a].start_at - up.events[b].start_at);
+    if (!eids.length) return;
+    const ev = up.events[eids[0]];
+    const d = new Date(ev.start_at * 1000);
+    const wd = ['日', '月', '火', '水', '木', '金', '土'][d.getDay()];
+    document.getElementById('yosou-head').style.display = '';
+    const t = document.getElementById('yosou-tour');
+    t.style.display = '';
+    t.textContent = `${ev.tournament_name} ・ ${d.getMonth() + 1}/${d.getDate()}(${wd}) ・ ` +
+      `${(ev.entrants && ev.entrants.length) || ev.num_entrants || '?'}人`;
+  } catch (e) { /* ドラフトデータ未配置時は ボタンのみ表示 */ }
 }
 
 let META = null;
@@ -1575,6 +1603,8 @@ function render() {
       setTimeout(() => { renderRadarChart(); renderRankChart(); }, 30);
     });
   });
+
+  buildYosouSection();
 }
 
 let RADAR_CHART = null;
