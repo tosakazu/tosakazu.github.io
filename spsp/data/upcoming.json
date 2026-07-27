@@ -1,5 +1,5 @@
 {
-  "generated_at": 1785152298,
+  "generated_at": 1785153633,
   "country_code": "JP",
   "lookahead_days": 21,
   "count": 45,
@@ -896,14 +896,14 @@
       "city": "名古屋市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 84,
+      "num_attendees": 85,
       "url": "/tournament/growup_6",
       "events": [
         {
           "event_id": 1675058,
           "event_slug": "tournament/growup_6/event/1on1-tournament",
           "event_name": "1on1 tournament",
-          "num_entrants": 84,
+          "num_entrants": 85,
           "type": 1,
           "start_at": 1786672800
         }
