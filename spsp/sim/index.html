@@ -338,21 +338,38 @@
     ENS_CUR_RAW = ENS.predictRaw(PLAYER.scores.tjpr_score || 0, PLAYER.scores.bt_gated_elo || 0);
   }
 
+  // Lv ラベル (プレイヤーページと同一仕様): 総合順位に応じた接尾辞付き。
+  // Lv5 は 👑(≤8)/🥇(≤16)/🥈(≤32)/🥉(≤64)/+(≤128)、Lv1-4 は +カットオフ以内なら「+」。
+  function lvLabel(lv, rank) {
+    var sfx = '';
+    if (lv === 5 && rank) {
+      sfx = rank <= 8 ? '👑' : rank <= 16 ? '🥇' : rank <= 32 ? '🥈'
+          : rank <= 64 ? '🥉' : rank <= 128 ? '+' : '';
+    } else if (lv && rank) {
+      var c = { 4: 384, 3: 768, 2: 1536, 1: 3072 }[lv];
+      sfx = (c && rank <= c) ? '+' : '';
+    }
+    return lv ? 'Lv' + lv + sfx : '対象外';
+  }
+
   // ヒーロー (名前下の大きい順位表示) にシミュ前後の順位を矢印で表示する。
-  // nr が null の枠は現在値のみの通常表示に戻す。simLv は昇格時のみピルを並記。
+  // nr が null の枠は現在値のみの通常表示に戻す。
+  // Lv ピルはラベル (接尾辞込み) が変わる場合のみ並記。
   function updateHero(tjprRank, btRank, ensRank, simLv) {
     if (!PLAYER) return;
     var rk = PLAYER.ranks || {};
     var curLv = PLAYER.scores.shared_cascade_lv || 0;
     var lvSlot = document.getElementById('lv-slot');
     if (lvSlot) {
-      if (simLv != null && simLv !== curLv) {
+      var curLabel = lvLabel(curLv, rk.ensemble || 0);
+      var simLabel = (simLv != null && ensRank != null) ? lvLabel(simLv, ensRank) : null;
+      if (simLabel != null && simLabel !== curLabel) {
         lvSlot.innerHTML =
-          '<span class="lv-pill lv-' + curLv + '">Lv' + curLv + '</span>' +
+          '<span class="lv-pill lv-' + curLv + '">' + curLabel + '</span>' +
           '<span class="hero-arw">→</span>' +
-          '<span class="lv-pill lv-' + simLv + '">Lv' + simLv + '</span>';
+          '<span class="lv-pill lv-' + simLv + '">' + simLabel + '</span>';
       } else {
-        lvSlot.innerHTML = '<span class="lv-pill lv-' + curLv + '">Lv' + curLv + '</span>';
+        lvSlot.innerHTML = '<span class="lv-pill lv-' + curLv + '">' + curLabel + '</span>';
       }
     }
     function set(el, isBig, id, cur, nr) {
@@ -454,7 +471,7 @@
     nameLink.href = DATA_BASE + 'p/?uid=' + UID;
     var lv = sc.shared_cascade_lv || 0;
     document.getElementById('lv-slot').innerHTML =
-      '<span class="lv-pill lv-' + lv + '">Lv' + lv + '</span>';
+      '<span class="lv-pill lv-' + lv + '">' + lvLabel(lv, rk.ensemble || 0) + '</span>';
     document.getElementById('cur-ens').textContent = rk.ensemble || '—';
     document.getElementById('cur-tjpr').textContent = rk.tjpr || '—';
     document.getElementById('cur-tjpr-s').textContent =
