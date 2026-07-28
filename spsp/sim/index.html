@@ -59,7 +59,6 @@
   .lv-pill.lv-3 { background: #dbeafe; color: #1d4ed8; }
   .lv-pill.lv-2 { background: #dcfce7; color: #15803d; }
   .lv-pill.lv-1 { background: #f3f4f6; color: #6b7280; }
-  .lv-pill.lv-pre { background: #f3f4f6; color: #9ca3af; }  /* シミュ中の変動前 Lv (グレー) */
 
   .section { margin-top: 14px; }
   .section h2 {
@@ -349,7 +348,7 @@
     if (lvSlot) {
       if (simLv != null && simLv !== curLv) {
         lvSlot.innerHTML =
-          '<span class="lv-pill lv-' + curLv + ' lv-pre">Lv' + curLv + '</span>' +
+          '<span class="lv-pill lv-' + curLv + '">Lv' + curLv + '</span>' +
           '<span class="hero-arw">→</span>' +
           '<span class="lv-pill lv-' + simLv + '">Lv' + simLv + '</span>';
       } else {
