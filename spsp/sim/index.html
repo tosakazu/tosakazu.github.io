@@ -43,6 +43,12 @@
   .subrank-card .label { font-size: 10px; color: #6b7280; letter-spacing: 0.06em; }
   .subrank-card .value { font-size: 18px; color: #111827; font-weight: 600; margin-top: 2px; font-variant-numeric: tabular-nums; }
   .subrank-card .subscore { font-size: 11px; color: #dc2626; margin-top: 2px; font-variant-numeric: tabular-nums; }
+  /* シミュレーション中: 変動前 → 変動後 をヒーローに直接表示 */
+  .rank-hero .big.siming { font-size: 30px; text-shadow: none; }
+  .rank-hero .big.siming .hash { font-size: 18px; vertical-align: 4px; }
+  .hero-pre { color: #9ca3af; font-weight: 600; text-shadow: none; }
+  .hero-arw { color: #9ca3af; font-weight: 400; margin: 0 5px; font-size: 0.75em; }
+  .subrank-card .value.siming { font-size: 15px; }
   .lv-pill {
     display: inline-block; padding: 1px 7px; border-radius: 10px;
     font-size: 11px; font-weight: 700; background: #e5e7eb; color: #6b7280;
@@ -331,15 +337,45 @@
     ENS_CUR_RAW = ENS.predictRaw(PLAYER.scores.tjpr_score || 0, PLAYER.scores.bt_gated_elo || 0);
   }
 
-  // 総合評価の暫定順位 (現在順位にアンカーして差分適用)
+  // ヒーロー (名前下の大きい順位表示) にシミュ前後の順位を矢印で表示する。
+  // nr が null の枠は現在値のみの通常表示に戻す。
+  function updateHero(tjprRank, btRank, ensRank) {
+    if (!PLAYER) return;
+    var rk = PLAYER.ranks || {};
+    function set(el, isBig, id, cur, nr) {
+      if (!el) return;
+      if (nr == null) {
+        el.classList.remove('siming');
+        el.innerHTML = (isBig ? '<span class="hash">#</span>' : '#') +
+          '<span id="' + id + '">' + (cur || '—') + '</span>';
+      } else {
+        el.classList.add('siming');
+        el.innerHTML = '<span class="hero-pre">' + (cur ? '#' + cur : '—') + '</span>' +
+          '<span class="hero-arw">→</span>' +
+          (isBig ? '<span class="hash">#</span>' : '#') +
+          '<span id="' + id + '">' + nr + '</span>';
+      }
+    }
+    var cards = document.querySelectorAll('.subrank-card .value');
+    set(document.querySelector('.rank-hero .big'), true, 'cur-ens', rk.ensemble || 0, ensRank);
+    set(cards[0], false, 'cur-tjpr', rk.tjpr || 0, tjprRank);
+    set(cards[1], false, 'cur-bt', rk.bt_gated || 0, btRank);
+  }
+
+  // 総合評価の暫定順位 (現在順位にアンカーして差分適用) + ヒーロー更新
   function updateEns(panel, state) {
+    var nr = null;
+    var cur = (PLAYER.ranks || {}).ensemble || 0;
+    if (state.tjpr != null || state.bt != null) {
+      var tj = state.tjpr != null ? state.tjpr : (PLAYER.scores.tjpr_score || 0);
+      var bt = state.bt != null ? state.bt : (PLAYER.scores.bt_gated_elo || 0);
+      nr = Math.max(1, cur + ENS.predictRaw(tj, bt) - ENS_CUR_RAW);
+    }
+    updateHero(state.tjprRank != null ? state.tjprRank : null,
+               state.btRank != null ? state.btRank : null, nr);
     var wrap = panel.querySelector('.ens-wrap');
     if (!wrap) return;
-    if (state.tjpr == null && state.bt == null) { wrap.style.display = 'none'; return; }
-    var tj = state.tjpr != null ? state.tjpr : (PLAYER.scores.tjpr_score || 0);
-    var bt = state.bt != null ? state.bt : (PLAYER.scores.bt_gated_elo || 0);
-    var cur = (PLAYER.ranks || {}).ensemble || 0;
-    var nr = Math.max(1, cur + ENS.predictRaw(tj, bt) - ENS_CUR_RAW);
+    if (nr == null) { wrap.style.display = 'none'; return; }
     var d = cur ? cur - nr : 0;
     wrap.style.display = '';
     wrap.querySelector('.ens-box').innerHTML =
@@ -561,6 +597,8 @@
       buildTjprSelect(panel, ev, g, state);
       buildBtSim(panel, ev, g, st, state);
     }
+    // 大会切替時にヒーローのシミュ表示をリセット (state は常に初期値で始まる)
+    updateEns(panel, state);
   }
 
   function buildTjprSelect(panel, ev, g, state) {
@@ -593,6 +631,7 @@
       if (sel.value === '') {
         detail.classList.remove('show');
         state.tjpr = null;
+        state.tjprRank = null;
         updateEns(panel, state);
         return;
       }
@@ -609,6 +648,7 @@
         (rankDiff > 0 ? ' <span class="dim">(↑' + rankDiff + ')</span>' : rankDiff < 0 ? ' <span class="dim">(↓' + (-rankDiff) + ')</span>' : '') + '</div>';
       detail.classList.add('show');
       state.tjpr = r.newScore;
+      state.tjprRank = r.newRank;
       updateEns(panel, state);
     }
   }
@@ -779,6 +819,7 @@
       renderRows(deltas);
 
       state.bt = results.length ? peakAfter : null;
+      state.btRank = results.length ? newBtRank : null;
       updateEns(panel, state);
       if (!results.length) { resBox.style.display = 'none'; return; }
       var dInt = afterRating - beforeRating;
