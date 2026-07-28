@@ -387,6 +387,8 @@
       return n;
     }
     return {
+      // このスコアで到達する Lv (昇格モデル適用後)。現在スコアでは self.lv を返す
+      predictLv: function (tj, bt) { return bandAt(tj, bt); },
       predictRaw: function (tj, bt) {
         var eLv = bandAt(tj, bt);
         var c = L[eLv];

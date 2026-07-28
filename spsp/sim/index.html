@@ -48,6 +48,7 @@
   .rank-hero .big.siming .hash { font-size: 18px; vertical-align: 4px; }
   .hero-pre { color: #9ca3af; font-weight: 600; text-shadow: none; }
   .hero-arw { color: #9ca3af; font-weight: 400; margin: 0 5px; font-size: 0.75em; }
+  #lv-slot .hero-arw { font-size: 11px; margin: 0 2px; vertical-align: 4px; }
   .subrank-card .value.siming { font-size: 15px; }
   .lv-pill {
     display: inline-block; padding: 1px 7px; border-radius: 10px;
@@ -58,6 +59,7 @@
   .lv-pill.lv-3 { background: #dbeafe; color: #1d4ed8; }
   .lv-pill.lv-2 { background: #dcfce7; color: #15803d; }
   .lv-pill.lv-1 { background: #f3f4f6; color: #6b7280; }
+  .lv-pill.lv-pre { background: #f3f4f6; color: #9ca3af; }  /* シミュ中の変動前 Lv (グレー) */
 
   .section { margin-top: 14px; }
   .section h2 {
@@ -338,10 +340,22 @@
   }
 
   // ヒーロー (名前下の大きい順位表示) にシミュ前後の順位を矢印で表示する。
-  // nr が null の枠は現在値のみの通常表示に戻す。
-  function updateHero(tjprRank, btRank, ensRank) {
+  // nr が null の枠は現在値のみの通常表示に戻す。simLv は昇格時のみピルを並記。
+  function updateHero(tjprRank, btRank, ensRank, simLv) {
     if (!PLAYER) return;
     var rk = PLAYER.ranks || {};
+    var curLv = PLAYER.scores.shared_cascade_lv || 0;
+    var lvSlot = document.getElementById('lv-slot');
+    if (lvSlot) {
+      if (simLv != null && simLv !== curLv) {
+        lvSlot.innerHTML =
+          '<span class="lv-pill lv-' + curLv + ' lv-pre">Lv' + curLv + '</span>' +
+          '<span class="hero-arw">→</span>' +
+          '<span class="lv-pill lv-' + simLv + '">Lv' + simLv + '</span>';
+      } else {
+        lvSlot.innerHTML = '<span class="lv-pill lv-' + curLv + '">Lv' + curLv + '</span>';
+      }
+    }
     function set(el, isBig, id, cur, nr) {
       if (!el) return;
       if (nr == null) {
@@ -364,15 +378,16 @@
 
   // 総合評価の暫定順位 (現在順位にアンカーして差分適用) + ヒーロー更新
   function updateEns(panel, state) {
-    var nr = null;
+    var nr = null, simLv = null;
     var cur = (PLAYER.ranks || {}).ensemble || 0;
     if (state.tjpr != null || state.bt != null) {
       var tj = state.tjpr != null ? state.tjpr : (PLAYER.scores.tjpr_score || 0);
       var bt = state.bt != null ? state.bt : (PLAYER.scores.bt_gated_elo || 0);
       nr = Math.max(1, cur + ENS.predictRaw(tj, bt) - ENS_CUR_RAW);
+      simLv = ENS.predictLv(tj, bt);
     }
     updateHero(state.tjprRank != null ? state.tjprRank : null,
-               state.btRank != null ? state.btRank : null, nr);
+               state.btRank != null ? state.btRank : null, nr, simLv);
     var wrap = panel.querySelector('.ens-wrap');
     if (!wrap) return;
     if (nr == null) { wrap.style.display = 'none'; return; }
