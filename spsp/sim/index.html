@@ -646,6 +646,16 @@
       sel.before(m);
       return;
     }
+    // SPSP 予想順位 = 参加者内のレート順シード相当の順位帯 (シード n は n 位帯どまり想定)
+    var myRating = PLAYER.scores.bt_internal_elo > 0 ? PLAYER.scores.bt_internal_elo : 1500;
+    var seed = 1;
+    ev.entrants.forEach(function (e) {
+      if (e.uid === UID) return;
+      var m = e.uid ? MASTER.get(e.uid) : null;
+      if ((m && m.bt_internal_elo > 0 ? m.bt_internal_elo : 1500) > myRating) seed++;
+    });
+    var defIdx = 0;
+    rows.forEach(function (r, i) { if (r.place <= seed) defIdx = i; });
     rows.forEach(function (r, i) {
       var tier = C.placementToTier(r.place);
       var next = C.tierBestPlace(tier + 1) - 1;
@@ -655,9 +665,12 @@
       r.label = label;
       var opt = document.createElement('option');
       opt.value = String(i);
-      opt.textContent = label + ' (' + signed(r.newElo - r.curScore * C.TJPR_ELO_SCALE) + ')';
+      opt.textContent = label + ' (' + signed(r.newElo - r.curScore * C.TJPR_ELO_SCALE) + ')' +
+                        (i === defIdx ? ' ・SPSP予想' : '');
       sel.appendChild(opt);
     });
+    // 予想順位をデフォルト選択して詳細も表示
+    sel.value = String(defIdx);
     sel.addEventListener('change', function () {
       if (sel.value === '') {
         detail.classList.remove('show');
@@ -683,6 +696,7 @@
       state.tjprRank = r.newRank;
       updateEns(panel, state);
     }
+    showDetail(rows[defIdx]);
   }
 
   // ---- 直対シミュ ----
