@@ -322,7 +322,12 @@
       if (uid === UID) return;
       others.push({ lv: v.lv, tj: v.tjpr_score, bt: v.bt_gated_elo, gray: v.gray, uid: uid });
     });
-    ENS = C.createEnsemblePredictor(others, PLAYER.scores.shared_cascade_lv || 1, UID);
+    ENS = C.createEnsemblePredictor(others, {
+      lv: PLAYER.scores.shared_cascade_lv || 1,
+      uid: UID,
+      tj: PLAYER.scores.tjpr_score || 0,
+      bt: PLAYER.scores.bt_gated_elo || 0,
+    });
     ENS_CUR_RAW = ENS.predictRaw(PLAYER.scores.tjpr_score || 0, PLAYER.scores.bt_gated_elo || 0);
   }
 

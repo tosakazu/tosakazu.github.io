@@ -299,29 +299,39 @@
 
   // ---- 総合評価 (ensemble) 暫定順位の近似 -----------------------------------
   // エンジンは Lv カスケード内で (bt_rank + tj_rank)/2 の ens_rank を作り、
-  // (-lv, ens_r, uid) ソート + jp-counter で表示順位を決める。ここでは
-  // 「自分の Lv 帯に居るプレイヤー (lv >= myLv) を cohort とし、他人のスコアは
-  // 固定のまま自分の bt/tjpr だけ動かす」近似で raw 順位を出す。
-  // エンジンでは自分が誰かを追い抜くと相手側の rank も 1 悪化するため、
-  // 同 Lv の各相手の ens に「自分が上に居る分 (+0.5×2系列)」を都度加算して比較する。
-  // 絶対値には cohort 境界の誤差が乗るため、呼び出し側で現在順位にアンカーして
-  // 差分適用すること。
-  // others: [{lv, tj, bt, gray, uid}] (自分を除く)
-  function createEnsemblePredictor(others, myLv, myUid) {
-    var higher = 0;
-    var btPairs = [], tjPairs = [], same = [];
+  // (-max_lv, ens_r, uid) ソート + jp-counter で表示順位を決める。
+  // Lv(n+1) の cohort は「Lv(n) の ens rank 上位 N (2048/1024/512/256, 灰色も
+  // 枠を消費)」で選抜されるため、帯の先頭に居るプレイヤーは Lv 昇格を伴わないと
+  // 総合順位が動かない。ここでは cohort(n) を「現在の判定 Lv >= n のプレイヤー
+  // (+自分)」で近似し、他人のスコアは固定のまま自分の bt/tjpr だけ動かして
+  //   1) 現 Lv 以上の各段で自分の raw ens rank (灰色込み) を計算し、
+  //      「現在スコアでは枠外 (rank0 > N) だった段の枠を跨いだ」場合のみ昇格
+  //      (エクスポート済み tjpr_score は各自の判定 Lv での集計値のため、
+  //       現 Lv より下の段の閾値判定は再現できない。降格も非モデル化)
+  //   2) 到達 Lv 帯の中で表示順位を数える
+  // という手順で raw 順位を出す。エンジンでは自分が誰かを追い抜くと相手側の
+  // rank も 1 悪化するため、同帯の各相手の ens には「自分が上に居る分
+  // (+0.5×2系列)」を都度加算して比較する。絶対値には cohort 境界の誤差が
+  // 乗るため、呼び出し側で現在順位にアンカーして差分適用すること。
+  // others: [{lv, tj, bt, gray, uid}] (自分を除く) / self: {lv, uid, tj, bt}
+  var LV_TOPN = { 2: 2048, 3: 1024, 4: 512, 5: 256 };  // Lv(n) cohort = 前Lv上位N
+  function createEnsemblePredictor(others, self) {
+    var myUid = self.uid;
+    var myLv = Math.max(1, Math.min(5, self.lv || 1));
+    function cmp(a, b) { return b.v - a.v || a.uid - b.uid; }
+    // 自分の現 Lv 以上の各段 n の cohort (lv >= n) データ
+    var L = {};
+    for (var n = myLv; n <= 5; n++) L[n] = { btPairs: [], tjPairs: [], higher: 0 };
     for (var i = 0; i < others.length; i++) {
       var o = others[i];
-      if (o.lv > myLv && !o.gray) higher++;
-      if (o.lv >= myLv) {
-        btPairs.push({ v: o.bt, uid: o.uid });
-        tjPairs.push({ v: o.tj, uid: o.uid });
-        if (o.lv === myLv && !o.gray) same.push(o);
+      for (var m = myLv; m <= 5; m++) {
+        if (o.lv > m && !o.gray) L[m].higher++;
+        if (o.lv >= m) {
+          L[m].btPairs.push({ v: o.bt, uid: o.uid });
+          L[m].tjPairs.push({ v: o.tj, uid: o.uid });
+        }
       }
     }
-    function cmp(a, b) { return b.v - a.v || a.uid - b.uid; }
-    btPairs.sort(cmp);
-    tjPairs.sort(cmp);
     // (v desc, uid asc) 順に並べた cohort 内での順位 (エンジンの tie-break と同一)
     function rankOf(pairs, v, uid) {
       var lo = 0, hi = pairs.length;
@@ -332,25 +342,64 @@
       }
       return lo + 1;
     }
-    // 自分の影響を除いた same-Lv 非灰色勢の base ens (灰色は表示順位に不算入)
-    var sameBase = [];
-    for (var j = 0; j < same.length; j++) {
-      var s = same[j];
-      sameBase.push({ ens: (rankOf(btPairs, s.bt, s.uid) + rankOf(tjPairs, s.tj, s.uid)) / 2,
-                      bt: s.bt, tj: s.tj, uid: s.uid });
+    for (var n2 = myLv; n2 <= 5; n2++) {
+      var c = L[n2];
+      c.btPairs.sort(cmp);
+      c.tjPairs.sort(cmp);
+      // cohort(n) 内の「他人全員」(lv>=n, 灰色込み) の base ens。
+      // ensList (昇順) = 昇格枠の消費判定用 / sameBase (lv==n 非灰色) = 帯内順位カウント用
+      c.sameBase = [];
+      var full = [];
+      for (var j = 0; j < others.length; j++) {
+        var o2 = others[j];
+        if (o2.lv < n2) continue;
+        var e = (rankOf(c.btPairs, o2.bt, o2.uid) + rankOf(c.tjPairs, o2.tj, o2.uid)) / 2;
+        full.push({ ens: e, uid: o2.uid });
+        if (o2.lv === n2 && !o2.gray) {
+          c.sameBase.push({ ens: e, bt: o2.bt, tj: o2.tj, uid: o2.uid });
+        }
+      }
+      full.sort(function (a, b) { return a.ens - b.ens || a.uid - b.uid; });
+      c.ensList = full;
+    }
+    function myEnsAt(n, tj, bt) {
+      return (rankOf(L[n].btPairs, bt, myUid) + rankOf(L[n].tjPairs, tj, myUid)) / 2;
+    }
+    // cohort(n) 内での自分の raw rank (灰色込み、昇格枠の判定用)
+    function rawRankAt(n, tj, bt) {
+      var myEns = myEnsAt(n, tj, bt);
+      var list = L[n].ensList;
+      var lo = 0, hi = list.length;
+      while (lo < hi) {
+        var mid = (lo + hi) >> 1;
+        var p = list[mid];
+        if (p.ens < myEns || (p.ens === myEns && p.uid < myUid)) lo = mid + 1; else hi = mid;
+      }
+      return lo + 1;
+    }
+    // 現在スコアでの各段の raw rank (昇格の「枠跨ぎ」判定の基準)
+    var rank0 = {};
+    for (var n3 = myLv; n3 < 5; n3++) rank0[n3] = rawRankAt(n3, self.tj, self.bt);
+    // このスコアで到達する Lv: 現在は枠外だった段の枠 (上位N) を実際に跨いだ時のみ昇格
+    function bandAt(tj, bt) {
+      var n = myLv;
+      while (n < 5 && rank0[n] > LV_TOPN[n + 1] && rawRankAt(n, tj, bt) <= LV_TOPN[n + 1]) n++;
+      return n;
     }
     return {
       predictRaw: function (tj, bt) {
-        var myEns = (rankOf(btPairs, bt, myUid) + rankOf(tjPairs, tj, myUid)) / 2;
+        var eLv = bandAt(tj, bt);
+        var c = L[eLv];
+        var myEns = myEnsAt(eLv, tj, bt);
         var above = 0;
-        for (var k = 0; k < sameBase.length; k++) {
-          var s = sameBase[k];
+        for (var k = 0; k < c.sameBase.length; k++) {
+          var s = c.sameBase[k];
           var sEns = s.ens +
             ((bt > s.bt || (bt === s.bt && myUid < s.uid)) ? 0.5 : 0) +
             ((tj > s.tj || (tj === s.tj && myUid < s.uid)) ? 0.5 : 0);
           if (sEns < myEns || (sEns === myEns && s.uid < myUid)) above++;
         }
-        return higher + above + 1;
+        return c.higher + above + 1;
       },
     };
   }
