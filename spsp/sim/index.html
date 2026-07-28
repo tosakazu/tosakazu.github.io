@@ -114,6 +114,7 @@
     border: 1px solid #f3f4f6; border-radius: 8px; margin-bottom: 4px;
     background: #f9fafb; font-size: 12px;
   }
+  .sim-row .rno { flex-shrink: 0; min-width: 40px; color: #6b7280; font-weight: 700; font-size: 11px; }
   .sim-row .who { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
   .sim-row .wlseg { display: inline-flex; flex-shrink: 0; }
   .sim-row .wlseg button {
@@ -319,9 +320,9 @@
     var others = [];
     MASTER.forEach(function (v, uid) {
       if (uid === UID) return;
-      others.push({ lv: v.lv, tj: v.tjpr_score, bt: v.bt_gated_elo, gray: v.gray });
+      others.push({ lv: v.lv, tj: v.tjpr_score, bt: v.bt_gated_elo, gray: v.gray, uid: uid });
     });
-    ENS = C.createEnsemblePredictor(others, PLAYER.scores.shared_cascade_lv || 1);
+    ENS = C.createEnsemblePredictor(others, PLAYER.scores.shared_cascade_lv || 1, UID);
     ENS_CUR_RAW = ENS.predictRaw(PLAYER.scores.tjpr_score || 0, PLAYER.scores.bt_gated_elo || 0);
   }
 
@@ -693,6 +694,7 @@
     function renderRows(deltas) {
       listBox.innerHTML = results.map(function (r, i) {
         return '<div class="sim-row">' +
+          '<span class="rno">' + (i + 1) + '回戦</span>' +
           '<span class="wlseg">' +
           '<button class="win' + (r.won ? ' on' : '') + '" data-i="' + i + '" data-won="1">勝ち</button>' +
           '<button class="loss' + (r.won ? '' : ' on') + '" data-i="' + i + '" data-won="0">負け</button>' +

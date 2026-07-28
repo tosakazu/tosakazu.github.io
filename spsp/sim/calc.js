@@ -299,45 +299,58 @@
 
   // ---- 総合評価 (ensemble) 暫定順位の近似 -----------------------------------
   // エンジンは Lv カスケード内で (bt_rank + tj_rank)/2 の ens_rank を作り、
-  // (-lv, ens_r) ソート + jp-counter で表示順位を決める。ここでは
-  // 「自分の Lv 帯に居るプレイヤー (lv >= myLv) を cohort とし、自分の
-  // bt/tjpr ランクだけ動かす」近似で raw 順位を出す。絶対値には cohort 境界の
-  // 誤差が乗るため、呼び出し側で現在順位にアンカーして差分適用すること。
-  // others: [{lv, tj, bt, gray}] (自分を除く)
-  function createEnsemblePredictor(others, myLv) {
+  // (-lv, ens_r, uid) ソート + jp-counter で表示順位を決める。ここでは
+  // 「自分の Lv 帯に居るプレイヤー (lv >= myLv) を cohort とし、他人のスコアは
+  // 固定のまま自分の bt/tjpr だけ動かす」近似で raw 順位を出す。
+  // エンジンでは自分が誰かを追い抜くと相手側の rank も 1 悪化するため、
+  // 同 Lv の各相手の ens に「自分が上に居る分 (+0.5×2系列)」を都度加算して比較する。
+  // 絶対値には cohort 境界の誤差が乗るため、呼び出し側で現在順位にアンカーして
+  // 差分適用すること。
+  // others: [{lv, tj, bt, gray, uid}] (自分を除く)
+  function createEnsemblePredictor(others, myLv, myUid) {
     var higher = 0;
-    var btVals = [], tjVals = [], same = [];
+    var btPairs = [], tjPairs = [], same = [];
     for (var i = 0; i < others.length; i++) {
       var o = others[i];
       if (o.lv > myLv && !o.gray) higher++;
       if (o.lv >= myLv) {
-        btVals.push(o.bt);
-        tjVals.push(o.tj);
-        if (o.lv === myLv) same.push(o);
+        btPairs.push({ v: o.bt, uid: o.uid });
+        tjPairs.push({ v: o.tj, uid: o.uid });
+        if (o.lv === myLv && !o.gray) same.push(o);
       }
     }
-    btVals.sort(function (a, b) { return b - a; });
-    tjVals.sort(function (a, b) { return b - a; });
-    function rankIn(arr, v) {  // 1 + #(> v)  (降順配列を二分探索)
-      var lo = 0, hi = arr.length;
-      while (lo < hi) { var mid = (lo + hi) >> 1; if (arr[mid] > v) lo = mid + 1; else hi = mid; }
+    function cmp(a, b) { return b.v - a.v || a.uid - b.uid; }
+    btPairs.sort(cmp);
+    tjPairs.sort(cmp);
+    // (v desc, uid asc) 順に並べた cohort 内での順位 (エンジンの tie-break と同一)
+    function rankOf(pairs, v, uid) {
+      var lo = 0, hi = pairs.length;
+      while (lo < hi) {
+        var mid = (lo + hi) >> 1;
+        var p = pairs[mid];
+        if (p.v > v || (p.v === v && p.uid < uid)) lo = mid + 1; else hi = mid;
+      }
       return lo + 1;
     }
-    var sameEns = [];
+    // 自分の影響を除いた same-Lv 非灰色勢の base ens (灰色は表示順位に不算入)
+    var sameBase = [];
     for (var j = 0; j < same.length; j++) {
-      sameEns.push({ ens: (rankIn(btVals, same[j].bt) + rankIn(tjVals, same[j].tj)) / 2,
-                     gray: same[j].gray });
+      var s = same[j];
+      sameBase.push({ ens: (rankOf(btPairs, s.bt, s.uid) + rankOf(tjPairs, s.tj, s.uid)) / 2,
+                      bt: s.bt, tj: s.tj, uid: s.uid });
     }
-    sameEns.sort(function (a, b) { return a.ens - b.ens; });
-    var prefixNonGray = [];
-    var c = 0;
-    for (var k = 0; k < sameEns.length; k++) { if (!sameEns[k].gray) c++; prefixNonGray.push(c); }
     return {
       predictRaw: function (tj, bt) {
-        var myEns = (rankIn(btVals, bt) + rankIn(tjVals, tj)) / 2;
-        var lo = 0, hi = sameEns.length;
-        while (lo < hi) { var mid = (lo + hi) >> 1; if (sameEns[mid].ens < myEns) lo = mid + 1; else hi = mid; }
-        return higher + (lo > 0 ? prefixNonGray[lo - 1] : 0) + 1;
+        var myEns = (rankOf(btPairs, bt, myUid) + rankOf(tjPairs, tj, myUid)) / 2;
+        var above = 0;
+        for (var k = 0; k < sameBase.length; k++) {
+          var s = sameBase[k];
+          var sEns = s.ens +
+            ((bt > s.bt || (bt === s.bt && myUid < s.uid)) ? 0.5 : 0) +
+            ((tj > s.tj || (tj === s.tj && myUid < s.uid)) ? 0.5 : 0);
+          if (sEns < myEns || (sEns === myEns && s.uid < myUid)) above++;
+        }
+        return higher + above + 1;
       },
     };
   }
