@@ -143,8 +143,8 @@
     padding: 10px; font-size: 12px; line-height: 1.8;
   }
   .sim-result b { font-variant-numeric: tabular-nums; }
-  .sim-result .up { color: #16a34a; }
-  .sim-result .down { color: #2563eb; }
+  .sim-result .up, .detail-box .up { color: #16a34a; }
+  .sim-result .down, .detail-box .down { color: #2563eb; }
   .note {
     margin-top: 16px; font-size: 11px; color: #9ca3af; line-height: 1.6;
     border-top: 1px solid #f3f4f6; padding-top: 10px;
@@ -674,9 +674,10 @@
       detail.innerHTML =
         '<div><b>' + esc(r.label) + '</b> ・ 素点 ' + fmt1(r.raw * C.TJPR_ELO_SCALE) + 'pt' +
         (r.delta < 0.005 && r.raw > 0 ? ' <span class="dim">(上位3大会外のためほぼ反映なし)</span>' : '') + '</div>' +
-        '<div>スコア ' + fmt1(curElo) + ' → <b>' + fmt1(r.newElo) + '</b> <span class="dim">(' + signed(r.newElo - curElo) + ')</span></div>' +
+        '<div>スコア ' + fmt1(curElo) + ' → <b>' + fmt1(r.newElo) + '</b> ' +
+        '<span class="' + (r.newElo - curElo >= 0 ? 'up' : 'down') + '">(' + signed(r.newElo - curElo) + ')</span></div>' +
         '<div>順位評価 暫定順位 ' + (r.curRank ? '#' + r.curRank : '–') + ' → <b>#' + r.newRank + '</b>' +
-        (rankDiff > 0 ? ' <span class="dim">(↑' + rankDiff + ')</span>' : rankDiff < 0 ? ' <span class="dim">(↓' + (-rankDiff) + ')</span>' : '') + '</div>';
+        (rankDiff > 0 ? ' <span class="up">(↑' + rankDiff + ')</span>' : rankDiff < 0 ? ' <span class="down">(↓' + (-rankDiff) + ')</span>' : '') + '</div>';
       detail.classList.add('show');
       state.tjpr = r.newScore;
       state.tjprRank = r.newRank;
