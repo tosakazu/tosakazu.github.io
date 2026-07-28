@@ -562,10 +562,10 @@
           <div class="chart-tab" data-chart="bt_score">直対評価スコア</div>
         </div>
         <div style="display:flex;gap:4px;flex-wrap:wrap;margin:6px 0 8px;align-items:center">
-          <button class="filter-btn chart-tab-size active" data-filter-period="all">全期間</button>
+          <button class="filter-btn chart-tab-size" data-filter-period="all">全期間</button>
           <button class="filter-btn chart-tab-size" data-filter-period="3y">3年</button>
           <button class="filter-btn chart-tab-size" data-filter-period="1y">1年</button>
-          <button class="filter-btn chart-tab-size" data-filter-period="6m">半年</button>
+          <button class="filter-btn chart-tab-size active" data-filter-period="6m">半年</button>
           <button class="filter-btn chart-tab-size" data-filter-period="3m">3ヶ月</button>
         </div>
         <div class="chart-area"><canvas id="chart-canvas"></canvas></div>
@@ -621,7 +621,7 @@
   </div>
 
   <div class="footer" id="footer-info">
-    <span class="site-version" style="font-size:11px;color:#9ca3af">v 2b0e90a · 2026-07-28 15:08 UTC</span>
+    <span class="site-version" style="font-size:11px;color:#9ca3af">v e5848b4 · 2026-07-28 15:28 UTC</span>
   </div>
 </main>
 
@@ -694,7 +694,7 @@ function charEmojiOf(uid) {
   }
   return (uid != null && _CHAR_EMOJI_BY_UID[uid]) || '';
 }
-let FILTER = { period: 'all', kind: 'all' };  // 共通フィルタ state (render() で再初期化される)
+let FILTER = { period: '6m', kind: 'all' };  // 共通フィルタ state (render() で再初期化される). チャート期間は半年がデフォルト
 // 期間 → 日数. 'all' は無制限 (Infinity), 他は最大日数.
 const PERIOD_DAYS = { 'all': Infinity, '3y': 1095, '1y': 365, '6m': 183, '3m': 91 };
 
@@ -1133,7 +1133,7 @@ function render() {
   const TJPR_SCALE = (META.params && META.params.TJPR_ELO_SCALE) || 100;
 
   // ── フィルタ state + 補助 ──
-  FILTER = { period: 'all', kind: 'all' };
+  FILTER = { period: '6m', kind: 'all' };
   // tourMetaByEid: 複数 source から fallback できるよう、tournaments + top_tjpr_contribs + top_spr を統合
   // (古い event は tournaments 60件には乗らないことがあるので、補助のため)
   const tourMetaByEid = {};
