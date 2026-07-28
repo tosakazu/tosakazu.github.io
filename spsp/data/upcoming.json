@@ -1,32 +1,9 @@
 {
-  "generated_at": 1785229232,
+  "generated_at": 1785240035,
   "country_code": "JP",
   "lookahead_days": 21,
   "count": 48,
   "tournaments": [
-    {
-      "tournament_id": 935399,
-      "tournament_slug": "tournament/134-shibuya-tatsu",
-      "tournament_name": "渋谷\"達\" #134 shibuya -tatsu-",
-      "start_at": 1785232800,
-      "end_at": 1785245400,
-      "is_online": false,
-      "city": "渋谷区",
-      "venue_name": "",
-      "country_code": "JP",
-      "num_attendees": 19,
-      "url": "/tournament/134-shibuya-tatsu",
-      "events": [
-        {
-          "event_id": 1672588,
-          "event_slug": "tournament/134-shibuya-tatsu/event/singles",
-          "event_name": "Singles",
-          "num_entrants": 19,
-          "type": 1,
-          "start_at": 1785232800
-        }
-      ]
-    },
     {
       "tournament_id": 935758,
       "tournament_slug": "tournament/29-18",
@@ -83,14 +60,14 @@
       "city": "京都市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 9,
+      "num_attendees": 10,
       "url": "/tournament/dsw-62",
       "events": [
         {
           "event_id": 1673936,
           "event_slug": "tournament/dsw-62/event/singletournament",
           "event_name": "SingleTournament",
-          "num_entrants": 9,
+          "num_entrants": 11,
           "type": 1,
           "start_at": 1785322800
         }
@@ -274,7 +251,7 @@
           "event_id": 1674508,
           "event_slug": "tournament/quattro/event/quattro",
           "event_name": "四闘-Quattro-",
-          "num_entrants": 18,
+          "num_entrants": 19,
           "type": 1,
           "start_at": 1785513600
         }
@@ -749,6 +726,29 @@
       ]
     },
     {
+      "tournament_id": 937722,
+      "tournament_slug": "tournament/8-69",
+      "tournament_name": "ミコッチ杯#8",
+      "start_at": 1786266000,
+      "end_at": 1786280400,
+      "is_online": false,
+      "city": "横浜市",
+      "venue_name": "",
+      "country_code": "JP",
+      "num_attendees": 0,
+      "url": "/tournament/8-69",
+      "events": [
+        {
+          "event_id": 1677304,
+          "event_slug": "tournament/8-69/event/super-smash-bros-ultimate-singles",
+          "event_name": "シングルス",
+          "num_entrants": 0,
+          "type": 1,
+          "start_at": 1786266000
+        }
+      ]
+    },
+    {
       "tournament_id": 936807,
       "tournament_slug": "tournament/28-11",
       "tournament_name": "第28回ベルスマトナメ",
@@ -781,7 +781,7 @@
       "city": "台東区",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 0,
+      "num_attendees": 1,
       "url": "/tournament/10-520",
       "events": [
         {
@@ -1080,7 +1080,7 @@
       "city": "台東区",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 1,
+      "num_attendees": 2,
       "url": "/tournament/16-525",
       "events": [
         {
