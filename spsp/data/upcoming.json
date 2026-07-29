@@ -1,5 +1,5 @@
 {
-  "generated_at": 1785240035,
+  "generated_at": 1785250838,
   "country_code": "JP",
   "lookahead_days": 21,
   "count": 48,
@@ -37,7 +37,7 @@
       "city": "中野区",
       "venue_name": "Red Bull Gaming Sphere Tokyo",
       "country_code": "JP",
-      "num_attendees": 82,
+      "num_attendees": 83,
       "url": "/tournament/weekly-smash-party-239",
       "events": [
         {
@@ -60,7 +60,7 @@
       "city": "京都市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 10,
+      "num_attendees": 11,
       "url": "/tournament/dsw-62",
       "events": [
         {
@@ -129,14 +129,14 @@
       "city": "大阪市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 5,
+      "num_attendees": 7,
       "url": "/tournament/hit-185-maesuma-hit-185",
       "events": [
         {
           "event_id": 1658649,
           "event_slug": "tournament/hit-185-maesuma-hit-185/event/singles-tournament",
           "event_name": "Singles Tournament",
-          "num_entrants": 5,
+          "num_entrants": 7,
           "type": 1,
           "start_at": 1785405600
         }
@@ -244,7 +244,7 @@
       "city": "四日市市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 18,
+      "num_attendees": 19,
       "url": "/tournament/quattro",
       "events": [
         {
@@ -290,14 +290,14 @@
       "city": "福岡市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 20,
+      "num_attendees": 21,
       "url": "/tournament/revival-14-5",
       "events": [
         {
           "event_id": 1672554,
           "event_slug": "tournament/revival-14-5/event/1on1",
           "event_name": "1on1トーナメント",
-          "num_entrants": 20,
+          "num_entrants": 21,
           "type": 1,
           "start_at": 1785547800
         }
@@ -359,14 +359,14 @@
       "city": "台東区",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 10,
+      "num_attendees": 13,
       "url": "/tournament/1-514",
       "events": [
         {
           "event_id": 1676155,
           "event_slug": "tournament/1-514/event/on",
           "event_name": "シングルス（１on１トーナメント）",
-          "num_entrants": 9,
+          "num_entrants": 12,
           "type": 1,
           "start_at": 1785553200
         }
@@ -528,14 +528,14 @@
       "city": "渋谷区",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 6,
+      "num_attendees": 7,
       "url": "/tournament/135-shibuya-tatsu",
       "events": [
         {
           "event_id": 1677110,
           "event_slug": "tournament/135-shibuya-tatsu/event/singles",
           "event_name": "Singles",
-          "num_entrants": 6,
+          "num_entrants": 7,
           "type": 1,
           "start_at": 1785837600
         }
@@ -735,14 +735,14 @@
       "city": "横浜市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 0,
+      "num_attendees": 1,
       "url": "/tournament/8-69",
       "events": [
         {
           "event_id": 1677304,
           "event_slug": "tournament/8-69/event/super-smash-bros-ultimate-singles",
           "event_name": "シングルス",
-          "num_entrants": 0,
+          "num_entrants": 1,
           "type": 1,
           "start_at": 1786266000
         }
@@ -804,14 +804,14 @@
       "city": "中野区",
       "venue_name": "Pio, Tokyo",
       "country_code": "JP",
-      "num_attendees": 16,
+      "num_attendees": 17,
       "url": "/tournament/5-104",
       "events": [
         {
           "event_id": 1670065,
           "event_slug": "tournament/5-104/event/singles-ssqm",
           "event_name": "シングルス / Singles(SSQM)",
-          "num_entrants": 16,
+          "num_entrants": 17,
           "type": 1,
           "start_at": 1786374000
         }
@@ -988,14 +988,14 @@
       "city": "名古屋市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 462,
+      "num_attendees": 463,
       "url": "/tournament/-3119",
       "events": [
         {
           "event_id": 1651150,
           "event_slug": "tournament/-3119/event/grand-slum",
           "event_name": "grand slum",
-          "num_entrants": 462,
+          "num_entrants": 463,
           "type": 1,
           "start_at": 1786752000
         }
