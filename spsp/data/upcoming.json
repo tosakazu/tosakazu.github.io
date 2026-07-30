@@ -1,8 +1,8 @@
 {
-  "generated_at": 1785380435,
+  "generated_at": 1785391267,
   "country_code": "JP",
   "lookahead_days": 21,
-  "count": 51,
+  "count": 54,
   "tournaments": [
     {
       "tournament_id": 932724,
@@ -83,7 +83,7 @@
       "city": "台東区",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 21,
+      "num_attendees": 23,
       "url": "/tournament/31-513",
       "events": [
         {
@@ -221,14 +221,14 @@
       "city": "福岡市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 21,
+      "num_attendees": 22,
       "url": "/tournament/revival-14-5",
       "events": [
         {
           "event_id": 1672554,
           "event_slug": "tournament/revival-14-5/event/1on1",
           "event_name": "1on1トーナメント",
-          "num_entrants": 21,
+          "num_entrants": 23,
           "type": 1,
           "start_at": 1785547800
         }
@@ -244,7 +244,7 @@
       "city": "札幌市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 116,
+      "num_attendees": 115,
       "url": "/tournament/15-kyokkan-15",
       "events": [
         {
@@ -290,14 +290,14 @@
       "city": "台東区",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 17,
+      "num_attendees": 20,
       "url": "/tournament/1-514",
       "events": [
         {
           "event_id": 1676155,
           "event_slug": "tournament/1-514/event/on",
           "event_name": "シングルス（１on１トーナメント）",
-          "num_entrants": 16,
+          "num_entrants": 19,
           "type": 1,
           "start_at": 1785553200
         }
@@ -336,7 +336,7 @@
       "city": "町田市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 211,
+      "num_attendees": 212,
       "url": "/tournament/impact-major-4",
       "events": [
         {
@@ -351,7 +351,7 @@
           "event_id": 1664756,
           "event_slug": "tournament/impact-major-4/event/waiting-for-competitors-slots",
           "event_name": "Waiting for competitors' slots",
-          "num_entrants": 16,
+          "num_entrants": 17,
           "type": 1,
           "start_at": 1785632400
         }
@@ -459,14 +459,14 @@
       "city": "渋谷区",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 9,
+      "num_attendees": 10,
       "url": "/tournament/135-shibuya-tatsu",
       "events": [
         {
           "event_id": 1677110,
           "event_slug": "tournament/135-shibuya-tatsu/event/singles",
           "event_name": "Singles",
-          "num_entrants": 9,
+          "num_entrants": 10,
           "type": 1,
           "start_at": 1785837600
         }
@@ -559,14 +559,14 @@
       "city": "京都市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 3,
+      "num_attendees": 6,
       "url": "/tournament/dsw-63",
       "events": [
         {
           "event_id": 1678531,
           "event_slug": "tournament/dsw-63/event/singletournament",
           "event_name": "SingleTournament",
-          "num_entrants": 3,
+          "num_entrants": 6,
           "type": 1,
           "start_at": 1785927600
         }
@@ -592,6 +592,29 @@
           "num_entrants": 4,
           "type": 1,
           "start_at": 1786003200
+        }
+      ]
+    },
+    {
+      "tournament_id": 938333,
+      "tournament_slug": "tournament/shibuya-g-g-smash-weekly-74",
+      "tournament_name": "Shibuya G.G.Smash Weekly 74",
+      "start_at": 1786006800,
+      "end_at": 1786023000,
+      "is_online": false,
+      "city": "渋谷区",
+      "venue_name": "",
+      "country_code": "JP",
+      "num_attendees": 0,
+      "url": "/tournament/shibuya-g-g-smash-weekly-74",
+      "events": [
+        {
+          "event_id": 1678636,
+          "event_slug": "tournament/shibuya-g-g-smash-weekly-74/event/singles",
+          "event_name": "Singles",
+          "num_entrants": 0,
+          "type": 1,
+          "start_at": 1786012200
         }
       ]
     },
@@ -776,6 +799,29 @@
           "num_entrants": 14,
           "type": 1,
           "start_at": 1786240800
+        }
+      ]
+    },
+    {
+      "tournament_id": 937988,
+      "tournament_slug": "tournament/sen-smash-6",
+      "tournament_name": "千スマ / Sen Smash #6",
+      "start_at": 1786244400,
+      "end_at": 1786276800,
+      "is_online": false,
+      "city": "柏市",
+      "venue_name": "",
+      "country_code": "JP",
+      "num_attendees": 5,
+      "url": "/tournament/sen-smash-6",
+      "events": [
+        {
+          "event_id": 1677912,
+          "event_slug": "tournament/sen-smash-6/event/singles",
+          "event_name": "シングルス / Singles",
+          "num_entrants": 2,
+          "type": 1,
+          "start_at": 1786244400
         }
       ]
     },
@@ -996,14 +1042,14 @@
       "city": "台東区",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 4,
+      "num_attendees": 3,
       "url": "/tournament/14-524",
       "events": [
         {
           "event_id": 1676162,
           "event_slug": "tournament/14-524/event/on",
           "event_name": "シングルス（１on１トーナメント）",
-          "num_entrants": 4,
+          "num_entrants": 3,
           "type": 1,
           "start_at": 1786694400
         }
@@ -1042,14 +1088,14 @@
       "city": "名古屋市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 465,
+      "num_attendees": 469,
       "url": "/tournament/-3119",
       "events": [
         {
           "event_id": 1651150,
           "event_slug": "tournament/-3119/event/grand-slum",
           "event_name": "grand slum",
-          "num_entrants": 465,
+          "num_entrants": 469,
           "type": 1,
           "start_at": 1786752000
         }
@@ -1144,6 +1190,29 @@
           "num_entrants": 42,
           "type": 1,
           "start_at": 1786845600
+        }
+      ]
+    },
+    {
+      "tournament_id": 938325,
+      "tournament_slug": "tournament/sen-smash-7",
+      "tournament_name": "千スマ / Sen Smash #7",
+      "start_at": 1786849200,
+      "end_at": 1786881600,
+      "is_online": false,
+      "city": "柏市",
+      "venue_name": "",
+      "country_code": "JP",
+      "num_attendees": 2,
+      "url": "/tournament/sen-smash-7",
+      "events": [
+        {
+          "event_id": 1678616,
+          "event_slug": "tournament/sen-smash-7/event/singles",
+          "event_name": "シングルス / Singles",
+          "num_entrants": 0,
+          "type": 1,
+          "start_at": 1786849200
         }
       ]
     },
