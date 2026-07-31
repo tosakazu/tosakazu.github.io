@@ -1,5 +1,5 @@
 {
-  "generated_at": 1785423639,
+  "generated_at": 1785434436,
   "country_code": "JP",
   "lookahead_days": 21,
   "count": 53,
@@ -21,7 +21,7 @@
           "event_id": 1667234,
           "event_slug": "tournament/31-513/event/on",
           "event_name": "シングルス（１on１トーナメント）",
-          "num_entrants": 21,
+          "num_entrants": 23,
           "type": 1,
           "start_at": 1785484800
         }
@@ -37,14 +37,14 @@
       "city": "川崎市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 12,
+      "num_attendees": 14,
       "url": "/tournament/10-69",
       "events": [
         {
           "event_id": 1675008,
           "event_slug": "tournament/10-69/event/super-smash-bros-ultimate-singles",
           "event_name": "シングルス",
-          "num_entrants": 10,
+          "num_entrants": 12,
           "type": 1,
           "start_at": 1785488400
         }
@@ -60,14 +60,14 @@
       "city": "福岡市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 12,
+      "num_attendees": 13,
       "url": "/tournament/smash-147-1",
       "events": [
         {
           "event_id": 1676106,
           "event_slug": "tournament/smash-147-1/event/1on1",
           "event_name": "1on1トーナメント",
-          "num_entrants": 12,
+          "num_entrants": 13,
           "type": 1,
           "start_at": 1785493800
         }
@@ -221,14 +221,14 @@
       "city": "台東区",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 21,
+      "num_attendees": 22,
       "url": "/tournament/1-514",
       "events": [
         {
           "event_id": 1676155,
           "event_slug": "tournament/1-514/event/on",
           "event_name": "シングルス（１on１トーナメント）",
-          "num_entrants": 20,
+          "num_entrants": 21,
           "type": 1,
           "start_at": 1785553200
         }
@@ -267,7 +267,7 @@
       "city": "町田市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 208,
+      "num_attendees": 209,
       "url": "/tournament/impact-major-4",
       "events": [
         {
@@ -282,7 +282,7 @@
           "event_id": 1664756,
           "event_slug": "tournament/impact-major-4/event/waiting-for-competitors-slots",
           "event_name": "Waiting for competitors' slots",
-          "num_entrants": 0,
+          "num_entrants": 1,
           "type": 1,
           "start_at": 1785632400
         }
@@ -298,14 +298,14 @@
       "city": "宇部市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 16,
+      "num_attendees": 15,
       "url": "/tournament/35-3",
       "events": [
         {
           "event_id": 1668068,
           "event_slug": "tournament/35-3/event/sp-1on1",
           "event_name": "スマブラSP 1on1",
-          "num_entrants": 16,
+          "num_entrants": 15,
           "type": 1,
           "start_at": 1785643200
         }
@@ -444,14 +444,14 @@
       "city": "川崎市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 4,
+      "num_attendees": 5,
       "url": "/tournament/30-20",
       "events": [
         {
           "event_id": 1677936,
           "event_slug": "tournament/30-20/event/super-smash-bros-ultimate-singles",
           "event_name": "雷影杯",
-          "num_entrants": 3,
+          "num_entrants": 4,
           "type": 1,
           "start_at": 1785920400
         }
@@ -1042,14 +1042,14 @@
       "city": "名古屋市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 469,
+      "num_attendees": 470,
       "url": "/tournament/-3119",
       "events": [
         {
           "event_id": 1651150,
           "event_slug": "tournament/-3119/event/grand-slum",
           "event_name": "grand slum",
-          "num_entrants": 469,
+          "num_entrants": 470,
           "type": 1,
           "start_at": 1786752000
         }
