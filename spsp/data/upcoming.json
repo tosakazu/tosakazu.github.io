@@ -1,8 +1,8 @@
 {
-  "generated_at": 1785412836,
+  "generated_at": 1785423639,
   "country_code": "JP",
   "lookahead_days": 21,
-  "count": 52,
+  "count": 53,
   "tournaments": [
     {
       "tournament_id": 932726,
@@ -14,7 +14,7 @@
       "city": "台東区",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 23,
+      "num_attendees": 24,
       "url": "/tournament/31-513",
       "events": [
         {
@@ -60,14 +60,14 @@
       "city": "福岡市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 11,
+      "num_attendees": 12,
       "url": "/tournament/smash-147-1",
       "events": [
         {
           "event_id": 1676106,
           "event_slug": "tournament/smash-147-1/event/1on1",
           "event_name": "1on1トーナメント",
-          "num_entrants": 11,
+          "num_entrants": 12,
           "type": 1,
           "start_at": 1785493800
         }
@@ -267,14 +267,14 @@
       "city": "町田市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 212,
+      "num_attendees": 208,
       "url": "/tournament/impact-major-4",
       "events": [
         {
           "event_id": 1656500,
           "event_slug": "tournament/impact-major-4/event/singles-tournament",
           "event_name": "Singles Tournament",
-          "num_entrants": 192,
+          "num_entrants": 206,
           "type": 1,
           "start_at": 1785632400
         },
@@ -282,7 +282,7 @@
           "event_id": 1664756,
           "event_slug": "tournament/impact-major-4/event/waiting-for-competitors-slots",
           "event_name": "Waiting for competitors' slots",
-          "num_entrants": 17,
+          "num_entrants": 0,
           "type": 1,
           "start_at": 1785632400
         }
@@ -674,14 +674,14 @@
       "city": "富山市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 23,
+      "num_attendees": 24,
       "url": "/tournament/tsurugi-4",
       "events": [
         {
           "event_id": 1640470,
           "event_slug": "tournament/tsurugi-4/event/singles",
           "event_name": "Singles",
-          "num_entrants": 23,
+          "num_entrants": 24,
           "type": 1,
           "start_at": 1786161600
         }
@@ -1213,6 +1213,29 @@
           "num_entrants": 2,
           "type": 1,
           "start_at": 1786953600
+        }
+      ]
+    },
+    {
+      "tournament_id": 937950,
+      "tournament_slug": "tournament/20-529",
+      "tournament_name": "20(木)上野スマコミ#529(オープン)",
+      "start_at": 1787212800,
+      "end_at": 1787234400,
+      "is_online": false,
+      "city": "台東区",
+      "venue_name": "",
+      "country_code": "JP",
+      "num_attendees": 2,
+      "url": "/tournament/20-529",
+      "events": [
+        {
+          "event_id": 1677836,
+          "event_slug": "tournament/20-529/event/on",
+          "event_name": "シングルス（１on１トーナメント）",
+          "num_entrants": 2,
+          "type": 1,
+          "start_at": 1787212800
         }
       ]
     }
