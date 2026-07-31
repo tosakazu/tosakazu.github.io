@@ -1,5 +1,5 @@
 {
-  "generated_at": 1785466838,
+  "generated_at": 1785477674,
   "country_code": "JP",
   "lookahead_days": 21,
   "count": 56,
@@ -106,14 +106,14 @@
       "city": "四日市市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 24,
+      "num_attendees": 26,
       "url": "/tournament/quattro",
       "events": [
         {
           "event_id": 1674508,
           "event_slug": "tournament/quattro/event/quattro",
           "event_name": "四闘-Quattro-",
-          "num_entrants": 24,
+          "num_entrants": 26,
           "type": 1,
           "start_at": 1785513600
         }
@@ -129,7 +129,7 @@
       "city": "宜野湾市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 13,
+      "num_attendees": 14,
       "url": "/tournament/2-hakumei-2",
       "events": [
         {
@@ -189,29 +189,6 @@
       ]
     },
     {
-      "tournament_id": 937205,
-      "tournament_slug": "tournament/1-514",
-      "tournament_name": "1(土)上野スマコミ#514(オープン)",
-      "start_at": 1785553200,
-      "end_at": 1785578400,
-      "is_online": false,
-      "city": "台東区",
-      "venue_name": "",
-      "country_code": "JP",
-      "num_attendees": 29,
-      "url": "/tournament/1-514",
-      "events": [
-        {
-          "event_id": 1676155,
-          "event_slug": "tournament/1-514/event/on",
-          "event_name": "シングルス（１on１トーナメント）",
-          "num_entrants": 28,
-          "type": 1,
-          "start_at": 1785553200
-        }
-      ]
-    },
-    {
       "tournament_id": 929388,
       "tournament_slug": "tournament/13-31",
       "tournament_name": "クロガネスマッシュ#13",
@@ -235,6 +212,29 @@
       ]
     },
     {
+      "tournament_id": 937205,
+      "tournament_slug": "tournament/1-514",
+      "tournament_name": "1(土)上野スマコミ#514(オープン)",
+      "start_at": 1785553200,
+      "end_at": 1785578400,
+      "is_online": false,
+      "city": "台東区",
+      "venue_name": "",
+      "country_code": "JP",
+      "num_attendees": 32,
+      "url": "/tournament/1-514",
+      "events": [
+        {
+          "event_id": 1676155,
+          "event_slug": "tournament/1-514/event/on",
+          "event_name": "シングルス（１on１トーナメント）",
+          "num_entrants": 31,
+          "type": 1,
+          "start_at": 1785553200
+        }
+      ]
+    },
+    {
       "tournament_id": 936871,
       "tournament_slug": "tournament/beesmash-53",
       "tournament_name": "渋谷BeeSmash 53",
@@ -244,14 +244,14 @@
       "city": "渋谷区",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 11,
+      "num_attendees": 15,
       "url": "/tournament/beesmash-53",
       "events": [
         {
           "event_id": 1675481,
           "event_slug": "tournament/beesmash-53/event/singles",
           "event_name": "Singles",
-          "num_entrants": 11,
+          "num_entrants": 15,
           "type": 1,
           "start_at": 1785560400
         }
@@ -277,14 +277,6 @@
           "num_entrants": 202,
           "type": 1,
           "start_at": 1785632400
-        },
-        {
-          "event_id": 1664756,
-          "event_slug": "tournament/impact-major-4/event/waiting-for-competitors-slots",
-          "event_name": "Waiting for competitors' slots",
-          "num_entrants": 0,
-          "type": 1,
-          "start_at": 1785632400
         }
       ]
     },
@@ -305,7 +297,7 @@
           "event_id": 1668068,
           "event_slug": "tournament/35-3/event/sp-1on1",
           "event_name": "スマブラSP 1on1",
-          "num_entrants": 16,
+          "num_entrants": 17,
           "type": 1,
           "start_at": 1785643200
         }
@@ -321,14 +313,14 @@
       "city": "足立区",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 56,
+      "num_attendees": 49,
       "url": "/tournament/unibura-8",
       "events": [
         {
           "event_id": 1652207,
           "event_slug": "tournament/unibura-8/event/ultimate-singles",
           "event_name": "Ultimate Singles",
-          "num_entrants": 54,
+          "num_entrants": 47,
           "type": 1,
           "start_at": 1785724200
         }
@@ -582,14 +574,14 @@
       "city": "立川市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 5,
+      "num_attendees": 6,
       "url": "/tournament/sumao2026-15",
       "events": [
         {
           "event_id": 1678849,
           "event_slug": "tournament/sumao2026-15/event/sp-1on1",
           "event_name": "スマブラSP 1on1",
-          "num_entrants": 5,
+          "num_entrants": 6,
           "type": 1,
           "start_at": 1786091400
         }
@@ -651,14 +643,14 @@
       "city": "浜松市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 78,
+      "num_attendees": 79,
       "url": "/tournament/sp15-2",
       "events": [
         {
           "event_id": 1666584,
           "event_slug": "tournament/sp15-2/event/1on1",
           "event_name": "1on1",
-          "num_entrants": 76,
+          "num_entrants": 77,
           "type": 1,
           "start_at": 1786154400
         }
@@ -743,14 +735,14 @@
       "city": "渋谷区",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 5,
+      "num_attendees": 8,
       "url": "/tournament/to-win-12",
       "events": [
         {
           "event_id": 1679057,
           "event_slug": "tournament/to-win-12/event/singles",
           "event_name": "Singles",
-          "num_entrants": 6,
+          "num_entrants": 8,
           "type": 1,
           "start_at": 1786237200
         }
@@ -1180,14 +1172,14 @@
       "city": "東広島市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 8,
+      "num_attendees": 24,
       "url": "/tournament/15-33",
       "events": [
         {
           "event_id": 1676059,
           "event_slug": "tournament/15-33/event/singles",
           "event_name": "シングルス/Singles",
-          "num_entrants": 16,
+          "num_entrants": 24,
           "type": 1,
           "start_at": 1786807800
         }
