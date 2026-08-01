@@ -1,8 +1,8 @@
 {
-  "generated_at": 1785553370,
+  "generated_at": 1785564062,
   "country_code": "JP",
   "lookahead_days": 21,
-  "count": 47,
+  "count": 52,
   "tournaments": [
     {
       "tournament_id": 927324,
@@ -120,6 +120,29 @@
       ]
     },
     {
+      "tournament_id": 938893,
+      "tournament_slug": "tournament/hit-186-maesuma-hit-186",
+      "tournament_name": "マエスマ'HIT#186 / Maesuma'HIT#186",
+      "start_at": 1785751200,
+      "end_at": 1785765600,
+      "is_online": false,
+      "city": "大阪市",
+      "venue_name": "",
+      "country_code": "JP",
+      "num_attendees": 2,
+      "url": "/tournament/hit-186-maesuma-hit-186",
+      "events": [
+        {
+          "event_id": 1679803,
+          "event_slug": "tournament/hit-186-maesuma-hit-186/event/singles-tournament",
+          "event_name": "Singles Tournament",
+          "num_entrants": 2,
+          "type": 1,
+          "start_at": 1785751200
+        }
+      ]
+    },
+    {
       "tournament_id": 937624,
       "tournament_slug": "tournament/135-shibuya-tatsu",
       "tournament_name": "渋谷\"達\" #135 shibuya -tatsu-",
@@ -129,14 +152,14 @@
       "city": "渋谷区",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 11,
+      "num_attendees": 12,
       "url": "/tournament/135-shibuya-tatsu",
       "events": [
         {
           "event_id": 1677110,
           "event_slug": "tournament/135-shibuya-tatsu/event/singles",
           "event_name": "Singles",
-          "num_entrants": 11,
+          "num_entrants": 12,
           "type": 1,
           "start_at": 1785837600
         }
@@ -152,14 +175,14 @@
       "city": "中野区",
       "venue_name": "Red Bull Gaming Sphere Tokyo",
       "country_code": "JP",
-      "num_attendees": 4,
+      "num_attendees": 50,
       "url": "/tournament/weekly-smash-party-240",
       "events": [
         {
           "event_id": 1677988,
           "event_slug": "tournament/weekly-smash-party-240/event/special-1on1-ultimate-singles",
           "event_name": "SPECIAL 1on1/ Ultimate Singles",
-          "num_entrants": 2,
+          "num_entrants": 48,
           "type": 1,
           "start_at": 1785920400
         },
@@ -193,29 +216,6 @@
           "num_entrants": 4,
           "type": 1,
           "start_at": 1785920400
-        }
-      ]
-    },
-    {
-      "tournament_id": 938287,
-      "tournament_slug": "tournament/16-33",
-      "tournament_name": "平日いろスマ#16",
-      "start_at": 1785925800,
-      "end_at": 1785936600,
-      "is_online": false,
-      "city": "大分市",
-      "venue_name": "",
-      "country_code": "JP",
-      "num_attendees": 2,
-      "url": "/tournament/16-33",
-      "events": [
-        {
-          "event_id": 1678546,
-          "event_slug": "tournament/16-33/event/1on1",
-          "event_name": "1on1トーナメント",
-          "num_entrants": 2,
-          "type": 1,
-          "start_at": 1785925800
         }
       ]
     },
@@ -289,6 +289,29 @@
       ]
     },
     {
+      "tournament_id": 938897,
+      "tournament_slug": "tournament/hit-187-maesuma-hit-187",
+      "tournament_name": "マエスマ'HIT#187 / Maesuma'HIT#187",
+      "start_at": 1786010400,
+      "end_at": 1786024800,
+      "is_online": false,
+      "city": "大阪市",
+      "venue_name": "",
+      "country_code": "JP",
+      "num_attendees": 0,
+      "url": "/tournament/hit-187-maesuma-hit-187",
+      "events": [
+        {
+          "event_id": 1679808,
+          "event_slug": "tournament/hit-187-maesuma-hit-187/event/singles-tournament",
+          "event_name": "Singles Tournament",
+          "num_entrants": 0,
+          "type": 1,
+          "start_at": 1786010400
+        }
+      ]
+    },
+    {
       "tournament_id": 937208,
       "tournament_slug": "tournament/7-519",
       "tournament_name": "7(金)上野スマコミ#519(オープン)",
@@ -358,6 +381,29 @@
       ]
     },
     {
+      "tournament_id": 938287,
+      "tournament_slug": "tournament/16-33",
+      "tournament_name": "平日いろスマ#16",
+      "start_at": 1786098600,
+      "end_at": 1786109400,
+      "is_online": false,
+      "city": "大分市",
+      "venue_name": "",
+      "country_code": "JP",
+      "num_attendees": 2,
+      "url": "/tournament/16-33",
+      "events": [
+        {
+          "event_id": 1678546,
+          "event_slug": "tournament/16-33/event/1on1",
+          "event_name": "1on1トーナメント",
+          "num_entrants": 2,
+          "type": 1,
+          "start_at": 1786098600
+        }
+      ]
+    },
+    {
       "tournament_id": 935369,
       "tournament_slug": "tournament/masterhand74",
       "tournament_name": "MasterHand74",
@@ -390,14 +436,14 @@
       "city": "浜松市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 81,
+      "num_attendees": 82,
       "url": "/tournament/sp15-2",
       "events": [
         {
           "event_id": 1666584,
           "event_slug": "tournament/sp15-2/event/1on1",
           "event_name": "1on1",
-          "num_entrants": 79,
+          "num_entrants": 80,
           "type": 1,
           "start_at": 1786154400
         }
@@ -482,14 +528,14 @@
       "city": "渋谷区",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 11,
+      "num_attendees": 17,
       "url": "/tournament/to-win-12",
       "events": [
         {
           "event_id": 1679057,
           "event_slug": "tournament/to-win-12/event/singles",
           "event_name": "Singles",
-          "num_entrants": 10,
+          "num_entrants": 16,
           "type": 1,
           "start_at": 1786237200
         }
@@ -657,6 +703,29 @@
       ]
     },
     {
+      "tournament_id": 938901,
+      "tournament_slug": "tournament/hit-188-maesuma-hit-188",
+      "tournament_name": "マエスマ'HIT#188 / Maesuma'HIT#188",
+      "start_at": 1786356000,
+      "end_at": 1786370400,
+      "is_online": false,
+      "city": "大阪市",
+      "venue_name": "",
+      "country_code": "JP",
+      "num_attendees": 0,
+      "url": "/tournament/hit-188-maesuma-hit-188",
+      "events": [
+        {
+          "event_id": 1679812,
+          "event_slug": "tournament/hit-188-maesuma-hit-188/event/singles-tournament",
+          "event_name": "Singles Tournament",
+          "num_entrants": 0,
+          "type": 1,
+          "start_at": 1786356000
+        }
+      ]
+    },
+    {
       "tournament_id": 934151,
       "tournament_slug": "tournament/5-104",
       "tournament_name": "女王杯#5",
@@ -768,6 +837,29 @@
           "num_entrants": 3,
           "type": 1,
           "start_at": 1786608000
+        }
+      ]
+    },
+    {
+      "tournament_id": 938904,
+      "tournament_slug": "tournament/hit-189-maesuma-hit-189",
+      "tournament_name": "マエスマ'HIT#189 / Maesuma'HIT#189",
+      "start_at": 1786615200,
+      "end_at": 1786629600,
+      "is_online": false,
+      "city": "大阪市",
+      "venue_name": "",
+      "country_code": "JP",
+      "num_attendees": 0,
+      "url": "/tournament/hit-189-maesuma-hit-189",
+      "events": [
+        {
+          "event_id": 1679815,
+          "event_slug": "tournament/hit-189-maesuma-hit-189/event/singles-tournament",
+          "event_name": "Singles Tournament",
+          "num_entrants": 0,
+          "type": 1,
+          "start_at": 1786615200
         }
       ]
     },
@@ -1025,6 +1117,29 @@
       ]
     },
     {
+      "tournament_id": 938907,
+      "tournament_slug": "tournament/hit-190-maesuma-hit-190",
+      "tournament_name": "マエスマ'HIT#190 / Maesuma'HIT#190",
+      "start_at": 1786960800,
+      "end_at": 1786975200,
+      "is_online": false,
+      "city": "大阪市",
+      "venue_name": "",
+      "country_code": "JP",
+      "num_attendees": 0,
+      "url": "/tournament/hit-190-maesuma-hit-190",
+      "events": [
+        {
+          "event_id": 1679818,
+          "event_slug": "tournament/hit-190-maesuma-hit-190/event/singles-tournament",
+          "event_name": "Singles Tournament",
+          "num_entrants": 0,
+          "type": 1,
+          "start_at": 1786960800
+        }
+      ]
+    },
+    {
       "tournament_id": 937950,
       "tournament_slug": "tournament/20-529",
       "tournament_name": "20(木)上野スマコミ#529(オープン)",
@@ -1080,14 +1195,14 @@
       "city": "渋谷区",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 259,
+      "num_attendees": 260,
       "url": "/tournament/shibuya-dairan-first-strike",
       "events": [
         {
           "event_id": 1649473,
           "event_slug": "tournament/shibuya-dairan-first-strike/event/shibuya-dairan",
           "event_name": "渋谷大乱/SHIBUYA DAIRAN",
-          "num_entrants": 252,
+          "num_entrants": 253,
           "type": 1,
           "start_at": 1787364000
         }
