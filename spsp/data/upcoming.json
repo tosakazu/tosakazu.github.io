@@ -1,8 +1,8 @@
 {
-  "generated_at": 1785564062,
+  "generated_at": 1785574846,
   "country_code": "JP",
   "lookahead_days": 21,
-  "count": 52,
+  "count": 53,
   "tournaments": [
     {
       "tournament_id": 927324,
@@ -83,14 +83,14 @@
       "city": "台東区",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 4,
+      "num_attendees": 5,
       "url": "/tournament/3-516",
       "events": [
         {
           "event_id": 1676156,
           "event_slug": "tournament/3-516/event/on",
           "event_name": "シングルス（１on１トーナメント）",
-          "num_entrants": 4,
+          "num_entrants": 5,
           "type": 1,
           "start_at": 1785744000
         }
@@ -129,14 +129,14 @@
       "city": "大阪市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 2,
+      "num_attendees": 4,
       "url": "/tournament/hit-186-maesuma-hit-186",
       "events": [
         {
           "event_id": 1679803,
           "event_slug": "tournament/hit-186-maesuma-hit-186/event/singles-tournament",
           "event_name": "Singles Tournament",
-          "num_entrants": 2,
+          "num_entrants": 4,
           "type": 1,
           "start_at": 1785751200
         }
@@ -436,14 +436,14 @@
       "city": "浜松市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 82,
+      "num_attendees": 83,
       "url": "/tournament/sp15-2",
       "events": [
         {
           "event_id": 1666584,
           "event_slug": "tournament/sp15-2/event/1on1",
           "event_name": "1on1",
-          "num_entrants": 80,
+          "num_entrants": 81,
           "type": 1,
           "start_at": 1786154400
         }
@@ -1195,7 +1195,7 @@
       "city": "渋谷区",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 260,
+      "num_attendees": 261,
       "url": "/tournament/shibuya-dairan-first-strike",
       "events": [
         {
@@ -1205,6 +1205,29 @@
           "num_entrants": 253,
           "type": 1,
           "start_at": 1787364000
+        }
+      ]
+    },
+    {
+      "tournament_id": 915823,
+      "tournament_slug": "tournament/1-new-town",
+      "tournament_name": "第1回NeW town 新町スマブラオフ大会",
+      "start_at": 1787371200,
+      "end_at": 1787389200,
+      "is_online": false,
+      "city": "高崎市",
+      "venue_name": "",
+      "country_code": "JP",
+      "num_attendees": 1,
+      "url": "/tournament/1-new-town",
+      "events": [
+        {
+          "event_id": 1637261,
+          "event_slug": "tournament/1-new-town/event/smashsp-1vs1tournament",
+          "event_name": "smashsp 1vs1tournament",
+          "num_entrants": 1,
+          "type": 1,
+          "start_at": 1783137600
         }
       ]
     }
