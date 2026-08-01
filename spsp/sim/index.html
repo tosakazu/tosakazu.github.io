@@ -122,7 +122,10 @@
     background: #f9fafb; font-size: 12px;
   }
   .sim-row .rno { flex-shrink: 0; min-width: 40px; color: #6b7280; font-weight: 700; font-size: 11px; }
-  .sim-row .who { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .sim-row .who { flex: 1; min-width: 0; display: flex; align-items: baseline; gap: 6px; }
+  .sim-row .who .nm { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .sim-row .who a.nm { color: inherit; text-decoration: underline; text-decoration-color: #d1d5db; text-underline-offset: 2px; }
+  .sim-row .who .orank { flex-shrink: 0; color: #9ca3af; font-size: 11px; }
   .sim-row .wlseg { display: inline-flex; flex-shrink: 0; }
   .sim-row .wlseg button {
     border: 1px solid #d1d5db; background: #fff; color: #9ca3af;
@@ -284,6 +287,7 @@
           gray: !!(rec.metadata && rec.metadata.provisional),
           tjpr_rank: rec.ranks ? rec.ranks.tjpr : 0,
           bt_rank: rec.ranks ? rec.ranks.bt_gated : 0,
+          ens_rank: rec.ranks ? rec.ranks.ensemble : 0,
         });
       }
     });
@@ -782,6 +786,16 @@
 
     // 行の描画。deltas=null は計算中 (…) 表示。
     // 変更操作のたびに同期で再描画することで、fetch 中の古い data-i による誤操作を防ぐ
+    function whoHtml(r) {
+      var nm = r.uid
+        ? '<a class="nm" href="' + DATA_BASE + 'p/?uid=' + r.uid + '">' + esc(r.tag) + '</a>'
+        : '<span class="nm">' + esc(r.tag) + '</span>';
+      var m = r.uid ? MASTER.get(r.uid) : null;
+      // gray (計測中/海外) は全国順位カウント外なので出さない
+      if (m && !m.gray && m.ens_rank) nm += '<span class="orank">全国#' + m.ens_rank + '</span>';
+      return nm;
+    }
+
     function renderRows(deltas) {
       listBox.innerHTML = results.map(function (r, i) {
         return '<div class="sim-row">' +
@@ -790,7 +804,7 @@
           '<button class="win' + (r.won ? ' on' : '') + '" data-i="' + i + '" data-won="1">勝ち</button>' +
           '<button class="loss' + (r.won ? '' : ' on') + '" data-i="' + i + '" data-won="0">負け</button>' +
           '</span>' +
-          '<span class="who">' + esc(r.tag) + '</span>' +
+          '<span class="who">' + whoHtml(r) + '</span>' +
           '<span class="delta">' + (deltas ? signed(deltas[i]) : '…') + '</span>' +
           '<button class="rm" data-i="' + i + '">✕</button></div>';
       }).join('');
