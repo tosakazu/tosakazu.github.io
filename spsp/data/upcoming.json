@@ -1,8 +1,8 @@
 {
-  "generated_at": 1785499242,
+  "generated_at": 1785510043,
   "country_code": "JP",
   "lookahead_days": 21,
-  "count": 52,
+  "count": 53,
   "tournaments": [
     {
       "tournament_id": 936373,
@@ -152,14 +152,14 @@
       "city": "渋谷区",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 15,
+      "num_attendees": 16,
       "url": "/tournament/beesmash-53",
       "events": [
         {
           "event_id": 1675481,
           "event_slug": "tournament/beesmash-53/event/singles",
           "event_name": "Singles",
-          "num_entrants": 15,
+          "num_entrants": 16,
           "type": 1,
           "start_at": 1785560400
         }
@@ -482,14 +482,14 @@
       "city": "立川市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 6,
+      "num_attendees": 7,
       "url": "/tournament/sumao2026-15",
       "events": [
         {
           "event_id": 1678849,
           "event_slug": "tournament/sumao2026-15/event/sp-1on1",
           "event_name": "スマブラSP 1on1",
-          "num_entrants": 6,
+          "num_entrants": 7,
           "type": 1,
           "start_at": 1786091400
         }
@@ -1205,6 +1205,29 @@
           "num_entrants": 2,
           "type": 1,
           "start_at": 1787212800
+        }
+      ]
+    },
+    {
+      "tournament_id": 937951,
+      "tournament_slug": "tournament/21-530",
+      "tournament_name": "21(金)上野スマコミ#530(オープン)",
+      "start_at": 1787299200,
+      "end_at": 1787320800,
+      "is_online": false,
+      "city": "台東区",
+      "venue_name": "",
+      "country_code": "JP",
+      "num_attendees": 1,
+      "url": "/tournament/21-530",
+      "events": [
+        {
+          "event_id": 1677837,
+          "event_slug": "tournament/21-530/event/on",
+          "event_name": "シングルス（１on１トーナメント）",
+          "num_entrants": 1,
+          "type": 1,
+          "start_at": 1787299200
         }
       ]
     }
