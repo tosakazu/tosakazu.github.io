@@ -1,5 +1,5 @@
 {
-  "generated_at": 1785520854,
+  "generated_at": 1785531645,
   "country_code": "JP",
   "lookahead_days": 21,
   "count": 52,
@@ -37,14 +37,14 @@
       "city": "福岡市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 28,
+      "num_attendees": 27,
       "url": "/tournament/revival-14-5",
       "events": [
         {
           "event_id": 1672554,
           "event_slug": "tournament/revival-14-5/event/1on1",
           "event_name": "1on1トーナメント",
-          "num_entrants": 28,
+          "num_entrants": 27,
           "type": 1,
           "start_at": 1785547800
         }
@@ -129,14 +129,14 @@
       "city": "渋谷区",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 17,
+      "num_attendees": 16,
       "url": "/tournament/beesmash-53",
       "events": [
         {
           "event_id": 1675481,
           "event_slug": "tournament/beesmash-53/event/singles",
           "event_name": "Singles",
-          "num_entrants": 17,
+          "num_entrants": 16,
           "type": 1,
           "start_at": 1785560400
         }
@@ -620,14 +620,14 @@
       "city": "渋谷区",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 9,
+      "num_attendees": 11,
       "url": "/tournament/to-win-12",
       "events": [
         {
           "event_id": 1679057,
           "event_slug": "tournament/to-win-12/event/singles",
           "event_name": "Singles",
-          "num_entrants": 9,
+          "num_entrants": 10,
           "type": 1,
           "start_at": 1786237200
         }
