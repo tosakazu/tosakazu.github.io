@@ -1,32 +1,9 @@
 {
-  "generated_at": 1785607249,
+  "generated_at": 1785618039,
   "country_code": "JP",
   "lookahead_days": 21,
   "count": 57,
   "tournaments": [
-    {
-      "tournament_id": 938876,
-      "tournament_slug": "tournament/nogata-cup2026-3",
-      "tournament_name": "NOGATA-CUP2026 夏の陣　一般の部",
-      "start_at": 1785618000,
-      "end_at": 1785679200,
-      "is_online": false,
-      "city": "直方市",
-      "venue_name": "",
-      "country_code": "JP",
-      "num_attendees": 40,
-      "url": "/tournament/nogata-cup2026-3",
-      "events": [
-        {
-          "event_id": 1679758,
-          "event_slug": "tournament/nogata-cup2026-3/event/1on1",
-          "event_name": "1on1トーナメント",
-          "num_entrants": 40,
-          "type": 1,
-          "start_at": 1785618000
-        }
-      ]
-    },
     {
       "tournament_id": 927324,
       "tournament_slug": "tournament/impact-major-4",
@@ -106,14 +83,14 @@
       "city": "台東区",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 7,
+      "num_attendees": 8,
       "url": "/tournament/3-516",
       "events": [
         {
           "event_id": 1676156,
           "event_slug": "tournament/3-516/event/on",
           "event_name": "シングルス（１on１トーナメント）",
-          "num_entrants": 7,
+          "num_entrants": 8,
           "type": 1,
           "start_at": 1785744000
         }
@@ -381,6 +358,29 @@
       ]
     },
     {
+      "tournament_id": 939083,
+      "tournament_slug": "tournament/11-75",
+      "tournament_name": "もびすまっ！#11",
+      "start_at": 1786093200,
+      "end_at": 1786111200,
+      "is_online": false,
+      "city": "川崎市",
+      "venue_name": "",
+      "country_code": "JP",
+      "num_attendees": 2,
+      "url": "/tournament/11-75",
+      "events": [
+        {
+          "event_id": 1680190,
+          "event_slug": "tournament/11-75/event/super-smash-bros-ultimate-singles",
+          "event_name": "シングルス",
+          "num_entrants": 1,
+          "type": 1,
+          "start_at": 1786093200
+        }
+      ]
+    },
+    {
       "tournament_id": 938276,
       "tournament_slug": "tournament/16-32",
       "tournament_name": "平日いろスマ#16",
@@ -551,14 +551,14 @@
       "city": "渋谷区",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 17,
+      "num_attendees": 18,
       "url": "/tournament/to-win-12",
       "events": [
         {
           "event_id": 1679057,
           "event_slug": "tournament/to-win-12/event/singles",
           "event_name": "Singles",
-          "num_entrants": 16,
+          "num_entrants": 17,
           "type": 1,
           "start_at": 1786237200
         }
@@ -965,14 +965,14 @@
       "city": "名古屋市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 477,
+      "num_attendees": 472,
       "url": "/tournament/-3119",
       "events": [
         {
           "event_id": 1651150,
           "event_slug": "tournament/-3119/event/grand-slum",
           "event_name": "grand slum",
-          "num_entrants": 477,
+          "num_entrants": 472,
           "type": 1,
           "start_at": 1786752000
         }
@@ -1057,14 +1057,14 @@
       "city": "草加市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 43,
+      "num_attendees": 44,
       "url": "/tournament/aya-9",
       "events": [
         {
           "event_id": 1652189,
           "event_slug": "tournament/aya-9/event/ultimate-singles",
           "event_name": "Ultimate Singles",
-          "num_entrants": 43,
+          "num_entrants": 44,
           "type": 1,
           "start_at": 1786845600
         }
