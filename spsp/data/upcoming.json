@@ -1,9 +1,32 @@
 {
-  "generated_at": 1785585648,
+  "generated_at": 1785596446,
   "country_code": "JP",
   "lookahead_days": 21,
-  "count": 56,
+  "count": 57,
   "tournaments": [
+    {
+      "tournament_id": 938876,
+      "tournament_slug": "tournament/nogata-cup2026-3",
+      "tournament_name": "NOGATA-CUP2026 夏の陣　一般の部",
+      "start_at": 1785618000,
+      "end_at": 1785679200,
+      "is_online": false,
+      "city": "直方市",
+      "venue_name": "",
+      "country_code": "JP",
+      "num_attendees": 40,
+      "url": "/tournament/nogata-cup2026-3",
+      "events": [
+        {
+          "event_id": 1679758,
+          "event_slug": "tournament/nogata-cup2026-3/event/1on1",
+          "event_name": "1on1トーナメント",
+          "num_entrants": 40,
+          "type": 1,
+          "start_at": 1785618000
+        }
+      ]
+    },
     {
       "tournament_id": 927324,
       "tournament_slug": "tournament/impact-major-4",
@@ -83,14 +106,14 @@
       "city": "台東区",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 5,
+      "num_attendees": 6,
       "url": "/tournament/3-516",
       "events": [
         {
           "event_id": 1676156,
           "event_slug": "tournament/3-516/event/on",
           "event_name": "シングルス（１on１トーナメント）",
-          "num_entrants": 5,
+          "num_entrants": 6,
           "type": 1,
           "start_at": 1785744000
         }
@@ -942,14 +965,14 @@
       "city": "名古屋市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 472,
+      "num_attendees": 474,
       "url": "/tournament/-3119",
       "events": [
         {
           "event_id": 1651150,
           "event_slug": "tournament/-3119/event/grand-slum",
           "event_name": "grand slum",
-          "num_entrants": 472,
+          "num_entrants": 474,
           "type": 1,
           "start_at": 1786752000
         }
@@ -1241,14 +1264,14 @@
       "city": "渋谷区",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 261,
+      "num_attendees": 262,
       "url": "/tournament/shibuya-dairan-first-strike",
       "events": [
         {
           "event_id": 1649473,
           "event_slug": "tournament/shibuya-dairan-first-strike/event/shibuya-dairan",
           "event_name": "渋谷大乱/SHIBUYA DAIRAN",
-          "num_entrants": 253,
+          "num_entrants": 254,
           "type": 1,
           "start_at": 1787364000
         }
