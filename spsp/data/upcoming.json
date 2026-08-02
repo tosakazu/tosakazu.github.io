@@ -1,5 +1,5 @@
 {
-  "generated_at": 1785596446,
+  "generated_at": 1785607249,
   "country_code": "JP",
   "lookahead_days": 21,
   "count": 57,
@@ -106,14 +106,14 @@
       "city": "台東区",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 6,
+      "num_attendees": 7,
       "url": "/tournament/3-516",
       "events": [
         {
           "event_id": 1676156,
           "event_slug": "tournament/3-516/event/on",
           "event_name": "シングルス（１on１トーナメント）",
-          "num_entrants": 6,
+          "num_entrants": 7,
           "type": 1,
           "start_at": 1785744000
         }
@@ -152,14 +152,14 @@
       "city": "大阪市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 4,
+      "num_attendees": 6,
       "url": "/tournament/hit-186-maesuma-hit-186",
       "events": [
         {
           "event_id": 1679803,
           "event_slug": "tournament/hit-186-maesuma-hit-186/event/singles-tournament",
           "event_name": "Singles Tournament",
-          "num_entrants": 4,
+          "num_entrants": 6,
           "type": 1,
           "start_at": 1785751200
         }
@@ -965,14 +965,14 @@
       "city": "名古屋市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 474,
+      "num_attendees": 477,
       "url": "/tournament/-3119",
       "events": [
         {
           "event_id": 1651150,
           "event_slug": "tournament/-3119/event/grand-slum",
           "event_name": "grand slum",
-          "num_entrants": 474,
+          "num_entrants": 477,
           "type": 1,
           "start_at": 1786752000
         }
@@ -1241,14 +1241,14 @@
       "city": "観音寺市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 148,
+      "num_attendees": 149,
       "url": "/tournament/big-lagoon-with",
       "events": [
         {
           "event_id": 1659077,
           "event_slug": "tournament/big-lagoon-with/event/big-lagoon-with",
           "event_name": "BIG LAGOON with 銭スマ",
-          "num_entrants": 148,
+          "num_entrants": 149,
           "type": 1,
           "start_at": 1787360400
         }
@@ -1264,14 +1264,14 @@
       "city": "渋谷区",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 262,
+      "num_attendees": 264,
       "url": "/tournament/shibuya-dairan-first-strike",
       "events": [
         {
           "event_id": 1649473,
           "event_slug": "tournament/shibuya-dairan-first-strike/event/shibuya-dairan",
           "event_name": "渋谷大乱/SHIBUYA DAIRAN",
-          "num_entrants": 254,
+          "num_entrants": 255,
           "type": 1,
           "start_at": 1787364000
         }
