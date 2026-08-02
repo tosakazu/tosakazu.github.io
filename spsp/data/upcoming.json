@@ -1,5 +1,5 @@
 {
-  "generated_at": 1785650432,
+  "generated_at": 1785654721,
   "country_code": "JP",
   "lookahead_days": 21,
   "count": 55,
@@ -83,14 +83,14 @@
       "city": "大阪市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 15,
+      "num_attendees": 16,
       "url": "/tournament/hit-186-maesuma-hit-186",
       "events": [
         {
           "event_id": 1679803,
           "event_slug": "tournament/hit-186-maesuma-hit-186/event/singles-tournament",
           "event_name": "Singles Tournament",
-          "num_entrants": 15,
+          "num_entrants": 16,
           "type": 1,
           "start_at": 1785751200
         }
@@ -129,7 +129,7 @@
       "city": "中野区",
       "venue_name": "Red Bull Gaming Sphere Tokyo",
       "country_code": "JP",
-      "num_attendees": 53,
+      "num_attendees": 55,
       "url": "/tournament/weekly-smash-party-240",
       "events": [
         {
@@ -505,14 +505,14 @@
       "city": "渋谷区",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 20,
+      "num_attendees": 21,
       "url": "/tournament/to-win-12",
       "events": [
         {
           "event_id": 1679057,
           "event_slug": "tournament/to-win-12/event/singles",
           "event_name": "Singles",
-          "num_entrants": 19,
+          "num_entrants": 20,
           "type": 1,
           "start_at": 1786237200
         }
@@ -1011,14 +1011,14 @@
       "city": "草加市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 44,
+      "num_attendees": 45,
       "url": "/tournament/aya-9",
       "events": [
         {
           "event_id": 1652189,
           "event_slug": "tournament/aya-9/event/ultimate-singles",
           "event_name": "Ultimate Singles",
-          "num_entrants": 44,
+          "num_entrants": 45,
           "type": 1,
           "start_at": 1786845600
         }
