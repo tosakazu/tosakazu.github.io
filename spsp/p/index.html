@@ -205,6 +205,77 @@
   /* クリックで展開する大会行 */
   .tour-clickable { cursor: pointer; }
   .tour-clickable:hover { background: #fafafa; }
+  /* 最新の大会結果カード: 順位とパフォーマンスを統合したヒーロー表示 */
+  #latestres-section h2 { margin-bottom: 0; }
+  .latestres-card .lr-top { margin-top: -1px; }
+  .tour-item.latestres-card { display: block; padding: 0 4px 2px; }
+  .latestres-card .lr-chev { display: inline-block; align-self: center; margin-left: 4px; }
+  .perf-hero .ph-perf-sub { font-size: 9px; color: #9ca3af; }
+  .latestres-card .lr-top { font-size: 13px; }
+  .lr-date { font-size: 11px; color: #9ca3af; font-weight: 400; margin-left: 6px; }
+  .lr-badge { font-size: 9px; padding: 1px 6px; border-radius: 8px; margin-left: 4px; vertical-align: 1px; white-space: nowrap; }
+  .lr-badge.ok { background: #dcfce7; color: #15803d; }
+  .lr-badge.ng { background: #fee2e2; color: #b91c1c; }
+  .lr-zen { font-size: 12.5px; color: #374151; margin-top: 1px; text-align: center; }
+  .lr-zen b { font-weight: 700; }
+  .lr-zen .lr-zen-up { color: #16a34a; font-weight: 700; }
+  .perf-hero { display: flex; align-items: center; justify-content: center; gap: 3px; flex-wrap: wrap; margin: 5px 0 2px; }
+  .perf-hero .ph-place { font-size: 24px; font-weight: 800; color: #111827; line-height: 1; }
+  .perf-hero .ph-place .ph-i { font-size: 14px; font-weight: 700; margin-left: 1px; }
+  .perf-hero .ph-place.gold { color: #d4a30f; }
+  .perf-hero .ph-place.silver { color: #9ca3af; }
+  .perf-hero .ph-place.bronze { color: #b45309; }
+  .perf-hero .ph-place.top8 { color: #ec4899; }
+  .perf-hero .ph-n { font-size: 11px; color: #6b7280; font-weight: 600; margin-left: -2px; align-self: flex-end; padding-bottom: 2px; }
+  .perf-hero .ph-spr { font-size: 18px; font-weight: 700; line-height: 1.2; }
+  .perf-hero .ph-spr.pos { color: #16a34a; }
+  .perf-hero .ph-spr.neg { color: #2563eb; }
+  .perf-hero .ph-spr.dim { color: #9ca3af; }
+  .perf-hero { align-items: center; }
+  .perf-hero .ph-sep { width: 1px; height: 28px; background: #e5e7eb; margin: 0 2px; align-self: center; }
+  .perf-hero .ph-perf { display: flex; flex-direction: column; align-items: flex-start; gap: 1px; }
+  .perf-hero .ph-perf-lbl { font-size: 9px; color: #9ca3af; letter-spacing: 0.05em; display: flex; align-items: center; gap: 4px; }
+  .perf-hero .ph-perf-val { display: flex; align-items: baseline; gap: 6px; }
+  .perf-hero .ph-rank { font-size: 16px; font-weight: 700; color: #111827; }
+  .perf-hero .ph-rank .ph-lbl { font-size: 10px; color: #6b7280; font-weight: 600; margin: 0 1px; }
+  .perf-hero .lv-pill { font-size: 10px; padding: 1px 6px; }
+  .perf-hero .ph-perf-val .lv-pill { align-self: center; }
+  .perf-hero .ph-help {
+    width: 14px; height: 14px; padding: 0; border-radius: 50%;
+    border: 1px solid #d1d5db; background: #fff; color: #9ca3af;
+    font-size: 9px; font-weight: 700; line-height: 1; cursor: pointer;
+  }
+  .perf-hero .ph-help:hover { color: #6b7280; border-color: #9ca3af; }
+  .lr-cap {
+    font-size: 10px; color: #6b7280; line-height: 1.6;
+    background: #f9fafb; border-radius: 8px; padding: 7px 10px; margin: 4px 0 6px;
+  }
+  /* ライバルプレイヤー */
+  .rivals-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .rival-cat { background: #f9fafb; border-radius: 8px; padding: 8px 10px; min-width: 0; }
+  .rival-cat .rc-title {
+    font-size: 10px; color: #6b7280; font-weight: 600; margin-bottom: 4px;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
+  .rival-row { display: flex; justify-content: space-between; align-items: baseline; gap: 6px; font-size: 12px; padding: 2px 0; min-width: 0; }
+  .rival-row .rr-name { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .rival-row .rr-name a { color: #111827; text-decoration: none; font-weight: 500; }
+  .rival-row .rr-rank { color: #6b7280; flex-shrink: 0; font-size: 11px; font-variant-numeric: tabular-nums; }
+  .rival-row.me, .rival-row.me .rr-rank { color: #b91c1c; font-weight: 600; }
+  .rival-row.me { border-top: 1px dashed #e5e7eb; border-bottom: 1px dashed #e5e7eb; }
+  /* 出場履歴 行展開時のパフォーマンス表記 */
+  .tour-group .tour-perf {
+    display: none; font-size: 12px; color: #374151; text-align: center;
+    padding: 6px 0 2px; background: #fafafa;
+  }
+  .tour-group.expanded .tour-perf { display: block; }
+  .tour-perf .tp-lbl { font-size: 9px; color: #9ca3af; letter-spacing: 0.05em; margin-right: 4px; }
+  .tour-perf .lv-pill { font-size: 10px; padding: 1px 6px; }
+  /* SPR/順位評価/直対評価 chips + 対戦は ▶ 展開の中 */
+  .tour-group .lr-detail { display: none; }
+  .tour-group.expanded .lr-detail { display: block; }
+  .lr-detail .lr-stats { justify-content: center; padding: 8px 0 4px; }
+  .lr-detail .tour-matches { margin-top: 4px; }
   .tour-group .chevron {
     color: #d1d5db; font-size: 10px; margin-left: 6px;
     transition: transform 0.15s;
@@ -534,6 +605,13 @@
       <div class="badges" id="badges"></div>
     </div>
 
+    <!-- 最新の大会結果 + パフォーマンス (SPSP シード基準の相当順位/相当Lv)
+         (share-top 内だがシェア画像キャプチャ時は一時的に隠す) -->
+    <div class="section" id="latestres-section" style="display:none">
+      <h2>🎮 最新の大会結果 <span id="latestres-date" class="lr-date"></span></h2>
+      <div id="latestres-body"></div>
+    </div>
+
     <!-- ポイントシミュレーション: 次回出場予定の集計対象大会 + シミュレーションボタン
          (share-top 内だがシェア画像キャプチャ時は一時的に隠す) -->
     <div class="section" id="yosou-section" style="display:none">
@@ -547,6 +625,12 @@
     </div>
     </div><!-- /#share-top -->
 
+    <!-- ライバルプレイヤー: 4指標 × 上下2人 (重複なし) -->
+    <div class="section" id="rivals-section" style="display:none">
+      <h2>👥 ライバルプレイヤー</h2>
+      <div id="rivals-body" class="rivals-grid"></div>
+    </div>
+
     <div class="section">
       <h2>📊 プレイヤー分析 <span style="font-size:11px;color:#9ca3af;font-weight:400">(直近 5 大会)</span></h2>
       <div class="radar-wrap">
@@ -559,8 +643,9 @@
       <div class="chart-wrap">
         <div class="chart-tabs">
           <div class="chart-tab active" data-chart="rank">順位</div>
-          <div class="chart-tab" data-chart="tjpr_score">順位評価スコア</div>
-          <div class="chart-tab" data-chart="bt_score">直対評価スコア</div>
+          <div class="chart-tab" data-chart="tjpr_score">順位スコア</div>
+          <div class="chart-tab" data-chart="bt_score">直対スコア</div>
+          <div class="chart-tab" data-chart="perf">パフォーマンス</div>
         </div>
         <div style="display:flex;gap:4px;flex-wrap:wrap;margin:6px 0 8px;align-items:center">
           <button class="filter-btn chart-tab-size" data-filter-period="all">全期間</button>
@@ -622,7 +707,7 @@
   </div>
 
   <div class="footer" id="footer-info">
-    <span class="site-version" style="font-size:11px;color:#9ca3af">v 36e2d40 · 2026-08-02 12:11 UTC</span>
+    <span class="site-version" style="font-size:11px;color:#9ca3af">v 5741256 · 2026-08-02 14:36 UTC</span>
   </div>
 </main>
 
@@ -634,6 +719,242 @@
 
 const params = new URLSearchParams(location.search);
 const UID = parseInt(params.get('uid') || location.hash.replace(/^#/, '') || '0');
+
+// パフォーマンス = 実際に獲得した順位帯が SPSP 換算で全国何位/Lvいくつ相当か。
+// 計算は build 側 (v4/output.py _perf_map_for_t) が行い perf_rank として
+// tournaments[] にエクスポート済み。ここでは相当 Lv と接尾辞を導出するだけ。
+function perfInfoOf(t) {
+  if (t.perf_rank == null || t.is_dq || t.place == null) return null;
+  const eq = t.perf_rank;
+  // 全国順位 (非 gray) 空間での Lv 境界は cascade 定数 (256/512/1024/2048) に一致
+  const eqLv = eq <= 256 ? 5 : eq <= 512 ? 4 : eq <= 1024 ? 3 : eq <= 2048 ? 2 : 1;
+  // 接尾辞はヒーローの lvLabel と同じカットオフ
+  let lvSfx = '';
+  if (eqLv === 5) {
+    lvSfx = eq <= 8 ? '👑' : eq <= 16 ? '🥇' : eq <= 32 ? '🥈'
+          : eq <= 64 ? '🥉' : eq <= 128 ? '+' : '';
+  } else {
+    const c = { 4: 384, 3: 768, 2: 1536, 1: 3072 }[eqLv];
+    lvSfx = (c && eq <= c) ? '+' : '';
+  }
+  return { eq, eqLv, lvSfx };
+}
+
+// 最新の大会結果 + パフォーマンス。
+function buildLatestResultSection() {
+  const tours = (PLAYER && PLAYER.tournaments) || [];
+  if (!tours.length) return;
+  const t = tours.slice().sort((a, b) => (b.ts || 0) - (a.ts || 0))[0];
+
+  // ---- パフォーマンス (build がエクスポートする perf_rank をそのまま使う) ----
+  const perf = perfInfoOf(t);
+
+  // ---- カード描画 ----
+  const link = t.event_id ? `<a href="../t/?id=${t.event_id}">${escapeHtml(t.name || '')}</a>` : escapeHtml(t.name || '');
+  const resTag = t.is_restricted ? '<span style="color:#be123c;font-size:9px;padding:1px 5px;background:rgba(225,29,72,0.10);border-radius:8px;margin-left:4px">制限大会</span>' : '';
+  const lcTag = t.is_lower_class ? '<span style="color:#0369a1;font-size:9px;padding:1px 5px;background:rgba(2,132,199,0.10);border-radius:8px;margin-left:4px">下位クラス</span>' : '';
+  // 当時全国 → 大会後。改善時のみ (+N) を付ける (悪化時は注記なし)
+  let zenHtml = '';
+  if (t.pretour_ranks && t.pretour_ranks.ensemble != null) {
+    const pre = t.pretour_ranks.ensemble;
+    const d = t.rank_delta_ensemble;
+    zenHtml = `<div class="lr-zen">全国 <b>#${pre}</b>${d != null ? ` → <b>#${pre - d}</b>` : ''}${
+      d > 0 ? ` <span class="lr-zen-up">(+${d})</span>` : ''}</div>`;
+  }
+  // 集計対象バッジ (この選手にとって評価に使われた大会か)
+  const counted = !!(t.bt_used || (t.tjpr_lv || 0) > 0 || (t.tjpr_raw || 0) > 0);
+  const cntTag = counted
+    ? '<span class="lr-badge ok">集計対象</span>'
+    : '<span class="lr-badge ng">集計対象外</span>';
+  // 順位の色: 1-3位 = 金銀銅, 4-8位 (トップ8) = ピンク
+  const placeCls = t.place === 1 ? 'gold' : t.place === 2 ? 'silver' : t.place === 3 ? 'bronze'
+    : (t.place != null && t.place <= 8) ? 'top8' : '';
+  let hero = `<span class="ph-place ${placeCls}">${t.is_dq ? 'DQ' : (t.place != null ? t.place + '<span class="ph-i">位</span>' : '—')}</span>` +
+    (t.nent != null ? `<span class="ph-n">/${t.nent}</span>` : '');
+  // SPR は順位の横に大きく (ラベル+値+seed のスタック)
+  if (!t.is_dq && t.spr != null) {
+    const cls = t.spr > 0 ? 'pos' : (t.spr < 0 ? 'neg' : 'dim');
+    const txt = t.spr > 0 ? `+${t.spr}` : (t.spr < 0 ? `${t.spr}` : '±0');
+    hero += `<span class="ph-sep"></span>` +
+      `<span class="ph-perf"><span class="ph-perf-lbl">SPR</span>` +
+      `<span class="ph-spr ${cls}">${txt}</span>` +
+      (t.seed != null ? `<span class="ph-perf-sub">seed ${t.seed}</span>` : '') +
+      `</span>`;
+  }
+  // パフォーマンスも同じ行 (ラベルを数値の上にスタック)
+  let capHtml = '';
+  if (perf) {
+    hero += `<span class="ph-sep"></span>` +
+      `<span class="ph-perf">` +
+      `<span class="ph-perf-lbl">パフォーマンス` +
+      `<button type="button" class="ph-help" id="ph-help-btn" aria-label="パフォーマンスの説明">?</button></span>` +
+      `<span class="ph-perf-val"><span class="ph-rank"><span class="ph-lbl">全国</span>#${perf.eq}<span class="ph-lbl">相当</span></span>` +
+      `<span class="lv-pill lv-${perf.eqLv}">Lv${perf.eqLv}${perf.lvSfx}</span></span>` +
+      `</span>`;
+    capHtml = `<div class="lr-cap" id="lr-cap" style="display:none">` +
+      `この大会で全国何位・Lv いくつ相当の実力を発揮したかの目安。` +
+      `</div>`;
+  }
+  // 順位評価 / 直対評価 chips (= 出場大会一覧の行と同じ表記、▶ 展開の中)
+  const ELO_PER_UNIT2 = (META.params && META.params.ELO_PER_UNIT) || 29.48;
+  const TJPR_SCALE2 = (META.params && META.params.TJPR_ELO_SCALE) || 100;
+  const w = (t.tjpr_w || 0) * TJPR_SCALE2;
+  const base = (t.tjpr_raw || 0) * TJPR_SCALE2;
+  const tjprChip = `<div class="chip"><span class="lbl">順位評価</span>${
+    w > 0.05 ? `<span class="val pos">+${w.toFixed(1)}</span>` : `<span class="val dim">±0</span>`}${
+    base > 0.05 ? `<span class="sub">(${base.toFixed(1)})</span>` : `<span class="sub">&nbsp;</span>`}</div>`;
+  const btElo = (t.bt_d || 0) * ELO_PER_UNIT2;
+  const btIntElo = (t.bt_internal_d || 0) * ELO_PER_UNIT2;
+  const btChip = `<div class="chip"><span class="lbl">直対評価</span>${
+    Math.abs(btElo) > 0.05
+      ? `<span class="val ${btElo > 0 ? 'pos' : 'neg'}">${btElo > 0 ? '+' : ''}${btElo.toFixed(1)}</span>`
+      : `<span class="val dim">±0</span>`}${
+    Math.abs(btIntElo) > 0.05
+      ? `<span class="sub">(${btIntElo > 0 ? '+' : ''}${btIntElo.toFixed(1)})</span>`
+      : `<span class="sub">&nbsp;</span>`}</div>`;
+
+  const dataPid = (t.parent_event_id != null) ? t.parent_event_id : (t.event_id != null ? t.event_id : '');
+  const isClass = t.parent_event_id != null ? '1' : '0';
+  document.getElementById('latestres-body').innerHTML =
+    `<div class="tour-group" data-pid="${dataPid}" data-cls="${isClass}" data-seed="${t.seed != null ? t.seed : ''}">
+      <div class="tour-item tour-item-nohover tour-clickable latestres-card" style="border-bottom:none">
+        <div class="lr-top">${link}${cntTag}${resTag}${lcTag}</div>
+        <div class="perf-hero">${hero}<span class="chevron lr-chev">▶</span></div>
+        ${capHtml}
+        ${zenHtml}
+      </div>
+      <div class="lr-detail">
+        <div class="v-stats lr-stats">${tjprChip}${btChip}</div>
+        <div class="tour-matches"></div>
+      </div>
+    </div>`;
+  document.getElementById('latestres-date').textContent = t.date || '';
+  document.getElementById('latestres-section').style.display = '';
+  const helpBtn = document.getElementById('ph-help-btn');
+  if (helpBtn) {
+    helpBtn.addEventListener('click', e => {
+      e.stopPropagation();  // カード展開 (対戦表示) を発火させない
+      const cap = document.getElementById('lr-cap');
+      cap.style.display = cap.style.display === 'none' ? '' : 'none';
+    });
+  }
+}
+
+// ライバルプレイヤー: 4指標ごとに全国順位の近い上下2人 (カテゴリ間で重複なし)。
+//   1. よく対戦する      : 直近20大会の対戦回数 × 順位近接度の評価関数
+//   2. 同じ大会によく出る : 直近20大会の同時出場回数 × 順位近接度の評価関数
+//   3. 同じメインキャラ   : player_subranks のキャラ内順位 (= 全国順位順) の近傍
+//   4. 同じ都道府県       : 同上の都道府県内順位の近傍
+// 評価関数: score = 回数 × min(順位) / max(順位)  (= 回数 × 2^-|log2 順位倍率|)
+//   順位は倍率で比較 (#10 vs #20 と #1000 vs #2000 は同じ距離)。倍率の逆数を
+//   そのまま係数にするので 2 倍離れると半減、3 倍で 1/3 — 遠い相手は回数が
+//   多くても乗りにくい。
+async function buildRivalsSection() {
+  const myRank = MAIN_REC && MAIN_REC.ranks && MAIN_REC.ranks.ensemble;
+  if (!UID || !myRank) return;
+  // ---- 直近20大会の大会 JSON から 対戦回数 / 同時出場回数を集計 ----
+  const tours = (PLAYER.tournaments || [])
+    .filter(t => t.event_id != null && !t.is_dq)
+    .sort((a, b) => (b.ts || 0) - (a.ts || 0)).slice(0, 20);
+  const docs = (await Promise.allSettled(tours.map(t =>
+    fetch(`../tournaments/${t.event_id}.json`).then(r => { if (!r.ok) throw new Error(r.status); return r.json(); })
+  ))).filter(r => r.status === 'fulfilled').map(r => r.value);
+  const info = new Map();   // uid -> {display, rank} (新しい大会優先)
+  const vsN = new Map(), coN = new Map();
+  docs.forEach(doc => {
+    (doc.standings || []).forEach(s => {
+      if (s.user_id === UID) return;
+      if (!info.has(s.user_id)) {
+        info.set(s.user_id, { display: s.display, rank: (s.global_ranks || {}).ensemble });
+      }
+      coN.set(s.user_id, (coN.get(s.user_id) || 0) + 1);
+    });
+    (doc.matches || []).forEach(m => {
+      const opp = m.w_id === UID ? m.l_id : (m.l_id === UID ? m.w_id : null);
+      if (opp == null) return;
+      vsN.set(opp, (vsN.get(opp) || 0) + 1);
+    });
+  });
+  const proximity = r => Math.min(r, myRank) / Math.max(r, myRank);
+  function pickByScore(counts, used) {
+    const cands = [...counts.entries()]
+      .map(([uid, n]) => Object.assign({ uid, n }, info.get(uid) || {}))
+      .filter(c => c.rank && !used.has(c.uid))
+      .map(c => Object.assign(c, { score: c.n * proximity(c.rank) }))
+      .sort((a, b) => b.score - a.score);
+    return cands.filter(c => c.rank < myRank).slice(0, 2)
+      .concat(cands.filter(c => c.rank > myRank).slice(0, 2));
+  }
+  // ---- subranks (キャラ内/都道府県内順位 = 全国順位順) の近傍 ----
+  const mySub = PLAYER_SUBRANKS && PLAYER_SUBRANKS[String(UID)];
+  function pickBySubrank(kind, used) {
+    const mine = mySub && mySub[kind];
+    if (!mine) return [];
+    const key = kind === 'char' ? mine.id : mine.name;
+    const pool = [];
+    for (const u in PLAYER_SUBRANKS) {
+      const e = PLAYER_SUBRANKS[u][kind];
+      if (!e || (kind === 'char' ? e.id : e.name) !== key) continue;
+      const uid = parseInt(u, 10);
+      if (used.has(uid)) continue;
+      pool.push({ uid, r: e.rank });
+    }
+    return pool.filter(p => p.r < mine.rank).sort((a, b) => b.r - a.r).slice(0, 2)
+      .concat(pool.filter(p => p.r > mine.rank).sort((a, b) => a.r - b.r).slice(0, 2));
+  }
+  const used = new Set([UID]);
+  const take = items => { items.forEach(c => used.add(c.uid)); return items; };
+  const charName = mySub && mySub.char && CHAR_EMOJI && CHAR_EMOJI[mySub.char.id];
+  // 絵文字はキャラ絵文字 (3番目のカテゴリ) と被らないものを使う (🆚/🏟/📍 はキャラ未使用)
+  const cats = [
+    { title: '🆚 直対ライバル', items: take(pickByScore(vsN, used)) },
+    { title: '🏟 大会ライバル', items: take(pickByScore(coN, used)) },
+    { title: `${charName ? charName.emoji + ' ' + charName.name : 'メインキャラ'}使い`,
+      href: mySub && mySub.char ? `../c/ranking.html?char=${mySub.char.id}` : null,
+      items: take(pickBySubrank('char', used)) },
+    { title: `📍 ${mySub && mySub.pref ? mySub.pref.name : '都道府県'}民`,
+      href: mySub && mySub.pref ? `../pref/ranking.html?pref=${encodeURIComponent(mySub.pref.name)}` : null,
+      items: take(pickBySubrank('pref', used)) },
+  ];
+  // subrank 系の 名前 + 全国順位 は players/<uid>.json から取得 (最大8件)
+  const needFetch = cats[2].items.concat(cats[3].items).map(c => c.uid);
+  const fetched = await Promise.allSettled(needFetch.map(uid =>
+    fetch(`../players/${uid}.json`).then(r => { if (!r.ok) throw new Error(r.status); return r.json(); })));
+  const fmap = new Map();
+  fetched.forEach((r, i) => {
+    if (r.status === 'fulfilled') fmap.set(needFetch[i], { display: r.value.display, rank: (r.value.ranks || {}).ensemble });
+  });
+  cats[2].items.concat(cats[3].items).forEach(c => {
+    const f = fmap.get(c.uid);
+    if (f) { c.display = f.display; c.rank = f.rank; }
+  });
+  // ---- 描画: 各カテゴリ 順位昇順 + 自分の行を挟む ----
+  // 横幅が足りないのでチームタグ (例 "ZETA | あcola" の ZETA) は省略し、
+  // 代わりにメインキャラ絵文字を名前の前に付ける
+  const stripTag = s => {
+    const i = (s || '').lastIndexOf('|');
+    return i >= 0 ? s.slice(i + 1).trim() : s;
+  };
+  const emojiOf = uid => { const e = charEmojiOf(uid); return e ? e + ' ' : ''; };
+  const boxes = cats.map(cat => {
+    const items = cat.items.filter(c => c.display && c.rank);
+    if (!items.length) return '';
+    const rows = items.map(c => ({ html:
+      `<div class="rival-row"><span class="rr-name">${emojiOf(c.uid)}<a href="?uid=${c.uid}">${escapeHtml(stripTag(c.display))}</a></span>` +
+      `<span class="rr-rank">#${c.rank}</span></div>`, rank: c.rank }));
+    rows.push({ html:
+      `<div class="rival-row me"><span class="rr-name">${emojiOf(UID)}${escapeHtml(stripTag(MAIN_REC.display))}</span>` +
+      `<span class="rr-rank">#${myRank}</span></div>`, rank: myRank });
+    rows.sort((a, b) => a.rank - b.rank);
+    const titleHtml = cat.href
+      ? `<a href="${cat.href}" style="color:inherit;text-decoration:underline;text-decoration-color:#d1d5db;text-underline-offset:2px">${cat.title}</a>`
+      : cat.title;
+    return `<div class="rival-cat"><div class="rc-title">${titleHtml}</div>${rows.map(r => r.html).join('')}</div>`;
+  }).filter(Boolean);
+  if (!boxes.length) return;
+  document.getElementById('rivals-body').innerHTML = boxes.join('');
+  document.getElementById('rivals-section').style.display = '';
+}
 
 // ポイントシミュレーション: 次に出場予定の集計対象大会
 // (エントラント登録済 & 現 Lv の加算対象) を出す。
@@ -1149,22 +1470,31 @@ function render() {
   for (const t of (PLAYER.top_ufs || [])) _registerMeta(t);
   // 期間フィルタの基準は META.eval_date (= データ生成時刻). チャートも同じ起点を使うので一致.
   const ANCHOR_MS = Date.parse((META.eval_date || '') + 'T00:00:00') || Date.now();
+  // 集計対象 = 順位評価または直対評価に使われた大会 (最新の大会結果バッジと同じ定義)。
+  // 判定用フィールドを一切持たない meta (= match record 由来など) は通す (lenient)。
+  function _isCounted(t) {
+    if (!('bt_used' in t) && !('tjpr_raw' in t) && !('tjpr_w' in t) && !('tjpr_lv' in t)) return true;
+    return !!(t.bt_used || (t.tjpr_lv || 0) > 0 || (t.tjpr_raw || 0) > 0 || (t.tjpr_w || 0) > 0);
+  }
   function passesFilter(t) {
     if (!t) return true;
     // 期間フィルタはチャート専用 (= 大会データには影響させない)
     // kind フィルタ: is_weekend は data に直接含まれる前提
     if (FILTER.kind === 'weekend' && !t.is_weekend) return false;
     if (FILTER.kind === 'weekday' && t.is_weekend) return false;
-    if (FILTER.kind === 'counted' && !((t.tjpr_w || 0) > 0)) return false;
+    if (FILTER.kind === 'counted' && !_isCounted(t)) return false;
     return true;
   }
   function passesFilterByEid(eid) {
     if (eid == null) return true;
     return passesFilter(tourMetaByEid[eid]);
   }
-  // entry が is_weekend を直接持つなら entry で、無ければ eid lookup で判定
+  // entry が is_weekend を直接持つなら entry で、無ければ eid lookup で判定。
+  // ただし counted 判定に必要なフィールド (bt_used / tjpr_*) は match entry に無いので、
+  // counted フィルタ時は常に eid で大会メタを引く (entry 直接判定だと全滅するバグがあった)
   function passesFilterEntry(m) {
     if (!m) return true;
+    if (FILTER.kind === 'counted') return passesFilterByEid(m.event_id);
     if ('is_weekend' in m) return passesFilter(m);
     return passesFilterByEid(m.event_id);
   }
@@ -1537,12 +1867,19 @@ function render() {
       const vHtml = `<div class="v-stats">${sprChip}${tjprChip}${btChip}<span class="chevron">▶</span></div>`;
       const itemHtml = tournamentItem(t, vHtml)
         .replace('class="tour-item"', 'class="tour-item tour-item-nohover tour-clickable" style="border-bottom:none"');
+      // 展開部の先頭にパフォーマンス (perf_rank があれば)
+      const pf = perfInfoOf(t);
+      const perfHtml = pf
+        ? `<div class="tour-perf"><span class="tp-lbl">パフォーマンス</span>` +
+          ` 全国 <b>#${pf.eq}</b> 相当` +
+          ` <span class="lv-pill lv-${pf.eqLv}">Lv${pf.eqLv}${pf.lvSfx}</span></div>`
+        : '';
       const matchesHtml = `<div class="tour-matches"></div>`;
       // data-eid + data-pid + data-class が onClick 時に matches を遅延 render する.
       const dataPid = (t.parent_event_id != null) ? t.parent_event_id : (t.event_id != null ? t.event_id : '');
       const isClass = t.parent_event_id != null ? '1' : '0';
       const seedAttr = t.seed != null ? t.seed : '';
-      return `<div class="tour-group" data-pid="${dataPid}" data-cls="${isClass}" data-seed="${seedAttr}">${itemHtml}${matchesHtml}</div>`;
+      return `<div class="tour-group" data-pid="${dataPid}" data-cls="${isClass}" data-seed="${seedAttr}">${itemHtml}${perfHtml}${matchesHtml}</div>`;
     }).join('');
   }
   // Click delegation: tour-clickable → toggle parent .tour-group.expanded + render matches lazily
@@ -1608,6 +1945,8 @@ function render() {
   });
 
   buildYosouSection();
+  buildLatestResultSection();
+  buildRivalsSection();
 }
 
 let RADAR_CHART = null;
@@ -1844,6 +2183,54 @@ function renderRankChart() {
              ticks: { color: '#6b7280' }, grid: { color: '#f3f4f6' } },
       },
       plugins: { legend: { labels: { color: '#374151', font: { size: 10 } } } },
+    },
+    plugins: [SHARED_LV_BG_PLUGIN],
+  });
+}
+
+// パフォーマンスチャート: 大会ごとの perf_rank (相当全国順位) の折れ線
+function renderPerfChart() {
+  const canvas = document.getElementById('chart-canvas');
+  if (RANK_CHART) { RANK_CHART.destroy(); RANK_CHART = null; }
+  const evalDate = new Date(META.eval_date + 'T00:00:00');
+  const evalTs = evalDate.getTime();
+  const rangeStart = evalTs - _chartRangeDays() * 86400 * 1000;
+  const pts = (PLAYER.tournaments || [])
+    .filter(t => t.perf_rank != null && t.date && !t.is_dq)
+    .map(t => ({ x: t.date, y: t.perf_rank, _name: t.name, _place: t.place, _nent: t.nent }))
+    .filter(p => { const ts = new Date(p.x).getTime(); return ts >= rangeStart && ts <= evalTs; })
+    .sort((a, b) => new Date(a.x) - new Date(b.x));
+  RANK_CHART = new Chart(canvas, {
+    type: 'line',
+    data: { datasets: [{
+      label: 'パフォーマンス',
+      data: pts,
+      borderColor: '#7c3aed', backgroundColor: '#7c3aed40',
+      tension: 0.1, spanGaps: false,
+      pointRadius: 3, pointHoverRadius: 5,
+    }] },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      scales: {
+        x: { type: 'time', time: { unit: _chartTimeUnit(), tooltipFormat: 'yyyy-MM-dd' },
+             ticks: { color: '#6b7280', maxRotation: 0, minRotation: 0, autoSkip: true, autoSkipPadding: 20, maxTicksLimit: 5, source: 'auto', font: { size: 10 } },
+             grid: { color: '#f3f4f6' } },
+        y: { reverse: true, title: { display: true, text: '相当順位', color: '#6b7280' },
+             ticks: { color: '#6b7280' }, grid: { color: '#f3f4f6' } },
+      },
+      plugins: {
+        legend: { labels: { color: '#374151', font: { size: 10 } } },
+        tooltip: { callbacks: {
+          label: (ctx) => `全国 #${ctx.parsed.y} 相当`,
+          afterLabel: (ctx) => {
+            const r = ctx.raw || {};
+            const lines = [];
+            if (r._place != null) lines.push(`${r._place}位${r._nent != null ? '/' + r._nent : ''}`);
+            if (r._name) lines.push(r._name);
+            return lines;
+          },
+        } },
+      },
     },
     plugins: [SHARED_LV_BG_PLUGIN],
   });
@@ -2162,6 +2549,7 @@ function _rerenderActiveChart() {
   if (which === 'rank') renderRankChart();
   else if (which === 'tjpr_score') renderScoreChart('tjpr');
   else if (which === 'bt_score') renderScoreChart('bt');
+  else if (which === 'perf') renderPerfChart();
 }
 document.querySelectorAll('.chart-tab').forEach(t => {
   t.addEventListener('click', () => {
@@ -2170,6 +2558,7 @@ document.querySelectorAll('.chart-tab').forEach(t => {
     if (t.dataset.chart === 'rank') renderRankChart();
     else if (t.dataset.chart === 'tjpr_score') renderScoreChart('tjpr');
     else if (t.dataset.chart === 'bt_score') renderScoreChart('bt');
+    else if (t.dataset.chart === 'perf') renderPerfChart();
   });
 });
 
@@ -2194,10 +2583,13 @@ async function capturePng() {
   const wasHidden = hidden && hidden.style.display === 'none';
   if (wasHidden) hidden.style.display = '';
   if (toggleBtn) toggleBtn.style.display = 'none';
-  // 予定大会 + シミュボタンはシェア画像に含めない
+  // 予定大会 + シミュボタン / 最新の大会結果はシェア画像に含めない
   const yosou = document.getElementById('yosou-section');
   const yosouShown = yosou && yosou.style.display !== 'none';
   if (yosouShown) yosou.style.display = 'none';
+  const latestres = document.getElementById('latestres-section');
+  const latestresShown = latestres && latestres.style.display !== 'none';
+  if (latestresShown) latestres.style.display = 'none';
   await new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)));
   try {
     const target = document.getElementById('share-top') || document.getElementById('share-card');
@@ -2213,6 +2605,7 @@ async function capturePng() {
     if (wasHidden) hidden.style.display = 'none';
     if (toggleBtn) toggleBtn.style.display = '';
     if (yosouShown) yosou.style.display = '';
+    if (latestresShown) latestres.style.display = '';
   }
 }
 
