@@ -534,17 +534,18 @@
       <div class="badges" id="badges"></div>
     </div>
 
-    <div class="section">
-      <div id="highlights"></div>
-    </div>
-    </div><!-- /#share-top -->
-
-    <!-- ポイントシミュレーション: 次回出場予定の集計対象大会 + シミュレーションボタン -->
+    <!-- ポイントシミュレーション: 次回出場予定の集計対象大会 + シミュレーションボタン
+         (share-top 内だがシェア画像キャプチャ時は一時的に隠す) -->
     <div class="section" id="yosou-section" style="display:none">
       <h2 id="yosou-head" style="display:none">📅 次に出場予定の集計対象大会</h2>
       <div id="yosou-tour" style="display:none;font-size:13px;color:#374151;margin-bottom:8px"></div>
       <a id="yosou-link" href="#" style="display:block;text-align:center;padding:8px;border:1px solid #dc2626;border-radius:8px;color:#dc2626;font-weight:600;text-decoration:none;font-size:13px">🔮 獲得ポイントをシミュレーションする</a>
     </div>
+
+    <div class="section">
+      <div id="highlights"></div>
+    </div>
+    </div><!-- /#share-top -->
 
     <div class="section">
       <h2>📊 プレイヤー分析 <span style="font-size:11px;color:#9ca3af;font-weight:400">(直近 5 大会)</span></h2>
@@ -621,7 +622,7 @@
   </div>
 
   <div class="footer" id="footer-info">
-    <span class="site-version" style="font-size:11px;color:#9ca3af">v d5a16f1 · 2026-08-02 03:09 UTC</span>
+    <span class="site-version" style="font-size:11px;color:#9ca3af">v 36e2d40 · 2026-08-02 04:03 UTC</span>
   </div>
 </main>
 
@@ -2193,6 +2194,10 @@ async function capturePng() {
   const wasHidden = hidden && hidden.style.display === 'none';
   if (wasHidden) hidden.style.display = '';
   if (toggleBtn) toggleBtn.style.display = 'none';
+  // 予定大会 + シミュボタンはシェア画像に含めない
+  const yosou = document.getElementById('yosou-section');
+  const yosouShown = yosou && yosou.style.display !== 'none';
+  if (yosouShown) yosou.style.display = 'none';
   await new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)));
   try {
     const target = document.getElementById('share-top') || document.getElementById('share-card');
@@ -2207,6 +2212,7 @@ async function capturePng() {
   } finally {
     if (wasHidden) hidden.style.display = 'none';
     if (toggleBtn) toggleBtn.style.display = '';
+    if (yosouShown) yosou.style.display = '';
   }
 }
 
