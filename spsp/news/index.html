@@ -103,9 +103,12 @@ let CURRENT_FILTER = (_urlFilter === 'auto' || _urlFilter === 'announcement') ? 
 function escapeHtml(s) {
   return String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 }
-// markdown-like bold: **text** → <strong>text</strong>. escapeHtml の後に適用.
+// markdown-like bold/italic: **text** → <strong>, *text* → <em>. escapeHtml の後に適用.
+// 太字を先に消費するので入れ子は不可 (太字の中で強調したいときは斜体を使う).
 function renderMD(s) {
-  return escapeHtml(s).replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
+  return escapeHtml(s)
+    .replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>')
+    .replace(/\*([^*]+)\*/g, '<em>$1</em>');
 }
 
 function render() {
