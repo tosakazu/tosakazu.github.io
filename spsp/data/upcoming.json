@@ -1,8 +1,8 @@
 {
-  "generated_at": 1785726007,
+  "generated_at": 1785736840,
   "country_code": "JP",
   "lookahead_days": 21,
-  "count": 58,
+  "count": 59,
   "tournaments": [
     {
       "tournament_id": 937206,
@@ -106,7 +106,7 @@
       "city": "中野区",
       "venue_name": "Red Bull Gaming Sphere Tokyo",
       "country_code": "JP",
-      "num_attendees": 66,
+      "num_attendees": 68,
       "url": "/tournament/weekly-smash-party-240",
       "events": [
         {
@@ -206,14 +206,14 @@
       "city": "渋谷区",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 6,
+      "num_attendees": 9,
       "url": "/tournament/shibuya-g-g-smash-weekly-74",
       "events": [
         {
           "event_id": 1678636,
           "event_slug": "tournament/shibuya-g-g-smash-weekly-74/event/singles",
           "event_name": "Singles",
-          "num_entrants": 6,
+          "num_entrants": 9,
           "type": 1,
           "start_at": 1786012200
         }
@@ -252,14 +252,14 @@
       "city": "台東区",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 9,
+      "num_attendees": 10,
       "url": "/tournament/7-519",
       "events": [
         {
           "event_id": 1676158,
           "event_slug": "tournament/7-519/event/on",
           "event_name": "シングルス（１on１トーナメント）",
-          "num_entrants": 9,
+          "num_entrants": 10,
           "type": 1,
           "start_at": 1786089600
         }
@@ -275,14 +275,14 @@
       "city": "立川市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 9,
+      "num_attendees": 11,
       "url": "/tournament/sumao2026-15",
       "events": [
         {
           "event_id": 1678849,
           "event_slug": "tournament/sumao2026-15/event/sp-1on1",
           "event_name": "スマブラSP 1on1",
-          "num_entrants": 9,
+          "num_entrants": 11,
           "type": 1,
           "start_at": 1786091400
         }
@@ -413,14 +413,14 @@
       "city": "台東区",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 5,
+      "num_attendees": 6,
       "url": "/tournament/8-519-5",
       "events": [
         {
           "event_id": 1680878,
           "event_slug": "tournament/8-519-5/event/on",
           "event_name": "シングルス（１on１トーナメント）",
-          "num_entrants": 5,
+          "num_entrants": 6,
           "type": 1,
           "start_at": 1786158000
         }
@@ -574,14 +574,14 @@
       "city": "柏市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 12,
+      "num_attendees": 13,
       "url": "/tournament/sen-smash-6",
       "events": [
         {
           "event_id": 1677912,
           "event_slug": "tournament/sen-smash-6/event/singles",
           "event_name": "シングルス / Singles",
-          "num_entrants": 11,
+          "num_entrants": 12,
           "type": 1,
           "start_at": 1786244400
         }
@@ -887,6 +887,29 @@
       ]
     },
     {
+      "tournament_id": 939153,
+      "tournament_slug": "tournament/flyhigh-28-96-1",
+      "tournament_name": "FlyHigh!!#28 埼玉県熊谷市スマブラ大会96人規模",
+      "start_at": 1786719600,
+      "end_at": 1786762800,
+      "is_online": false,
+      "city": "熊谷市",
+      "venue_name": "",
+      "country_code": "JP",
+      "num_attendees": 3,
+      "url": "/tournament/flyhigh-28-96-1",
+      "events": [
+        {
+          "event_id": 1680317,
+          "event_slug": "tournament/flyhigh-28-96-1/event/fly-high-96",
+          "event_name": "Fly High!! 96人トーナメント 埼玉県熊谷市スマブラ大会",
+          "num_entrants": 3,
+          "type": 1,
+          "start_at": 1786719600
+        }
+      ]
+    },
+    {
       "tournament_id": 930331,
       "tournament_slug": "tournament/sp7-4",
       "tournament_name": "ヘルブラSP7",
@@ -919,14 +942,14 @@
       "city": "名古屋市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 480,
+      "num_attendees": 482,
       "url": "/tournament/-3119",
       "events": [
         {
           "event_id": 1651150,
           "event_slug": "tournament/-3119/event/grand-slum",
           "event_name": "grand slum",
-          "num_entrants": 480,
+          "num_entrants": 482,
           "type": 1,
           "start_at": 1786752000
         }
@@ -1241,7 +1264,7 @@
       "city": "渋谷区",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 274,
+      "num_attendees": 277,
       "url": "/tournament/shibuya-dairan-first-strike",
       "events": [
         {
@@ -1287,14 +1310,14 @@
       "city": "和歌山市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 5,
+      "num_attendees": 6,
       "url": "/tournament/3-153",
       "events": [
         {
           "event_id": 1672471,
           "event_slug": "tournament/3-153/event/sp-1on1",
           "event_name": "スマブラSP 1on1 トーナメント",
-          "num_entrants": 5,
+          "num_entrants": 6,
           "type": 1,
           "start_at": 1787371200
         }

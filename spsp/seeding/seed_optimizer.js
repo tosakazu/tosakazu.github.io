@@ -107,6 +107,9 @@
     bracketScope: 'pools',
     // winners スコープの既定回戦重みは roundWeights とは別 (optimize 内で
     // winnersRoundWeights を全深さぶん生成)。roundWeights 明示指定時はそれが優先。
+    // winners スコープでプール内順位 (snake 行番号) の可動制約 (kIntra と同じ規則) を
+    // 追加するオプション。既定 OFF (= タイ帯不変のみが制約)。
+    winnersPoolRankLimit: false,
     // 探索
     mode: 'multistart-sa',               // 'hillclimb'|'sa'|'multistart-hillclimb'|'multistart-sa'
     restarts: 15,
@@ -355,7 +358,7 @@
   // poolUids: within-pool seed 順の uid 配列。プール内でのみ swap。
   function intraOptimizePool(poolUids, pp, params, rng, ctx, poolLabel, orderOf, globalSeeds) {
     const M = poolUids.length;
-    if (M < 2) return { state: poolUids.slice(), score: 0, iters: 0 };
+    if (M < 2) return { state: poolUids.slice(), score: 0, iters: 0, maxIters: 0 };
     const rw = roundWeightFn(params.roundWeights);
     const kIntra = kIntraFn(params);
     const B = nextPow2(M);
@@ -447,9 +450,9 @@
   // 当たり回戦重み付きの被り罰則を最適化する。ハード制約は「各選手の DE 想定順位
   // (タイ帯) が元シードから不変」のみ (+maxSeedShift 指定時)。タイ帯は 1,2,3,4 が
   // 単独帯 (=不動)、以降 {5,6},{7,8},{9..12},{13..16},{17..24},… と広がる。
-  function winnersOptimize(seedOrder, pp, params, rng, ctx, orderOf) {
+  function winnersOptimize(seedOrder, pp, params, rng, ctx, orderOf, P) {
     const N = seedOrder.length;
-    if (N < 2) return { state: seedOrder.slice(), score: 0 };
+    if (N < 2) return { state: seedOrder.slice(), score: 0, iters: 0, maxIters: 0 };
     const rw = roundWeightFn(params.roundWeights);
     const B = nextPow2(N);
     const slotOf = slotOfSeedMap(B);
@@ -463,6 +466,18 @@
       bandOfPos[s] = b;
       (posByBand[b] || (posByBand[b] = [])).push(s);
     }
+    // オプション: プール内順位に基づく可動制約 (= pools スコープの kIntra と同じ規則を
+    // snake 行番号 = プール内順位に適用)。既定 OFF。ON のとき各自のプール内順位
+    // (rowOfSeed+1) が元の順位から ±kIntra(元順位, プールサイズ) 内に制限される。
+    const poolRankLimit = params.winnersPoolRankLimit === true && P >= 1;
+    const kIntra = poolRankLimit ? kIntraFn(params) : null;
+    const poolM = poolRankLimit ? Math.ceil(N / P) : 0;
+    function rowOk(uid, newPos0) {
+      const orig1 = origRank[uid] || (newPos0 + 1);
+      const origRow = rowOfSeed(orig1 - 1, P) + 1;
+      const newRow = rowOfSeed(newPos0, P) + 1;
+      return Math.abs(newRow - origRow) <= kIntra(origRow, poolM);
+    }
 
     function swapAllowed(order, i, j) {
       const X = order[i], Y = order[j];
@@ -472,6 +487,9 @@
       if (maxShift != null) {
         if (Math.abs((j + 1) - (origRank[X] || (j + 1))) > maxShift) return false;
         if (Math.abs((i + 1) - (origRank[Y] || (i + 1))) > maxShift) return false;
+      }
+      if (poolRankLimit) {
+        if (!rowOk(X, j) || !rowOk(Y, i)) return false;
       }
       return true;
     }
@@ -540,6 +558,7 @@
     const maxIters = params.maxIters || Math.max(500, stateSize * (params.maxItersScale || 40));
 
     let best = null;
+    let itersUsed = 0;   // 実際に回した近傍ステップ数 (全リスタート合算・early stop 込み)
 
     for (let k = 0; k < restarts; k++) {
       if (ctx.shouldStop && ctx.shouldStop()) break;
@@ -574,6 +593,7 @@
       const earlyStop = params.earlyStopIters || Math.max(10000, Math.floor(maxIters * (params.earlyStopFrac != null ? params.earlyStopFrac : 0.3)));
       for (let iter = 0; iter < maxIters; iter++) {
         if ((iter & 1023) === 0 && ctx.shouldStop && ctx.shouldStop()) break;
+        itersUsed++;
         const nb = opt.randomNeighbor(state);
         if (!nb) break;
         const d = opt.delta(state, pools, nb.i, nb.j);
@@ -605,6 +625,8 @@
         best = { state: bestState, score: bestSeen };
       }
     }
+    // ステップ統計 (= 進捗レポート用)。maxIters は全リスタート合算の上限。
+    if (best) { best.iters = itersUsed; best.maxIters = maxIters * restarts; }
     return best;
   }
 
@@ -633,6 +655,7 @@
     }
     // keepDePlace は truthy 文字列等が「無言で無効」にならないよう boolean に正規化。
     out.keepDePlace = !!out.keepDePlace;
+    out.winnersPoolRankLimit = !!out.winnersPoolRankLimit;
     // bracketScope の typo が「無言で pools 扱い」にならないよう明示的に弾く。
     if (out.bracketScope !== 'pools' && out.bracketScope !== 'winners') {
       throw new Error('未知の bracketScope: ' + out.bracketScope + " (対応: 'pools', 'winners')");
@@ -791,6 +814,41 @@
     recentInter.sort(byRecency); recentIntra.sort(byRecency);
     const sum = (obj) => Object.values(obj).reduce((s, v) => s + (Array.isArray(v) ? v.length : v), 0);
 
+    // ⑤ 予選抜け後 (本戦想定): 全体を 1 つの勝者側 DE ブラケットとみなし、シード通り
+    // 勝ち進んだ場合に earlyRound より後の回戦で当たる 直近対戦/同地域 ペアを列挙する。
+    // プール構造とは独立 (別プールのペアも本戦で当たり得る) の見積もり。
+    const postRecent = [], postRegion = [];
+    {
+      const Nn = seedOrderAfter.length;
+      const Bg = nextPow2(Nn), slotG = slotOfSeedMap(Bg);
+      for (let i = 0; i < Nn; i++) {
+        for (let j = i + 1; j < Nn; j++) {
+          const a = seedOrderAfter[i], b = seedOrderAfter[j];
+          const r = earliestMeetRound(slotG[i + 1], slotG[j + 1]);
+          if (r <= earlyRound) continue;
+          const pa = params._prefByUid[a], pb = params._prefByUid[b];
+          if (pa && pb && pa === pb && pa !== mostPopRegion) {
+            postRegion.push({ a, b, seedA: i + 1, seedB: j + 1, round: r, region: pa, prefCount: prefCounts[pa] || 0 });
+          }
+          const rawRecent = (recentPair && recentPair[pairKey(a, b)]) || 0;
+          if (rawRecent > 0) {
+            const meta = recentMeta && recentMeta[pairKey(a, b)];
+            const withinReport = !meta || meta.lastDeltaDays == null || meta.lastDeltaDays <= reportRecentMaxDays;
+            if (withinReport) {
+              postRecent.push({ a, b, seedA: i + 1, seedB: j + 1, round: r, recentPenalty: rawRecent,
+                                lastDate: meta ? meta.lastDate : null, count: meta ? meta.count : null,
+                                lastTournament: (meta && meta.lastTournament) || null,
+                                lastNent: (meta && meta.lastNent != null) ? meta.lastNent : null,
+                                matches: (meta && Array.isArray(meta.matches)) ? meta.matches : null });
+            }
+          }
+        }
+      }
+      // 早い回戦 (= 予選抜け直後) 優先、同回戦は罰則/人数少ない地域を先に。
+      postRecent.sort((x, y) => x.round - y.round || y.recentPenalty - x.recentPenalty);
+      postRegion.sort((x, y) => x.round - y.round || x.prefCount - y.prefCount);
+    }
+
     // 各プールの地域内訳（地域バランス表示用）。
     const poolComposition = poolsAfter.map((pool) => {
       const counts = {}; let unknown = 0;
@@ -834,6 +892,13 @@
           },
           recent: { pairs: recentIntra.length, top: recentIntra.slice(0, 10) },
         } : null,
+        // 予選抜け後 (本戦想定): 全体勝者側ブラケットで earlyRound より後に当たるペア。
+        // シード通り進出した場合の見積もり (プール構造非依存)。
+        postPool: {
+          threshold: earlyRound,
+          region: { pairs: postRegion.length, top: postRegion.slice(0, 20), excludedRegion: mostPopRegion },
+          recent: { pairs: postRecent.length, top: postRecent.slice(0, 10) },
+        },
       },
     };
   }
@@ -906,7 +971,7 @@
         params.roundWeights = winnersRoundWeights(rounds);
       }
       if (ctx.onProgress) ctx.onProgress({ phase: 'winners', stage: 'start' });
-      const r = winnersOptimize(seedOrder, pp, params, rng, ctx, orderOf);
+      const r = winnersOptimize(seedOrder, pp, params, rng, ctx, orderOf, P);
       if (r) seedOrder = r.state;
       if (ctx.onCheckpoint) ctx.onCheckpoint({ phase: 'winners', seedOrder: seedOrder.slice() });
       if (ctx.shouldStop && ctx.shouldStop()) stoppedEarly = true;
@@ -919,14 +984,19 @@
         report: reportW,
         stoppedEarly,
         ranAfter: { runInter: false, runIntra: false, runWinners: true },
+        searchStats: [{ phase: 'winners', iters: (r && r.iters) || 0, maxIters: (r && r.maxIters) || 0 }],
       };
     }
 
     // 1) inter
+    const searchStats = [];
     if (gate.runInter) {
       if (ctx.onProgress) ctx.onProgress({ phase: 'inter', stage: 'start' });
       const r = interOptimize(seedOrder, P, pp, params, rng, ctx, orderOf);
-      if (r) seedOrder = r.state;
+      if (r) {
+        seedOrder = r.state;
+        searchStats.push({ phase: 'inter', iters: r.iters || 0, maxIters: r.maxIters || 0 });
+      }
       if (ctx.onCheckpoint) ctx.onCheckpoint({ phase: 'inter', seedOrder: seedOrder.slice() });
       if (ctx.shouldStop && ctx.shouldStop()) stoppedEarly = true;
     }
@@ -938,7 +1008,10 @@
         if (ctx.shouldStop && ctx.shouldStop()) { stoppedEarly = true; break; }
         if (ctx.onProgress) ctx.onProgress({ phase: 'intra', pool: pi, stage: 'start' });
         const r = intraOptimizePool(pools[pi], pp, params, rng, ctx, String(pi), orderOf, globalSeedsByPool[pi]);
-        if (r) pools[pi] = r.state;
+        if (r) {
+          pools[pi] = r.state;
+          searchStats.push({ phase: 'intra:' + pi, iters: r.iters || 0, maxIters: r.maxIters || 0 });
+        }
         if (ctx.onCheckpoint) ctx.onCheckpoint({ phase: 'intra', pool: pi });
       }
       seedOrder = seedOrderFromPools(pools, P, N);
@@ -954,6 +1027,7 @@
       report,
       stoppedEarly,
       ranAfter: { runInter: gate.runInter, runIntra: runIntra },
+      searchStats,
     };
   }
 

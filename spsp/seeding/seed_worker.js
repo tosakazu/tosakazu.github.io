@@ -79,6 +79,11 @@ async function run(input) {
       bestScore: best.report.after.total,
       beforeScore: best.report.before.total,
       seedOrder: best.seedOrder,
+      // このラウンドのステップ統計 (phase 別 iters/maxIters)。UI で % 表示に使う。
+      roundStats: res.searchStats || null,
+      // 中間レポート: ここまでのベスト解の完全な結果 (レポート/プール込み)。
+      // UI はこれで各ラウンド終了時に中間レポートを描画できる。
+      intermediate: best,
     });
     // イールドして 'stop' メッセージを処理可能にする。
     await new Promise((r) => setTimeout(r, 0));
