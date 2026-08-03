@@ -171,6 +171,9 @@
   .hl-detail a:hover { text-decoration: underline; }
   .hl-detail .sep { color: #d1d5db; margin: 0 6px; }
   .hl-detail .dim { color: #9ca3af; }
+  /* タップで対戦履歴を展開できるハイライト (最大アップセット / 最大シード超え / 最長ルーザーズラン) */
+  .hl-group > .stat-row { cursor: pointer; }
+  .hl-group .tour-matches { border-radius: 6px; margin-bottom: 4px; }
   .hl-counts {
     font-size: 11px; color: #374151; font-variant-numeric: tabular-nums;
     text-align: right;
@@ -707,7 +710,7 @@
   </div>
 
   <div class="footer" id="footer-info">
-    <span class="site-version" style="font-size:11px;color:#9ca3af">v f3e7a50 · 2026-08-03 06:09 UTC</span>
+    <span class="site-version" style="font-size:11px;color:#9ca3af">v c3e563a · 2026-08-03 08:22 UTC</span>
   </div>
 </main>
 
@@ -1389,7 +1392,8 @@ function render() {
           `<span style="color:#9ca3af">seed ${m.winner_seed} → seed ${m.opp_seed}${scoreStr ? ' · ' + scoreStr : ''}</span><br>` +
           `<span style="color:#9ca3af">${m.date}</span> ${tName}` +
         `</div>` +
-      `</div>`]);
+      `</div>`,
+      m.event_id ? { eid: m.event_id, seed: m.winner_seed } : null]);
   }
   // Max +SPR (上振れ)
   const maxSpr = PLAYER.max_spr;
@@ -1405,7 +1409,8 @@ function render() {
           `<span style="color:#9ca3af">seed ${s.seed} → ${s.place}位</span><br>` +
           `<span style="color:#9ca3af">${s.date}</span> ${tName}` +
         `</div>` +
-      `</div>`]);
+      `</div>`,
+      s.event_id ? { eid: s.event_id, seed: s.seed } : null]);
   }
   // 最長ルーザーズラン (= WB 敗北後の LB 連勝数)
   const maxLR = PLAYER.max_losers_run;
@@ -1423,7 +1428,8 @@ function render() {
           (subParts ? `<span style="color:#9ca3af">${escapeHtml(subParts)}</span><br>` : '') +
           `<span style="color:#9ca3af">${maxLR.date || ''}</span> ${tName}` +
         `</div>` +
-      `</div>`]);
+      `</div>`,
+      maxLR.event_id ? { eid: maxLR.event_id, seed: null } : null]);
   }
   // 大会出場 / 試合数: 全期間 (= lifetime) のみ大きく表示.
   const meta_pd = MAIN_REC.metadata || {};
@@ -1444,9 +1450,16 @@ function render() {
       `</div>`]);
   }
   document.getElementById('highlights').innerHTML = hl.map(e => {
-    const [k, v, detail] = e;
-    if (detail) {
-      return `<div class="stat-row hl-headline"><span>${k}</span><span>${v}</span></div><div class="hl-detail">${detail}</div>`;
+    const [k, v, extra] = e;
+    if (extra && extra.eid != null) {
+      // タップでその大会の対戦履歴を展開 (chevron + .tour-group の展開機構を流用)
+      return `<div class="tour-group hl-group" data-eid="${extra.eid}" data-seed="${extra.seed != null ? extra.seed : ''}">` +
+        `<div class="stat-row hl-headline"><span>${k}</span><span>${v}</span></div>` +
+        `<div class="tour-matches"></div>` +
+      `</div>`;
+    }
+    if (extra) {
+      return `<div class="stat-row hl-headline"><span>${k}</span><span>${v}</span></div><div class="hl-detail">${extra}</div>`;
     }
     return `<div class="stat-row"><span>${k}</span><span>${v}</span></div>`;
   }).join('');
@@ -1904,6 +1917,35 @@ function render() {
       }
     }
   });
+  // ハイライト (最大アップセット等) のタップ展開: event_id から対戦履歴を引く.
+  // tourMetaByEid に大会 entry があればそれと同じ main/class 判定を使い、無ければ main → class の順で試す.
+  function _hlMatchesHtml(eid, seedOverride) {
+    const meta = tourMetaByEid[eid];
+    const seed = seedOverride != null ? seedOverride : (meta && meta.seed != null ? meta.seed : null);
+    const tProxy = (meta && meta.parent_event_id != null)
+      ? { event_id: null, parent_event_id: meta.parent_event_id, seed }
+      : { event_id: eid, parent_event_id: null, seed };
+    let html = renderTournamentMatches(tProxy);
+    if (html.includes('試合データはありません') && (matchesByEvent[eid] || []).some(m => m.is_class === true)) {
+      html = renderTournamentMatches({ event_id: null, parent_event_id: eid, seed });
+    }
+    return html;
+  }
+  document.getElementById('highlights').addEventListener('click', (e) => {
+    if (e.target.closest('a')) return;
+    const g = e.target.closest('.hl-group');
+    if (!g) return;
+    const wasExpanded = g.classList.contains('expanded');
+    g.classList.toggle('expanded');
+    if (!wasExpanded) {
+      const matchesEl = g.querySelector('.tour-matches');
+      if (matchesEl && !matchesEl.dataset.rendered) {
+        const seed = g.dataset.seed !== '' ? parseInt(g.dataset.seed) : null;
+        matchesEl.innerHTML = _hlMatchesHtml(parseInt(g.dataset.eid), seed);
+        matchesEl.dataset.rendered = '1';
+      }
+    }
+  });
   function renderRecentSection() {
     const allTours = allToursAll.filter(t => passesFilter(t));
     setupPaginated(allTours, 'recent', 'recent-pager',
@@ -2188,7 +2230,7 @@ function renderRankChart() {
   });
 }
 
-// パフォーマンスチャート: 大会ごとの perf_rank (相当全国順位) の折れ線
+// パフォーマンスチャート: 大会ごとの perf_rank (相当全国順位) の折れ線 + 総合評価の推移
 function renderPerfChart() {
   const canvas = document.getElementById('chart-canvas');
   if (RANK_CHART) { RANK_CHART.destroy(); RANK_CHART = null; }
@@ -2197,8 +2239,24 @@ function renderPerfChart() {
   const rangeStart = evalTs - _chartRangeDays() * 86400 * 1000;
   const pts = (PLAYER.tournaments || [])
     .filter(t => t.perf_rank != null && t.date && !t.is_dq)
-    .map(t => ({ x: t.date, y: t.perf_rank, _name: t.name, _place: t.place, _nent: t.nent }))
+    .map(t => ({ x: t.date, y: t.perf_rank, _name: t.name, _place: t.place, _nent: t.nent,
+                 _pre: (t.pretour_ranks && t.pretour_ranks.ensemble) || null }))
     .filter(p => { const ts = new Date(p.x).getTime(); return ts >= rangeStart && ts <= evalTs; })
+    .sort((a, b) => new Date(a.x) - new Date(b.x));
+  // 点色: 当時の総合評価以上のパフォーマンス=緑 / 未満=青 / 当時無ランク=灰
+  const ptColor = (raw) => {
+    if (!raw || raw._pre == null) return '#9ca3af';
+    return raw.y <= raw._pre ? '#16a34a' : '#2563eb';
+  };
+  const dateFromDaysAgo = (days) => {
+    const d = new Date(evalDate); d.setDate(d.getDate() - days);
+    const y = d.getFullYear(), m = String(d.getMonth() + 1).padStart(2, '0'), dd = String(d.getDate()).padStart(2, '0');
+    return `${y}-${m}-${dd}`;
+  };
+  const hist = _filterHistForRange((PLAYER.history || []).slice().sort((a, b) => b.d - a.d));
+  const ensPts = hist.map(h => ({ x: dateFromDaysAgo(h.d), y: h.ens }))
+    .concat([{ x: META.eval_date, y: MAIN_REC.ranks.ensemble }])
+    .filter(p => p.y != null && p.y > 0)
     .sort((a, b) => new Date(a.x) - new Date(b.x));
   RANK_CHART = new Chart(canvas, {
     type: 'line',
@@ -2207,7 +2265,15 @@ function renderPerfChart() {
       data: pts,
       borderColor: '#7c3aed', backgroundColor: '#7c3aed40',
       tension: 0.1, spanGaps: false,
-      pointRadius: 3, pointHoverRadius: 5,
+      pointRadius: 5, pointHoverRadius: 7, pointHitRadius: 10,
+      pointBackgroundColor: (ctx) => ptColor(ctx.raw),
+      pointBorderColor: (ctx) => ptColor(ctx.raw),
+    }, {
+      label: '総合評価',
+      data: ensPts,
+      borderColor: '#dc2626', backgroundColor: '#dc262640',
+      tension: 0.1, spanGaps: false,
+      pointRadius: 0, pointHoverRadius: 4, pointHitRadius: 6,
     }] },
     options: {
       responsive: true, maintainAspectRatio: false,
@@ -2221,8 +2287,11 @@ function renderPerfChart() {
       plugins: {
         legend: { labels: { color: '#374151', font: { size: 10 } } },
         tooltip: { callbacks: {
-          label: (ctx) => `全国 #${ctx.parsed.y} 相当`,
+          label: (ctx) => ctx.dataset.label === '総合評価'
+            ? `総合評価 #${ctx.parsed.y}`
+            : `全国 #${ctx.parsed.y} 相当`,
           afterLabel: (ctx) => {
+            if (ctx.dataset.label === '総合評価') return [];
             const r = ctx.raw || {};
             const lines = [];
             if (r._place != null) lines.push(`${r._place}位${r._nent != null ? '/' + r._nent : ''}`);
