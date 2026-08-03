@@ -124,12 +124,12 @@ const SEED_APP_SKELETON_HTML = `
     </div>
     <div style="display:flex;gap:16px;flex-wrap:wrap;align-items:center;margin-top:10px;font-size:12px;color:#374151">
       <label title="2プール以上のとき、プール内の当たり回戦も最適化する（プレイヤーのプール内順位を少し動かす）。1プールでは常に実行＝指定不可"><input type="checkbox" id="so-enable-intra" checked> プール内変動</label>
-      <label title="地域被り（同じ都道府県/地域の選手が同じプールに固まる）を避ける"><input type="checkbox" id="so-avoid-region" checked> 地域被りを避ける</label>
-      <label title="直近に対戦した相手と再び早期に当たるのを避ける"><input type="checkbox" id="so-avoid-recent" checked> 直近対戦を避ける</label>
+      <label title="地域被り（同じ都道府県/地域の選手が同じプール・早期回戦に固まる）を考慮して分散する"><input type="checkbox" id="so-avoid-region" checked> 地域被りを考慮</label>
+      <label title="直近に対戦した相手と再び早期に当たるのを考慮して避ける"><input type="checkbox" id="so-avoid-recent" checked> 直接対戦を考慮</label>
       <span style="color:#d1d5db">｜</span>
-      <label title="全員のダブルイリミネーション想定順位（1,2,3,4,5,5,7,7,9,9,9,9,…のタイ帯）が元シードから変わらない範囲でのみ入れ替える"><input type="checkbox" id="so-keep-deplace" checked> DE想定順位を変えない</label>
+      <label title="全員のトーナメント想定順位（1,2,3,4,5,5,7,7,9,9,9,9,…のタイ帯）が元シードから変わらない範囲でのみ入れ替える"><input type="checkbox" id="so-keep-deplace" checked> トーナメント順位固定</label>
       <label title="通常のプール最適化（プール間/内）に加えて、全体を1つの勝者側ダブルイリミブラケットとみなし「シード通り勝ち上がったときに実際に発生する試合」の被りも追加で最適化する。追加フェーズはタイ帯（DE想定順位）内で動き、プール分離を壊す移動は損として評価される。このモード中は全フェーズでDE想定順位不変がハード制約。1プールでは勝者側のみ。DE専用"><input type="checkbox" id="so-scope-winners" checked> 勝者側ブラケットも考慮</label>
-      <label title="平日扱いの大会（平日開催・実質平日・プレ大会）での対戦を「直近対戦」の考慮対象から除く"><input type="checkbox" id="so-exclude-weekday"> 平日大会の対戦を除く</label>
+      <label title="平日扱いの大会（平日開催・実質平日・プレ大会）での対戦も「直接対戦」の考慮対象に含める（既定は含めない）"><input type="checkbox" id="so-include-weekday"> 平日大会を含む</label>
       <span style="color:#d1d5db">｜</span>
       <label title="東京・神奈川・埼玉・千葉を同一地域(南関東)として扱う"><input type="checkbox" id="so-group-minamikanto" checked> 東京・神奈川・埼玉・千葉をまとめる</label>
       <label title="兵庫・大阪・京都を同一地域(京阪神)として扱う"><input type="checkbox" id="so-group-keihanshin"> 兵庫・大阪・京都をまとめる</label>
@@ -2034,7 +2034,8 @@ async function runSeedOptimize() {
   const enableIntra = document.getElementById('so-enable-intra').checked;
   // 追加制約トグル: DE 想定順位不変 / 平日大会（実質平日・プレ含む）の対戦を考慮しない。
   const keepDePlace = document.getElementById('so-keep-deplace').checked;
-  const excludeWeekday = document.getElementById('so-exclude-weekday').checked;
+  // 「平日大会を含む」(既定OFF) の反転が excludeWeekday (= 既定で平日を除外)。
+  const excludeWeekday = !document.getElementById('so-include-weekday').checked;
   // 地域グルーピングのトグル（南関東 / 兵庫・大阪・京都）。
   const groupMinamiKanto = document.getElementById('so-group-minamikanto').checked;
   const groupKeihanshin = document.getElementById('so-group-keihanshin').checked;
