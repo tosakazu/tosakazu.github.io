@@ -1,0 +1,433 @@
+/* seed_app.css — シードツール共通スタイル (seed / seed-upload 両ページで使用)。
+   元は site/seed/index.html の <style>。 */
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Hiragino Sans", sans-serif;
+    background: #ffffff; color: #111827; font-size: 14px;
+    -webkit-text-size-adjust: 100%;
+  }
+  .nav {
+    background: #ffffff; border-bottom: 1px solid #e5e7eb;
+    padding: 12px 24px; display: flex; gap: 24px; align-items: center;
+    position: sticky; top: 0; z-index: 10;
+  }
+  .nav a { color: #6b7280; text-decoration: none; font-size: 14px; padding: 4px 8px; border-radius: 4px; }
+  .nav a:hover { color: #111827; background: #f3f4f6; }
+  .nav a.current { color: #dc2626; background: #f3f4f6; }
+  .nav .brand { font-size: 16px; color: #111827; font-weight: 600; margin-right: 16px; }
+  .nav .brand a { color: #111827; font-size: 16px; padding: 0; }
+  .nav .brand a:hover { background: transparent; }
+  .nav .meta { margin-left: auto; color: #9ca3af; font-size: 12px; }
+
+  .header { max-width: 1400px; margin: 0 auto; padding: 20px 24px 0; }
+  h1 { font-size: 22px; color: #111827; margin: 0 0 4px; }
+  .subtitle { font-size: 13px; color: #6b7280; margin-bottom: 16px; }
+
+  .method-tabs {
+    display: flex; gap: 4px; margin: 12px 0;
+    background: #ffffff; padding: 4px; border-radius: 8px;
+    border: 1px solid #e5e7eb; overflow-x: auto;
+  }
+  .method-tab {
+    padding: 8px 14px; cursor: pointer; border-radius: 6px;
+    font-size: 13px; color: #6b7280; transition: all 0.1s;
+    user-select: none; white-space: nowrap;
+  }
+  .method-tab:hover { color: #374151; background: #f3f4f6; }
+  .method-tab.active { background: #dc2626; color: #fff; }
+  .method-tab .tab-desc { display: block; font-size: 10px; opacity: 0.7; margin-top: 2px; }
+
+  .controls {
+    display: flex; gap: 12px; align-items: center; flex-wrap: wrap; margin: 12px 0;
+  }
+  input, button, select {
+    padding: 8px 12px; border: 1px solid #e5e7eb;
+    background: #ffffff; color: #111827;
+    border-radius: 6px; font-size: 13px; font-family: inherit;
+  }
+  input[type="search"] { min-width: 280px; }
+  button { cursor: pointer; }
+  button:hover { background: #f3f4f6; border-color: #dc2626; }
+  /* disabled は inline の background 色を override (= 全 button 共通の灰色化) */
+  button:disabled, button[disabled] {
+    background: #e5e7eb !important; color: #9ca3af !important;
+    cursor: not-allowed; opacity: 0.7;
+  }
+  button:disabled:hover, button[disabled]:hover {
+    background: #e5e7eb !important; border-color: #e5e7eb !important;
+  }
+  button.jump { font-size: 11px; padding: 4px 10px; }
+  .status { color: #6b7280; font-size: 12px; }
+
+  .table-wrap { max-width: 1400px; margin: 0 auto; padding: 0 24px 32px; }
+  /* Table base, column widths, lv-badge / gate-pill / player-name / mobile card layout は
+     共有 ranking-table.css へ移行済。ここではシード固有のオーバーライドのみ. */
+
+  /* 手動調整列: 縦積み (手動シード#+変動矢印 / 元#N / 選択ボタン)。隣列と重ならないよう固定幅 */
+  #ranktable th.col-manual, #ranktable td.col-manual {
+    width: 76px; min-width: 68px; text-align: center; white-space: normal; padding: 4px 4px;
+  }
+  .mn-cell { display: flex; flex-direction: column; align-items: center; gap: 2px; line-height: 1.2; }
+  .mn-cell .mn-num { font-variant-numeric: tabular-nums; font-weight: 700; white-space: nowrap; }
+  .mn-cell .mn-orig { font-size: 9px; color: #9ca3af; white-space: nowrap; }
+  /* 挿入スロット: タップしやすい高さのある帯にする */
+  .mn-slot {
+    cursor: pointer; text-align: center; user-select: none;
+    font-size: 11px; font-weight: 600; color: #ea580c;
+    padding: 7px 0; margin: 3px 4px;
+    border: 1.5px dashed #fb923c; border-radius: 6px; background: #fff7ed;
+  }
+  .mn-slot:hover, .mn-slot:active { background: #ffedd5; border-style: solid; }
+  @media (max-width: 720px) {
+    .mn-slot { padding: 10px 0; margin: 4px 2px; font-size: 12px; }
+  }
+  /* モバイルカードレイアウト: 手動セルはカード下段に全幅・横並びで配置
+     (grid 未指定だと他セルと重なって選択ボタンが押せない) */
+  @media (max-width: 720px) {
+    #ranktable tr.main-row td.col-manual {
+      grid-column: 1 / -1; grid-row: 3;
+      display: flex !important; padding-top: 4px !important;
+    }
+    .mn-cell { flex-direction: row; gap: 8px; align-items: center; }
+    #ranktable tr.mn-slot-row { display: block; width: 100%; }
+    #ranktable tr.mn-slot-row td { display: block !important; width: 100%; padding: 0 !important; border: none; }
+  }
+
+  .detail-explain {
+    background: #f9fafb; border-left: 3px solid #dc2626;
+    padding: 10px 16px; margin-bottom: 12px;
+    font-size: 13px; color: #374151; line-height: 1.6;
+  }
+  .detail-explain strong { color: #111827; }
+  .detail-section { margin-bottom: 20px; }
+  .detail-section h4 {
+    margin: 0 0 8px; color: #dc2626; font-size: 13px; font-weight: 600;
+  }
+  .detail-section h5 {
+    margin: 0 0 6px; color: #374151; font-size: 12px; font-weight: 600;
+  }
+  /* Detail tabs (大会別 / 直接対決) */
+  .detail-tabs {
+    display: flex; gap: 4px; margin: 4px 0 10px;
+    border-bottom: 1px solid #e5e7eb;
+  }
+  .detail-tab {
+    padding: 7px 14px; cursor: pointer; user-select: none;
+    font-size: 13px; color: #6b7280; font-weight: 500;
+    border-bottom: 2px solid transparent;
+    border-radius: 4px 4px 0 0; transition: color .12s, background .12s, border-color .12s;
+  }
+  .detail-tab:hover {
+    color: #dc2626; background: #fef2f2; border-bottom-color: #fca5a5;
+  }
+  .detail-tab.active {
+    color: #dc2626; border-bottom-color: #dc2626; font-weight: 600;
+  }
+  /* H2H section (直接対決) */
+  .h2h-section { display: flex; flex-direction: column; gap: 16px; }
+  .h2h-col { min-width: 0; }
+  .h2h-list { display: flex; flex-direction: column; gap: 6px; }
+  .h2h-opp {
+    border: 1px solid #f3f4f6; border-radius: 6px;
+    padding: 8px 10px; background: #fafafa;
+    transition: background 0.1s, border-color 0.1s;
+  }
+  .h2h-opp:hover { background: #f0f0f0; border-color: #d1d5db; }
+  .h2h-opp.h2h-win  { border-left: 3px solid #16a34a; }
+  .h2h-opp.h2h-loss { border-left: 3px solid #2563eb; }
+  .h2h-head { display: flex; align-items: baseline; gap: 8px; margin-bottom: 4px; }
+  .h2h-opp-name {
+    color: #dc2626; font-weight: 600; text-decoration: none; font-size: 13px;
+    word-break: break-word; min-width: 0;
+  }
+  .h2h-opp.h2h-win .h2h-opp-name { color: #16a34a; }
+  .h2h-opp.h2h-loss .h2h-opp-name { color: #2563eb; }
+  .h2h-opp-name:hover { text-decoration: underline; }
+  .h2h-rank { color: #9ca3af; font-size: 11px; font-variant-numeric: tabular-nums; }
+  .h2h-count { color: #6b7280; font-size: 11px; margin-left: auto; flex-shrink: 0; }
+  .h2h-match {
+    display: flex; gap: 8px; align-items: baseline;
+    font-size: 11px; color: #6b7280; padding: 3px 0;
+  }
+  .h2h-match .h2h-date { color: #9ca3af; font-size: 10px; flex-shrink: 0; }
+  .h2h-match .h2h-tname { flex: 1 1 auto; min-width: 0; word-break: break-word; }
+  .h2h-match .h2h-tname a { color: #6b7280; text-decoration: none; }
+  .h2h-match .h2h-tname a:hover { color: #dc2626; text-decoration: underline; }
+  .h2h-match .h2h-delta {
+    font-weight: 700; font-variant-numeric: tabular-nums;
+    color: #9ca3af; font-size: 12px; flex-shrink: 0;
+  }
+  .h2h-match .h2h-delta.pos { color: #16a34a; }
+  .h2h-match .h2h-delta.neg { color: #2563eb; }
+  @media (min-width: 800px) {
+    .h2h-section { flex-direction: row; gap: 20px; }
+    .h2h-col { flex: 1 1 50%; }
+  }
+  /* tour-main-row / tour-opp-row: 1 行を main + opp の 2 つの <tr> として表現する canonical 形 */
+  /* #ranktable prefix を付けて ranking-table.css の #ranktable td 上書き */
+  #ranktable .tour-table tr.tour-main-row td { border-bottom: none; }
+  .tour-table tr.tour-main-row { transition: background 0.1s; }
+  .tour-table tr.tour-opp-row { transition: background 0.1s; }
+  .tour-table tr.tour-main-row:hover,
+  .tour-table tr.tour-main-row:hover + tr.tour-opp-row,
+  .tour-table tr.tour-opp-row:hover,
+  .tour-table tr.tour-main-row:has(+ tr.tour-opp-row:hover) {
+    background: #eef2f6 !important;
+  }
+  .tour-table tr.tour-main-row.counted:hover,
+  .tour-table tr.tour-main-row.counted:hover + tr.tour-opp-row,
+  .tour-table tr.tour-opp-row.counted:hover,
+  .tour-table tr.tour-main-row.counted:has(+ tr.tour-opp-row.counted:hover) {
+    background: rgba(220, 38, 38, 0.07) !important;
+  }
+  .tour-table tr.extra-row.hidden-row { display: none !important; }
+  /* タグ chip (= 制限大会 / 下位クラス) */
+  .tag-res { color: #be123c; font-size: 10px; padding: 1px 5px; background: rgba(225, 29, 72, 0.10); border-radius: 8px; margin-left: 4px; }
+  .tag-lc  { color: #0369a1; font-size: 10px; padding: 1px 5px; background: rgba(2, 132, 199, 0.10); border-radius: 8px; margin-left: 4px; }
+
+  /* Chart container */
+  .chart-wrap {
+    background: #f9fafb; border: 1px solid #f3f4f6; border-radius: 6px;
+    padding: 12px; margin: 8px 0;
+  }
+  .chart-tabs {
+    display: flex; gap: 4px; margin-bottom: 8px;
+  }
+  .chart-tab {
+    padding: 4px 10px; font-size: 11px; cursor: pointer; user-select: none;
+    background: #ffffff; border-radius: 4px; color: #6b7280;
+  }
+  .chart-tab.active { background: #dc2626; color: #fff; }
+  .chart-area { height: 220px; position: relative; }
+  .chart-status { font-size: 11px; color: #9ca3af; }
+
+  .tour-table, .breakdown-table { font-size: 12px; width: 100%; border-collapse: collapse; }
+  .tour-table th, .breakdown-table th {
+    background: #f9fafb; position: static; padding: 6px 8px;
+    border-bottom: 1px solid #f3f4f6; cursor: default; font-weight: 600;
+  }
+  .tour-table th::after, .breakdown-table th::after { content: ""; }
+  .tour-table td, .breakdown-table td { padding: 4px 8px; border-bottom: 1px solid #ffffff; }
+  .tour-table tr.counted, .breakdown-table tr.counted { background: rgba(220, 38, 38, 0.04); }
+  .tour-table tr.weekday { color: #6b7280; }
+  .tour-table tr.weekend { color: #374151; }
+  /* Hover ハイライト (paired main + opp) は canonical block (上方) に集約済.
+     旧 .tour-table tbody tr:hover は tour-main-row / tour-opp-row のペア hover と
+     specificity が同じで cascade ties により壊すため、削除する (= main / local と整合). */
+  .tag-wk { color: #dc2626; font-size: 10px; padding: 1px 5px; background: rgba(220, 38, 38, 0.08); border-radius: 8px; }
+  .tag-wd { color: #6b7280; font-size: 10px; padding: 1px 5px; background: rgba(107, 114, 128, 0.08); border-radius: 8px; }
+  .tag-sm { color: #d97706; font-size: 10px; padding: 1px 5px; background: rgba(217, 119, 6, 0.10); border-radius: 8px; margin-left: 4px; }
+  .tag-pre { color: #6b21a8; font-size: 10px; padding: 1px 5px; background: rgba(168, 85, 247, 0.12); border-radius: 8px; margin-left: 4px; }
+  .num { font-variant-numeric: tabular-nums; text-align: right; }
+  .pos { color: #16a34a; }
+  .neg { color: #2563eb; }
+
+  .footer { text-align: center; color: #9ca3af; font-size: 12px; padding: 32px 0 16px; }
+  .empty-msg { padding: 24px; text-align: center; color: #6b7280; }
+
+  /* ── 今後の大会ピッカー ── */
+  .upcoming-box { background: #ffffff; border: 1px solid #e5e7eb; border-radius: 6px; margin: 10px 0 14px; }
+  .upcoming-toggle {
+    display: flex; align-items: center; gap: 8px; padding: 9px 12px;
+    cursor: pointer; user-select: none; font-size: 13px; color: #374151; font-weight: 600;
+  }
+  .upcoming-toggle:hover { background: #f9fafb; }
+  .upcoming-toggle .chev { transition: transform 0.15s; color: #9ca3af; }
+  .upcoming-box.open .upcoming-toggle .chev { transform: rotate(90deg); }
+  .upcoming-toggle .badge {
+    background: #dc2626; color: #fff; font-size: 10px; padding: 1px 7px;
+    border-radius: 9px; font-weight: 600;
+  }
+  .upcoming-body { display: none; border-top: 1px solid #e5e7eb; padding: 8px 4px; }
+  .upcoming-box.open .upcoming-body { display: block; }
+  .upcoming-loading { padding: 14px; text-align: center; color: #9ca3af; font-size: 12px; }
+  .upcoming-list { display: flex; flex-direction: column; gap: 4px; }
+  .upcoming-item {
+    border: 1px solid #f3f4f6; border-radius: 6px; padding: 8px 10px;
+    cursor: pointer; transition: border-color 0.1s, background 0.1s;
+    display: flex; flex-direction: column; gap: 4px;
+  }
+  .upcoming-item:hover { border-color: #dc2626; background: #fef2f2; }
+  .upcoming-item .row-1 { display: flex; align-items: baseline; gap: 8px; flex-wrap: wrap; }
+  .upcoming-item .ev-date { color: #dc2626; font-weight: 600; font-size: 11px; white-space: nowrap; }
+  .upcoming-item .ev-name { font-size: 13px; color: #111827; font-weight: 500; flex: 1; min-width: 0; }
+  .upcoming-item .ev-link {
+    color: #9ca3af; text-decoration: none; font-size: 12px;
+    padding: 1px 6px; border: 1px solid #e5e7eb; border-radius: 4px;
+    line-height: 1.2; white-space: nowrap;
+  }
+  .upcoming-item .ev-link:hover { color: #dc2626; border-color: #dc2626; background: #fef2f2; }
+  .upcoming-item .row-2 { display: flex; gap: 10px; font-size: 11px; color: #6b7280; flex-wrap: wrap; }
+  .upcoming-item .row-2 .att-num { color: #111827; font-weight: 600; }
+  .upcoming-item .row-2 .city { background: #f3f4f6; padding: 1px 6px; border-radius: 8px; }
+  .upcoming-events {
+    display: none; margin-top: 6px; padding-top: 6px; border-top: 1px dashed #e5e7eb;
+    flex-direction: column; gap: 4px;
+  }
+  .upcoming-item.expanded .upcoming-events { display: flex; }
+  .upcoming-event-row {
+    display: flex; align-items: center; gap: 8px; padding: 6px 8px;
+    background: #f9fafb; border-radius: 4px; cursor: pointer;
+    transition: background 0.1s;
+  }
+  .upcoming-event-row:hover { background: #fef2f2; border: 1px solid #dc2626; padding: 5px 7px; }
+  .upcoming-event-row .ev-event-name { flex: 1; font-size: 12px; color: #374151; }
+  .upcoming-event-row .ev-event-entrants { font-size: 11px; color: #6b7280; white-space: nowrap; }
+  .upcoming-pager {
+    display: flex; justify-content: center; align-items: center; gap: 10px;
+    padding: 10px 8px 6px; font-size: 12px; color: #6b7280;
+  }
+  .upcoming-pager button {
+    padding: 4px 10px; font-size: 12px; background: #ffffff; color: #374151;
+    border: 1px solid #e5e7eb; border-radius: 4px; cursor: pointer;
+  }
+  .upcoming-pager button:hover:not(:disabled) { background: #f3f4f6; border-color: #dc2626; color: #dc2626; }
+  .upcoming-pager button:disabled { opacity: 0.4; cursor: not-allowed; }
+  /* event-picker (= handleFetch 複数 event 警告の inline UI) */
+  #event-picker { display: none; margin: 6px 0 10px; }
+  #event-picker .label {
+    font-size: 12px; color: #374151; font-weight: 600; margin-bottom: 6px;
+  }
+  #event-picker .pe-list { display: flex; flex-direction: column; gap: 4px; }
+
+  .summary-row {
+    display: flex; flex-wrap: wrap; gap: 8px 24px; margin-bottom: 12px; font-size: 12px;
+    background: #f9fafb; padding: 10px 14px; border-radius: 6px; border: 1px solid #f3f4f6;
+  }
+  .summary-row b { color: #111827; font-weight: 600; margin-right: 4px; }
+  .summary-row span { color: #6b7280; }
+
+  /* ── Mobile responsive (card layout) ── */
+  @media (max-width: 720px) {
+    body { font-size: 13px; }
+    .nav { padding: 8px 12px; gap: 8px; font-size: 12px; flex-wrap: wrap; }
+    .nav .brand { font-size: 14px; margin-right: 8px; }
+    .nav a { padding: 3px 6px; font-size: 12px; }
+    .nav .meta { width: 100%; margin-left: 0; font-size: 10px; }
+
+    .header { padding: 12px 12px 0; }
+    h1 { font-size: 18px; }
+    .subtitle { font-size: 11px; margin-bottom: 10px; }
+
+    .method-tabs { padding: 2px; gap: 2px; -webkit-overflow-scrolling: touch; }
+    .method-tab { padding: 6px 8px; font-size: 11px; }
+    .method-tab .tab-desc { display: none; }
+
+    .controls { gap: 6px; }
+    input[type="search"] { min-width: 0; flex: 1 1 100%; font-size: 14px; padding: 8px 10px; }
+    button.jump { font-size: 10px; padding: 4px 8px; }
+    .status { width: 100%; font-size: 10px; }
+
+    .table-wrap { padding: 0 8px 24px; max-width: 100vw; overflow-x: hidden; }
+
+    /* Mobile card layout, detail-row base は ranking-table.css に集約済 */
+
+    /* Inner detail tables: TJPR breakdown keeps table layout; tour-table is converted below */
+    .detail-row .breakdown-table { display: table; table-layout: auto; width: 100%; }
+    .detail-row .breakdown-table thead { display: table-header-group; }
+    .detail-row .breakdown-table tbody { display: table-row-group; }
+    .detail-row .breakdown-table tfoot { display: table-footer-group; }
+    .detail-row .breakdown-table tr { display: table-row; }
+    .detail-row .breakdown-table td,
+    .detail-row .breakdown-table th { display: table-cell; }
+
+    .detail-explain { padding: 8px 10px; font-size: 12px; line-height: 1.55; word-wrap: break-word; }
+    .detail-section { margin-bottom: 16px; box-sizing: border-box; max-width: 100%; }
+    .detail-section h4 { font-size: 12px; }
+
+    /* tour-table: 4 行 grid layout on mobile */
+    .hscroll { overflow-x: visible; max-width: 100%; }
+    .tour-table { display: block !important; min-width: 0; font-size: 12px; }
+    .tour-table thead { display: none !important; }
+    .tour-table tbody { display: block !important; }
+    .tour-table tr {
+      display: grid !important;
+      grid-template-columns: auto auto auto 1fr auto auto;
+      column-gap: 0;
+      row-gap: 3px;
+      padding: 6px 8px;
+      margin-bottom: 4px;
+      background: #f9fafb;
+      border-radius: 6px;
+      border: 1px solid #f3f4f6;
+      align-items: baseline;
+    }
+    .tour-table td { padding: 0 !important; border: none; font-size: 11px; color: #374151; line-height: 1.3; min-width: 0; }
+    /* Row 1: 日付 + 区分 + Lv */
+    .tour-table td:nth-child(1) { grid-column: 1; grid-row: 1; color: #dc2626; font-weight: 500; font-size: 11px; margin-right: 8px; }
+    .tour-table td:nth-child(5) { grid-column: 2; grid-row: 1; margin-right: 4px; }   /* 区分 */
+    .tour-table td:nth-child(6) { grid-column: 3; grid-row: 1; }   /* Lv */
+    /* Row 2: 大会名 + 順位/人数 (横並び) */
+    .tour-table td:nth-child(2) {
+      grid-column: 1 / 5; grid-row: 2;
+      font-size: 12px; word-break: break-word; line-height: 1.35;
+    }
+    .tour-table td:nth-child(3) {
+      grid-column: 5; grid-row: 2;
+      font-size: 14px; font-weight: 700; color: #111827; text-align: right;
+    }
+    .tour-table td:nth-child(4) {
+      grid-column: 6; grid-row: 2;
+      font-size: 11px; color: #6b7280;
+    }
+    /* Row 3: 順位評価 (寄与 (ベース)) + 直対評価 (両方目立つ、横並び) */
+    .tour-table td:nth-child(7) {
+      grid-column: 1 / 4; grid-row: 3;
+      font-size: 14px; font-weight: 700; color: #dc2626; margin-top: 3px;
+      text-align: left;
+    }
+    .tour-table td:nth-child(8) {
+      grid-column: 4 / 7; grid-row: 3;
+      font-size: 14px; font-weight: 700; color: #9ca3af; margin-top: 3px;
+      text-align: right;
+    }
+    .tour-table td:nth-child(8).pos { color: #16a34a; }
+    .tour-table td:nth-child(8).neg { color: #2563eb; }
+    /* ::before ラベル */
+    .tour-table td:nth-child(4)::before { content: "/"; color: #9ca3af; }
+    .tour-table td:nth-child(3)::before { content: ""; }
+    .tour-table td:nth-child(5)::before { content: ""; }
+    .tour-table td:nth-child(6)::before { content: ""; }
+    .tour-table td:nth-child(7)::before { content: "順位評価 "; color: #9ca3af; font-size: 10px; font-weight: 400; margin-right: 2px; }
+
+    /* Opponent row (各大会の対戦相手): 同じカードに見えるよう main row と一体化 */
+    .tour-table tr.tour-main-row {
+      margin-bottom: 0 !important;
+      border-radius: 6px 6px 0 0 !important;
+      border-bottom: none !important;
+    }
+    .tour-table tr.tour-opp-row {
+      display: block !important;
+      grid-template-columns: none !important;
+      /* background は base / .counted を継承させるため指定しない */
+      border-top: none !important;
+      border-radius: 0 0 6px 6px !important;
+      padding: 0 8px 6px !important;
+      margin: 0 0 4px 0 !important;
+    }
+    .tour-table tr.tour-opp-row td {
+      display: block !important;
+      padding: 0 !important;
+      font-size: 11px;
+      color: #6b7280;
+      line-height: 1.5;
+    }
+    .tour-table tr.tour-opp-row td::before { content: none !important; }
+    .tour-table td:nth-child(8)::before { content: "直対評価 "; color: #9ca3af; font-size: 10px; font-weight: 400; margin-right: 2px; }
+
+    /* TJPR breakdown table fits viewport */
+    .breakdown-table { min-width: 0; max-width: 100% !important; width: 100%; }
+    .breakdown-table th, .breakdown-table td { white-space: normal; font-size: 11px; }
+
+    .chart-area { height: 220px; }
+    .chart-tab { padding: 4px 8px; font-size: 10px; }
+  }
+
+  @media (max-width: 380px) {
+    h1 { font-size: 16px; }
+    .nav .brand { font-size: 13px; }
+    .nav a { font-size: 11px; }
+    .method-tab { padding: 5px 6px; font-size: 10px; }
+    /* #ranktable 関連の超狭幅オーバーライドは ranking-table.css に集約済 */
+  }
