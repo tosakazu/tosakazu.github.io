@@ -247,7 +247,12 @@ const SEED_APP_CONFIG = Object.assign({ mode: 'spsp' }, window.SEED_APP_CONFIG |
     const fb = root.querySelector('#fetch-btn');
     if (fb) fb.style.display = 'none';
     const urlHelp = root.querySelector('#event-url-help');
-    if (urlHelp) urlHelp.textContent = '大会イベント URL は「start.gg にシード適用」時に使います (シード枠の取得・フェーズ自動作成)。';
+    if (urlHelp) urlHelp.style.display = 'none';
+    // 「参加者を取得」前提の案内文も CSV 向けに差し替え
+    const st = root.querySelector('#status');
+    if (st) st.textContent = 'CSV / Google Sheets を読み込んでください';
+    const emptyMsg = root.querySelector('#ranktable .empty-msg');
+    if (emptyMsg) emptyMsg.textContent = 'CSV / Google Sheets を読み込むとここにリストが表示されます';
   }
   // csv モード: 基準順位ソース (CSV / Sheets) の入力欄を差し込む
   if (SEED_APP_CONFIG.mode === 'csv') {
