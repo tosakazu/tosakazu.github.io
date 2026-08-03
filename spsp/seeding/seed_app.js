@@ -1422,6 +1422,11 @@ function render() {
 }
 // 手動調整のクリック操作 (動的要素はデリゲーションで拾う)。
 document.getElementById('manual-bar').addEventListener('click', manualClickHandler);
+// プレイヤーページへのリンク (表・詳細展開内とも) は常に新しいタブで開く。
+document.getElementById('ranktable').addEventListener('click', (e) => {
+  const a = e.target.closest('a');
+  if (a && /p\/\?uid=/.test(a.getAttribute('href') || '')) { a.target = '_blank'; a.rel = 'noopener'; }
+}, true);
 // テーブル内の手動調整コントロール ([data-mn] = 選択ボタン/挿入スロット) は
 // capture で先取りして、行クリック (詳細展開) やソートに食われないようにする。
 document.getElementById('ranktable').addEventListener('click', (e) => {
