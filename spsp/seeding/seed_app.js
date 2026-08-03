@@ -1929,15 +1929,23 @@ function shiftPresetForSize(n) {
   if (n <= 640) return [null, 24, 48, 96, 192];    // 〜512人規模
   return [null, 32, 64, 128, 256];                 // 1024人規模〜
 }
-// 全欄が空のときだけ規模別既定を入れる (ユーザーの手入力は上書きしない)。
+// 規模別既定を入れる。全欄が空、または「前回の自動プリセットのまま (手入力なし)」の
+// ときだけ上書きする — 別の大会を読み込み直したら新しい規模の既定に更新される。
+// ユーザーが1欄でも書き換えていたら触らない。
+let _lastShiftPrefill = null;   // 直近に自動で入れた値 (['','16',…] 形式)
 function prefillShiftLimits(n) {
   const els = ['so-shift0', 'so-shift1', 'so-shift2', 'so-shift3', 'so-shift4']
     .map(id => document.getElementById(id));
   if (els.some(e => !e)) return;
-  if (els.some(e => (e.value || '').trim() !== '')) return;
+  const cur = els.map(e => (e.value || '').trim());
+  const untouched = cur.every(v => v === '') ||
+    (_lastShiftPrefill != null && cur.every((v, k) => v === _lastShiftPrefill[k]));
+  if (!untouched) return;
   const p = shiftPresetForSize(n);
   if (!p) return;
-  els.forEach((e, k) => { e.value = p[k] != null ? p[k] : ''; });
+  const vals = p.map(v => (v != null ? String(v) : ''));
+  els.forEach((e, k) => { e.value = vals[k]; });
+  _lastShiftPrefill = vals;
 }
 // 「プール内変動」トグルは 2プール以上のときだけ指定可能。
 // 1プール×DE では intra が唯一の被り回避なので常に実行＝チェックは固定・無効表示。
