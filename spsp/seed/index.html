@@ -547,12 +547,27 @@
       <label title="直近に対戦した相手と再び早期に当たるのを避ける"><input type="checkbox" id="so-avoid-recent" checked> 直近対戦を避ける</label>
       <span style="color:#d1d5db">｜</span>
       <label title="全員のダブルイリミネーション想定順位（1,2,3,4,5,5,7,7,9,9,9,9,…のタイ帯）が元シードから変わらない範囲でのみ入れ替える"><input type="checkbox" id="so-keep-deplace" checked> DE想定順位を変えない</label>
-      <label title="プール（予選/本戦）構造を無視し、全体を1つの勝者側ダブルイリミブラケットとみなして被りを最適化する。制約はDE想定順位（タイ帯）不変のみで、プール内順位の固定や±幅の可動制約（kInter/kIntra）は適用されない（最大シード移動は有効）。移動の抑制はシードズレ罰則（W_order）で調整。DE専用"><input type="checkbox" id="so-scope-winners"> 勝者側ブラケットで最適化</label>
-      <label title="勝者側ブラケット最適化でも、従来のプール内順位の可動制約（kIntra: 既定は上位1/4固定・残り±1）をタイ帯不変制約に追加で適用する。勝者側最適化オン時のみ有効"><input type="checkbox" id="so-winners-poolrank"> └ プール内順位の制約</label>
+      <label title="通常のプール最適化（プール間/内）に加えて、全体を1つの勝者側ダブルイリミブラケットとみなし「シード通り勝ち上がったときに実際に発生する試合」の被りも追加で最適化する。追加フェーズはタイ帯（DE想定順位）内で動き、プール分離を壊す移動は損として評価される。このモード中は全フェーズでDE想定順位不変がハード制約。1プールでは勝者側のみ。DE専用"><input type="checkbox" id="so-scope-winners"> 勝者側ブラケットも考慮</label>
       <label title="平日扱いの大会（平日開催・実質平日・プレ大会）での対戦を「直近対戦」の考慮対象から除く"><input type="checkbox" id="so-exclude-weekday"> 平日大会の対戦を除く</label>
       <span style="color:#d1d5db">｜</span>
       <label title="東京・神奈川・埼玉・千葉を同一地域(南関東)として扱う"><input type="checkbox" id="so-group-minamikanto" checked> 東京・神奈川・埼玉・千葉をまとめる</label>
       <label title="兵庫・大阪・京都を同一地域(京阪神)として扱う"><input type="checkbox" id="so-group-keihanshin"> 兵庫・大阪・京都をまとめる</label>
+    </div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:8px;font-size:12px;color:#374151"
+         title="順位帯ごとのシードズレ上限。各欄は「そのズレ幅までしか許さないのは何位まで」。例: ±1に8・±2に16・±3に32 → 1-8位は±1、9-16位は±2、17-32位は±3、33位以降は無制限。左の欄ほど小さい順位にすること。全て空欄=制約なし。全スコープ共通 (タイ帯不変等の他の制約とは AND)">
+      <span style="font-weight:600">シードズレ上限:</span>
+      <label>固定(±0)は <input type="number" id="so-shift0" min="1" style="width:52px"> 位まで</label>
+      <label>／ ±1は <input type="number" id="so-shift1" min="1" style="width:52px"> 位まで</label>
+      <label>／ ±2は <input type="number" id="so-shift2" min="1" style="width:52px"> 位まで</label>
+      <label>／ ±3は <input type="number" id="so-shift3" min="1" style="width:52px"> 位まで</label>
+      <label>／ ±4は <input type="number" id="so-shift4" min="1" style="width:52px"> 位まで</label>
+      <span style="color:#9ca3af;font-size:10px">（超えた順位は無制限・全て空欄=制約なし。空のまま大会を読み込むと規模別の既定値が入る）</span>
+    </div>
+    <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-top:6px;font-size:12px;color:#374151">
+      <span style="font-weight:600" title="元ランキングからのシードズレ罰則の指数。罰則 = W_order × |ズレ|^指数。1=線形、大きいほど大きなズレを選択的に強く罰する">ズレ指数:</span>
+      <input type="range" id="so-orderpow" min="1" max="3" step="0.5" value="2" style="width:150px">
+      <span id="so-orderpow-val" style="font-variant-numeric:tabular-nums;font-weight:600">2</span>
+      <span style="color:#9ca3af;font-size:10px">1=線形 〜 3=大移動を強く抑制</span>
     </div>
     <div style="margin-top:8px">
       <details>
@@ -578,7 +593,6 @@
             <label>地域重み W_region<input type="number" id="so-wregion" value="1.0" step="0.1" style="display:block;width:72px;padding:4px;border:1px solid #d1d5db;border-radius:5px;font-size:12px"></label>
             <label>直近重み W_recent<input type="number" id="so-wrecent" value="0.3" step="0.05" style="display:block;width:72px;padding:4px;border:1px solid #d1d5db;border-radius:5px;font-size:12px"></label>
             <label title="元ランキングからのシードズレ罰則の重み(0で無効)">元順位ズレ重み<input type="number" id="so-worder" value="0.001" step="0.005" min="0" style="display:block;width:80px;padding:4px;border:1px solid #d1d5db;border-radius:5px;font-size:12px"></label>
-            <label title="ズレ罰則の指数(1=線形, 2=2乗で大きなズレを強く罰)">ズレ指数<input type="number" id="so-orderpow" value="2" step="1" min="1" max="3" style="display:block;width:64px;padding:4px;border:1px solid #d1d5db;border-radius:5px;font-size:12px"></label>
             <label>県の重み式
               <select id="so-prefweight" style="display:block;padding:4px;border:1px solid #d1d5db;border-radius:5px;font-size:12px">
                 <option value="inv_sqrt">1/√人数（既定）</option>
@@ -635,7 +649,7 @@
 </div>
 
 <div class="footer" id="footer-info"></div>
-<div class="footer" style="margin-top:-12px"><span class="site-version" style="font-size:11px;color:#9ca3af">v 8792193 · 2026-08-03 15:09 UTC</span></div>
+<div class="footer" style="margin-top:-12px"><span class="site-version" style="font-size:11px;color:#9ca3af">v 225e368 · 2026-08-03 18:09 UTC</span></div>
 
 <!-- Chart.js (lazy load on first graph use) -->
 <script>
@@ -1892,6 +1906,9 @@ function showEventPickerInline(tournamentSlug, events) {
   document.getElementById('so-stop').addEventListener('click', stopSeedOptimize);
   document.getElementById('so-apply').addEventListener('click', applySeedOptimize);
   document.getElementById('so-mode').addEventListener('change', applyModeDefaults);
+  document.getElementById('so-orderpow').addEventListener('input', () => {
+    document.getElementById('so-orderpow-val').textContent = document.getElementById('so-orderpow').value;
+  });
   // プール数に応じて「プール内変動」トグルの有効/無効を切り替える（2プール以上のみ指定可能）。
   document.getElementById('so-pools').addEventListener('input', updateIntraToggleState);
 
@@ -1934,6 +1951,26 @@ function applyModeDefaults() {
   if (d.saCooling != null) document.getElementById('so-cooling').value = d.saCooling;
   if (d.maxItersScale != null) document.getElementById('so-itersscale').value = d.maxItersScale;
 }
+// 大会規模ごとのシードズレ上限の既定値 [±0, ±1, ±2, ±3, ±4 それぞれ「〜位まで」]。
+// 上位ほど絶対的な意味が強いので厳しく、規模が大きいほど深い帯まで段階をかける。
+function shiftPresetForSize(n) {
+  if (!n) return null;
+  if (n <= 48) return [null, 8, 16, 24, null];     // 〜32人規模: ±1≤8 / ±2≤16 / ±3≤24 / 25位〜無制限
+  if (n <= 160) return [null, 16, 32, 64, null];   // 〜128人規模
+  if (n <= 320) return [null, 16, 32, 64, 128];    // 〜256人規模
+  if (n <= 640) return [null, 24, 48, 96, 192];    // 〜512人規模
+  return [null, 32, 64, 128, 256];                 // 1024人規模〜
+}
+// 全欄が空のときだけ規模別既定を入れる (ユーザーの手入力は上書きしない)。
+function prefillShiftLimits(n) {
+  const els = ['so-shift0', 'so-shift1', 'so-shift2', 'so-shift3', 'so-shift4']
+    .map(id => document.getElementById(id));
+  if (els.some(e => !e)) return;
+  if (els.some(e => (e.value || '').trim() !== '')) return;
+  const p = shiftPresetForSize(n);
+  if (!p) return;
+  els.forEach((e, k) => { e.value = p[k] != null ? p[k] : ''; });
+}
 // 「プール内変動」トグルは 2プール以上のときだけ指定可能。
 // 1プール×DE では intra が唯一の被り回避なので常に実行＝チェックは固定・無効表示。
 function updateIntraToggleState() {
@@ -1963,6 +2000,8 @@ function initSeedOptPanel() {
   const fmtJa = { DOUBLE_ELIMINATION: 'ダブルイリミネーション', SINGLE_ELIMINATION: 'シングルイリミネーション', ROUND_ROBIN: '総当たり' }[soFormat()];
   const bt = EVENT_CONTEXT && EVENT_CONTEXT.bracketType;
   document.getElementById('so-format-label').textContent = `形式: ${fmtJa}${bt ? '（自動取得）' : '（未取得→DE想定）'}`;
+  // シードズレ上限の規模別既定 (全欄が空のときだけ)。
+  prefillShiftLimits(DATA.length);
   document.getElementById('so-report').innerHTML = '';
   document.getElementById('so-progress').textContent = '';
   document.getElementById('so-apply').style.display = 'none';
@@ -2043,11 +2082,16 @@ async function runSeedOptimize() {
     rngSeed: intDef('so-rngseed', 12345),
     avoidRegion, avoidRecent, enableIntra, keepDePlace,
     bracketScope: scopeWinners ? 'winners' : undefined,   // undefined→既定 'pools'
-    winnersPoolRankLimit: (scopeWinners && document.getElementById('so-winners-poolrank').checked) ? true : undefined,
+    // シードズレ上限の段階指定 ([±0,±1,±2,±3,±4] それぞれ「何位まで」)。全空欄なら未指定。
+    shiftLimitRanks: (() => {
+      const arr = ['so-shift0', 'so-shift1', 'so-shift2', 'so-shift3', 'so-shift4']
+        .map(id => { const v = parseInt(document.getElementById(id).value, 10); return Number.isFinite(v) ? Math.max(1, v) : null; });
+      return arr.some(v => v != null) ? arr : undefined;
+    })(),
     W_region: numDef('so-wregion', 1.0),
     W_recent: numDef('so-wrecent', 0.3),
     W_order: Math.max(0, numDef('so-worder', 0)),
-    orderPow: Math.max(1, intDef('so-orderpow', 2)),
+    orderPow: Math.max(1, numDef('so-orderpow', 2)),   // スライダー (1〜3, 0.5刻み)
     prefWeight: document.getElementById('so-prefweight').value,
     roundWeights: csvNums('so-roundweights'),   // undefined→既定
     kInter: csvNums('so-kinter'),
@@ -2057,6 +2101,15 @@ async function runSeedOptimize() {
   };
   // undefined のキーは optimizer 既定に任せる（明示的に消す）。
   Object.keys(params).forEach(k => { if (params[k] === undefined) delete params[k]; });
+  // シードズレ上限の昇順チェック (optimizer でも throw するが、取得前にわかりやすく弾く)。
+  if (params.shiftLimitRanks) {
+    let prev = 0;
+    for (const v of params.shiftLimitRanks) {
+      if (v == null) continue;
+      if (v <= prev) { progress.textContent = '⚠ シードズレ上限は左の欄 (小さいズレ幅) ほど小さい順位にしてください。'; return; }
+      prev = v;
+    }
+  }
   // 減衰の制御点 "日:重み,..." をパース（空欄なら既定）。
   const dpRaw = (document.getElementById('so-decaypoints').value || '').trim();
   let recentDecayPoints;
@@ -2119,9 +2172,12 @@ async function runSeedOptimize() {
     SEEDOPT_WORKER.onmessage = (ev) => {
       const msg = ev.data || {};
       if (msg.type === 'progress') {
+        // このラウンドの何%処理中か (iter/maxIters)。phase 単位で 0→100% が進む。
+        const pct = (msg.iter != null && msg.maxIters > 0)
+          ? ` ${Math.min(100, msg.iter / msg.maxIters * 100).toFixed(0)}%` : '';
         progress.textContent = msg.stage === 'stop-requested'
           ? `${note} ｜ 停止要求受付 — 現在のラウンド完了後に停止します`
-          : `${note} ｜ 最適化中 (round ${msg.round + 1}/${msg.restarts}, phase ${msg.phase || ''})`;
+          : `${note} ｜ 最適化中 ラウンド ${msg.round + 1}/${msg.restarts} (${msg.phase || ''}${pct})`;
       } else if (msg.type === 'checkpoint') {
         const imp = msg.beforeScore > 0 ? ((1 - msg.bestScore / msg.beforeScore) * 100).toFixed(1) : '0.0';
         // このラウンドのステップ数% を蓄積 (phase 合算)。
@@ -2208,6 +2264,16 @@ function finishSeedOptimize(result, displayOf, note, ranking, interInfo) {
   // レポート描画: {プール間, プール内} × {同一地域, 直近対戦} の4セル。
   const dn = (u) => escHtml(displayOf[u] || u);
   const rc = rep.residualConcerns;
+  const rcB = rep.residualConcernsBefore || null;   // 最適化前 (前後比較用)
+  // 各項目 = 最適化後 (薄緑) + 折りたたみの「最適化前」(グレー・タップで展開)。
+  // key は再描画時の開閉状態保持 (data-k) に使う。
+  function beforeAfter(key, beforeHtml, afterHtml) {
+    if (beforeHtml == null) return afterHtml;
+    return `<div style="border:1px solid #dcfce7;border-radius:6px;padding:6px 8px;background:#f0fdf4;margin-top:3px">` +
+        `<div style="font-size:10px;font-weight:700;color:#16a34a;margin-bottom:2px">最適化後</div>${afterHtml}</div>` +
+      `<details data-k="ba-${key}" style="margin-top:3px"><summary style="cursor:pointer;font-size:10px;font-weight:700;color:#6b7280">最適化前を表示</summary>` +
+        `<div style="border:1px solid #e5e7eb;border-radius:6px;padding:6px 8px;background:#f3f4f6;margin-top:2px">${beforeHtml}</div></details>`;
+  }
   const sectionHead = (t) => `<div style="margin-top:10px;padding-top:6px;border-top:1px solid #e5e7eb;font-weight:700;font-size:12px;color:#111827">${t}</div>`;
   const ul = (items) => items.length ? `<ul style="margin:3px 0 0;padding-left:18px;font-size:11px;color:#374151">${items.map(x => `<li>${x}</li>`).join('')}</ul>` : '';
   const ok = (t) => `<div style="margin-top:3px;font-size:11px;color:#16a34a">✅ ${t}</div>`;
@@ -2319,12 +2385,43 @@ function finishSeedOptimize(result, displayOf, note, ranking, interInfo) {
 
   // ── レポート本体（デフォルト折りたたみ） ──
   html += `<details style="margin-top:6px"><summary style="cursor:pointer;font-weight:600;color:#374151">📋 レポート（プール間/内の被り）</summary>`;
+  // ⑤ 予選抜け後セル (再対戦 = ②④ と同じタップ展開付き)。
+  function postRecentCell(pRec) {
+    let h = `<div style="font-size:11px;color:#374151">予選抜け後の再対戦想定: <strong>${pRec.pairs}</strong> 組${pRec.top.length ? '（早い回戦順）' : ''}</div>`;
+    if (!pRec.top.length) return h;
+    h += `<div style="margin:3px 0 0;padding-left:6px;font-size:11px;color:#374151">`;
+    h += pRec.top.map(c => {
+      const t = c.lastTournament ? ` ${escHtml(c.lastTournament)}${c.lastNent != null ? `〈${c.lastNent}人〉` : ''}` : '';
+      const line = `${dn(c.a)} × ${dn(c.b)}（seed${c.seedA}×${c.seedB} / ${c.round}回戦${c.count != null ? ' / ' + c.count + '回' : ''}, 最終${c.lastDate || '?'}${t}）`;
+      const ms = Array.isArray(c.matches) ? c.matches : [];
+      if (!ms.length) return `<div style="padding:1px 0 1px 12px">${line}</div>`;
+      const hist = ms.map(m =>
+        `<div>${escHtml(m.date || '?')} ${m.tournament ? escHtml(m.tournament) : '（大会名不明）'}${m.nent != null ? `〈${m.nent}人〉` : ''}</div>`
+      ).join('');
+      return `<details style="padding:1px 0"><summary style="cursor:pointer">${line}</summary>` +
+        `<div style="margin:2px 0 4px 18px;color:#6b7280">${hist}</div></details>`;
+    }).join('');
+    h += `</div>`;
+    if (pRec.pairs > pRec.top.length) h += `<div style="font-size:11px;color:#9ca3af">…ほか ${pRec.pairs - pRec.top.length} 組</div>`;
+    return h;
+  }
+  function postRegionCell(pReg) {
+    const exR = pReg.excludedRegion ? `（最多地域 ${escHtml(pReg.excludedRegion)} は除外）` : '';
+    let h = `<div style="margin-top:5px;font-size:11px;color:#374151">予選抜け後の同一地域の当たり想定: <strong>${pReg.pairs}</strong> 組${exR}</div>`;
+    if (pReg.top.length) {
+      h += ul(pReg.top.map(x =>
+        `<strong>${escHtml(x.region)}</strong>: ${dn(x.a)} × ${dn(x.b)}（seed${x.seedA}×${x.seedB} / ${x.round}回戦）`));
+      if (pReg.pairs > pReg.top.length) h += `<div style="font-size:11px;color:#9ca3af">…ほか ${pReg.pairs - pReg.top.length} 組</div>`;
+    }
+    return h;
+  }
+
   // ① プール間 × 同一地域 ＝ 各プールの地域バランス
   html += sectionHead(`① プール間 × 同一地域（各プールの地域バランス） ${ev('interRegion')}`) + `<div style="font-size:10px;color:#9ca3af">各地域がプール間で均等に散っているか（同一地域＝都道府県/南関東等）</div>`;
-  html += regionBalanceCell(rc.inter.region);
+  html += beforeAfter('1', rcB && regionBalanceCell(rcB.inter.region), regionBalanceCell(rc.inter.region));
   // ② プール間 × 直近対戦
   html += sectionHead(`② プール間 × 直近対戦 ${ev('interRecent')}`) + `<div style="font-size:10px;color:#9ca3af">最近(1年内)対戦した相手が同じプールにいないか</div>`;
-  html += recentCell(rc.inter.recent, false);
+  html += beforeAfter('2', rcB && recentCell(rcB.inter.recent, false), recentCell(rc.inter.recent, false));
 
   if (rc.intra) {
     const er = rc.intra.earlyRound;
@@ -2334,10 +2431,10 @@ function finishSeedOptimize(result, displayOf, note, ranking, interInfo) {
     const evIntra = (k) => ranIntra ? ev(k) : '<span style="font-size:10px;color:#9ca3af">（プール内変動オフ＝既定ブラケット順の当たり）</span>';
     // ③ プール内 × 同一地域 ＝ 同一地域が当たる最早回戦の分布
     html += sectionHead(`③ プール内 × 同一地域（ブラケット内の当たり回戦バランス） ${evIntra('intraRegion')}`) + `<div style="font-size:10px;color:#9ca3af">同プールの同一地域同士がなるべく遅い回戦で当たるか</div>`;
-    html += intraRegionCell(rc.intra.region, er);
+    html += beforeAfter('3', rcB && rcB.intra && intraRegionCell(rcB.intra.region, er), intraRegionCell(rc.intra.region, er));
     // ④ プール内 × 直近対戦
     html += sectionHead(`④ プール内 × 直近対戦（${er}回戦以内） ${evIntra('intraRecent')}`) + `<div style="font-size:10px;color:#9ca3af">同プール内でも直近対戦相手と早期回戦で当たらないか</div>`;
-    html += recentCell(rc.intra.recent, true);
+    html += beforeAfter('4', rcB && rcB.intra && recentCell(rcB.intra.recent, true), recentCell(rc.intra.recent, true));
   }
   // ⑤ 予選抜け後 (本戦想定): 全体を1つの勝者側ブラケットとみなし、シード通り
   // 勝ち進んだ場合に閾値より後の回戦で当たる 直近対戦/同一地域 ペア。
@@ -2345,23 +2442,8 @@ function finishSeedOptimize(result, displayOf, note, ranking, interInfo) {
     const th = rc.postPool.threshold;
     html += sectionHead(`⑤ 予選抜け後 × 直近対戦 / 同一地域（本戦想定・${th}回戦超）`) +
       `<div style="font-size:10px;color:#9ca3af">全員をシード順の1つの勝者側ブラケットとみなし、シード通り勝ち進んだ場合に${th}回戦より後で当たるペア（プール構造とは独立の見積もり）</div>`;
-    const pRec = rc.postPool.recent;
-    html += `<div style="margin-top:5px;font-size:11px;color:#374151">予選抜け後の再対戦想定: <strong>${pRec.pairs}</strong> 組${pRec.top.length ? '（早い回戦順）' : ''}</div>`;
-    if (pRec.top.length) {
-      html += ul(pRec.top.map(c => {
-        const t = c.lastTournament ? ` ${escHtml(c.lastTournament)}${c.lastNent != null ? `〈${c.lastNent}人〉` : ''}` : '';
-        return `${dn(c.a)} × ${dn(c.b)}（seed${c.seedA}×${c.seedB} / ${c.round}回戦 / ${c.count != null ? c.count + '回, ' : ''}最終${c.lastDate || '?'}${t}）`;
-      }));
-      if (pRec.pairs > pRec.top.length) html += `<div style="font-size:11px;color:#9ca3af">…ほか ${pRec.pairs - pRec.top.length} 組</div>`;
-    }
-    const pReg = rc.postPool.region;
-    const exR = pReg.excludedRegion ? `（最多地域 ${escHtml(pReg.excludedRegion)} は除外）` : '';
-    html += `<div style="margin-top:5px;font-size:11px;color:#374151">予選抜け後の同一地域の当たり想定: <strong>${pReg.pairs}</strong> 組${exR}</div>`;
-    if (pReg.top.length) {
-      html += ul(pReg.top.map(x =>
-        `<strong>${escHtml(x.region)}</strong>: ${dn(x.a)} × ${dn(x.b)}（seed${x.seedA}×${x.seedB} / ${x.round}回戦）`));
-      if (pReg.pairs > pReg.top.length) html += `<div style="font-size:11px;color:#9ca3af">…ほか ${pReg.pairs - pReg.top.length} 組</div>`;
-    }
+    const postHtml = (pc) => postRecentCell(pc.recent) + postRegionCell(pc.region);
+    html += beforeAfter('5', rcB && rcB.postPool && postHtml(rcB.postPool), postHtml(rc.postPool));
   }
   html += `</details>`;
 
@@ -2418,7 +2500,22 @@ function finishSeedOptimize(result, displayOf, note, ranking, interInfo) {
     t += `</tbody></table></details>`;
     html += t;
   }
-  document.getElementById('so-report').innerHTML = html;
+  // 中間レポートの再描画で開いていた <details> が閉じないよう、開閉状態を
+  // キー (data-k、無ければ summary テキスト) で保存して復元する。
+  const reportEl2 = document.getElementById('so-report');
+  const detailKey = (d) => {
+    if (d.dataset && d.dataset.k) return d.dataset.k;
+    const s = d.querySelector('summary');
+    return s ? s.textContent : '';
+  };
+  const openKeys = new Set();
+  reportEl2.querySelectorAll('details[open]').forEach(d => openKeys.add(detailKey(d)));
+  reportEl2.innerHTML = html;
+  if (openKeys.size) {
+    reportEl2.querySelectorAll('details').forEach(d => {
+      if (openKeys.has(detailKey(d))) d.open = true;
+    });
+  }
   if (!interInfo) {
     const applyBtn = document.getElementById('so-apply');
     applyBtn.style.display = '';

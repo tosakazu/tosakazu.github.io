@@ -33,6 +33,7 @@ self.onmessage = function (e) {
 async function run(input) {
   running = true;
   stopRequested = false;
+  let lastProgressTs = 0;   // iter 進捗のスロットリング用
 
   const baseMode = (input.params && input.params.mode) || input.mode || 'multistart-sa';
   const isMulti = baseMode.indexOf('multistart') === 0;
@@ -55,7 +56,16 @@ async function run(input) {
       }),
     });
     const res = SeedOptimizer.optimize(inp, {
-      onProgress: (p) => self.postMessage(Object.assign({ type: 'progress', round: k, restarts }, p)),
+      // iter 進捗は 100ms にスロットリング (事前計算高速化で素の頻度は ~1ms 毎になった)。
+      // stage 付き (phase 開始等) はそのまま通す。
+      onProgress: (p) => {
+        if (p.stage == null && p.iter != null) {
+          const now = Date.now();
+          if (now - lastProgressTs < 100) return;
+          lastProgressTs = now;
+        }
+        self.postMessage(Object.assign({ type: 'progress', round: k, restarts }, p));
+      },
       shouldStop: () => stopRequested,
     });
 
