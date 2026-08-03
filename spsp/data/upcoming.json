@@ -1,8 +1,8 @@
 {
-  "generated_at": 1785672012,
+  "generated_at": 1785682810,
   "country_code": "JP",
   "lookahead_days": 21,
-  "count": 56,
+  "count": 57,
   "tournaments": [
     {
       "tournament_id": 925145,
@@ -44,7 +44,7 @@
           "event_id": 1676156,
           "event_slug": "tournament/3-516/event/on",
           "event_name": "シングルス（１on１トーナメント）",
-          "num_entrants": 9,
+          "num_entrants": 10,
           "type": 1,
           "start_at": 1785744000
         }
@@ -83,14 +83,14 @@
       "city": "大阪市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 16,
+      "num_attendees": 17,
       "url": "/tournament/hit-186-maesuma-hit-186",
       "events": [
         {
           "event_id": 1679803,
           "event_slug": "tournament/hit-186-maesuma-hit-186/event/singles-tournament",
           "event_name": "Singles Tournament",
-          "num_entrants": 16,
+          "num_entrants": 17,
           "type": 1,
           "start_at": 1785751200
         }
@@ -129,7 +129,7 @@
       "city": "中野区",
       "venue_name": "Red Bull Gaming Sphere Tokyo",
       "country_code": "JP",
-      "num_attendees": 56,
+      "num_attendees": 57,
       "url": "/tournament/weekly-smash-party-240",
       "events": [
         {
@@ -275,14 +275,14 @@
       "city": "台東区",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 4,
+      "num_attendees": 5,
       "url": "/tournament/7-519",
       "events": [
         {
           "event_id": 1676158,
           "event_slug": "tournament/7-519/event/on",
           "event_name": "シングルス（１on１トーナメント）",
-          "num_entrants": 4,
+          "num_entrants": 5,
           "type": 1,
           "start_at": 1786089600
         }
@@ -512,7 +512,7 @@
           "event_id": 1679057,
           "event_slug": "tournament/to-win-12/event/singles",
           "event_name": "Singles",
-          "num_entrants": 20,
+          "num_entrants": 22,
           "type": 1,
           "start_at": 1786237200
         }
@@ -1218,7 +1218,7 @@
       "city": "渋谷区",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 271,
+      "num_attendees": 272,
       "url": "/tournament/shibuya-dairan-first-strike",
       "events": [
         {
@@ -1274,6 +1274,29 @@
           "num_entrants": 5,
           "type": 1,
           "start_at": 1787371200
+        }
+      ]
+    },
+    {
+      "tournament_id": 936065,
+      "tournament_slug": "tournament/kowloon-18-5",
+      "tournament_name": "九龍-KOWLOON-#18.5",
+      "start_at": 1787446800,
+      "end_at": 1787490000,
+      "is_online": false,
+      "city": "福岡市",
+      "venue_name": "",
+      "country_code": "JP",
+      "num_attendees": 87,
+      "url": "/tournament/kowloon-18-5",
+      "events": [
+        {
+          "event_id": 1673913,
+          "event_slug": "tournament/kowloon-18-5/event/kowloon_sp",
+          "event_name": "KOWLOON_SP",
+          "num_entrants": 87,
+          "type": 1,
+          "start_at": 1787446800
         }
       ]
     },
