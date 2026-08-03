@@ -1,32 +1,9 @@
 {
-  "generated_at": 1785704409,
+  "generated_at": 1785715232,
   "country_code": "JP",
   "lookahead_days": 21,
   "count": 58,
   "tournaments": [
-    {
-      "tournament_id": 925145,
-      "tournament_slug": "tournament/unibura-8",
-      "tournament_name": "ユニブラ/Unibura #8",
-      "start_at": 1785724200,
-      "end_at": 1785747600,
-      "is_online": false,
-      "city": "足立区",
-      "venue_name": "",
-      "country_code": "JP",
-      "num_attendees": 48,
-      "url": "/tournament/unibura-8",
-      "events": [
-        {
-          "event_id": 1652207,
-          "event_slug": "tournament/unibura-8/event/ultimate-singles",
-          "event_name": "Ultimate Singles",
-          "num_entrants": 46,
-          "type": 1,
-          "start_at": 1785724200
-        }
-      ]
-    },
     {
       "tournament_id": 937206,
       "tournament_slug": "tournament/3-516",
@@ -37,14 +14,14 @@
       "city": "台東区",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 14,
+      "num_attendees": 17,
       "url": "/tournament/3-516",
       "events": [
         {
           "event_id": 1676156,
           "event_slug": "tournament/3-516/event/on",
           "event_name": "シングルス（１on１トーナメント）",
-          "num_entrants": 13,
+          "num_entrants": 17,
           "type": 1,
           "start_at": 1785744000
         }
@@ -67,7 +44,7 @@
           "event_id": 1675472,
           "event_slug": "tournament/gg-8-kannai-gg/event/kannai-gg-sp-1on1",
           "event_name": "kannai-gg/スマブラSP 1on1",
-          "num_entrants": 5,
+          "num_entrants": 6,
           "type": 1,
           "start_at": 1785747600
         }
@@ -83,14 +60,14 @@
       "city": "大阪市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 20,
+      "num_attendees": 25,
       "url": "/tournament/hit-186-maesuma-hit-186",
       "events": [
         {
           "event_id": 1679803,
           "event_slug": "tournament/hit-186-maesuma-hit-186/event/singles-tournament",
           "event_name": "Singles Tournament",
-          "num_entrants": 20,
+          "num_entrants": 25,
           "type": 1,
           "start_at": 1785751200
         }
@@ -129,7 +106,7 @@
       "city": "中野区",
       "venue_name": "Red Bull Gaming Sphere Tokyo",
       "country_code": "JP",
-      "num_attendees": 63,
+      "num_attendees": 64,
       "url": "/tournament/weekly-smash-party-240",
       "events": [
         {
@@ -183,14 +160,14 @@
       "city": "京都市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 9,
+      "num_attendees": 11,
       "url": "/tournament/dsw-63",
       "events": [
         {
           "event_id": 1678531,
           "event_slug": "tournament/dsw-63/event/singletournament",
           "event_name": "SingleTournament",
-          "num_entrants": 9,
+          "num_entrants": 11,
           "type": 1,
           "start_at": 1785927600
         }
@@ -206,14 +183,14 @@
       "city": "台東区",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 5,
+      "num_attendees": 8,
       "url": "/tournament/6-518",
       "events": [
         {
           "event_id": 1676157,
           "event_slug": "tournament/6-518/event/on",
           "event_name": "シングルス（１on１トーナメント）",
-          "num_entrants": 5,
+          "num_entrants": 8,
           "type": 1,
           "start_at": 1786003200
         }
@@ -275,14 +252,14 @@
       "city": "台東区",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 5,
+      "num_attendees": 9,
       "url": "/tournament/7-519",
       "events": [
         {
           "event_id": 1676158,
           "event_slug": "tournament/7-519/event/on",
           "event_name": "シングルス（１on１トーナメント）",
-          "num_entrants": 5,
+          "num_entrants": 9,
           "type": 1,
           "start_at": 1786089600
         }
@@ -367,14 +344,14 @@
       "city": "大分市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 3,
+      "num_attendees": 4,
       "url": "/tournament/16-33",
       "events": [
         {
           "event_id": 1678546,
           "event_slug": "tournament/16-33/event/1on1",
           "event_name": "1on1トーナメント",
-          "num_entrants": 3,
+          "num_entrants": 4,
           "type": 1,
           "start_at": 1786098600
         }
@@ -423,6 +400,29 @@
           "num_entrants": 82,
           "type": 1,
           "start_at": 1786154400
+        }
+      ]
+    },
+    {
+      "tournament_id": 939424,
+      "tournament_slug": "tournament/8-519-5",
+      "tournament_name": "8(土)上野スマコミ#519.5(オープン)",
+      "start_at": 1786158000,
+      "end_at": 1786183200,
+      "is_online": false,
+      "city": "台東区",
+      "venue_name": "",
+      "country_code": "JP",
+      "num_attendees": 3,
+      "url": "/tournament/8-519-5",
+      "events": [
+        {
+          "event_id": 1680878,
+          "event_slug": "tournament/8-519-5/event/on",
+          "event_name": "シングルス（１on１トーナメント）",
+          "num_entrants": 3,
+          "type": 1,
+          "start_at": 1786158000
         }
       ]
     },
@@ -505,7 +505,7 @@
       "city": "渋谷区",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 24,
+      "num_attendees": 25,
       "url": "/tournament/to-win-12",
       "events": [
         {
@@ -758,14 +758,14 @@
       "city": "岐阜市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 17,
+      "num_attendees": 18,
       "url": "/tournament/12-55",
       "events": [
         {
           "event_id": 1666986,
           "event_slug": "tournament/12-55/event/super-smash-bros-ultimate-singles",
           "event_name": "ぐーすま",
-          "num_entrants": 17,
+          "num_entrants": 18,
           "type": 1,
           "start_at": 1786420800
         }
@@ -919,14 +919,14 @@
       "city": "名古屋市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 477,
+      "num_attendees": 478,
       "url": "/tournament/-3119",
       "events": [
         {
           "event_id": 1651150,
           "event_slug": "tournament/-3119/event/grand-slum",
           "event_name": "grand slum",
-          "num_entrants": 477,
+          "num_entrants": 478,
           "type": 1,
           "start_at": 1786752000
         }
