@@ -83,6 +83,36 @@
   /* Table base, column widths, lv-badge / gate-pill / player-name / mobile card layout は
      共有 ranking-table.css へ移行済。ここではシード固有のオーバーライドのみ. */
 
+  /* 手動調整列: 縦積み (手動シード#+変動矢印 / 元#N / 選択ボタン)。隣列と重ならないよう固定幅 */
+  #ranktable th.col-manual, #ranktable td.col-manual {
+    width: 76px; min-width: 68px; text-align: center; white-space: normal; padding: 4px 4px;
+  }
+  .mn-cell { display: flex; flex-direction: column; align-items: center; gap: 2px; line-height: 1.2; }
+  .mn-cell .mn-num { font-variant-numeric: tabular-nums; font-weight: 700; white-space: nowrap; }
+  .mn-cell .mn-orig { font-size: 9px; color: #9ca3af; white-space: nowrap; }
+  /* 挿入スロット: タップしやすい高さのある帯にする */
+  .mn-slot {
+    cursor: pointer; text-align: center; user-select: none;
+    font-size: 11px; font-weight: 600; color: #ea580c;
+    padding: 7px 0; margin: 3px 4px;
+    border: 1.5px dashed #fb923c; border-radius: 6px; background: #fff7ed;
+  }
+  .mn-slot:hover, .mn-slot:active { background: #ffedd5; border-style: solid; }
+  @media (max-width: 720px) {
+    .mn-slot { padding: 10px 0; margin: 4px 2px; font-size: 12px; }
+  }
+  /* モバイルカードレイアウト: 手動セルはカード下段に全幅・横並びで配置
+     (grid 未指定だと他セルと重なって選択ボタンが押せない) */
+  @media (max-width: 720px) {
+    #ranktable tr.main-row td.col-manual {
+      grid-column: 1 / -1; grid-row: 3;
+      display: flex !important; padding-top: 4px !important;
+    }
+    .mn-cell { flex-direction: row; gap: 8px; align-items: center; }
+    #ranktable tr.mn-slot-row { display: block; width: 100%; }
+    #ranktable tr.mn-slot-row td { display: block !important; width: 100%; padding: 0 !important; border: none; }
+  }
+
   .detail-explain {
     background: #f9fafb; border-left: 3px solid #dc2626;
     padding: 10px 16px; margin-bottom: 12px;
@@ -547,7 +577,7 @@
       <label title="直近に対戦した相手と再び早期に当たるのを避ける"><input type="checkbox" id="so-avoid-recent" checked> 直近対戦を避ける</label>
       <span style="color:#d1d5db">｜</span>
       <label title="全員のダブルイリミネーション想定順位（1,2,3,4,5,5,7,7,9,9,9,9,…のタイ帯）が元シードから変わらない範囲でのみ入れ替える"><input type="checkbox" id="so-keep-deplace" checked> DE想定順位を変えない</label>
-      <label title="通常のプール最適化（プール間/内）に加えて、全体を1つの勝者側ダブルイリミブラケットとみなし「シード通り勝ち上がったときに実際に発生する試合」の被りも追加で最適化する。追加フェーズはタイ帯（DE想定順位）内で動き、プール分離を壊す移動は損として評価される。このモード中は全フェーズでDE想定順位不変がハード制約。1プールでは勝者側のみ。DE専用"><input type="checkbox" id="so-scope-winners"> 勝者側ブラケットも考慮</label>
+      <label title="通常のプール最適化（プール間/内）に加えて、全体を1つの勝者側ダブルイリミブラケットとみなし「シード通り勝ち上がったときに実際に発生する試合」の被りも追加で最適化する。追加フェーズはタイ帯（DE想定順位）内で動き、プール分離を壊す移動は損として評価される。このモード中は全フェーズでDE想定順位不変がハード制約。1プールでは勝者側のみ。DE専用"><input type="checkbox" id="so-scope-winners" checked> 勝者側ブラケットも考慮</label>
       <label title="平日扱いの大会（平日開催・実質平日・プレ大会）での対戦を「直近対戦」の考慮対象から除く"><input type="checkbox" id="so-exclude-weekday"> 平日大会の対戦を除く</label>
       <span style="color:#d1d5db">｜</span>
       <label title="東京・神奈川・埼玉・千葉を同一地域(南関東)として扱う"><input type="checkbox" id="so-group-minamikanto" checked> 東京・神奈川・埼玉・千葉をまとめる</label>
@@ -634,6 +664,9 @@
   </details>
 </div>
 
+<!-- 手動調整モード: ロック解除で通常のランキング表のまま並べ替えできる (自動保存/undo/redo) -->
+<div id="manual-bar" style="display:none;margin:10px 0 6px"></div>
+
 <div class="table-wrap">
   <table id="ranktable">
     <!-- thead は SPSPRankingTable コンポーネントが自動生成 -->
@@ -649,7 +682,7 @@
 </div>
 
 <div class="footer" id="footer-info"></div>
-<div class="footer" style="margin-top:-12px"><span class="site-version" style="font-size:11px;color:#9ca3af">v 225e368 · 2026-08-03 18:09 UTC</span></div>
+<div class="footer" style="margin-top:-12px"><span class="site-version" style="font-size:11px;color:#9ca3af">v 5a164a2 · 2026-08-03 19:23 UTC</span></div>
 
 <!-- Chart.js (lazy load on first graph use) -->
 <script>
@@ -699,14 +732,274 @@ let EVENT_CONTEXT = null;
 // 被り回避最適化を「適用」した場合のシード順 (= uid 配列)。null なら currentMethod 順。
 let APPLIED_ORDER = null;
 
-// CSV / start.gg 適用で使うシード出力順。APPLIED_ORDER があればそれ、なければ currentMethod 順。
+// CSV / start.gg 適用で使うシード出力順。優先度: 被り回避適用 > 手動調整 > currentMethod 順。
+// 手動調整は編集中でも現在の並びを出力に使う (確定は「編集を終える」の意味)。
 function orderedRecs() {
   if (APPLIED_ORDER) {
     const pos = new Map(APPLIED_ORDER.map((u, i) => [u, i]));
     return DATA.slice().sort((a, b) =>
       (pos.has(a.user_id) ? pos.get(a.user_id) : 1e9) - (pos.has(b.user_id) ? pos.get(b.user_id) : 1e9));
   }
+  if (MANUAL) {
+    const pos = new Map(manualOrder().map((u, i) => [u, i]));
+    return DATA.slice().sort((a, b) =>
+      (pos.has(a.user_id) ? pos.get(a.user_id) : 1e9) - (pos.has(b.user_id) ? pos.get(b.user_id) : 1e9));
+  }
   return DATA.slice().sort((a, b) => (a.ranks[currentMethod] || 1e9) - (b.ranks[currentMethod] || 1e9));
+}
+
+// ── 手動調整モード ─────────────────────────────────────────────
+// ロックを外すと現在の出力順を基準 (base) に、行の「選択」→挿入位置クリック or
+// シード番号直接入力で並べ替えできる。操作は op 履歴 (最大 MANUAL_MAX_OPS 件,
+// undo/redo 可、超過分は base に畳み込み) で管理し、localStorage に1件だけ自動保存
+// (同一イベント・同一参加者集合なら再訪時に復元)。確定すると orderedRecs / CSV /
+// start.gg 適用 / 被り回避最適化の基準ランキングになる。
+const MANUAL_LS_KEY = 'spsp_seed_manual_v1';
+const MANUAL_MAX_OPS = 100;
+let MANUAL = null;   // {base:[uid], ops:[{uid,to}], hpos, committed, editing, sel}
+
+function manualEventKey() {
+  if (!EVENT_CONTEXT) return null;
+  return `${EVENT_CONTEXT.eventId || ''}:${EVENT_CONTEXT.phaseId || ''}`;
+}
+function manualParseUid(s) { const n = Number(s); return Number.isNaN(n) ? s : n; }
+function manualApplyOp(arr, op) {
+  const a = arr.slice();
+  const i = a.indexOf(op.uid);
+  if (i >= 0) {
+    a.splice(i, 1);
+    a.splice(Math.max(0, Math.min(op.to, a.length)), 0, op.uid);
+  }
+  return a;
+}
+function manualOrder() {
+  let a = MANUAL.base.slice();
+  for (let k = 0; k < MANUAL.hpos; k++) a = manualApplyOp(a, MANUAL.ops[k]);
+  return a;
+}
+function manualMovedSet() {
+  return new Set(MANUAL.ops.slice(0, MANUAL.hpos).map(o => o.uid));
+}
+function saveManual() {
+  try {
+    if (!MANUAL) { localStorage.removeItem(MANUAL_LS_KEY); return; }
+    localStorage.setItem(MANUAL_LS_KEY, JSON.stringify({
+      eventKey: manualEventKey(), base: MANUAL.base, ops: MANUAL.ops,
+      hpos: MANUAL.hpos, committed: MANUAL.committed, ts: Date.now(),
+    }));
+  } catch (e) { /* 容量超過等は無視 (保存はベストエフォート) */ }
+}
+// イベント取得後に呼ぶ: 同一イベント & 同一参加者集合なら保存済み手動調整を復元。
+function restoreManualForEvent() {
+  MANUAL = null;
+  try {
+    const raw = localStorage.getItem(MANUAL_LS_KEY);
+    if (raw) {
+      const s = JSON.parse(raw);
+      if (s && s.eventKey === manualEventKey() && Array.isArray(s.base)) {
+        const cur = new Set(DATA.map(r => r.user_id));
+        if (s.base.length === cur.size && s.base.every(u => cur.has(u))) {
+          MANUAL = {
+            base: s.base, ops: Array.isArray(s.ops) ? s.ops : [],
+            hpos: Math.min(s.hpos || 0, (s.ops || []).length),
+            committed: !!s.committed, editing: false, sel: null,
+          };
+        }
+      }
+    }
+  } catch (e) { MANUAL = null; }
+  renderManualUI();
+}
+function manualPushOp(uid, to) {
+  const cur = manualOrder();
+  const from = cur.indexOf(uid);
+  if (from < 0) return;
+  const t = Math.max(0, Math.min(to, cur.length - 1));
+  if (t === from) { MANUAL.sel = null; renderManualUI(); return; }
+  MANUAL.ops = MANUAL.ops.slice(0, MANUAL.hpos);
+  MANUAL.ops.push({ uid, to: t });
+  if (MANUAL.ops.length > MANUAL_MAX_OPS) {   // 古い op は base に畳み込む
+    MANUAL.base = manualApplyOp(MANUAL.base, MANUAL.ops[0]);
+    MANUAL.ops = MANUAL.ops.slice(1);
+  }
+  MANUAL.hpos = MANUAL.ops.length;
+  MANUAL.sel = null;
+  saveManual(); renderManualUI();
+}
+function manualUnlock() {
+  if (!MANUAL) {
+    // 初回: 現在の出力順 (被り回避適用済みならその順序) を基準に取り込む。
+    MANUAL = { base: orderedRecs().map(r => r.user_id), ops: [], hpos: 0, committed: false, editing: true, sel: null };
+  } else {
+    // 再編集: MANUAL (op 履歴・undo/redo 位置) をそのまま保持する。
+    // 被り回避適用中でも base には畳み込まない (最適化は確定後に再実行できるが、
+    // 手動の履歴はここでしか持っていないため優先)。
+    MANUAL.editing = true;
+    MANUAL.sel = null;
+  }
+  if (APPLIED_ORDER) { APPLIED_ORDER = null; clearSeedOptApplied(); }
+  if (SEEDOPT_RESULT) resetSeedOptResultPanel('手動調整モードに入ったため被り回避の結果をクリアしました。確定後に再実行してください。');
+  saveManual(); renderManualUI();
+}
+function manualCommit() {
+  if (!MANUAL) return;
+  MANUAL.editing = false;
+  MANUAL.committed = true;
+  MANUAL.sel = null;
+  saveManual(); renderManualUI();
+  const st = document.getElementById('status');
+  if (st) st.textContent = `✋ 手動調整を確定しました (${manualMovedSet().size}人移動)。CSV / start.gg 適用 / 被り回避最適化はこの順序が基準になります。`;
+}
+function manualDiscard() {
+  if (!MANUAL) return;
+  // 必ず確認ダイアログを出す (undo/redo 履歴ごと消える操作なので)。
+  if (!confirm('手動調整を破棄して元の順序に戻しますか？\n(移動内容と元に戻す/やり直す履歴、ブラウザ保存も消えます)')) return;
+  MANUAL = null;
+  saveManual(); renderManualUI();
+}
+function manualBarHtml() {
+  const btn = (mn, label, extra) =>
+    `<button data-mn="${mn}" ${extra || ''} style="font-size:11px;padding:3px 10px;border:1px solid #d1d5db;border-radius:6px;background:#f9fafb;color:#374151;cursor:pointer">${label}</button>`;
+  if (!MANUAL) {
+    return `<button data-mn="unlock" style="font-size:12px;padding:5px 12px;border:1px solid #d1d5db;border-radius:6px;background:#f3f4f6;color:#6b7280;cursor:pointer">🔒 手動調整 — タップで編集開始</button>`;
+  }
+  const moved = manualMovedSet().size;
+  if (MANUAL.editing) {
+    const canUndo = MANUAL.hpos > 0, canRedo = MANUAL.hpos < MANUAL.ops.length;
+    return `<div style="border:2px solid #fb923c;background:#fff7ed;border-radius:8px;padding:8px 10px;font-size:12px;display:flex;gap:8px;flex-wrap:wrap;align-items:center">`
+      + `<span style="font-weight:700;color:#ea580c">✋ 手動調整モード</span>`
+      + `<span style="color:#9a3412">${moved}人移動</span>`
+      + btn('undo', '↩ 元に戻す', canUndo ? '' : 'disabled')
+      + btn('redo', '↪ やり直す', canRedo ? '' : 'disabled')
+      + `<button data-mn="commit" style="font-size:11px;padding:3px 12px;border:none;border-radius:6px;background:#16a34a;color:#fff;font-weight:600;cursor:pointer">✅ 確定</button>`
+      + btn('discard', '🗑 破棄')
+      + `<span style="color:#9ca3af;font-size:10px;flex-basis:100%">行の「選択」→ 挿入位置クリック か シード番号入力で移動。プレイヤー名クリックはプロフィールを新しいタブで開きます。状態はこのブラウザに自動保存 (1件・上書き)</span>`
+      + `</div>`;
+  }
+  const optNote = APPLIED_ORDER ? '（被り回避適用中 — 下の表は最適化後の順序）' : '';
+  return `<div style="border:1px solid #f59e0b;background:#fffbeb;border-radius:8px;padding:6px 10px;font-size:12px;display:flex;gap:8px;flex-wrap:wrap;align-items:center">`
+    + `<span style="font-weight:700;color:#b45309">✋ 手動調整 (${moved}人移動)</span><span style="color:#9ca3af;font-size:10px">${optNote}</span>`
+    + btn('unlock', moved > 0 ? '✏ 編集を再開' : '✏ 編集を開始') + btn('discard', '🗑 破棄')
+    + `</div>`;
+}
+// 「移動中」アクションバー (選択中のみ manual-bar 直下に表示)。
+function manualActionBarHtml() {
+  const recBy = new Map(DATA.map(r => [r.user_id, r]));
+  const selRec = recBy.get(MANUAL.sel);
+  const n = manualOrder().length;
+  return `<div style="margin-top:6px;background:#fff7ed;border:1px solid #fb923c;border-radius:6px;padding:6px 10px;font-size:12px">`
+    + `<b>${escHtml(selRec ? selRec.display : String(MANUAL.sel))}</b> を移動中 — 表の行間の「▾ ここに挿入」をクリック、またはシード番号 `
+    + `<input type="number" data-mn-input min="1" max="${n}" style="width:64px;padding:2px 4px;border:1px solid #d1d5db;border-radius:4px"> `
+    + `<button data-mn="move-input" style="padding:2px 10px;border:none;border-radius:5px;background:#fb923c;color:#fff;cursor:pointer">移動</button> `
+    + `<button data-mn="cancel-sel" style="padding:2px 8px;border:1px solid #d1d5db;border-radius:5px;background:#fff;cursor:pointer">キャンセル</button></div>`;
+}
+// 通常のランキング表への手動調整装飾 (描画のたびに適用)。
+//   - 移動済み行 = 黄背景、選択中行 = オレンジ背景
+//   - 編集中はプレイヤーリンクを新規タブ化
+//   - 選択中は行間に「▾ ここに挿入」スロット行を差し込む
+function decorateManualTable() {
+  if (!MANUAL) return;
+  const tbody = document.getElementById('ranktable').querySelector('tbody');
+  if (!tbody) return;
+  const editing = MANUAL.editing;
+  const colspan = (TABLE && TABLE.columns) ? TABLE.columns.length : 10;
+  const rows = Array.from(tbody.querySelectorAll('tr.main-row'));
+  rows.forEach((tr) => {
+    const uid = manualParseUid(tr.dataset.uid);
+    if (MANUAL.sel === uid) tr.style.background = '#ffedd5';
+    else if (_mnMoved.has(uid)) tr.style.background = '#fef9c3';
+    // 手動調整中 (編集中/確定後とも) はプレイヤー名クリックを新規タブに。
+    tr.querySelectorAll('a.player-name').forEach((a) => { a.target = '_blank'; a.rel = 'noopener'; });
+  });
+  if (editing && MANUAL.sel != null && rows.length) {
+    const slotHtml = (attr) =>
+      `<td colspan="${colspan}" style="padding:0;border:none"><div class="mn-slot" data-mn="slot" ${attr}>▾ ここに挿入</div></td>`;
+    const first = document.createElement('tr');
+    first.className = 'mn-slot-row';
+    first.innerHTML = slotHtml('data-top="1"');
+    tbody.insertBefore(first, rows[0]);
+    rows.forEach((tr) => {
+      const s = document.createElement('tr');
+      s.className = 'mn-slot-row';
+      s.innerHTML = slotHtml(`data-after="${escHtml(String(tr.dataset.uid))}"`);
+      // 詳細展開行 (detail-row) があればその後ろに入れる
+      let anchor = tr;
+      if (anchor.nextElementSibling && anchor.nextElementSibling.classList.contains('detail-row')) {
+        anchor = anchor.nextElementSibling;
+      }
+      tbody.insertBefore(s, anchor.nextElementSibling);
+    });
+  }
+}
+// 手動調整のクリック操作 (バー/リスト共通のデリゲーション)。
+function manualClickHandler(e) {
+  const el = e.target.closest('[data-mn]');
+  if (!el || el.disabled) return;
+  const act = el.dataset.mn;
+  if (act === 'unlock') { manualUnlock(); return; }
+  if (!MANUAL) return;
+  if (act === 'undo') { MANUAL.hpos = Math.max(0, MANUAL.hpos - 1); MANUAL.sel = null; saveManual(); renderManualUI(); return; }
+  if (act === 'redo') { MANUAL.hpos = Math.min(MANUAL.ops.length, MANUAL.hpos + 1); MANUAL.sel = null; saveManual(); renderManualUI(); return; }
+  if (act === 'commit') { manualCommit(); return; }
+  if (act === 'discard') { manualDiscard(); return; }
+  if (act === 'select') {
+    const uid = manualParseUid(el.dataset.uid);
+    MANUAL.sel = (MANUAL.sel === uid) ? null : uid;
+    renderManualUI(); return;
+  }
+  if (act === 'cancel-sel') { MANUAL.sel = null; renderManualUI(); return; }
+  if (act === 'slot') {
+    if (MANUAL.sel == null) return;
+    // スロットは「先頭 (data-top)」か「行 uid の直後 (data-after)」。フィルタ中でも
+    // 完全な手動順に対する位置で解決する。
+    const cur = manualOrder();
+    const from = cur.indexOf(MANUAL.sel);
+    const k = el.dataset.top != null ? 0 : cur.indexOf(manualParseUid(el.dataset.after)) + 1;
+    manualPushOp(MANUAL.sel, k > from ? k - 1 : k);
+    return;
+  }
+  if (act === 'move-input') {
+    if (MANUAL.sel == null) return;
+    const inp = document.getElementById('manual-bar').querySelector('input[data-mn-input]');
+    const v = inp ? parseInt(inp.value, 10) : NaN;
+    if (!Number.isFinite(v)) return;
+    manualPushOp(MANUAL.sel, v - 1);
+    return;
+  }
+}
+
+// 手動調整 UI 全体の再描画: バー更新 + 通常テーブルへの手動列/並び順の反映。
+// テーブル自体は共有コンポーネントのまま (手動調整列 + 装飾を足すだけ)。
+let _mnTableMode = false;   // テーブルに手動列が入っているか
+function renderManualUI() {
+  const bar = document.getElementById('manual-bar');
+  if (!bar) return;
+  if (!DATA.length) { bar.style.display = 'none'; return; }
+  bar.style.display = '';
+  let barHtml = manualBarHtml();
+  if (MANUAL && MANUAL.editing && MANUAL.sel != null) barHtml += manualActionBarHtml();
+  bar.innerHTML = barHtml;
+
+  // per-render キャッシュ (MANUAL_COL の cell / 装飾が参照)。
+  if (MANUAL) {
+    const order = manualOrder();
+    _mnPos = new Map(order.map((u, i) => [u, i]));
+    _mnBase = new Map(MANUAL.base.map((u, i) => [u, i]));
+    _mnMoved = manualMovedSet();
+  } else {
+    _mnPos = new Map(); _mnBase = new Map(); _mnMoved = new Set();
+  }
+
+  const tbl = ensureTable();
+  const wantManual = !!MANUAL && !APPLIED_ORDER;   // 被り回避適用中は通常表示 (最適化後順序)
+  if (wantManual !== _mnTableMode) {
+    _mnTableMode = wantManual;
+    tbl.setColumns(wantManual ? [MANUAL_COL].concat(SEED_BASE_COLUMNS) : SEED_BASE_COLUMNS);
+    tbl.setSort(wantManual ? 'manual_pos' : 'rank', 'asc');
+  } else if (wantManual) {
+    // 手動順 (manual_pos) で並べ直し + セル/装飾の再描画。
+    tbl.setSort('manual_pos', 'asc');
+  }
 }
 
 // V4 用 (= site/index.html の _columnsForMeta と同形): 平均順位 / 平均スコアの
@@ -726,6 +1019,43 @@ const BT_SCORE_COL = {
   cell: (rec) => _smallGray(rec.scores && rec.scores.bt_gated_elo, 2),
 };
 
+// 手動調整列 (手動調整モード中だけ SEED_BASE_COLUMNS の先頭に足す)。
+// 手動順のシード番号 + 移動バッジ (元#N) + 編集中は「選択」ボタン。
+// per-render キャッシュ (_mnPos/_mnMoved/_mnBase) は renderManualUI が更新する。
+let _mnPos = new Map(), _mnMoved = new Set(), _mnBase = new Map();
+const MANUAL_COL = {
+  id: 'manual_pos', label: '手動', css: 'col-manual', sortable: false, sortKey: 'manual_pos',
+  value: (rec) => (_mnPos.has(rec.user_id) ? _mnPos.get(rec.user_id) : 1e9),
+  cell: (rec) => {
+    // 手動シード# + 変動矢印 (▲上げ=緑/▼下げ=青) → 元#N (小さく) → 選択ボタン。
+    // 配置は .mn-cell (デスクトップ縦積み / モバイル横並び) で制御。
+    const u = rec.user_id;
+    const pos = _mnPos.get(u);
+    const moved = _mnMoved.has(u);
+    const isSel = MANUAL && MANUAL.sel === u;
+    let h = `<div class="mn-cell">`;
+    let numHtml = `#${pos != null ? pos + 1 : '–'}`;
+    if (moved && pos != null) {
+      const d = (_mnBase.get(u) != null ? _mnBase.get(u) : pos) - pos;   // 正 = 上げ (シード改善)
+      if (d !== 0) {
+        numHtml += ` <span style="font-size:10px;font-weight:700;color:${d > 0 ? '#16a34a' : '#2563eb'}">${d > 0 ? '▲' + d : '▼' + (-d)}</span>`;
+      }
+    }
+    h += `<span class="mn-num" title="手動調整後のシード位置">${numHtml}</span>`;
+    if (moved) h += `<span class="mn-orig" title="手動調整前のシード位置">元#${(_mnBase.get(u) != null ? _mnBase.get(u) : 0) + 1}</span>`;
+    if (MANUAL && MANUAL.editing) {
+      h += `<button data-mn="select" data-uid="${escHtml(String(u))}" style="font-size:10px;padding:1px 8px;border:1px solid ${isSel ? '#ea580c' : '#d1d5db'};border-radius:5px;background:${isSel ? '#fb923c' : '#f9fafb'};color:${isSel ? '#fff' : '#374151'};cursor:pointer;white-space:nowrap">${isSel ? '選択中' : '選択'}</button>`;
+    }
+    h += `</div>`;
+    return h;
+  },
+};
+const SEED_BASE_COLUMNS = [
+  'rank', 'display', BT_SCORE_COL, TJPR_SCORE_COL,
+  'tjpr_lv', 'tour_count', 'bt_weekday',
+  'rank_tjpr', 'rank_bt_gated',
+];
+
 // 共有 ranking table コンポーネント (= 初期化は DOMContentLoaded 後).
 let TABLE = null;
 function ensureTable() {
@@ -743,13 +1073,11 @@ function ensureTable() {
     showDisplayBadges: true,            // ローカル / メインと同じ mobile badges
     showGlobalRank: true,               // 参加者内ランキングに「全国 #N」badge を出す
     btWeekdayStyle: 'pill',             // ローカル / メインと同じ 常連 / レア
-    columns: [
-      'rank', 'display', BT_SCORE_COL, TJPR_SCORE_COL,
-      'tjpr_lv', 'tour_count', 'bt_weekday',
-      'rank_tjpr', 'rank_bt_gated',
-    ],
+    columns: SEED_BASE_COLUMNS,
     rowClick: (rec, tr, ev) => seedRowClickHandler(rec, tr, ev),
   });
+  // 手動調整モードの装飾 (背景色・挿入スロット・新規タブリンク) は描画のたびに当てる。
+  TABLE.on('rendered', () => decorateManualTable());
   return TABLE;
 }
 
@@ -1135,7 +1463,9 @@ function downloadCsv() {
   const a = document.createElement('a');
   const tName = (EVENT_CONTEXT.eventName || 'seed').replace(/[^\w\-]/g, '_');
   a.href = url;
-  a.download = `smash_banzuke_seed_${tName}_${currentMethod}.csv`;
+  // ファイル名に出力順の由来を付ける (手動調整 / 被り回避適用)。
+  const orderTag = (MANUAL ? '_manual' : '') + (APPLIED_ORDER ? '_opt' : '');
+  a.download = `smash_banzuke_seed_${tName}_${currentMethod}${orderTag}.csv`;
   document.body.appendChild(a); a.click(); a.remove();
   setTimeout(() => URL.revokeObjectURL(url), 1000);
 }
@@ -1317,6 +1647,7 @@ async function handleFetch() {
   setParticipantsUiVisible(false);
   DATA.length = 0;
   EVENT_CONTEXT = null;
+  MANUAL = null;   // 新規取得中は手動調整をメモリから外す (保存は restoreManualForEvent が判定)
   if (TABLE) render();
   try {
     await loadMasterData();
@@ -1430,7 +1761,7 @@ async function performSeedFetch(token, ev, phaseId) {
   setParticipantsUiVisible(true);
   const tbl = ensureTable();
   tbl.setSort('rank', 'asc');
-  render();
+  render();  restoreManualForEvent();
 }
 
 // phase 未作成 event 用: entrants から参加者一覧を表示する.
@@ -1466,7 +1797,7 @@ async function performEntrantsFetch(token, ev) {
   setParticipantsUiVisible(true);
   const tbl = ensureTable();
   tbl.setSort('rank', 'asc');
-  render();
+  render();  restoreManualForEvent();
 }
 
 // Backwards-compat aliases (= 内部の detail builder で使われている).
@@ -1482,7 +1813,26 @@ function render() {
   tbl.setRows(DATA);
   tbl.setMethod(currentMethod);
   tbl.setFilterText(filterText);
+  renderManualUI();
 }
+// 手動調整のクリック操作 (動的要素はデリゲーションで拾う)。
+document.getElementById('manual-bar').addEventListener('click', manualClickHandler);
+// テーブル内の手動調整コントロール ([data-mn] = 選択ボタン/挿入スロット) は
+// capture で先取りして、行クリック (詳細展開) やソートに食われないようにする。
+document.getElementById('ranktable').addEventListener('click', (e) => {
+  if (!MANUAL) return;
+  const mn = e.target.closest('[data-mn]');
+  if (mn) {
+    e.stopPropagation();
+    e.preventDefault();
+    manualClickHandler(e);
+    return;
+  }
+  // 編集中はヘッダソートを無効化 (手動順の表示が崩れて挿入位置が分からなくなるため)。
+  if (MANUAL.editing && e.target.closest('th.sortable')) {
+    e.stopPropagation();
+  }
+}, true);
 
 
 // ── Events ──
@@ -1493,13 +1843,21 @@ document.getElementById('search').addEventListener('input', e => {
 
 document.getElementById('method-tabs').addEventListener('click', e => {
   const tab = e.target.closest('.method-tab');
-  if (!tab) return;
+  if (!tab || tab.dataset.method === currentMethod) return;
+  // 手動調整がある場合は破棄確認を先に (キャンセルならタブ切替自体を中止)。
+  if (MANUAL && !confirm('基準ランキングを変更すると手動調整 (履歴含む) を破棄します。よろしいですか？')) return;
   document.querySelectorAll('.method-tab').forEach(t => t.classList.remove('active'));
   tab.classList.add('active');
   currentMethod = tab.dataset.method;
   if (APPLIED_ORDER) { APPLIED_ORDER = null; clearSeedOptApplied(); }  // 基準が変わるので適用解除
   // 被り回避の結果も基準ランキング前提なので破棄（残すと再適用できない死に状態になる）。
   if (SEEDOPT_RESULT) resetSeedOptResultPanel('基準ランキングが変わったため被り回避の結果をクリアしました。再実行してください。');
+  // 手動調整も旧基準前提なので破棄 (保存も消す)。
+  if (MANUAL) {
+    MANUAL = null; saveManual(); renderManualUI();
+    const st = document.getElementById('status');
+    if (st) st.textContent = '基準ランキングが変わったため手動調整を破棄しました。';
+  }
   const tbl = TABLE; if (tbl) tbl.setMethod(currentMethod);
 });
 
@@ -2036,8 +2394,15 @@ async function runSeedOptimize() {
   const poolCount = Math.max(1, parseInt(document.getElementById('so-pools').value, 10) || 1);
   const format = soFormat();   // start.gg bracketType から自動
 
-  // 入力ランキング = 現在の出力順（currentMethod 順。適用済みなら解除して基準に戻す）。
-  const baseRecs = DATA.slice().sort((a, b) => (a.ranks[currentMethod] || 1e9) - (b.ranks[currentMethod] || 1e9));
+  // 入力ランキング = 現在の基準順。手動調整があればそれを基準にする
+  // (「手動調整 → 被り回避」の流れ)。無ければ currentMethod 順 (適用済み最適化は解除して基準に戻す)。
+  const baseRecs = MANUAL
+    ? (() => {
+        const pos = new Map(manualOrder().map((u, i) => [u, i]));
+        return DATA.slice().sort((a, b) =>
+          (pos.has(a.user_id) ? pos.get(a.user_id) : 1e9) - (pos.has(b.user_id) ? pos.get(b.user_id) : 1e9));
+      })()
+    : DATA.slice().sort((a, b) => (a.ranks[currentMethod] || 1e9) - (b.ranks[currentMethod] || 1e9));
   const ranking = baseRecs.map(r => r.user_id).filter(u => u != null);
   const displayOf = {};
   for (const r of DATA) displayOf[r.user_id] = r.display;
@@ -2540,6 +2905,7 @@ function applySeedOptimize() {
     reportEl.appendChild(div);
   }
   document.getElementById('so-apply').disabled = true;
+  renderManualUI();   // 手動調整リスト表示中なら通常表 (最適化後順序) に切り替える
 }
 </script>
 
