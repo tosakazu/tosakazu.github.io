@@ -126,7 +126,6 @@ const SEED_APP_SKELETON_HTML = `
       <label title="2プール以上のとき、プール内の当たり回戦も最適化する（プレイヤーのプール内順位を少し動かす）。1プールでは常に実行＝指定不可"><input type="checkbox" id="so-enable-intra" checked> プール内変動</label>
       <label title="地域被り（同じ都道府県/地域の選手が同じプール・早期回戦に固まる）を考慮して分散する"><input type="checkbox" id="so-avoid-region" checked> 地域被りを考慮</label>
       <label title="直近に対戦した相手と再び早期に当たるのを考慮して避ける"><input type="checkbox" id="so-avoid-recent" checked> 直接対戦を考慮</label>
-      <span style="color:#d1d5db">｜</span>
       <label title="全員のトーナメント想定順位（1,2,3,4,5,5,7,7,9,9,9,9,…のタイ帯）が元シードから変わらない範囲でのみ入れ替える"><input type="checkbox" id="so-keep-deplace" checked> トーナメント順位固定</label>
       <label title="通常のプール最適化（プール間/内）に加えて、全体を1つの勝者側ダブルイリミブラケットとみなし「シード通り勝ち上がったときに実際に発生する試合」の被りも追加で最適化する。追加フェーズはタイ帯（DE想定順位）内で動き、プール分離を壊す移動は損として評価される。このモード中は全フェーズでDE想定順位不変がハード制約。1プールでは勝者側のみ。DE専用"><input type="checkbox" id="so-scope-winners" checked> 勝者側ブラケットも考慮</label>
       <label title="平日扱いの大会（平日開催・実質平日・プレ大会）での対戦も「直接対戦」の考慮対象に含める（既定は含めない）"><input type="checkbox" id="so-include-weekday"> 平日大会を含む</label>
@@ -143,12 +142,15 @@ const SEED_APP_SKELETON_HTML = `
       <label>／ ±4は <input type="number" id="so-shift4" min="1" style="width:52px"> 位まで</label>
       <span style="color:#9ca3af;font-size:10px">（超えた順位は無制限・全て空欄=制約なし。空のまま大会を読み込むと規模別の既定値が入る）</span>
     </div>
-    <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-top:6px;font-size:12px;color:#374151">
-      <span style="font-weight:600" title="元順位からのシードズレ罰則の強さ (指数)。左ほどズレの大きさを許容して大きく動かし、右ほど大きなズレを強く罰して小さく動かす。0 = ズレを罰しない">ズレ数調整:</span>
-      <span style="color:#9ca3af;font-size:10px">← 大きく動かす</span>
-      <input type="range" id="so-orderpow" min="0" max="5" step="0.5" value="2" style="width:170px">
-      <span style="color:#9ca3af;font-size:10px">小さく動かす →</span>
-      <span id="so-orderpow-val" style="font-variant-numeric:tabular-nums;font-weight:600">2</span>
+    <div style="margin-top:10px;font-size:12px;color:#374151;max-width:360px">
+      <div style="display:flex;align-items:center;gap:8px">
+        <span style="font-weight:600" title="元順位からのシードズレ罰則の強さ。左ほどズレの大きさを許容して大きく動かし、右ほど大きなズレを強く罰して小さく動かす。0 = ズレを罰しない">ズレ抑制</span>
+        <span id="so-orderpow-val" style="font-variant-numeric:tabular-nums;font-weight:700;font-size:11px;background:#f3f4f6;border:1px solid #e5e7eb;border-radius:10px;padding:1px 10px;min-width:34px;text-align:center">2</span>
+      </div>
+      <input type="range" id="so-orderpow" min="0" max="5" step="0.5" value="2" style="display:block;width:100%;margin:8px 0 3px;accent-color:#dc2626">
+      <div style="display:flex;justify-content:space-between;font-size:10px;color:#9ca3af">
+        <span>大きく動かす</span><span>小さく動かす</span>
+      </div>
     </div>
     <div style="margin-top:8px">
       <details>
