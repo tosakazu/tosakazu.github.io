@@ -547,6 +547,7 @@
       <label title="直近に対戦した相手と再び早期に当たるのを避ける"><input type="checkbox" id="so-avoid-recent" checked> 直近対戦を避ける</label>
       <span style="color:#d1d5db">｜</span>
       <label title="全員のダブルイリミネーション想定順位（1,2,3,4,5,5,7,7,9,9,9,9,…のタイ帯）が元シードから変わらない範囲でのみ入れ替える"><input type="checkbox" id="so-keep-deplace" checked> DE想定順位を変えない</label>
+      <label title="プール（予選/本戦）構造を無視し、全体を1つの勝者側ダブルイリミブラケットとみなして被りを最適化する。制約はDE想定順位（タイ帯）不変のみで、プール内順位の固定や±幅の可動制約（kInter/kIntra）は適用されない（最大シード移動は有効）。移動の抑制はシードズレ罰則（W_order）で調整。DE専用"><input type="checkbox" id="so-scope-winners"> 勝者側ブラケットで最適化</label>
       <label title="平日扱いの大会（平日開催・実質平日・プレ大会）での対戦を「直近対戦」の考慮対象から除く"><input type="checkbox" id="so-exclude-weekday"> 平日大会の対戦を除く</label>
       <span style="color:#d1d5db">｜</span>
       <label title="東京・神奈川・埼玉・千葉を同一地域(南関東)として扱う"><input type="checkbox" id="so-group-minamikanto" checked> 東京・神奈川・埼玉・千葉をまとめる</label>
@@ -633,7 +634,7 @@
 </div>
 
 <div class="footer" id="footer-info"></div>
-<div class="footer" style="margin-top:-12px"><span class="site-version" style="font-size:11px;color:#9ca3af">v c3e563a · 2026-08-03 09:09 UTC</span></div>
+<div class="footer" style="margin-top:-12px"><span class="site-version" style="font-size:11px;color:#9ca3af">v 08d05f3 · 2026-08-03 12:09 UTC</span></div>
 
 <!-- Chart.js (lazy load on first graph use) -->
 <script>
@@ -2000,6 +2001,11 @@ async function runSeedOptimize() {
   for (const r of DATA) displayOf[r.user_id] = r.display;
 
   // 非対応形式を事前判定（worker でも返るが、取得前に弾く）。
+  const scopeWinners = document.getElementById('so-scope-winners').checked;
+  if (scopeWinners && format !== 'DOUBLE_ELIMINATION') {
+    progress.textContent = '⚠ 勝者側ブラケット最適化はダブルイリミネーションのみ対応です。';
+    return;
+  }
   if (poolCount === 1 && format !== 'DOUBLE_ELIMINATION') {
     progress.textContent = '⚠ 1プール×ダブルイリミネーション以外は被り回避非対応です。';
     return;
@@ -2033,6 +2039,7 @@ async function runSeedOptimize() {
     maxItersScale: Math.max(10, intDef('so-itersscale', 1000)),
     rngSeed: intDef('so-rngseed', 12345),
     avoidRegion, avoidRecent, enableIntra, keepDePlace,
+    bracketScope: scopeWinners ? 'winners' : undefined,   // undefined→既定 'pools'
     W_region: numDef('so-wregion', 1.0),
     W_recent: numDef('so-wrecent', 0.3),
     W_order: Math.max(0, numDef('so-worder', 0)),
