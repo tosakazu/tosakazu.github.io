@@ -1,32 +1,9 @@
 {
-  "generated_at": 1785747620,
+  "generated_at": 1785758417,
   "country_code": "JP",
   "lookahead_days": 21,
-  "count": 58,
+  "count": 57,
   "tournaments": [
-    {
-      "tournament_id": 938893,
-      "tournament_slug": "tournament/hit-186-maesuma-hit-186",
-      "tournament_name": "マエスマ'HIT#186 / Maesuma'HIT#186",
-      "start_at": 1785751200,
-      "end_at": 1785765600,
-      "is_online": false,
-      "city": "大阪市",
-      "venue_name": "",
-      "country_code": "JP",
-      "num_attendees": 24,
-      "url": "/tournament/hit-186-maesuma-hit-186",
-      "events": [
-        {
-          "event_id": 1679803,
-          "event_slug": "tournament/hit-186-maesuma-hit-186/event/singles-tournament",
-          "event_name": "Singles Tournament",
-          "num_entrants": 24,
-          "type": 1,
-          "start_at": 1785751200
-        }
-      ]
-    },
     {
       "tournament_id": 937624,
       "tournament_slug": "tournament/135-shibuya-tatsu",
@@ -160,14 +137,14 @@
       "city": "渋谷区",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 9,
+      "num_attendees": 10,
       "url": "/tournament/shibuya-g-g-smash-weekly-74",
       "events": [
         {
           "event_id": 1678636,
           "event_slug": "tournament/shibuya-g-g-smash-weekly-74/event/singles",
           "event_name": "Singles",
-          "num_entrants": 9,
+          "num_entrants": 10,
           "type": 1,
           "start_at": 1786012200
         }
@@ -528,14 +505,14 @@
       "city": "宇都宮市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 18,
+      "num_attendees": 19,
       "url": "/tournament/19-13",
       "events": [
         {
           "event_id": 1655684,
           "event_slug": "tournament/19-13/event/super-smash-bros-ultimate-singles",
           "event_name": "大会",
-          "num_entrants": 17,
+          "num_entrants": 18,
           "type": 1,
           "start_at": 1786240800
         }
@@ -643,14 +620,14 @@
       "city": "横浜市",
       "venue_name": "おださがプラザ",
       "country_code": "JP",
-      "num_attendees": 2,
+      "num_attendees": 4,
       "url": "/tournament/gg-9-kannai-gg",
       "events": [
         {
           "event_id": 1679177,
           "event_slug": "tournament/gg-9-kannai-gg/event/kannai-gg-sp-1on1",
           "event_name": "kannai-gg/スマブラSP 1on1",
-          "num_entrants": 2,
+          "num_entrants": 4,
           "type": 1,
           "start_at": 1786352400
         }
@@ -919,14 +896,14 @@
       "city": "名古屋市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 483,
+      "num_attendees": 484,
       "url": "/tournament/-3119",
       "events": [
         {
           "event_id": 1651150,
           "event_slug": "tournament/-3119/event/grand-slum",
           "event_name": "grand slum",
-          "num_entrants": 483,
+          "num_entrants": 484,
           "type": 1,
           "start_at": 1786752000
         }
@@ -1310,14 +1287,14 @@
       "city": "福岡市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 84,
+      "num_attendees": 85,
       "url": "/tournament/kowloon-18-5",
       "events": [
         {
           "event_id": 1673913,
           "event_slug": "tournament/kowloon-18-5/event/kowloon_sp",
           "event_name": "KOWLOON_SP",
-          "num_entrants": 84,
+          "num_entrants": 85,
           "type": 1,
           "start_at": 1787446800
         }
