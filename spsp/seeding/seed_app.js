@@ -130,7 +130,6 @@ const SEED_APP_SKELETON_HTML = `
       <label title="全員のトーナメント想定順位（1,2,3,4,5,5,7,7,9,9,9,9,…のタイ帯）が元シードから変わらない範囲でのみ入れ替える"><input type="checkbox" id="so-keep-deplace" checked> トーナメント順位固定</label>
       <label title="通常のプール最適化（プール間/内）に加えて、全体を1つの勝者側ダブルイリミブラケットとみなし「シード通り勝ち上がったときに実際に発生する試合」の被りも追加で最適化する。追加フェーズはタイ帯（DE想定順位）内で動き、プール分離を壊す移動は損として評価される。このモード中は全フェーズでDE想定順位不変がハード制約。1プールでは勝者側のみ。DE専用"><input type="checkbox" id="so-scope-winners" checked> 勝者側ブラケットも考慮</label>
       <label title="平日扱いの大会（平日開催・実質平日・プレ大会）での対戦も「直接対戦」の考慮対象に含める（既定は含めない）"><input type="checkbox" id="so-include-weekday"> 平日大会を含む</label>
-      <span style="color:#d1d5db">｜</span>
       <label title="東京・神奈川・埼玉・千葉を同一地域(南関東)として扱う"><input type="checkbox" id="so-group-minamikanto" checked> 東京・神奈川・埼玉・千葉をまとめる</label>
       <label title="兵庫・大阪・京都を同一地域(京阪神)として扱う"><input type="checkbox" id="so-group-keihanshin"> 兵庫・大阪・京都をまとめる</label>
     </div>
@@ -145,10 +144,11 @@ const SEED_APP_SKELETON_HTML = `
       <span style="color:#9ca3af;font-size:10px">（超えた順位は無制限・全て空欄=制約なし。空のまま大会を読み込むと規模別の既定値が入る）</span>
     </div>
     <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-top:6px;font-size:12px;color:#374151">
-      <span style="font-weight:600" title="元ランキングからのシードズレ罰則の指数。罰則 = W_order × |ズレ|^指数。1=線形、大きいほど大きなズレを選択的に強く罰する">ズレ指数:</span>
-      <input type="range" id="so-orderpow" min="1" max="3" step="0.5" value="2" style="width:150px">
+      <span style="font-weight:600" title="元順位からのシードズレ罰則の強さ (指数)。左ほどズレの大きさを許容して大きく動かし、右ほど大きなズレを強く罰して小さく動かす。0 = ズレを罰しない">ズレ数調整:</span>
+      <span style="color:#9ca3af;font-size:10px">← 大きく動かす</span>
+      <input type="range" id="so-orderpow" min="0" max="5" step="0.5" value="2" style="width:170px">
+      <span style="color:#9ca3af;font-size:10px">小さく動かす →</span>
       <span id="so-orderpow-val" style="font-variant-numeric:tabular-nums;font-weight:600">2</span>
-      <span style="color:#9ca3af;font-size:10px">1=線形 〜 3=大移動を強く抑制</span>
     </div>
     <div style="margin-top:8px">
       <details>
@@ -2060,7 +2060,7 @@ async function runSeedOptimize() {
     W_region: numDef('so-wregion', 1.0),
     W_recent: numDef('so-wrecent', 0.3),
     W_order: Math.max(0, numDef('so-worder', 0)),
-    orderPow: Math.max(1, numDef('so-orderpow', 2)),   // スライダー (1〜3, 0.5刻み)
+    orderPow: Math.max(0, numDef('so-orderpow', 2)),   // ズレ数調整スライダー (0〜5, 0.5刻み。0=ズレを罰しない)
     prefWeight: document.getElementById('so-prefweight').value,
     roundWeights: csvNums('so-roundweights'),   // undefined→既定
     kInter: csvNums('so-kinter'),

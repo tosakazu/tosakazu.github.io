@@ -929,7 +929,7 @@
     const rw = roundWeightFn(params.roundWeights);
     const prefByUid = params._prefByUid || {}, origRank = params._origRank || {};
     const pwFn = prefWeightFn(params.prefWeight);
-    const Wr = params.W_region, Wn = params.W_recent, Wo = params.W_order || 0, oPow = params.orderPow || 1;
+    const Wr = params.W_region, Wn = params.W_recent, Wo = params.W_order || 0, oPow = params.orderPow != null ? params.orderPow : 1;
     // 罰則のオンオフを反映（無効化した成分はスコア 0 に＝改善率が実効目的を表す）。
     const useRegion = params.avoidRegion !== false, useRecent = params.avoidRecent !== false;
     const regionW = useRegion
@@ -1199,7 +1199,7 @@
     const origRank = {};
     ranking.forEach((u, i) => { origRank[u] = i + 1; });
     params._origRank = origRank; // レポート用
-    const Wo = params.W_order || 0, oPow = params.orderPow || 1;
+    const Wo = params.W_order || 0, oPow = params.orderPow != null ? params.orderPow : 1;
     const orderOf = Wo > 0
       ? (uid, seed1) => Wo * Math.pow(Math.abs(seed1 - origRank[uid]), oPow)
       : null;
