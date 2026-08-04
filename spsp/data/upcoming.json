@@ -1,5 +1,5 @@
 {
-  "generated_at": 1785823220,
+  "generated_at": 1785834010,
   "country_code": "JP",
   "lookahead_days": 21,
   "count": 63,
@@ -98,7 +98,7 @@
           "event_id": 1678531,
           "event_slug": "tournament/dsw-63/event/singletournament",
           "event_name": "SingleTournament",
-          "num_entrants": 15,
+          "num_entrants": 16,
           "type": 1,
           "start_at": 1785927600
         }
@@ -275,14 +275,14 @@
       "city": "福岡市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 4,
+      "num_attendees": 5,
       "url": "/tournament/smash-148-1",
       "events": [
         {
           "event_id": 1681065,
           "event_slug": "tournament/smash-148-1/event/1on1",
           "event_name": "1on1トーナメント",
-          "num_entrants": 4,
+          "num_entrants": 5,
           "type": 1,
           "start_at": 1786098600
         }
@@ -390,14 +390,14 @@
       "city": "台東区",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 9,
+      "num_attendees": 13,
       "url": "/tournament/8-519-5",
       "events": [
         {
           "event_id": 1680878,
           "event_slug": "tournament/8-519-5/event/on",
           "event_name": "シングルス（１on１トーナメント）",
-          "num_entrants": 9,
+          "num_entrants": 13,
           "type": 1,
           "start_at": 1786158000
         }
@@ -781,14 +781,14 @@
       "city": "福岡市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 8,
+      "num_attendees": 10,
       "url": "/tournament/smash-149-1",
       "events": [
         {
           "event_id": 1681715,
           "event_slug": "tournament/smash-149-1/event/1on1",
           "event_name": "1on1トーナメント",
-          "num_entrants": 8,
+          "num_entrants": 10,
           "type": 1,
           "start_at": 1786444200
         }
@@ -873,14 +873,14 @@
       "city": "福岡市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 7,
+      "num_attendees": 8,
       "url": "/tournament/smash-150-1",
       "events": [
         {
           "event_id": 1681748,
           "event_slug": "tournament/smash-150-1/event/1on1",
           "event_name": "1on1トーナメント",
-          "num_entrants": 7,
+          "num_entrants": 8,
           "type": 1,
           "start_at": 1786617000
         }
@@ -942,14 +942,14 @@
       "city": "熊谷市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 7,
+      "num_attendees": 8,
       "url": "/tournament/flyhigh-28-96-1",
       "events": [
         {
           "event_id": 1680317,
           "event_slug": "tournament/flyhigh-28-96-1/event/fly-high-96",
           "event_name": "Fly High!! 96人トーナメント 埼玉県熊谷市スマブラ大会",
-          "num_entrants": 7,
+          "num_entrants": 8,
           "type": 1,
           "start_at": 1786719600
         }
@@ -1080,14 +1080,14 @@
       "city": "草加市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 46,
+      "num_attendees": 47,
       "url": "/tournament/aya-9",
       "events": [
         {
           "event_id": 1652189,
           "event_slug": "tournament/aya-9/event/ultimate-singles",
           "event_name": "Ultimate Singles",
-          "num_entrants": 46,
+          "num_entrants": 47,
           "type": 1,
           "start_at": 1786845600
         }
