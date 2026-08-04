@@ -1,32 +1,9 @@
 {
-  "generated_at": 1785834010,
+  "generated_at": 1785844810,
   "country_code": "JP",
   "lookahead_days": 21,
-  "count": 63,
+  "count": 62,
   "tournaments": [
-    {
-      "tournament_id": 937624,
-      "tournament_slug": "tournament/135-shibuya-tatsu",
-      "tournament_name": "渋谷\"達\" #135 shibuya -tatsu-",
-      "start_at": 1785837600,
-      "end_at": 1785850200,
-      "is_online": false,
-      "city": "渋谷区",
-      "venue_name": "",
-      "country_code": "JP",
-      "num_attendees": 23,
-      "url": "/tournament/135-shibuya-tatsu",
-      "events": [
-        {
-          "event_id": 1677110,
-          "event_slug": "tournament/135-shibuya-tatsu/event/singles",
-          "event_name": "Singles",
-          "num_entrants": 23,
-          "type": 1,
-          "start_at": 1785837600
-        }
-      ]
-    },
     {
       "tournament_id": 938035,
       "tournament_slug": "tournament/weekly-smash-party-240",
@@ -37,7 +14,7 @@
       "city": "中野区",
       "venue_name": "Red Bull Gaming Sphere Tokyo",
       "country_code": "JP",
-      "num_attendees": 68,
+      "num_attendees": 69,
       "url": "/tournament/weekly-smash-party-240",
       "events": [
         {
@@ -91,7 +68,7 @@
       "city": "京都市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 15,
+      "num_attendees": 16,
       "url": "/tournament/dsw-63",
       "events": [
         {
@@ -275,14 +252,14 @@
       "city": "福岡市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 5,
+      "num_attendees": 6,
       "url": "/tournament/smash-148-1",
       "events": [
         {
           "event_id": 1681065,
           "event_slug": "tournament/smash-148-1/event/1on1",
           "event_name": "1on1トーナメント",
-          "num_entrants": 5,
+          "num_entrants": 6,
           "type": 1,
           "start_at": 1786098600
         }
@@ -390,14 +367,14 @@
       "city": "台東区",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 13,
+      "num_attendees": 14,
       "url": "/tournament/8-519-5",
       "events": [
         {
           "event_id": 1680878,
           "event_slug": "tournament/8-519-5/event/on",
           "event_name": "シングルス（１on１トーナメント）",
-          "num_entrants": 13,
+          "num_entrants": 14,
           "type": 1,
           "start_at": 1786158000
         }
