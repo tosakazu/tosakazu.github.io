@@ -1,8 +1,8 @@
 {
-  "generated_at": 1785758417,
+  "generated_at": 1785769218,
   "country_code": "JP",
   "lookahead_days": 21,
-  "count": 57,
+  "count": 59,
   "tournaments": [
     {
       "tournament_id": 937624,
@@ -91,14 +91,14 @@
       "city": "京都市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 11,
+      "num_attendees": 12,
       "url": "/tournament/dsw-63",
       "events": [
         {
           "event_id": 1678531,
           "event_slug": "tournament/dsw-63/event/singletournament",
           "event_name": "SingleTournament",
-          "num_entrants": 11,
+          "num_entrants": 12,
           "type": 1,
           "start_at": 1785927600
         }
@@ -114,14 +114,14 @@
       "city": "台東区",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 8,
+      "num_attendees": 9,
       "url": "/tournament/6-518",
       "events": [
         {
           "event_id": 1676157,
           "event_slug": "tournament/6-518/event/on",
           "event_name": "シングルス（１on１トーナメント）",
-          "num_entrants": 8,
+          "num_entrants": 9,
           "type": 1,
           "start_at": 1786003200
         }
@@ -919,14 +919,14 @@
       "city": "福岡市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 37,
+      "num_attendees": 38,
       "url": "/tournament/plum-4",
       "events": [
         {
           "event_id": 1673837,
           "event_slug": "tournament/plum-4/event/1on1",
           "event_name": "1on1トーナメント",
-          "num_entrants": 37,
+          "num_entrants": 38,
           "type": 1,
           "start_at": 1786755600
         }
@@ -1320,6 +1320,52 @@
           "num_entrants": 11,
           "type": 1,
           "start_at": 1787457600
+        }
+      ]
+    },
+    {
+      "tournament_id": 937952,
+      "tournament_slug": "tournament/24-532",
+      "tournament_name": "24(月)上野スマコミ#532(オープン)",
+      "start_at": 1787558400,
+      "end_at": 1787580000,
+      "is_online": false,
+      "city": "台東区",
+      "venue_name": "",
+      "country_code": "JP",
+      "num_attendees": 1,
+      "url": "/tournament/24-532",
+      "events": [
+        {
+          "event_id": 1677838,
+          "event_slug": "tournament/24-532/event/on",
+          "event_name": "シングルス（１on１トーナメント）",
+          "num_entrants": 1,
+          "type": 1,
+          "start_at": 1787558400
+        }
+      ]
+    },
+    {
+      "tournament_id": 939011,
+      "tournament_slug": "tournament/hit-192-maesuma-hit-192",
+      "tournament_name": "マエスマ'HIT#192 / Maesuma'HIT#192",
+      "start_at": 1787565600,
+      "end_at": 1787580000,
+      "is_online": false,
+      "city": "大阪市",
+      "venue_name": "",
+      "country_code": "JP",
+      "num_attendees": 0,
+      "url": "/tournament/hit-192-maesuma-hit-192",
+      "events": [
+        {
+          "event_id": 1680040,
+          "event_slug": "tournament/hit-192-maesuma-hit-192/event/singles-tournament",
+          "event_name": "Singles Tournament",
+          "num_entrants": 0,
+          "type": 1,
+          "start_at": 1787565600
         }
       ]
     }
