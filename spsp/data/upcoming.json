@@ -1,32 +1,9 @@
 {
-  "generated_at": 1785920409,
+  "generated_at": 1785931209,
   "country_code": "JP",
   "lookahead_days": 21,
-  "count": 61,
+  "count": 60,
   "tournaments": [
-    {
-      "tournament_id": 938280,
-      "tournament_slug": "tournament/dsw-63",
-      "tournament_name": "新京都 DSW#63",
-      "start_at": 1785927600,
-      "end_at": 1785938400,
-      "is_online": false,
-      "city": "京都市",
-      "venue_name": "",
-      "country_code": "JP",
-      "num_attendees": 20,
-      "url": "/tournament/dsw-63",
-      "events": [
-        {
-          "event_id": 1678531,
-          "event_slug": "tournament/dsw-63/event/singletournament",
-          "event_name": "SingleTournament",
-          "num_entrants": 20,
-          "type": 1,
-          "start_at": 1785927600
-        }
-      ]
-    },
     {
       "tournament_id": 937207,
       "tournament_slug": "tournament/6-518",
@@ -60,14 +37,14 @@
       "city": "渋谷区",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 22,
+      "num_attendees": 23,
       "url": "/tournament/shibuya-g-g-smash-weekly-74",
       "events": [
         {
           "event_id": 1678636,
           "event_slug": "tournament/shibuya-g-g-smash-weekly-74/event/singles",
           "event_name": "Singles",
-          "num_entrants": 22,
+          "num_entrants": 23,
           "type": 1,
           "start_at": 1786012200
         }
@@ -83,14 +60,14 @@
       "city": "大阪市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 14,
+      "num_attendees": 16,
       "url": "/tournament/hit-187-maesuma-hit-187",
       "events": [
         {
           "event_id": 1679808,
           "event_slug": "tournament/hit-187-maesuma-hit-187/event/singles-tournament",
           "event_name": "Singles Tournament",
-          "num_entrants": 14,
+          "num_entrants": 16,
           "type": 1,
           "start_at": 1786010400
         }
@@ -405,14 +382,14 @@
       "city": "渋谷区",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 28,
+      "num_attendees": 29,
       "url": "/tournament/to-win-12",
       "events": [
         {
           "event_id": 1679057,
           "event_slug": "tournament/to-win-12/event/singles",
           "event_name": "Singles",
-          "num_entrants": 27,
+          "num_entrants": 28,
           "type": 1,
           "start_at": 1786237200
         }
@@ -1233,14 +1210,14 @@
       "city": "観音寺市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 151,
+      "num_attendees": 152,
       "url": "/tournament/big-lagoon-with",
       "events": [
         {
           "event_id": 1659077,
           "event_slug": "tournament/big-lagoon-with/event/big-lagoon-with",
           "event_name": "BIG LAGOON with 銭スマ",
-          "num_entrants": 151,
+          "num_entrants": 152,
           "type": 1,
           "start_at": 1787360400
         }
