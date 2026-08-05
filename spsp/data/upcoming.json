@@ -1,5 +1,5 @@
 {
-  "generated_at": 1785844810,
+  "generated_at": 1785855611,
   "country_code": "JP",
   "lookahead_days": 21,
   "count": 62,
@@ -45,14 +45,14 @@
       "city": "川崎市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 7,
+      "num_attendees": 9,
       "url": "/tournament/30-20",
       "events": [
         {
           "event_id": 1677936,
           "event_slug": "tournament/30-20/event/super-smash-bros-ultimate-singles",
           "event_name": "雷影杯",
-          "num_entrants": 6,
+          "num_entrants": 8,
           "type": 1,
           "start_at": 1785920400
         }
@@ -183,14 +183,14 @@
       "city": "立川市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 11,
+      "num_attendees": 12,
       "url": "/tournament/sumao2026-15",
       "events": [
         {
           "event_id": 1678849,
           "event_slug": "tournament/sumao2026-15/event/sp-1on1",
           "event_name": "スマブラSP 1on1",
-          "num_entrants": 11,
+          "num_entrants": 12,
           "type": 1,
           "start_at": 1786091400
         }
@@ -367,14 +367,14 @@
       "city": "台東区",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 14,
+      "num_attendees": 15,
       "url": "/tournament/8-519-5",
       "events": [
         {
           "event_id": 1680878,
           "event_slug": "tournament/8-519-5/event/on",
           "event_name": "シングルス（１on１トーナメント）",
-          "num_entrants": 14,
+          "num_entrants": 15,
           "type": 1,
           "start_at": 1786158000
         }
@@ -758,14 +758,14 @@
       "city": "福岡市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 10,
+      "num_attendees": 12,
       "url": "/tournament/smash-149-1",
       "events": [
         {
           "event_id": 1681715,
           "event_slug": "tournament/smash-149-1/event/1on1",
           "event_name": "1on1トーナメント",
-          "num_entrants": 10,
+          "num_entrants": 12,
           "type": 1,
           "start_at": 1786444200
         }
@@ -850,14 +850,14 @@
       "city": "福岡市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 8,
+      "num_attendees": 9,
       "url": "/tournament/smash-150-1",
       "events": [
         {
           "event_id": 1681748,
           "event_slug": "tournament/smash-150-1/event/1on1",
           "event_name": "1on1トーナメント",
-          "num_entrants": 8,
+          "num_entrants": 9,
           "type": 1,
           "start_at": 1786617000
         }
