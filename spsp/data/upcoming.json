@@ -1,32 +1,9 @@
 {
-  "generated_at": 1786006811,
+  "generated_at": 1786017610,
   "country_code": "JP",
   "lookahead_days": 21,
   "count": 60,
   "tournaments": [
-    {
-      "tournament_id": 938897,
-      "tournament_slug": "tournament/hit-187-maesuma-hit-187",
-      "tournament_name": "マエスマ'HIT#187 / Maesuma'HIT#187",
-      "start_at": 1786010400,
-      "end_at": 1786024800,
-      "is_online": false,
-      "city": "大阪市",
-      "venue_name": "",
-      "country_code": "JP",
-      "num_attendees": 38,
-      "url": "/tournament/hit-187-maesuma-hit-187",
-      "events": [
-        {
-          "event_id": 1679808,
-          "event_slug": "tournament/hit-187-maesuma-hit-187/event/singles-tournament",
-          "event_name": "Singles Tournament",
-          "num_entrants": 37,
-          "type": 1,
-          "start_at": 1786010400
-        }
-      ]
-    },
     {
       "tournament_id": 937208,
       "tournament_slug": "tournament/7-519",
@@ -666,6 +643,29 @@
           "event_slug": "tournament/31-12/event/super-smash-bros-ultimate-singles",
           "event_name": "雷影杯",
           "num_entrants": 4,
+          "type": 1,
+          "start_at": 1786525200
+        }
+      ]
+    },
+    {
+      "tournament_id": 940593,
+      "tournament_slug": "tournament/weekly-smash-party-241",
+      "tournament_name": "Weekly Smash Party ～スマパ～ #241",
+      "start_at": 1786525200,
+      "end_at": 1786541400,
+      "is_online": false,
+      "city": "中野区",
+      "venue_name": "Red Bull Gaming Sphere Tokyo",
+      "country_code": "JP",
+      "num_attendees": 1,
+      "url": "/tournament/weekly-smash-party-241",
+      "events": [
+        {
+          "event_id": 1683423,
+          "event_slug": "tournament/weekly-smash-party-241/event/special-1on1-ultimate-singles",
+          "event_name": "SPECIAL 1on1/ Ultimate Singles",
+          "num_entrants": 1,
           "type": 1,
           "start_at": 1786525200
         }
