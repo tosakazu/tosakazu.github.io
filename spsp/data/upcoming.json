@@ -1,55 +1,9 @@
 {
-  "generated_at": 1785996044,
+  "generated_at": 1786006811,
   "country_code": "JP",
   "lookahead_days": 21,
-  "count": 62,
+  "count": 60,
   "tournaments": [
-    {
-      "tournament_id": 937207,
-      "tournament_slug": "tournament/6-518",
-      "tournament_name": "6(木)上野スマコミ#518(オープン)",
-      "start_at": 1786003200,
-      "end_at": 1786024800,
-      "is_online": false,
-      "city": "台東区",
-      "venue_name": "",
-      "country_code": "JP",
-      "num_attendees": 17,
-      "url": "/tournament/6-518",
-      "events": [
-        {
-          "event_id": 1676157,
-          "event_slug": "tournament/6-518/event/on",
-          "event_name": "シングルス（１on１トーナメント）",
-          "num_entrants": 17,
-          "type": 1,
-          "start_at": 1786003200
-        }
-      ]
-    },
-    {
-      "tournament_id": 938333,
-      "tournament_slug": "tournament/shibuya-g-g-smash-weekly-74",
-      "tournament_name": "Shibuya G.G.Smash Weekly 74",
-      "start_at": 1786006800,
-      "end_at": 1786023000,
-      "is_online": false,
-      "city": "渋谷区",
-      "venue_name": "",
-      "country_code": "JP",
-      "num_attendees": 33,
-      "url": "/tournament/shibuya-g-g-smash-weekly-74",
-      "events": [
-        {
-          "event_id": 1678636,
-          "event_slug": "tournament/shibuya-g-g-smash-weekly-74/event/singles",
-          "event_name": "Singles",
-          "num_entrants": 33,
-          "type": 1,
-          "start_at": 1786012200
-        }
-      ]
-    },
     {
       "tournament_id": 938897,
       "tournament_slug": "tournament/hit-187-maesuma-hit-187",
@@ -83,7 +37,7 @@
       "city": "台東区",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 20,
+      "num_attendees": 21,
       "url": "/tournament/7-519",
       "events": [
         {
@@ -221,14 +175,14 @@
       "city": "大阪市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 8,
+      "num_attendees": 9,
       "url": "/tournament/345-act",
       "events": [
         {
           "event_id": 1681648,
           "event_slug": "tournament/345-act/event/ultimate-singles",
           "event_name": "Ultimate singles",
-          "num_entrants": 8,
+          "num_entrants": 9,
           "type": 1,
           "start_at": 1786099200
         }
@@ -681,14 +635,14 @@
       "city": "福岡市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 22,
+      "num_attendees": 23,
       "url": "/tournament/smash-149-1",
       "events": [
         {
           "event_id": 1681715,
           "event_slug": "tournament/smash-149-1/event/1on1",
           "event_name": "1on1トーナメント",
-          "num_entrants": 22,
+          "num_entrants": 23,
           "type": 1,
           "start_at": 1786444200
         }
@@ -1302,7 +1256,7 @@
       "city": "渋谷区",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 282,
+      "num_attendees": 279,
       "url": "/tournament/shibuya-dairan-first-strike",
       "events": [
         {
