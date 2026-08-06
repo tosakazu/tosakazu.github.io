@@ -1,5 +1,5 @@
 {
-  "generated_at": 1785931209,
+  "generated_at": 1785942010,
   "country_code": "JP",
   "lookahead_days": 21,
   "count": 60,
@@ -60,14 +60,14 @@
       "city": "大阪市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 16,
+      "num_attendees": 17,
       "url": "/tournament/hit-187-maesuma-hit-187",
       "events": [
         {
           "event_id": 1679808,
           "event_slug": "tournament/hit-187-maesuma-hit-187/event/singles-tournament",
           "event_name": "Singles Tournament",
-          "num_entrants": 16,
+          "num_entrants": 18,
           "type": 1,
           "start_at": 1786010400
         }
@@ -451,14 +451,14 @@
       "city": "柏市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 15,
+      "num_attendees": 16,
       "url": "/tournament/sen-smash-6",
       "events": [
         {
           "event_id": 1677912,
           "event_slug": "tournament/sen-smash-6/event/singles",
           "event_name": "シングルス / Singles",
-          "num_entrants": 14,
+          "num_entrants": 15,
           "type": 1,
           "start_at": 1786244400
         }
@@ -520,14 +520,14 @@
       "city": "台東区",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 4,
+      "num_attendees": 5,
       "url": "/tournament/10-520",
       "events": [
         {
           "event_id": 1676159,
           "event_slug": "tournament/10-520/event/on",
           "event_name": "シングルス（１on１トーナメント）",
-          "num_entrants": 4,
+          "num_entrants": 5,
           "type": 1,
           "start_at": 1786348800
         }
@@ -612,14 +612,14 @@
       "city": "台東区",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 2,
+      "num_attendees": 3,
       "url": "/tournament/11-521",
       "events": [
         {
           "event_id": 1676160,
           "event_slug": "tournament/11-521/event/on",
           "event_name": "シングルス（１on１トーナメント）",
-          "num_entrants": 2,
+          "num_entrants": 3,
           "type": 1,
           "start_at": 1786417200
         }
