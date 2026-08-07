@@ -1,78 +1,9 @@
 {
-  "generated_at": 1786082475,
+  "generated_at": 1786093216,
   "country_code": "JP",
   "lookahead_days": 21,
-  "count": 63,
+  "count": 60,
   "tournaments": [
-    {
-      "tournament_id": 937208,
-      "tournament_slug": "tournament/7-519",
-      "tournament_name": "7(金)上野スマコミ#519(オープン)",
-      "start_at": 1786089600,
-      "end_at": 1786111200,
-      "is_online": false,
-      "city": "台東区",
-      "venue_name": "",
-      "country_code": "JP",
-      "num_attendees": 27,
-      "url": "/tournament/7-519",
-      "events": [
-        {
-          "event_id": 1676158,
-          "event_slug": "tournament/7-519/event/on",
-          "event_name": "シングルス（１on１トーナメント）",
-          "num_entrants": 27,
-          "type": 1,
-          "start_at": 1786089600
-        }
-      ]
-    },
-    {
-      "tournament_id": 938435,
-      "tournament_slug": "tournament/sumao2026-15",
-      "tournament_name": "スマ王/SumaO2026 #15",
-      "start_at": 1786091400,
-      "end_at": 1786107600,
-      "is_online": false,
-      "city": "立川市",
-      "venue_name": "",
-      "country_code": "JP",
-      "num_attendees": 21,
-      "url": "/tournament/sumao2026-15",
-      "events": [
-        {
-          "event_id": 1678849,
-          "event_slug": "tournament/sumao2026-15/event/sp-1on1",
-          "event_name": "スマブラSP 1on1",
-          "num_entrants": 21,
-          "type": 1,
-          "start_at": 1786091400
-        }
-      ]
-    },
-    {
-      "tournament_id": 939083,
-      "tournament_slug": "tournament/11-75",
-      "tournament_name": "もびすまっ！#11",
-      "start_at": 1786093200,
-      "end_at": 1786111200,
-      "is_online": false,
-      "city": "川崎市",
-      "venue_name": "",
-      "country_code": "JP",
-      "num_attendees": 8,
-      "url": "/tournament/11-75",
-      "events": [
-        {
-          "event_id": 1680190,
-          "event_slug": "tournament/11-75/event/super-smash-bros-ultimate-singles",
-          "event_name": "シングルス",
-          "num_entrants": 8,
-          "type": 1,
-          "start_at": 1786093200
-        }
-      ]
-    },
     {
       "tournament_id": 938276,
       "tournament_slug": "tournament/16-32",
@@ -198,7 +129,7 @@
       "city": "浜松市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 85,
+      "num_attendees": 86,
       "url": "/tournament/sp15-2",
       "events": [
         {
@@ -221,14 +152,14 @@
       "city": "台東区",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 53,
+      "num_attendees": 52,
       "url": "/tournament/8-519-5",
       "events": [
         {
           "event_id": 1680878,
           "event_slug": "tournament/8-519-5/event/on",
           "event_name": "シングルス（１on１トーナメント）",
-          "num_entrants": 53,
+          "num_entrants": 52,
           "type": 1,
           "start_at": 1786158000
         }
@@ -313,14 +244,14 @@
       "city": "渋谷区",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 46,
+      "num_attendees": 43,
       "url": "/tournament/to-win-12",
       "events": [
         {
           "event_id": 1679057,
           "event_slug": "tournament/to-win-12/event/singles",
           "event_name": "Singles",
-          "num_entrants": 45,
+          "num_entrants": 43,
           "type": 1,
           "start_at": 1786237200
         }
@@ -474,14 +405,14 @@
       "city": "横浜市",
       "venue_name": "おださがプラザ",
       "country_code": "JP",
-      "num_attendees": 7,
+      "num_attendees": 8,
       "url": "/tournament/gg-9-kannai-gg",
       "events": [
         {
           "event_id": 1679177,
           "event_slug": "tournament/gg-9-kannai-gg/event/kannai-gg-sp-1on1",
           "event_name": "kannai-gg/スマブラSP 1on1",
-          "num_entrants": 7,
+          "num_entrants": 8,
           "type": 1,
           "start_at": 1786352400
         }
@@ -1256,7 +1187,7 @@
       "city": "渋谷区",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 282,
+      "num_attendees": 283,
       "url": "/tournament/shibuya-dairan-first-strike",
       "events": [
         {
