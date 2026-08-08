@@ -1,5 +1,5 @@
 {
-  "generated_at": 1786158126,
+  "generated_at": 1786168821,
   "country_code": "JP",
   "lookahead_days": 21,
   "count": 53,
@@ -175,14 +175,14 @@
       "city": "松阪市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 15,
+      "num_attendees": 16,
       "url": "/tournament/28-11",
       "events": [
         {
           "event_id": 1675365,
           "event_slug": "tournament/28-11/event/sp-1on1",
           "event_name": "スマブラSP 1on1トーナメント",
-          "num_entrants": 13,
+          "num_entrants": 14,
           "type": 1,
           "start_at": 1786330800
         }
@@ -244,14 +244,14 @@
       "city": "大阪市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 0,
+      "num_attendees": 3,
       "url": "/tournament/hit-188-maesuma-hit-188",
       "events": [
         {
           "event_id": 1679812,
           "event_slug": "tournament/hit-188-maesuma-hit-188/event/singles-tournament",
           "event_name": "Singles Tournament",
-          "num_entrants": 0,
+          "num_entrants": 3,
           "type": 1,
           "start_at": 1786356000
         }
@@ -290,14 +290,14 @@
       "city": "台東区",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 8,
+      "num_attendees": 10,
       "url": "/tournament/11-521",
       "events": [
         {
           "event_id": 1676160,
           "event_slug": "tournament/11-521/event/on",
           "event_name": "シングルス（１on１トーナメント）",
-          "num_entrants": 8,
+          "num_entrants": 10,
           "type": 1,
           "start_at": 1786417200
         }
@@ -336,14 +336,14 @@
       "city": "渋谷区",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 11,
+      "num_attendees": 12,
       "url": "/tournament/136-shibuya-tatsu",
       "events": [
         {
           "event_id": 1681796,
           "event_slug": "tournament/136-shibuya-tatsu/event/singles",
           "event_name": "Singles",
-          "num_entrants": 11,
+          "num_entrants": 12,
           "type": 1,
           "start_at": 1786442400
         }
@@ -405,14 +405,14 @@
       "city": "中野区",
       "venue_name": "Red Bull Gaming Sphere Tokyo",
       "country_code": "JP",
-      "num_attendees": 8,
+      "num_attendees": 52,
       "url": "/tournament/weekly-smash-party-241",
       "events": [
         {
           "event_id": 1683423,
           "event_slug": "tournament/weekly-smash-party-241/event/special-1on1-ultimate-singles",
           "event_name": "SPECIAL 1on1/ Ultimate Singles",
-          "num_entrants": 14,
+          "num_entrants": 52,
           "type": 1,
           "start_at": 1786525200
         }
@@ -474,14 +474,14 @@
       "city": "台東区",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 7,
+      "num_attendees": 8,
       "url": "/tournament/13-523",
       "events": [
         {
           "event_id": 1676161,
           "event_slug": "tournament/13-523/event/on",
           "event_name": "シングルス（１on１トーナメント）",
-          "num_entrants": 7,
+          "num_entrants": 8,
           "type": 1,
           "start_at": 1786608000
         }
@@ -497,14 +497,14 @@
       "city": "渋谷区",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 4,
+      "num_attendees": 5,
       "url": "/tournament/shibuya-g-g-smash-weekly-75",
       "events": [
         {
           "event_id": 1683295,
           "event_slug": "tournament/shibuya-g-g-smash-weekly-75/event/singles",
           "event_name": "Singles",
-          "num_entrants": 4,
+          "num_entrants": 5,
           "type": 1,
           "start_at": 1786617000
         }
@@ -543,14 +543,14 @@
       "city": "福岡市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 12,
+      "num_attendees": 13,
       "url": "/tournament/smash-150-1",
       "events": [
         {
           "event_id": 1681748,
           "event_slug": "tournament/smash-150-1/event/1on1",
           "event_name": "1on1トーナメント",
-          "num_entrants": 12,
+          "num_entrants": 13,
           "type": 1,
           "start_at": 1786617000
         }
@@ -704,14 +704,14 @@
       "city": "函館市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 17,
+      "num_attendees": 18,
       "url": "/tournament/goryokaku-3",
       "events": [
         {
           "event_id": 1643673,
           "event_slug": "tournament/goryokaku-3/event/singles",
           "event_name": "Singles",
-          "num_entrants": 17,
+          "num_entrants": 18,
           "type": 1,
           "start_at": 1786766400
         }
@@ -1003,7 +1003,7 @@
       "city": "渋谷区",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 283,
+      "num_attendees": 284,
       "url": "/tournament/shibuya-dairan-first-strike",
       "events": [
         {
