@@ -1,8 +1,8 @@
 {
-  "generated_at": 1786179621,
+  "generated_at": 1786190419,
   "country_code": "JP",
   "lookahead_days": 21,
-  "count": 52,
+  "count": 55,
   "tournaments": [
     {
       "tournament_id": 927195,
@@ -221,14 +221,14 @@
       "city": "大阪市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 4,
+      "num_attendees": 5,
       "url": "/tournament/hit-188-maesuma-hit-188",
       "events": [
         {
           "event_id": 1679812,
           "event_slug": "tournament/hit-188-maesuma-hit-188/event/singles-tournament",
           "event_name": "Singles Tournament",
-          "num_entrants": 4,
+          "num_entrants": 5,
           "type": 1,
           "start_at": 1786356000
         }
@@ -382,14 +382,14 @@
       "city": "中野区",
       "venue_name": "Red Bull Gaming Sphere Tokyo",
       "country_code": "JP",
-      "num_attendees": 56,
+      "num_attendees": 60,
       "url": "/tournament/weekly-smash-party-241",
       "events": [
         {
           "event_id": 1683423,
           "event_slug": "tournament/weekly-smash-party-241/event/special-1on1-ultimate-singles",
           "event_name": "SPECIAL 1on1/ Ultimate Singles",
-          "num_entrants": 56,
+          "num_entrants": 60,
           "type": 1,
           "start_at": 1786525200
         }
@@ -681,14 +681,14 @@
       "city": "函館市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 18,
+      "num_attendees": 19,
       "url": "/tournament/goryokaku-3",
       "events": [
         {
           "event_id": 1643673,
           "event_slug": "tournament/goryokaku-3/event/singles",
           "event_name": "Singles",
-          "num_entrants": 18,
+          "num_entrants": 19,
           "type": 1,
           "start_at": 1786766400
         }
@@ -980,7 +980,7 @@
       "city": "渋谷区",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 284,
+      "num_attendees": 286,
       "url": "/tournament/shibuya-dairan-first-strike",
       "events": [
         {
@@ -1197,6 +1197,75 @@
           "num_entrants": 1,
           "type": 1,
           "start_at": 1787904000
+        }
+      ]
+    },
+    {
+      "tournament_id": 937614,
+      "tournament_slug": "tournament/72-sp-1",
+      "tournament_name": "第72回スマバトSP",
+      "start_at": 1787967600,
+      "end_at": 1787999400,
+      "is_online": false,
+      "city": "大東市",
+      "venue_name": "",
+      "country_code": "JP",
+      "num_attendees": 313,
+      "url": "/tournament/72-sp-1",
+      "events": [
+        {
+          "event_id": 1677094,
+          "event_slug": "tournament/72-sp-1/event/1on1",
+          "event_name": "予選あり1on1トーナメント",
+          "num_entrants": 310,
+          "type": 1,
+          "start_at": 1787967600
+        }
+      ]
+    },
+    {
+      "tournament_id": 925934,
+      "tournament_slug": "tournament/vic-seekers-1",
+      "tournament_name": "Vic-Seekers #1",
+      "start_at": 1787970600,
+      "end_at": 1788001200,
+      "is_online": false,
+      "city": "荒川区",
+      "venue_name": "",
+      "country_code": "JP",
+      "num_attendees": 221,
+      "url": "/tournament/vic-seekers-1",
+      "events": [
+        {
+          "event_id": 1660866,
+          "event_slug": "tournament/vic-seekers-1/event/ultimate-singles",
+          "event_name": "Ultimate Singles",
+          "num_entrants": 213,
+          "type": 1,
+          "start_at": 1787970600
+        }
+      ]
+    },
+    {
+      "tournament_id": 926566,
+      "tournament_slug": "tournament/6-100",
+      "tournament_name": "あらいぶ杯オフライン#6",
+      "start_at": 1787976000,
+      "end_at": 1788004800,
+      "is_online": false,
+      "city": "渋谷区",
+      "venue_name": "",
+      "country_code": "JP",
+      "num_attendees": 28,
+      "url": "/tournament/6-100",
+      "events": [
+        {
+          "event_id": 1655079,
+          "event_slug": "tournament/6-100/event/singles-1on1",
+          "event_name": "Singles (1on1トーナメント)",
+          "num_entrants": 28,
+          "type": 1,
+          "start_at": 1787976000
         }
       ]
     }
