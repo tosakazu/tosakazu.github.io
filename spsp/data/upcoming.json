@@ -1,8 +1,8 @@
 {
-  "generated_at": 1786104012,
+  "generated_at": 1786114816,
   "country_code": "JP",
   "lookahead_days": 21,
-  "count": 56,
+  "count": 57,
   "tournaments": [
     {
       "tournament_id": 935369,
@@ -60,14 +60,14 @@
       "city": "台東区",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 53,
+      "num_attendees": 57,
       "url": "/tournament/8-519-5",
       "events": [
         {
           "event_id": 1680878,
           "event_slug": "tournament/8-519-5/event/on",
           "event_name": "シングルス（１on１トーナメント）",
-          "num_entrants": 53,
+          "num_entrants": 57,
           "type": 1,
           "start_at": 1786158000
         }
@@ -152,14 +152,14 @@
       "city": "渋谷区",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 45,
+      "num_attendees": 47,
       "url": "/tournament/to-win-12",
       "events": [
         {
           "event_id": 1679057,
           "event_slug": "tournament/to-win-12/event/singles",
           "event_name": "Singles",
-          "num_entrants": 45,
+          "num_entrants": 47,
           "type": 1,
           "start_at": 1786237200
         }
@@ -428,14 +428,14 @@
       "city": "渋谷区",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 9,
+      "num_attendees": 10,
       "url": "/tournament/136-shibuya-tatsu",
       "events": [
         {
           "event_id": 1681796,
           "event_slug": "tournament/136-shibuya-tatsu/event/singles",
           "event_name": "Singles",
-          "num_entrants": 9,
+          "num_entrants": 10,
           "type": 1,
           "start_at": 1786442400
         }
@@ -497,14 +497,14 @@
       "city": "中野区",
       "venue_name": "Red Bull Gaming Sphere Tokyo",
       "country_code": "JP",
-      "num_attendees": 4,
+      "num_attendees": 6,
       "url": "/tournament/weekly-smash-party-241",
       "events": [
         {
           "event_id": 1683423,
           "event_slug": "tournament/weekly-smash-party-241/event/special-1on1-ultimate-singles",
           "event_name": "SPECIAL 1on1/ Ultimate Singles",
-          "num_entrants": 4,
+          "num_entrants": 6,
           "type": 1,
           "start_at": 1786525200
         }
@@ -750,14 +750,14 @@
       "city": "名古屋市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 491,
+      "num_attendees": 492,
       "url": "/tournament/-3119",
       "events": [
         {
           "event_id": 1651150,
           "event_slug": "tournament/-3119/event/grand-slum",
           "event_name": "grand slum",
-          "num_entrants": 491,
+          "num_entrants": 492,
           "type": 1,
           "start_at": 1786752000
         }
@@ -1289,6 +1289,29 @@
           "num_entrants": 0,
           "type": 1,
           "start_at": 1787824800
+        }
+      ]
+    },
+    {
+      "tournament_id": 937954,
+      "tournament_slug": "tournament/28-535",
+      "tournament_name": "28(金)上野スマコミ#535(オープン)",
+      "start_at": 1787904000,
+      "end_at": 1787925600,
+      "is_online": false,
+      "city": "台東区",
+      "venue_name": "",
+      "country_code": "JP",
+      "num_attendees": 1,
+      "url": "/tournament/28-535",
+      "events": [
+        {
+          "event_id": 1677840,
+          "event_slug": "tournament/28-535/event/on",
+          "event_name": "シングルス（１on１トーナメント）",
+          "num_entrants": 1,
+          "type": 1,
+          "start_at": 1787904000
         }
       ]
     }
