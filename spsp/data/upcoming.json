@@ -1,5 +1,5 @@
 {
-  "generated_at": 1786114816,
+  "generated_at": 1786125624,
   "country_code": "JP",
   "lookahead_days": 21,
   "count": 57,
@@ -21,7 +21,7 @@
           "event_id": 1672539,
           "event_slug": "tournament/masterhand74/event/sp-ultimate-singles",
           "event_name": "SP シングルス / Ultimate Singles",
-          "num_entrants": 6,
+          "num_entrants": 5,
           "type": 1,
           "start_at": 1786150800
         }
@@ -60,7 +60,7 @@
       "city": "台東区",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 57,
+      "num_attendees": 59,
       "url": "/tournament/8-519-5",
       "events": [
         {
@@ -313,14 +313,14 @@
       "city": "横浜市",
       "venue_name": "おださがプラザ",
       "country_code": "JP",
-      "num_attendees": 8,
+      "num_attendees": 9,
       "url": "/tournament/gg-9-kannai-gg",
       "events": [
         {
           "event_id": 1679177,
           "event_slug": "tournament/gg-9-kannai-gg/event/kannai-gg-sp-1on1",
           "event_name": "kannai-gg/スマブラSP 1on1",
-          "num_entrants": 8,
+          "num_entrants": 9,
           "type": 1,
           "start_at": 1786352400
         }
@@ -382,14 +382,14 @@
       "city": "台東区",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 5,
+      "num_attendees": 6,
       "url": "/tournament/11-521",
       "events": [
         {
           "event_id": 1676160,
           "event_slug": "tournament/11-521/event/on",
           "event_name": "シングルス（１on１トーナメント）",
-          "num_entrants": 5,
+          "num_entrants": 6,
           "type": 1,
           "start_at": 1786417200
         }
@@ -704,14 +704,14 @@
       "city": "熊谷市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 16,
+      "num_attendees": 17,
       "url": "/tournament/flyhigh-28-96-1",
       "events": [
         {
           "event_id": 1680317,
           "event_slug": "tournament/flyhigh-28-96-1/event/fly-high-96",
           "event_name": "Fly High!! 96人トーナメント 埼玉県熊谷市スマブラ大会",
-          "num_entrants": 16,
+          "num_entrants": 17,
           "type": 1,
           "start_at": 1786719600
         }
@@ -750,14 +750,14 @@
       "city": "名古屋市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 492,
+      "num_attendees": 493,
       "url": "/tournament/-3119",
       "events": [
         {
           "event_id": 1651150,
           "event_slug": "tournament/-3119/event/grand-slum",
           "event_name": "grand slum",
-          "num_entrants": 492,
+          "num_entrants": 493,
           "type": 1,
           "start_at": 1786752000
         }
