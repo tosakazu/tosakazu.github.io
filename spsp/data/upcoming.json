@@ -1,32 +1,9 @@
 {
-  "generated_at": 1786255268,
+  "generated_at": 1786266069,
   "country_code": "JP",
   "lookahead_days": 21,
-  "count": 51,
+  "count": 50,
   "tournaments": [
-    {
-      "tournament_id": 937722,
-      "tournament_slug": "tournament/8-69",
-      "tournament_name": "ミコッチ杯#8",
-      "start_at": 1786266000,
-      "end_at": 1786280400,
-      "is_online": false,
-      "city": "横浜市",
-      "venue_name": "",
-      "country_code": "JP",
-      "num_attendees": 9,
-      "url": "/tournament/8-69",
-      "events": [
-        {
-          "event_id": 1677304,
-          "event_slug": "tournament/8-69/event/super-smash-bros-ultimate-singles",
-          "event_name": "シングルス",
-          "num_entrants": 9,
-          "type": 1,
-          "start_at": 1786266000
-        }
-      ]
-    },
     {
       "tournament_id": 936807,
       "tournament_slug": "tournament/28-11",
@@ -106,14 +83,14 @@
       "city": "大阪市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 13,
+      "num_attendees": 14,
       "url": "/tournament/hit-188-maesuma-hit-188",
       "events": [
         {
           "event_id": 1679812,
           "event_slug": "tournament/hit-188-maesuma-hit-188/event/singles-tournament",
           "event_name": "Singles Tournament",
-          "num_entrants": 13,
+          "num_entrants": 14,
           "type": 1,
           "start_at": 1786356000
         }
@@ -152,14 +129,14 @@
       "city": "台東区",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 12,
+      "num_attendees": 13,
       "url": "/tournament/11-521",
       "events": [
         {
           "event_id": 1676160,
           "event_slug": "tournament/11-521/event/on",
           "event_name": "シングルス（１on１トーナメント）",
-          "num_entrants": 12,
+          "num_entrants": 13,
           "type": 1,
           "start_at": 1786417200
         }
@@ -198,14 +175,14 @@
       "city": "渋谷区",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 17,
+      "num_attendees": 18,
       "url": "/tournament/136-shibuya-tatsu",
       "events": [
         {
           "event_id": 1681796,
           "event_slug": "tournament/136-shibuya-tatsu/event/singles",
           "event_name": "Singles",
-          "num_entrants": 17,
+          "num_entrants": 18,
           "type": 1,
           "start_at": 1786442400
         }
@@ -451,14 +428,14 @@
       "city": "台東区",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 11,
+      "num_attendees": 12,
       "url": "/tournament/14-524",
       "events": [
         {
           "event_id": 1676162,
           "event_slug": "tournament/14-524/event/on",
           "event_name": "シングルス（１on１トーナメント）",
-          "num_entrants": 11,
+          "num_entrants": 12,
           "type": 1,
           "start_at": 1786694400
         }
@@ -520,14 +497,14 @@
       "city": "名古屋市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 490,
+      "num_attendees": 492,
       "url": "/tournament/-3119",
       "events": [
         {
           "event_id": 1651150,
           "event_slug": "tournament/-3119/event/grand-slum",
           "event_name": "grand slum",
-          "num_entrants": 490,
+          "num_entrants": 492,
           "type": 1,
           "start_at": 1786752000
         }
@@ -635,7 +612,7 @@
       "city": "柏市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 8,
+      "num_attendees": 9,
       "url": "/tournament/sen-smash-7",
       "events": [
         {
@@ -1095,14 +1072,14 @@
       "city": "大東市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 324,
+      "num_attendees": 325,
       "url": "/tournament/72-sp-1",
       "events": [
         {
           "event_id": 1677094,
           "event_slug": "tournament/72-sp-1/event/1on1",
           "event_name": "予選あり1on1トーナメント",
-          "num_entrants": 320,
+          "num_entrants": 321,
           "type": 1,
           "start_at": 1787967600
         }
