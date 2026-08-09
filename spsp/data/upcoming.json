@@ -1,5 +1,5 @@
 {
-  "generated_at": 1786233619,
+  "generated_at": 1786244512,
   "country_code": "JP",
   "lookahead_days": 21,
   "count": 51,
@@ -106,14 +106,14 @@
       "city": "大阪市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 9,
+      "num_attendees": 10,
       "url": "/tournament/hit-188-maesuma-hit-188",
       "events": [
         {
           "event_id": 1679812,
           "event_slug": "tournament/hit-188-maesuma-hit-188/event/singles-tournament",
           "event_name": "Singles Tournament",
-          "num_entrants": 9,
+          "num_entrants": 10,
           "type": 1,
           "start_at": 1786356000
         }
@@ -152,14 +152,14 @@
       "city": "台東区",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 11,
+      "num_attendees": 12,
       "url": "/tournament/11-521",
       "events": [
         {
           "event_id": 1676160,
           "event_slug": "tournament/11-521/event/on",
           "event_name": "シングルス（１on１トーナメント）",
-          "num_entrants": 11,
+          "num_entrants": 12,
           "type": 1,
           "start_at": 1786417200
         }
@@ -198,14 +198,14 @@
       "city": "渋谷区",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 15,
+      "num_attendees": 16,
       "url": "/tournament/136-shibuya-tatsu",
       "events": [
         {
           "event_id": 1681796,
           "event_slug": "tournament/136-shibuya-tatsu/event/singles",
           "event_name": "Singles",
-          "num_entrants": 15,
+          "num_entrants": 16,
           "type": 1,
           "start_at": 1786442400
         }
@@ -221,14 +221,14 @@
       "city": "福岡市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 26,
+      "num_attendees": 30,
       "url": "/tournament/smash-149-1",
       "events": [
         {
           "event_id": 1681715,
           "event_slug": "tournament/smash-149-1/event/1on1",
           "event_name": "1on1トーナメント",
-          "num_entrants": 26,
+          "num_entrants": 30,
           "type": 1,
           "start_at": 1786444200
         }
@@ -359,14 +359,14 @@
       "city": "渋谷区",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 5,
+      "num_attendees": 6,
       "url": "/tournament/shibuya-g-g-smash-weekly-75",
       "events": [
         {
           "event_id": 1683295,
           "event_slug": "tournament/shibuya-g-g-smash-weekly-75/event/singles",
           "event_name": "Singles",
-          "num_entrants": 5,
+          "num_entrants": 6,
           "type": 1,
           "start_at": 1786617000
         }
@@ -458,7 +458,7 @@
           "event_id": 1676162,
           "event_slug": "tournament/14-524/event/on",
           "event_name": "シングルス（１on１トーナメント）",
-          "num_entrants": 10,
+          "num_entrants": 11,
           "type": 1,
           "start_at": 1786694400
         }
@@ -566,14 +566,14 @@
       "city": "函館市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 19,
+      "num_attendees": 20,
       "url": "/tournament/goryokaku-3",
       "events": [
         {
           "event_id": 1643673,
           "event_slug": "tournament/goryokaku-3/event/singles",
           "event_name": "Singles",
-          "num_entrants": 19,
+          "num_entrants": 20,
           "type": 1,
           "start_at": 1786766400
         }
@@ -865,7 +865,7 @@
       "city": "渋谷区",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 287,
+      "num_attendees": 286,
       "url": "/tournament/shibuya-dairan-first-strike",
       "events": [
         {
@@ -1118,14 +1118,14 @@
       "city": "荒川区",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 224,
+      "num_attendees": 229,
       "url": "/tournament/vic-seekers-1",
       "events": [
         {
           "event_id": 1660866,
           "event_slug": "tournament/vic-seekers-1/event/ultimate-singles",
           "event_name": "Ultimate Singles",
-          "num_entrants": 216,
+          "num_entrants": 221,
           "type": 1,
           "start_at": 1787970600
         }
