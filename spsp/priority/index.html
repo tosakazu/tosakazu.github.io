@@ -87,9 +87,20 @@
     display: inline-block; padding: 1px 6px; border-radius: 9px; margin-left: 5px;
     font-size: 10px; font-weight: 600; background: #dbeafe; color: #1d4ed8; vertical-align: 1px;
   }
+  .csv-badge {
+    display: inline-block; padding: 1px 6px; border-radius: 9px; margin-left: 5px;
+    font-size: 10px; font-weight: 600; background: #fef3c7; color: #92400e; vertical-align: 1px;
+  }
+  .csv-btn {
+    display: inline-block; padding: 6px 10px; font-size: 12px; cursor: pointer;
+    border: 1px solid #d1d5db; border-radius: 8px; background: #fff;
+  }
+  .csv-btn:hover { background: #f3f4f6; }
+  #csv-note { font-size: 12px; color: #6b7280; margin-left: 8px; }
+  #csv-note .clear { color: #dc2626; cursor: pointer; margin-left: 6px; }
   #loading { padding: 24px; text-align: center; color: #9ca3af; }
 </style>
-<script src="/nav.js"></script>
+<script src="../nav.js"></script>
 </head>
 <body>
 <main>
@@ -124,6 +135,10 @@
           <div class="suggest" id="padd-suggest"></div>
         </div>
         <div class="chips" id="padd-chips"></div>
+        <div style="margin-top:8px">
+          <label class="csv-btn">CSV から一括追加<input type="file" id="csv-file" accept=".csv,text/csv,text/plain" hidden></label>
+          <span id="csv-note"></span>
+        </div>
         <div class="radio-group">
           <label class="opt-row"><input type="radio" name="manual-mode" value="include" checked> 指定人数に含める</label>
           <label class="opt-row"><input type="radio" name="manual-mode" value="extra"> 指定人数とは別枠</label>
@@ -156,10 +171,10 @@
 <script>
 (function () {
   'use strict';
-  // 共有データは絶対パスで取る (nav.js と同じく本番ルート基準)。
+  // 共有データは相対パスで取る (= spsp.games でも tosakazu.github.io/spsp/ でも動く)。
   // discriminators.json は build_discriminators_json.py が nightly で site/data/ に生成。
-  var DATA_BASE = '/';
-  var DISC_URL = '/data/discriminators.json';
+  var DATA_BASE = '../';
+  var DISC_URL = '../data/discriminators.json';
 
   var PREF_ORDER = [
     '北海道','青森県','岩手県','宮城県','秋田県','山形県','福島県','茨城県','栃木県','群馬県',
@@ -177,8 +192,11 @@
 
   var selPrefs = [];        // 選択済み都道府県 (追加順)
   var manualUids = [];      // 手動追加 uid (追加順)
+  var csvUids = [];         // CSV 一括追加 uid (追加順)
+  var csvUnknown = [];      // CSV 内の未一致 discriminator
   var removeUids = [];      // 手動除去 uid (自動選定から除外)
   var currentRows = [];     // プレビュー中の行 (= CSV 出力対象)
+  var DISC2UID = {};        // discriminator (小文字) -> uid
 
   function esc(s) {
     return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
@@ -240,6 +258,7 @@
     (res[1].uids || []).forEach(function (u) { OVERSEAS.add(u); });
     PREF = res[2] || {};
     DISC = res[3] || {};
+    Object.keys(DISC).forEach(function (k) { DISC2UID[DISC[k].toLowerCase()] = parseInt(k, 10); });
     document.getElementById('loading').style.display = 'none';
     document.getElementById('card').style.display = '';
     setup();
@@ -255,11 +274,13 @@
     if (!nValid) n = 0;
     var exclOverseas = document.getElementById('excl-overseas').checked;
     var prefSet = selPrefs.length ? new Set(selPrefs) : null;
-    var manualSet = new Set(manualUids);
+    // 手動系 = 単体追加 + CSV 一括追加 (重複は単体追加を優先)
+    var manualAll = manualUids.concat(csvUids.filter(function (u) { return manualUids.indexOf(u) < 0; }));
+    var manualSet = new Set(manualAll);
     var removeSet = new Set(removeUids);
     var mode = document.querySelector('input[name="manual-mode"]:checked').value;
 
-    var autoN = (mode === 'include') ? Math.max(0, n - manualUids.length) : n;
+    var autoN = (mode === 'include') ? Math.max(0, n - manualAll.length) : n;
     var auto = [];
     for (var i = 0; i < RANKED.length && auto.length < autoN; i++) {
       var p = RANKED[i];
@@ -271,9 +292,10 @@
       if (prefSet && !prefSet.has(PREF[String(p.uid)])) continue;
       auto.push({ uid: p.uid, display: p.display, ens: p.ens, manual: false });
     }
-    var manual = manualUids.map(function (uid, i) {
+    var manual = manualAll.map(function (uid, i) {
       var m = MASTER.get(uid) || { display: 'uid:' + uid, ens: null };
-      return { uid: uid, display: m.display, ens: m.ens, manual: true, ord: i };
+      var origin = manualUids.indexOf(uid) >= 0 ? 'manual' : 'csv';
+      return { uid: uid, display: m.display, ens: m.ens, origin: origin, ord: i };
     });
     var rows = manual.concat(auto);
     rows.sort(function (a, b) {
@@ -282,7 +304,9 @@
     currentRows = rows;
 
     // プレビュー描画
-    var note = rows.length + ' 人 (手動 ' + manual.length + ' · 自動 ' + auto.length + ')';
+    var nManual = manual.filter(function (r) { return r.origin === 'manual'; }).length;
+    var nCsv = manual.length - nManual;
+    var note = rows.length + ' 人 (手動 ' + nManual + ' · CSV ' + nCsv + ' · 自動 ' + auto.length + ')';
     var warns = [];
     if (!nValid) warns.push('出力人数が数値ではありません');
     if (auto.length < autoN) warns.push('条件に合う選手が足りません (自動 ' + auto.length + '/' + autoN + ')');
@@ -295,7 +319,8 @@
         '<td class="col-rank">' + (r.ens ? '#' + r.ens : '—') + '</td>' +
         '<td><a href="' + DATA_BASE + 'p/?id=' + r.uid + '" target="_blank" rel="noopener" ' +
           'style="color:inherit;text-decoration:none">' + esc(r.display) + '</a>' +
-          (r.manual ? '<span class="manual-badge">手動</span>' : '') + '</td>' +
+          (r.origin === 'manual' ? '<span class="manual-badge">手動</span>'
+            : r.origin === 'csv' ? '<span class="csv-badge">CSV</span>' : '') + '</td>' +
         '<td class="col-disc' + (disc ? '' : ' nodisc') + '">' + (disc ? esc(disc) : '—') + '</td>' +
         '</tr>';
     }).join('');
@@ -331,6 +356,96 @@
       return '<span class="chip">' + esc(p) + '<span class="x" data-i="' + i + '">×</span></span>';
     }).join('');
   }
+  // ---- CSV 一括追加 ----
+  function parseCsv(text) {
+    var rows = [], row = [], cell = '', inQ = false;
+    text = text.replace(/^\uFEFF/, '');
+    for (var i = 0; i < text.length; i++) {
+      var ch = text[i];
+      if (inQ) {
+        if (ch === '"') {
+          if (text[i + 1] === '"') { cell += '"'; i++; } else { inQ = false; }
+        } else { cell += ch; }
+      } else if (ch === '"') { inQ = true; }
+      else if (ch === ',') { row.push(cell); cell = ''; }
+      else if (ch === '\n' || ch === '\r') {
+        if (ch === '\r' && text[i + 1] === '\n') i++;
+        row.push(cell); cell = '';
+        rows.push(row); row = [];
+      } else { cell += ch; }
+    }
+    if (cell !== '' || row.length) { row.push(cell); rows.push(row); }
+    return rows.filter(function (r) {
+      return r.some(function (c) { return c.trim() !== ''; });
+    });
+  }
+
+  var HEX8 = /^[0-9a-f]{8}$/i;   // start.gg discriminator の形式
+
+  function findDiscColumn(rows) {
+    // ① ヘッダ行に discriminator らしき列名 (表記揺れ・大文字小文字無視。
+    //    "discord" 等の誤爆を避けるため discriminator / disc 単独のみ)
+    if (rows.length) {
+      for (var c = 0; c < rows[0].length; c++) {
+        var h = (rows[0][c] || '').trim();
+        if (/discriminator/i.test(h) || /^disc$/i.test(h)) return { col: c, start: 1 };
+      }
+    }
+    // ② 列名なし: 各列の hex8 マッチ数を数えて最多の列を採用 (ヘッダ行は自然に弾かれる)
+    var best = null, bestCount = 0;
+    var width = 0;
+    rows.forEach(function (r) { if (r.length > width) width = r.length; });
+    for (var c2 = 0; c2 < width; c2++) {
+      var cnt = 0;
+      rows.forEach(function (r) { if (r[c2] && HEX8.test(r[c2].trim())) cnt++; });
+      if (cnt > bestCount) { bestCount = cnt; best = { col: c2, start: 0 }; }
+    }
+    return best;
+  }
+
+  function importCsv(text) {
+    var rows = parseCsv(text);
+    var found = findDiscColumn(rows);
+    if (!found) {
+      document.getElementById('csv-note').innerHTML =
+        '<span style="color:#b45309">discriminator 列が見つかりません</span>';
+      return;
+    }
+    var added = 0, dup = 0;
+    for (var i = found.start; i < rows.length; i++) {
+      var v = (rows[i][found.col] || '').trim();
+      if (!HEX8.test(v)) continue;
+      var uid = DISC2UID[v.toLowerCase()];
+      if (uid === undefined) {
+        if (csvUnknown.indexOf(v) < 0) csvUnknown.push(v);
+        continue;
+      }
+      if (manualUids.indexOf(uid) >= 0 || csvUids.indexOf(uid) >= 0) { dup++; continue; }
+      csvUids.push(uid);
+      added++;
+    }
+    renderCsvNote('今回 +' + added + (dup ? ' (重複スキップ ' + dup + ')' : ''));
+    recompute();
+  }
+
+  function renderCsvNote(extra) {
+    var note = document.getElementById('csv-note');
+    if (!csvUids.length && !csvUnknown.length) { note.innerHTML = ''; return; }
+    var parts = ['計 ' + csvUids.length + ' 人'];
+    if (extra) parts.push(extra);
+    if (csvUnknown.length) {
+      parts.push('<span style="color:#b45309">未一致 ' + csvUnknown.length + ' 件 (' +
+        esc(csvUnknown.slice(0, 3).join(', ')) + (csvUnknown.length > 3 ? ' …' : '') + ')</span>');
+    }
+    note.innerHTML = parts.join(' · ') + '<span class="clear" id="csv-clear">クリア</span>';
+    document.getElementById('csv-clear').addEventListener('click', function () {
+      csvUids = [];
+      csvUnknown = [];
+      note.innerHTML = '';
+      recompute();
+    });
+  }
+
   // 手動追加 / 手動除去 共通のプレイヤーピッカー (名前 / discriminator / uid で検索)
   function setupPlayerPicker(inputId, sugId, chipsId, arr, otherArr) {
     var input = document.getElementById(inputId);
@@ -349,7 +464,8 @@
       var hits = [];
       for (var i = 0; i < RANKED.length && hits.length < 20; i++) {
         var p = RANKED[i];
-        if (arr.indexOf(p.uid) >= 0 || otherArr.indexOf(p.uid) >= 0) continue;
+        if (arr.indexOf(p.uid) >= 0 || otherArr.indexOf(p.uid) >= 0 ||
+            csvUids.indexOf(p.uid) >= 0) continue;
         var disc = DISC[String(p.uid)] || '';
         if (p.display.toLowerCase().indexOf(q) >= 0 ||
             disc.toLowerCase().indexOf(q) >= 0 ||
@@ -432,9 +548,19 @@
       recompute();
     });
 
-    // 手動追加 / 手動除去 (お互いに入っている人はサジェストに出さない)
+    // 手動追加 / 手動除去 (お互い・CSV 追加済みの人はサジェストに出さない)
     setupPlayerPicker('padd-input', 'padd-suggest', 'padd-chips', manualUids, removeUids);
     setupPlayerPicker('prem-input', 'prem-suggest', 'prem-chips', removeUids, manualUids);
+
+    // CSV 一括追加
+    document.getElementById('csv-file').addEventListener('change', function (e) {
+      var f = e.target.files && e.target.files[0];
+      if (!f) return;
+      var reader = new FileReader();
+      reader.onload = function () { importCsv(String(reader.result)); };
+      reader.readAsText(f);
+      e.target.value = '';   // 同じファイルの再選択でも change が発火するように
+    });
   }
 })();
 </script>
