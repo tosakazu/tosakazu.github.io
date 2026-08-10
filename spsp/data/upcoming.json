@@ -1,32 +1,9 @@
 {
-  "generated_at": 1786352430,
+  "generated_at": 1786363229,
   "country_code": "JP",
   "lookahead_days": 21,
-  "count": 55,
+  "count": 54,
   "tournaments": [
-    {
-      "tournament_id": 938901,
-      "tournament_slug": "tournament/hit-188-maesuma-hit-188",
-      "tournament_name": "マエスマ'HIT#188 / Maesuma'HIT#188",
-      "start_at": 1786356000,
-      "end_at": 1786370400,
-      "is_online": false,
-      "city": "大阪市",
-      "venue_name": "",
-      "country_code": "JP",
-      "num_attendees": 33,
-      "url": "/tournament/hit-188-maesuma-hit-188",
-      "events": [
-        {
-          "event_id": 1679812,
-          "event_slug": "tournament/hit-188-maesuma-hit-188/event/singles-tournament",
-          "event_name": "Singles Tournament",
-          "num_entrants": 32,
-          "type": 1,
-          "start_at": 1786356000
-        }
-      ]
-    },
     {
       "tournament_id": 934151,
       "tournament_slug": "tournament/5-104",
@@ -313,14 +290,14 @@
       "city": "福岡市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 14,
+      "num_attendees": 16,
       "url": "/tournament/smash-150-1",
       "events": [
         {
           "event_id": 1681748,
           "event_slug": "tournament/smash-150-1/event/1on1",
           "event_name": "1on1トーナメント",
-          "num_entrants": 14,
+          "num_entrants": 16,
           "type": 1,
           "start_at": 1786617000
         }
