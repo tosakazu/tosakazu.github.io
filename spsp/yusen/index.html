@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>優先枠作成 — SPSP</title>
+<meta name="robots" content="noindex">
+
+<style>
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Hiragino Sans", sans-serif;
+    background: #ffffff; color: #111827; font-size: 14px;
+    -webkit-text-size-adjust: 100%;
+  }
+  main { max-width: 560px; margin: 0 auto; padding: 16px; }
+  h1 { font-size: 18px; font-weight: 700; margin: 2px 0 4px; }
+  .subtitle { color: #6b7280; font-size: 12px; margin: 0 0 12px; }
+
+  #card {
+    background: linear-gradient(180deg, #fafafa 0%, #ffffff 30%, #ffffff 100%);
+    border: 1px solid #e5e7eb; border-radius: 12px; padding: 16px 14px;
+  }
+  .section { margin-top: 14px; }
+  .section:first-child { margin-top: 0; }
+  .section h2 {
+    font-size: 12px; color: #374151; text-transform: uppercase; letter-spacing: 0.08em;
+    margin: 0 0 8px; font-weight: 600;
+  }
+  .muted { color: #6b7280; font-size: 12px; }
+  .hint { color: #9ca3af; font-size: 11px; margin-top: 4px; }
+
+  input[type="text"], input[type="search"] {
+    width: 100%; padding: 8px 10px; font-size: 14px;
+    border: 1px solid #d1d5db; border-radius: 8px;
+  }
+  #count { width: 110px; font-variant-numeric: tabular-nums; }
+
+  .opt-row { display: flex; align-items: center; gap: 6px; margin: 6px 0; font-size: 13px; }
+  .opt-row input[type="checkbox"], .opt-row input[type="radio"] { accent-color: #dc2626; }
+
+  .search-wrap { position: relative; margin-top: 6px; }
+  .suggest {
+    position: absolute; left: 0; right: 0; top: 100%; z-index: 20;
+    background: #fff; border: 1px solid #d1d5db; border-radius: 8px;
+    max-height: 240px; overflow-y: auto; box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    display: none;
+  }
+  .suggest.open { display: block; }
+  .suggest .item { padding: 7px 10px; cursor: pointer; display: flex; justify-content: space-between; gap: 8px; }
+  .suggest .item:hover, .suggest .item.active { background: #f3f4f6; }
+  .suggest .item .meta { color: #9ca3af; font-size: 11px; white-space: nowrap; }
+
+  .chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+  .chip {
+    display: inline-flex; align-items: center; gap: 5px;
+    background: #f3f4f6; border: 1px solid #e5e7eb; border-radius: 12px;
+    padding: 2px 8px; font-size: 12px;
+  }
+  .chip .x { cursor: pointer; color: #9ca3af; font-weight: 700; padding: 0 2px; }
+  .chip .x:hover { color: #dc2626; }
+
+  .radio-group { margin-top: 8px; }
+
+  #dl-btn {
+    display: block; width: 100%; margin-top: 14px; padding: 10px;
+    background: #dc2626; color: #fff; border: none; border-radius: 8px;
+    font-size: 14px; font-weight: 700; cursor: pointer;
+  }
+  #dl-btn:hover { background: #b91c1c; }
+  #dl-btn:disabled { background: #e5e7eb; color: #9ca3af; cursor: default; }
+
+  /* プレビュー */
+  #preview-note { margin: 10px 0 6px; font-size: 12px; color: #6b7280; }
+  #preview-note .warn { color: #b45309; }
+  #ptable { width: 100%; border-collapse: collapse; font-size: 13px; }
+  #ptable th {
+    text-align: left; font-size: 11px; color: #6b7280; font-weight: 600;
+    border-bottom: 1px solid #e5e7eb; padding: 4px 6px;
+  }
+  #ptable td { padding: 4px 6px; border-bottom: 1px solid #f3f4f6; }
+  #ptable .col-rank { width: 52px; text-align: right; color: #6b7280; font-variant-numeric: tabular-nums; }
+  #ptable .col-disc { width: 90px; color: #6b7280; font-family: ui-monospace, monospace; font-size: 12px; }
+  #ptable .nodisc { color: #dc2626; }
+  .manual-badge {
+    display: inline-block; padding: 1px 6px; border-radius: 9px; margin-left: 5px;
+    font-size: 10px; font-weight: 600; background: #dbeafe; color: #1d4ed8; vertical-align: 1px;
+  }
+  #loading { padding: 24px; text-align: center; color: #9ca3af; }
+</style>
+<script src="/nav.js"></script>
+</head>
+<body>
+<main>
+  <h1>優先枠作成</h1>
+  <p class="subtitle">大会の優先参加枠リスト (プレイヤー名 + discriminator) を CSV で出力します。総合順位の上から取得します。</p>
+
+  <div id="loading">データ読み込み中…</div>
+
+  <div id="card" style="display:none">
+    <div class="section">
+      <h2>出力人数</h2>
+      <input type="text" id="count" inputmode="numeric" value="100" autocomplete="off">
+    </div>
+
+    <div class="section">
+      <h2>オプション</h2>
+      <label class="opt-row"><input type="checkbox" id="excl-overseas" checked> 海外勢を除く</label>
+
+      <div style="margin-top:10px">
+        <div class="muted">都道府県で限定</div>
+        <div class="search-wrap">
+          <input type="search" id="pref-input" placeholder="都道府県名を入力…" autocomplete="off">
+          <div class="suggest" id="pref-suggest"></div>
+        </div>
+        <div class="chips" id="pref-chips"></div>
+      </div>
+
+      <div style="margin-top:12px">
+        <div class="muted">手動追加</div>
+        <div class="search-wrap">
+          <input type="search" id="padd-input" placeholder="名前 / discriminator で検索…" autocomplete="off">
+          <div class="suggest" id="padd-suggest"></div>
+        </div>
+        <div class="chips" id="padd-chips"></div>
+        <div class="radio-group">
+          <label class="opt-row"><input type="radio" name="manual-mode" value="include" checked> 指定人数に含める</label>
+          <label class="opt-row"><input type="radio" name="manual-mode" value="extra"> 指定人数とは別枠</label>
+        </div>
+      </div>
+
+      <div style="margin-top:12px">
+        <div class="muted">手動除去</div>
+        <div class="search-wrap">
+          <input type="search" id="prem-input" placeholder="名前 / discriminator で検索…" autocomplete="off">
+          <div class="suggest" id="prem-suggest"></div>
+        </div>
+        <div class="chips" id="prem-chips"></div>
+      </div>
+    </div>
+
+    <button id="dl-btn">CSV をダウンロード</button>
+
+    <div class="section">
+      <h2>プレビュー</h2>
+      <div id="preview-note"></div>
+      <table id="ptable">
+        <thead><tr><th class="col-rank">順位</th><th>名前</th><th class="col-disc">disc</th></tr></thead>
+        <tbody id="ptbody"></tbody>
+      </table>
+    </div>
+  </div>
+</main>
+
+<script>
+(function () {
+  'use strict';
+  // 共有データは絶対パスで取る (nav.js と同じく本番ルート基準)。
+  // discriminators.json は build_discriminators_json.py が nightly で site/data/ に生成。
+  var DATA_BASE = '/';
+  var DISC_URL = '/data/discriminators.json';
+
+  var PREF_ORDER = [
+    '北海道','青森県','岩手県','宮城県','秋田県','山形県','福島県','茨城県','栃木県','群馬県',
+    '埼玉県','千葉県','東京都','神奈川県','新潟県','富山県','石川県','福井県','山梨県','長野県',
+    '岐阜県','静岡県','愛知県','三重県','滋賀県','京都府','大阪府','兵庫県','奈良県','和歌山県',
+    '鳥取県','島根県','岡山県','広島県','山口県','徳島県','香川県','愛媛県','高知県','福岡県',
+    '佐賀県','長崎県','熊本県','大分県','宮崎県','鹿児島県','沖縄県'
+  ];
+
+  var RANKED = [];          // [{uid, display, ens}] ens 昇順 (ens null は末尾)
+  var MASTER = new Map();   // uid -> {display, ens}
+  var OVERSEAS = new Set();
+  var PREF = {};            // uid(str) -> 都道府県漢字
+  var DISC = {};            // uid(str) -> discriminator
+
+  var selPrefs = [];        // 選択済み都道府県 (追加順)
+  var manualUids = [];      // 手動追加 uid (追加順)
+  var removeUids = [];      // 手動除去 uid (自動選定から除外)
+  var currentRows = [];     // プレビュー中の行 (= CSV 出力対象)
+
+  function esc(s) {
+    return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;');
+  }
+
+  // ---- サジェストのキーボード操作 (sim ページと同じ挙動) ----
+  document.addEventListener('click', function (e) {
+    document.querySelectorAll('.suggest.open').forEach(function (s) {
+      var wrap = s.parentNode;
+      if (!wrap || !wrap.contains(e.target)) s.classList.remove('open');
+    });
+  });
+  function attachSuggestNav(input, sug, pick) {
+    input.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape') { sug.classList.remove('open'); return; }
+      if (!sug.classList.contains('open')) return;
+      var items = Array.prototype.filter.call(sug.querySelectorAll('.item'), function (it) {
+        return it.dataset.v !== undefined;
+      });
+      if (!items.length) return;
+      var idx = items.findIndex(function (it) { return it.classList.contains('active'); });
+      if (e.key === 'ArrowDown') { e.preventDefault(); idx = (idx + 1) % items.length; }
+      else if (e.key === 'ArrowUp') { e.preventDefault(); idx = (idx - 1 + items.length) % items.length; }
+      else if (e.key === 'Enter') { if (idx >= 0) { e.preventDefault(); pick(items[idx]); } return; }
+      else return;
+      items.forEach(function (it, i) { it.classList.toggle('active', i === idx); });
+      items[idx].scrollIntoView({ block: 'nearest' });
+    });
+  }
+
+  // ---- データロード ----
+  function loadJsonl(url) {
+    return fetch(url).then(function (r) {
+      if (!r.ok) throw new Error('jsonl ' + r.status);
+      return r.text();
+    }).then(function (text) {
+      var lines = text.split('\n');
+      for (var i = 0; i < lines.length; i++) {
+        if (!lines[i]) continue;
+        var rec;
+        try { rec = JSON.parse(lines[i]); } catch (e) { continue; }
+        var ens = (rec.ranks && rec.ranks.ensemble) || null;
+        MASTER.set(rec.user_id, { display: rec.display, ens: ens });
+        RANKED.push({ uid: rec.user_id, display: rec.display, ens: ens });
+      }
+      RANKED.sort(function (a, b) {
+        return (a.ens || Infinity) - (b.ens || Infinity) || a.uid - b.uid;
+      });
+    });
+  }
+
+  Promise.all([
+    loadJsonl(DATA_BASE + 'latest_tjpr_full.jsonl'),
+    fetch(DATA_BASE + 'data/overseas.json').then(function (r) { return r.json(); }),
+    fetch(DATA_BASE + 'data/player_prefectures.json').then(function (r) { return r.json(); }),
+    fetch(DISC_URL).then(function (r) { return r.json(); }),
+  ]).then(function (res) {
+    (res[1].uids || []).forEach(function (u) { OVERSEAS.add(u); });
+    PREF = res[2] || {};
+    DISC = res[3] || {};
+    document.getElementById('loading').style.display = 'none';
+    document.getElementById('card').style.display = '';
+    setup();
+    recompute();
+  }).catch(function (e) {
+    document.getElementById('loading').textContent = 'データの読み込みに失敗しました: ' + e;
+  });
+
+  // ---- 選定ロジック ----
+  function recompute() {
+    var n = parseInt(document.getElementById('count').value.trim(), 10);
+    var nValid = !isNaN(n) && n >= 0;
+    if (!nValid) n = 0;
+    var exclOverseas = document.getElementById('excl-overseas').checked;
+    var prefSet = selPrefs.length ? new Set(selPrefs) : null;
+    var manualSet = new Set(manualUids);
+    var removeSet = new Set(removeUids);
+    var mode = document.querySelector('input[name="manual-mode"]:checked').value;
+
+    var autoN = (mode === 'include') ? Math.max(0, n - manualUids.length) : n;
+    var auto = [];
+    for (var i = 0; i < RANKED.length && auto.length < autoN; i++) {
+      var p = RANKED[i];
+      if (p.ens === null) break;                    // 総合順位なしは自動取得の対象外
+      if (manualSet.has(p.uid)) continue;           // 手動分と重複させない
+      if (removeSet.has(p.uid)) continue;           // 手動除去
+      if (exclOverseas && OVERSEAS.has(p.uid)) continue;
+      if (!DISC[String(p.uid)]) continue;            // disc 不明 (≒退会) は自動選定の対象外
+      if (prefSet && !prefSet.has(PREF[String(p.uid)])) continue;
+      auto.push({ uid: p.uid, display: p.display, ens: p.ens, manual: false });
+    }
+    var manual = manualUids.map(function (uid, i) {
+      var m = MASTER.get(uid) || { display: 'uid:' + uid, ens: null };
+      return { uid: uid, display: m.display, ens: m.ens, manual: true, ord: i };
+    });
+    var rows = manual.concat(auto);
+    rows.sort(function (a, b) {
+      return (a.ens || Infinity) - (b.ens || Infinity) || (a.ord || 0) - (b.ord || 0) || a.uid - b.uid;
+    });
+    currentRows = rows;
+
+    // プレビュー描画
+    var note = rows.length + ' 人 (手動 ' + manual.length + ' · 自動 ' + auto.length + ')';
+    var warns = [];
+    if (!nValid) warns.push('出力人数が数値ではありません');
+    if (auto.length < autoN) warns.push('条件に合う選手が足りません (自動 ' + auto.length + '/' + autoN + ')');
+    if (warns.length) note += ' <span class="warn">⚠ ' + warns.map(esc).join(' / ') + '</span>';
+    document.getElementById('preview-note').innerHTML = note;
+
+    document.getElementById('ptbody').innerHTML = rows.map(function (r) {
+      var disc = DISC[String(r.uid)];
+      return '<tr>' +
+        '<td class="col-rank">' + (r.ens ? '#' + r.ens : '—') + '</td>' +
+        '<td><a href="' + DATA_BASE + 'p/?id=' + r.uid + '" target="_blank" rel="noopener" ' +
+          'style="color:inherit;text-decoration:none">' + esc(r.display) + '</a>' +
+          (r.manual ? '<span class="manual-badge">手動</span>' : '') + '</td>' +
+        '<td class="col-disc' + (disc ? '' : ' nodisc') + '">' + (disc ? esc(disc) : '—') + '</td>' +
+        '</tr>';
+    }).join('');
+    document.getElementById('dl-btn').disabled = !rows.length;
+  }
+
+  // ---- CSV ----
+  function csvField(s) {
+    s = String(s == null ? '' : s);
+    return /[",\n]/.test(s) ? '"' + s.replace(/"/g, '""') + '"' : s;
+  }
+  function downloadCsv() {
+    var lines = ['name,discriminator'];
+    currentRows.forEach(function (r) {
+      lines.push(csvField(r.display) + ',' + csvField(DISC[String(r.uid)] || ''));
+    });
+    // BOM 付き UTF-8 (= Excel で文字化けしないように)
+    var blob = new Blob(['\uFEFF' + lines.join('\r\n') + '\r\n'], { type: 'text/csv' });
+    var a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    var d = new Date();
+    var pad = function (x) { return String(x).padStart(2, '0'); };
+    a.download = 'yusenwaku_' + d.getFullYear() + pad(d.getMonth() + 1) + pad(d.getDate()) + '.csv';
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    URL.revokeObjectURL(a.href);
+  }
+
+  // ---- チップ描画 ----
+  function renderPrefChips() {
+    document.getElementById('pref-chips').innerHTML = selPrefs.map(function (p, i) {
+      return '<span class="chip">' + esc(p) + '<span class="x" data-i="' + i + '">×</span></span>';
+    }).join('');
+  }
+  // 手動追加 / 手動除去 共通のプレイヤーピッカー (名前 / discriminator / uid で検索)
+  function setupPlayerPicker(inputId, sugId, chipsId, arr, otherArr) {
+    var input = document.getElementById(inputId);
+    var sug = document.getElementById(sugId);
+    var chips = document.getElementById(chipsId);
+    function renderChips() {
+      chips.innerHTML = arr.map(function (uid, i) {
+        var m = MASTER.get(uid);
+        return '<span class="chip">' + esc(m ? m.display : 'uid:' + uid) +
+          '<span class="x" data-i="' + i + '">×</span></span>';
+      }).join('');
+    }
+    function renderSug() {
+      var q = input.value.trim().toLowerCase();
+      if (!q) { sug.classList.remove('open'); return; }
+      var hits = [];
+      for (var i = 0; i < RANKED.length && hits.length < 20; i++) {
+        var p = RANKED[i];
+        if (arr.indexOf(p.uid) >= 0 || otherArr.indexOf(p.uid) >= 0) continue;
+        var disc = DISC[String(p.uid)] || '';
+        if (p.display.toLowerCase().indexOf(q) >= 0 ||
+            disc.toLowerCase().indexOf(q) >= 0 ||
+            String(p.uid) === q) {
+          hits.push(p);
+        }
+      }
+      sug.innerHTML = hits.map(function (p) {
+        var disc = DISC[String(p.uid)];
+        return '<div class="item" data-v="' + esc(p.uid) + '"><span>' + esc(p.display) + '</span>' +
+          '<span class="meta">' + (p.ens ? '#' + p.ens + ' · ' : '') + (disc ? esc(disc) : 'disc不明') + '</span></div>';
+      }).join('') || '<div class="item"><span class="meta">該当なし</span></div>';
+      sug.classList.add('open');
+    }
+    function pick(item) {
+      if (!item.dataset.v) return;
+      arr.push(parseInt(item.dataset.v, 10));
+      input.value = '';
+      sug.classList.remove('open');
+      renderChips();
+      recompute();
+    }
+    input.addEventListener('input', renderSug);
+    sug.addEventListener('click', function (e) {
+      var item = e.target.closest('.item');
+      if (item) pick(item);
+    });
+    attachSuggestNav(input, sug, pick);
+    chips.addEventListener('click', function (e) {
+      var x = e.target.closest('.x');
+      if (!x) return;
+      arr.splice(parseInt(x.dataset.i, 10), 1);
+      renderChips();
+      recompute();
+    });
+  }
+
+  // ---- UI 配線 ----
+  function setup() {
+    document.getElementById('count').addEventListener('input', recompute);
+    document.getElementById('excl-overseas').addEventListener('change', recompute);
+    document.querySelectorAll('input[name="manual-mode"]').forEach(function (r) {
+      r.addEventListener('change', recompute);
+    });
+    document.getElementById('dl-btn').addEventListener('click', downloadCsv);
+
+    // 都道府県サジェスト
+    var pin = document.getElementById('pref-input');
+    var psug = document.getElementById('pref-suggest');
+    function renderPrefSug() {
+      var q = pin.value.trim();
+      var hits = PREF_ORDER.filter(function (p) {
+        return selPrefs.indexOf(p) < 0 && (!q || p.indexOf(q) >= 0);
+      });
+      psug.innerHTML = hits.map(function (p) {
+        return '<div class="item" data-v="' + esc(p) + '"><span>' + esc(p) + '</span></div>';
+      }).join('') || '<div class="item"><span class="meta">該当なし</span></div>';
+      psug.classList.add('open');
+    }
+    function pickPref(item) {
+      if (!item.dataset.v) return;
+      selPrefs.push(item.dataset.v);
+      pin.value = '';
+      psug.classList.remove('open');
+      renderPrefChips();
+      recompute();
+    }
+    pin.addEventListener('focus', renderPrefSug);
+    pin.addEventListener('input', renderPrefSug);
+    psug.addEventListener('click', function (e) {
+      var item = e.target.closest('.item');
+      if (item) pickPref(item);
+    });
+    attachSuggestNav(pin, psug, pickPref);
+    document.getElementById('pref-chips').addEventListener('click', function (e) {
+      var x = e.target.closest('.x');
+      if (!x) return;
+      selPrefs.splice(parseInt(x.dataset.i, 10), 1);
+      renderPrefChips();
+      recompute();
+    });
+
+    // 手動追加 / 手動除去 (お互いに入っている人はサジェストに出さない)
+    setupPlayerPicker('padd-input', 'padd-suggest', 'padd-chips', manualUids, removeUids);
+    setupPlayerPicker('prem-input', 'prem-suggest', 'prem-chips', removeUids, manualUids);
+  }
+})();
+</script>
+</body>
+</html>
