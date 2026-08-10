@@ -1,5 +1,5 @@
 {
-  "generated_at": 1786287670,
+  "generated_at": 1786298469,
   "country_code": "JP",
   "lookahead_days": 21,
   "count": 54,
@@ -44,7 +44,7 @@
           "event_id": 1676159,
           "event_slug": "tournament/10-520/event/on",
           "event_name": "シングルス（１on１トーナメント）",
-          "num_entrants": 19,
+          "num_entrants": 20,
           "type": 1,
           "start_at": 1786348800
         }
@@ -83,14 +83,14 @@
       "city": "大阪市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 15,
+      "num_attendees": 18,
       "url": "/tournament/hit-188-maesuma-hit-188",
       "events": [
         {
           "event_id": 1679812,
           "event_slug": "tournament/hit-188-maesuma-hit-188/event/singles-tournament",
           "event_name": "Singles Tournament",
-          "num_entrants": 15,
+          "num_entrants": 18,
           "type": 1,
           "start_at": 1786356000
         }
@@ -129,14 +129,14 @@
       "city": "台東区",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 14,
+      "num_attendees": 15,
       "url": "/tournament/11-521",
       "events": [
         {
           "event_id": 1676160,
           "event_slug": "tournament/11-521/event/on",
           "event_name": "シングルス（１on１トーナメント）",
-          "num_entrants": 14,
+          "num_entrants": 15,
           "type": 1,
           "start_at": 1786417200
         }
@@ -244,7 +244,7 @@
       "city": "中野区",
       "venue_name": "Red Bull Gaming Sphere Tokyo",
       "country_code": "JP",
-      "num_attendees": 69,
+      "num_attendees": 70,
       "url": "/tournament/weekly-smash-party-241",
       "events": [
         {
@@ -336,7 +336,7 @@
       "city": "渋谷区",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 7,
+      "num_attendees": 8,
       "url": "/tournament/shibuya-g-g-smash-weekly-75",
       "events": [
         {
@@ -451,14 +451,14 @@
       "city": "熊谷市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 18,
+      "num_attendees": 19,
       "url": "/tournament/flyhigh-28-96-1",
       "events": [
         {
           "event_id": 1680317,
           "event_slug": "tournament/flyhigh-28-96-1/event/fly-high-96",
           "event_name": "Fly High!! 96人トーナメント 埼玉県熊谷市スマブラ大会",
-          "num_entrants": 18,
+          "num_entrants": 19,
           "type": 1,
           "start_at": 1786719600
         }
@@ -842,7 +842,7 @@
       "city": "渋谷区",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 288,
+      "num_attendees": 289,
       "url": "/tournament/shibuya-dairan-first-strike",
       "events": [
         {
@@ -1187,14 +1187,14 @@
       "city": "東大阪市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 262,
+      "num_attendees": 266,
       "url": "/tournament/grand-wars-3-maesuma-grand-wars-3",
       "events": [
         {
           "event_id": 1673718,
           "event_slug": "tournament/grand-wars-3-maesuma-grand-wars-3/event/singles-tournament",
           "event_name": "Singles Tournament",
-          "num_entrants": 262,
+          "num_entrants": 266,
           "type": 1,
           "start_at": 1788053400
         }
