@@ -135,7 +135,7 @@
 .rank-frac { color: #6b7280; font-size: 11px; }
 .global-rank-badge { color: #9ca3af; font-size: 10px; margin-left: 6px; }
 
-/* 海外上位 / 全一 バッジ. padding を gate-pill より詰めて 2px 6px に.
+/* 海外 / 全一 バッジ. padding を gate-pill より詰めて 2px 6px に.
    margin-left は display-line の gap (= 4px 8px) で吸収されるため設定しない. */
 .overseas-badge {
   display: inline-block; padding: 1px 6px; border-radius: 9px;

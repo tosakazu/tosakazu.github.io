@@ -236,7 +236,7 @@ function render() {
   } else {
     const html = rows.map((c, i) => {
       const url = `ranking.html?char=${c.id}`;
-      // top uid (= 1 番上位の使い手). 海外上位勢を除外した結果は init() で c._top_uid に格納済み.
+      // top uid (= 1 番上位の使い手). 海外タグ勢を除外した結果は init() で c._top_uid に格納済み.
       let topHtml = '<span style="color:#9ca3af">—</span>';
       const topUid = c._top_uid;
       if (topUid != null) {
@@ -350,7 +350,7 @@ async function init() {
     if (emojiRes && emojiRes.ok) {
       try { const ce = await emojiRes.json(); for (const k in ce) STATE.charEmoji[k] = ce[k].emoji; } catch (e) {}
     }
-    // 海外上位勢 (= site/data/overseas.json) は「全1」表示の対象から除外する.
+    // 海外タグ勢 (= site/data/overseas.json) は「全1」表示の対象から除外する.
     let overseasUids = null;
     if (overseasRes && overseasRes.ok) {
       try {

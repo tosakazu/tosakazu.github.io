@@ -126,7 +126,7 @@
   .gate-pill.rookie  { background: #dcfce7; color: #15803d; }
   .gate-pill.veteran { background: #e0e7ff; color: #3730a3; }
 
-  /* 海外上位 / 全一 バッジ (= ranking-table.css と同じデザイン) */
+  /* 海外 / 全一 バッジ (= ranking-table.css と同じデザイン) */
   .overseas-badge {
     display: inline-block; padding: 1px 6px; border-radius: 9px;
     font-size: 11px; font-weight: 600; letter-spacing: 0.02em;
@@ -710,7 +710,7 @@
   </div>
 
   <div class="footer" id="footer-info">
-    <span class="site-version" style="font-size:11px;color:#9ca3af">v feeca7f · 2026-08-10 15:10 UTC</span>
+    <span class="site-version" style="font-size:11px;color:#9ca3af">v 2daa856 · 2026-08-10 18:10 UTC</span>
   </div>
 </main>
 
@@ -1210,17 +1210,17 @@ function render() {
   document.getElementById('lv-pill').innerHTML =
     `<span class="lv-pill lv-${lvNow}">${lvLabel}</span>`;
   // 計測中 (= 2年で集計対象大会 3 未満. build が metadata.provisional に出力)
-  // 海外上位バッジと同居可.
+  // 海外バッジと同居可.
   const provNow = !!(MAIN_REC.metadata && MAIN_REC.metadata.provisional);
   document.getElementById('gate-pill').innerHTML =
     provNow ? `<span class="gate-pill rookie">計測中</span>` : '';
 
-  // 海外上位 / 全一 バッジ (= ranking-table と同じ pill スタイル)
+  // 海外 / 全一 バッジ (= ranking-table と同じ pill スタイル)
   const overseasEl = document.getElementById('overseas-pill');
   const zenichiEl = document.getElementById('zenichi-pill');
   if (overseasEl) {
     overseasEl.innerHTML = (OVERSEAS_UIDS && OVERSEAS_UIDS.has(UID))
-      ? '<span class="overseas-badge">海外上位</span>' : '';
+      ? '<span class="overseas-badge">海外</span>' : '';
   }
   if (zenichiEl) {
     // {1: [chars], 2: [chars], 3: [chars]} を組み立てる. main_by_char は
@@ -1297,8 +1297,10 @@ function render() {
     document.getElementById('pref-body').innerHTML =
       `📍 <a href="../pref/ranking.html?pref=${encodeURIComponent(pref)}" style="color:inherit;text-decoration:none">${pref}</a>` + prefRankHtml;
     document.getElementById('pref-line').style.display = '';
-  } else if (PLAYER.country && PLAYER.country !== 'Japan') {
-    // 海外勢は都道府県の代わりに国名 (players/<uid>.json の country_ja) を表示。リンクなし。
+  } else if (PLAYER.country && PLAYER.country !== 'Japan'
+             && OVERSEAS_UIDS && OVERSEAS_UIDS.has(UID)) {
+    // 海外タグ勢は都道府県の代わりに国名 (players/<uid>.json の country_ja) を表示。リンクなし。
+    // 日本勢扱い (jp_uids / 住んでそう勢 = overseas.json 非該当) は国登録があっても出さない。
     document.getElementById('pref-body').innerHTML =
       `📍 ${escapeHtml(PLAYER.country_ja || PLAYER.country)}`;
     document.getElementById('pref-line').style.display = '';

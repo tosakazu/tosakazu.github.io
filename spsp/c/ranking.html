@@ -326,7 +326,7 @@ function buildData() {
   const uids = (STATE.index && STATE.index.main_by_char[String(STATE.charId)]) || [];
   const ranked = [];
   for (const uid of uids) {
-    // 海外上位勢 (= site/data/overseas.json) は使い手ランキングから除外.
+    // 海外タグ勢 (= site/data/overseas.json) は使い手ランキングから除外.
     if (STATE.overseasUids && STATE.overseasUids.has(uid)) continue;
     const src = STATE.masterMap.get(uid);
     if (!src) continue;

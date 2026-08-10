@@ -53,7 +53,7 @@
   }
   // rows の各レコードに _display_rank[method] と _is_overseas / _is_gray を付与する.
   // overseasUids: Set<number> | number[] | null
-  // 灰色 (= JP カウント対象外) = 海外上位 or 計測中.
+  // 灰色 (= JP カウント対象外) = 海外 or 計測中.
   // methods: 処理対象の method 名一覧 (省略時は rows.ranks に現れる全 method).
   //   サブページ (= 使い手/ローカル) では rec.ranks.tjpr 等が GLOBAL 順位を保持しているため、
   //   ローカルプール上での jp-counter 計算は意味を持たない. その場合は ['ensemble'] のみ
@@ -180,7 +180,7 @@
           lvSuffix = (_c && _rk <= _c) ? '+' : '';
         }
         // 計測中 (= 2年で集計対象大会 3 未満) → "計測中" pill. それ以外は表示なし.
-        // 海外上位と同居可 (= 両方付く. 処理上の灰色判定は海外上位が優先).
+        // 海外と同居可 (= 両方付く. 処理上の灰色判定は海外が優先).
         const btPill = isProvisional(rec)
           ? '<span class="gate-pill rookie">計測中</span>'
           : '';
@@ -205,9 +205,10 @@
           ? `<span class="global-rank-badge">全国 #${gRank}</span>`
           : '';
 
-        // 海外上位 (= site/data/overseas.json 該当者). 行背景の薄灰色と合わせて識別.
+        // 海外 (= site/data/overseas.json 該当者 = country≠Japan 登録 or 手動リスト).
+        // 行背景の薄灰色と合わせて識別.
         const overseasBadge = rec._is_overseas
-          ? '<span class="overseas-badge">海外上位</span>'
+          ? '<span class="overseas-badge">海外</span>'
           : '';
         // 全一/全二/全三 (= 各キャラのメイン使い手 #1/#2/#3, 海外勢除外後).
         // attachZenichi() で rec._zenichi = {1: [...], 2: [...], 3: [...]} を入れておく.
