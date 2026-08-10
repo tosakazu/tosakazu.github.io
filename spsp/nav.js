@@ -65,7 +65,7 @@
     if (/\/math\.html$/.test(p))     return 'math';
     if (/\/seed-upload\//.test(p))   return 'seed-upload';
     if (/\/seed\//.test(p))          return 'seed';
-    if (/\/yusen\//.test(p))         return 'yusen';
+    if (/\/priority\//.test(p))      return 'priority';
     if (/\/local\/ranking\.html$/.test(p)) return 'local-ranking';
     if (/\/local\//.test(p))         return 'local-series';
     if (/\/c\/ranking\.html$/.test(p)) return 'char-ranking';
@@ -81,7 +81,7 @@
   }
   const cur = currentPage();
   const isRanking = cur === 'ranking' || cur === 'local-series' || cur === 'local-ranking' || cur === 'char-list' || cur === 'char-ranking' || cur === 'pref-list' || cur === 'pref-ranking' || cur === 'events' || cur === 'sim';
-  const isSeeding = cur === 'seed' || cur === 'seed-upload' || cur === 'yusen';
+  const isSeeding = cur === 'seed' || cur === 'seed-upload' || cur === 'priority';
   const isMethod  = ['overview', 'details', 'eval', 'math'].includes(cur);
 
   const html =
@@ -103,7 +103,7 @@
         <div class="nav-menu" role="menu">
           <a href="${prefix}seed/"${cur === 'seed' ? ' class="current"' : ''} role="menuitem">シード生成</a>
           <a href="${prefix}seed-upload/"${cur === 'seed-upload' ? ' class="current"' : ''} role="menuitem">シードアップロード</a>
-          <a href="${prefix}yusen/"${cur === 'yusen' ? ' class="current"' : ''} role="menuitem">優先枠作成</a>
+          <a href="${prefix}priority/"${cur === 'priority' ? ' class="current"' : ''} role="menuitem">優先枠作成</a>
         </div>
       </div>
       <div class="nav-dropdown${isMethod ? ' has-current' : ''}">
