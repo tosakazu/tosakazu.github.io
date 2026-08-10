@@ -96,8 +96,8 @@
     border: 1px solid #d1d5db; border-radius: 8px; background: #fff;
   }
   .csv-btn:hover { background: #f3f4f6; }
-  #csv-note { font-size: 12px; color: #6b7280; margin-left: 8px; }
-  #csv-note .clear { color: #dc2626; cursor: pointer; margin-left: 6px; }
+  .csv-note { font-size: 12px; color: #6b7280; margin-left: 8px; }
+  .csv-note .clear { color: #dc2626; cursor: pointer; margin-left: 6px; }
   #loading { padding: 24px; text-align: center; color: #9ca3af; }
 </style>
 <script src="../nav.js"></script>
@@ -137,7 +137,7 @@
         <div class="chips" id="padd-chips"></div>
         <div style="margin-top:8px">
           <label class="csv-btn">CSV から一括追加<input type="file" id="csv-file" accept=".csv,text/csv,text/plain" hidden></label>
-          <span id="csv-note"></span>
+          <span id="csv-note" class="csv-note"></span>
         </div>
         <div class="radio-group">
           <label class="opt-row"><input type="radio" name="manual-mode" value="include" checked> 指定人数に含める</label>
@@ -152,6 +152,10 @@
           <div class="suggest" id="prem-suggest"></div>
         </div>
         <div class="chips" id="prem-chips"></div>
+        <div style="margin-top:8px">
+          <label class="csv-btn">CSV から一括除去<input type="file" id="csv-rem-file" accept=".csv,text/csv,text/plain" hidden></label>
+          <span id="csv-rem-note" class="csv-note"></span>
+        </div>
       </div>
     </div>
 
@@ -193,8 +197,10 @@
   var selPrefs = [];        // 選択済み都道府県 (追加順)
   var manualUids = [];      // 手動追加 uid (追加順)
   var csvUids = [];         // CSV 一括追加 uid (追加順)
-  var csvUnknown = [];      // CSV 内の未一致 discriminator
+  var csvUnknown = [];      // CSV 内の未一致 discriminator (追加側)
   var removeUids = [];      // 手動除去 uid (自動選定から除外)
+  var csvRemoveUids = [];   // CSV 一括除去 uid
+  var csvRemoveUnknown = [];// CSV 内の未一致 discriminator (除去側)
   var currentRows = [];     // プレビュー中の行 (= CSV 出力対象)
   var DISC2UID = {};        // discriminator (小文字) -> uid
 
@@ -277,7 +283,7 @@
     // 手動系 = 単体追加 + CSV 一括追加 (重複は単体追加を優先)
     var manualAll = manualUids.concat(csvUids.filter(function (u) { return manualUids.indexOf(u) < 0; }));
     var manualSet = new Set(manualAll);
-    var removeSet = new Set(removeUids);
+    var removeSet = new Set(removeUids.concat(csvRemoveUids));
     var mode = document.querySelector('input[name="manual-mode"]:checked').value;
 
     var autoN = (mode === 'include') ? Math.max(0, n - manualAll.length) : n;
@@ -403,11 +409,13 @@
     return best;
   }
 
-  function importCsv(text) {
+  // target: {list, unknown, noteId, skip()} — 追加用と除去用で共通。
+  // clear で参照ごと差し替えないよう list/unknown は in-place で操作する。
+  function importCsv(text, target) {
     var rows = parseCsv(text);
     var found = findDiscColumn(rows);
     if (!found) {
-      document.getElementById('csv-note').innerHTML =
+      document.getElementById(target.noteId).innerHTML =
         '<span style="color:#b45309">discriminator 列が見つかりません</span>';
       return;
     }
@@ -417,34 +425,40 @@
       if (!HEX8.test(v)) continue;
       var uid = DISC2UID[v.toLowerCase()];
       if (uid === undefined) {
-        if (csvUnknown.indexOf(v) < 0) csvUnknown.push(v);
+        if (target.unknown.indexOf(v) < 0) target.unknown.push(v);
         continue;
       }
-      if (manualUids.indexOf(uid) >= 0 || csvUids.indexOf(uid) >= 0) { dup++; continue; }
-      csvUids.push(uid);
+      if (target.list.indexOf(uid) >= 0 || target.skip().indexOf(uid) >= 0) { dup++; continue; }
+      target.list.push(uid);
       added++;
     }
-    renderCsvNote('今回 +' + added + (dup ? ' (重複スキップ ' + dup + ')' : ''));
+    renderCsvNote(target, '今回 +' + added + (dup ? ' (重複スキップ ' + dup + ')' : ''));
     recompute();
   }
 
-  function renderCsvNote(extra) {
-    var note = document.getElementById('csv-note');
-    if (!csvUids.length && !csvUnknown.length) { note.innerHTML = ''; return; }
-    var parts = ['計 ' + csvUids.length + ' 人'];
+  function renderCsvNote(target, extra) {
+    var note = document.getElementById(target.noteId);
+    if (!target.list.length && !target.unknown.length) { note.innerHTML = ''; return; }
+    var parts = ['計 ' + target.list.length + ' 人'];
     if (extra) parts.push(extra);
-    if (csvUnknown.length) {
-      parts.push('<span style="color:#b45309">未一致 ' + csvUnknown.length + ' 件 (' +
-        esc(csvUnknown.slice(0, 3).join(', ')) + (csvUnknown.length > 3 ? ' …' : '') + ')</span>');
+    if (target.unknown.length) {
+      parts.push('<span style="color:#b45309">未一致 ' + target.unknown.length + ' 件 (' +
+        esc(target.unknown.slice(0, 3).join(', ')) + (target.unknown.length > 3 ? ' …' : '') + ')</span>');
     }
-    note.innerHTML = parts.join(' · ') + '<span class="clear" id="csv-clear">クリア</span>';
-    document.getElementById('csv-clear').addEventListener('click', function () {
-      csvUids = [];
-      csvUnknown = [];
+    note.innerHTML = parts.join(' · ') + '<span class="clear">クリア</span>';
+    note.querySelector('.clear').addEventListener('click', function () {
+      target.list.length = 0;
+      target.unknown.length = 0;
       note.innerHTML = '';
       recompute();
     });
   }
+
+  // 同一人物が複数リストに入らないよう、他リスト所属は重複スキップ扱いにする
+  var CSV_ADD = { list: csvUids, unknown: csvUnknown, noteId: 'csv-note',
+                  skip: function () { return manualUids.concat(removeUids, csvRemoveUids); } };
+  var CSV_REM = { list: csvRemoveUids, unknown: csvRemoveUnknown, noteId: 'csv-rem-note',
+                  skip: function () { return manualUids.concat(removeUids, csvUids); } };
 
   // 手動追加 / 手動除去 共通のプレイヤーピッカー (名前 / discriminator / uid で検索)
   function setupPlayerPicker(inputId, sugId, chipsId, arr, otherArr) {
@@ -465,7 +479,7 @@
       for (var i = 0; i < RANKED.length && hits.length < 20; i++) {
         var p = RANKED[i];
         if (arr.indexOf(p.uid) >= 0 || otherArr.indexOf(p.uid) >= 0 ||
-            csvUids.indexOf(p.uid) >= 0) continue;
+            csvUids.indexOf(p.uid) >= 0 || csvRemoveUids.indexOf(p.uid) >= 0) continue;
         var disc = DISC[String(p.uid)] || '';
         if (p.display.toLowerCase().indexOf(q) >= 0 ||
             disc.toLowerCase().indexOf(q) >= 0 ||
@@ -552,14 +566,16 @@
     setupPlayerPicker('padd-input', 'padd-suggest', 'padd-chips', manualUids, removeUids);
     setupPlayerPicker('prem-input', 'prem-suggest', 'prem-chips', removeUids, manualUids);
 
-    // CSV 一括追加
-    document.getElementById('csv-file').addEventListener('change', function (e) {
-      var f = e.target.files && e.target.files[0];
-      if (!f) return;
-      var reader = new FileReader();
-      reader.onload = function () { importCsv(String(reader.result)); };
-      reader.readAsText(f);
-      e.target.value = '';   // 同じファイルの再選択でも change が発火するように
+    // CSV 一括追加 / 一括除去
+    [['csv-file', CSV_ADD], ['csv-rem-file', CSV_REM]].forEach(function (pair) {
+      document.getElementById(pair[0]).addEventListener('change', function (e) {
+        var f = e.target.files && e.target.files[0];
+        if (!f) return;
+        var reader = new FileReader();
+        reader.onload = function () { importCsv(String(reader.result), pair[1]); };
+        reader.readAsText(f);
+        e.target.value = '';   // 同じファイルの再選択でも change が発火するように
+      });
     });
   }
 })();
