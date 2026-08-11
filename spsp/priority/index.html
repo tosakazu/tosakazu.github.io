@@ -341,7 +341,10 @@
   function downloadCsv() {
     var lines = ['name,discriminator'];
     currentRows.forEach(function (r) {
-      lines.push(csvField(r.display) + ',' + csvField(DISC[String(r.uid)] || ''));
+      // disc は ="..." で書く: "600e0118" 等を Google Sheets / Excel が指数表記の
+      // 数値 (6.00E+118) に化けさせるのを防ぐ (= 文字列を返す数式として読ませる)。
+      var disc = DISC[String(r.uid)] || '';
+      lines.push(csvField(r.display) + ',' + (disc ? '="' + disc + '"' : ''));
     });
     // BOM 付き UTF-8 (= Excel で文字化けしないように)
     var blob = new Blob(['\uFEFF' + lines.join('\r\n') + '\r\n'], { type: 'text/csv' });
@@ -386,7 +389,12 @@
     });
   }
 
-  var HEX8 = /^[0-9a-f]{8}$/i;   // start.gg discriminator の形式
+  // セル値 -> discriminator (無効なら null)。プレーンな "600e0118" のほか、
+  // 本ページ出力の ="600e0118" (パース後は =600e0118) も受け付ける。
+  function cellDisc(v) {
+    var m = String(v || '').trim().match(/^=?"?([0-9a-f]{8})"?$/i);
+    return m ? m[1] : null;
+  }
 
   function findDiscColumn(rows) {
     // ① ヘッダ行に discriminator らしき列名 (表記揺れ・大文字小文字無視。
@@ -403,7 +411,7 @@
     rows.forEach(function (r) { if (r.length > width) width = r.length; });
     for (var c2 = 0; c2 < width; c2++) {
       var cnt = 0;
-      rows.forEach(function (r) { if (r[c2] && HEX8.test(r[c2].trim())) cnt++; });
+      rows.forEach(function (r) { if (cellDisc(r[c2])) cnt++; });
       if (cnt > bestCount) { bestCount = cnt; best = { col: c2, start: 0 }; }
     }
     return best;
@@ -421,8 +429,8 @@
     }
     var added = 0, dup = 0;
     for (var i = found.start; i < rows.length; i++) {
-      var v = (rows[i][found.col] || '').trim();
-      if (!HEX8.test(v)) continue;
+      var v = cellDisc(rows[i][found.col]);
+      if (!v) continue;
       var uid = DISC2UID[v.toLowerCase()];
       if (uid === undefined) {
         if (target.unknown.indexOf(v) < 0) target.unknown.push(v);
