@@ -80,7 +80,12 @@
     border-bottom: 1px solid #e5e7eb; padding: 4px 6px;
   }
   #ptable td { padding: 4px 6px; border-bottom: 1px solid #f3f4f6; }
+  #ptable .col-no { width: 44px; text-align: right; color: #9ca3af; font-variant-numeric: tabular-nums; }
   #ptable .col-rank { width: 52px; text-align: right; color: #6b7280; font-variant-numeric: tabular-nums; }
+  .prov-badge {
+    display: inline-block; padding: 1px 6px; border-radius: 9px; margin-left: 5px;
+    font-size: 10px; font-weight: 600; background: #f3f4f6; color: #6b7280; vertical-align: 1px;
+  }
   #ptable .col-disc { width: 90px; color: #6b7280; font-family: ui-monospace, monospace; font-size: 12px; }
   #ptable .nodisc { color: #dc2626; }
   .manual-badge {
@@ -165,7 +170,7 @@
       <h2>プレビュー</h2>
       <div id="preview-note"></div>
       <table id="ptable">
-        <thead><tr><th class="col-rank">順位</th><th>名前</th><th class="col-disc">disc</th></tr></thead>
+        <thead><tr><th class="col-no">No.</th><th class="col-rank">順位</th><th>名前</th><th class="col-disc">disc</th></tr></thead>
         <tbody id="ptbody"></tbody>
       </table>
     </div>
@@ -246,8 +251,9 @@
         var rec;
         try { rec = JSON.parse(lines[i]); } catch (e) { continue; }
         var ens = (rec.ranks && rec.ranks.ensemble) || null;
-        MASTER.set(rec.user_id, { display: rec.display, ens: ens });
-        RANKED.push({ uid: rec.user_id, display: rec.display, ens: ens });
+        var prov = !!(rec.metadata && rec.metadata.provisional);
+        MASTER.set(rec.user_id, { display: rec.display, ens: ens, prov: prov });
+        RANKED.push({ uid: rec.user_id, display: rec.display, ens: ens, prov: prov });
       }
       RANKED.sort(function (a, b) {
         return (a.ens || Infinity) - (b.ens || Infinity) || a.uid - b.uid;
@@ -296,12 +302,12 @@
       if (exclOverseas && OVERSEAS.has(p.uid)) continue;
       if (!DISC[String(p.uid)]) continue;            // disc 不明 (≒退会) は自動選定の対象外
       if (prefSet && !prefSet.has(PREF[String(p.uid)])) continue;
-      auto.push({ uid: p.uid, display: p.display, ens: p.ens, manual: false });
+      auto.push({ uid: p.uid, display: p.display, ens: p.ens, prov: p.prov });
     }
     var manual = manualAll.map(function (uid, i) {
       var m = MASTER.get(uid) || { display: 'uid:' + uid, ens: null };
       var origin = manualUids.indexOf(uid) >= 0 ? 'manual' : 'csv';
-      return { uid: uid, display: m.display, ens: m.ens, origin: origin, ord: i };
+      return { uid: uid, display: m.display, ens: m.ens, prov: m.prov, origin: origin, ord: i };
     });
     var rows = manual.concat(auto);
     rows.sort(function (a, b) {
@@ -319,12 +325,14 @@
     if (warns.length) note += ' <span class="warn">⚠ ' + warns.map(esc).join(' / ') + '</span>';
     document.getElementById('preview-note').innerHTML = note;
 
-    document.getElementById('ptbody').innerHTML = rows.map(function (r) {
+    document.getElementById('ptbody').innerHTML = rows.map(function (r, idx) {
       var disc = DISC[String(r.uid)];
       return '<tr>' +
+        '<td class="col-no">' + (idx + 1) + '</td>' +
         '<td class="col-rank">' + (r.ens ? '#' + r.ens : '—') + '</td>' +
         '<td><a href="' + DATA_BASE + 'p/?id=' + r.uid + '" target="_blank" rel="noopener" ' +
           'style="color:inherit;text-decoration:none">' + esc(r.display) + '</a>' +
+          (r.prov ? '<span class="prov-badge">計測中</span>' : '') +
           (r.origin === 'manual' ? '<span class="manual-badge">手動</span>'
             : r.origin === 'csv' ? '<span class="csv-badge">CSV</span>' : '') + '</td>' +
         '<td class="col-disc' + (disc ? '' : ' nodisc') + '">' + (disc ? esc(disc) : '—') + '</td>' +
