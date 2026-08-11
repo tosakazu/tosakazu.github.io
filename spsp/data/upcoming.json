@@ -1,5 +1,5 @@
 {
-  "generated_at": 1786374032,
+  "generated_at": 1786384829,
   "country_code": "JP",
   "lookahead_days": 21,
   "count": 54,
@@ -14,14 +14,14 @@
       "city": "台東区",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 22,
+      "num_attendees": 24,
       "url": "/tournament/11-521",
       "events": [
         {
           "event_id": 1676160,
           "event_slug": "tournament/11-521/event/on",
           "event_name": "シングルス（１on１トーナメント）",
-          "num_entrants": 22,
+          "num_entrants": 24,
           "type": 1,
           "start_at": 1786417200
         }
@@ -60,14 +60,14 @@
       "city": "渋谷区",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 25,
+      "num_attendees": 27,
       "url": "/tournament/136-shibuya-tatsu",
       "events": [
         {
           "event_id": 1681796,
           "event_slug": "tournament/136-shibuya-tatsu/event/singles",
           "event_name": "Singles",
-          "num_entrants": 25,
+          "num_entrants": 27,
           "type": 1,
           "start_at": 1786442400
         }
@@ -83,14 +83,14 @@
       "city": "福岡市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 38,
+      "num_attendees": 39,
       "url": "/tournament/smash-149-1",
       "events": [
         {
           "event_id": 1681715,
           "event_slug": "tournament/smash-149-1/event/1on1",
           "event_name": "1on1トーナメント",
-          "num_entrants": 38,
+          "num_entrants": 39,
           "type": 1,
           "start_at": 1786444200
         }
@@ -152,14 +152,14 @@
       "city": "京都市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 25,
+      "num_attendees": 26,
       "url": "/tournament/dsw-64",
       "events": [
         {
           "event_id": 1683195,
           "event_slug": "tournament/dsw-64/event/singletournament",
           "event_name": "SingleTournament",
-          "num_entrants": 25,
+          "num_entrants": 26,
           "type": 1,
           "start_at": 1786532400
         }
@@ -589,14 +589,14 @@
       "city": "横浜市",
       "venue_name": "おださがプラザ",
       "country_code": "JP",
-      "num_attendees": 2,
+      "num_attendees": 3,
       "url": "/tournament/gg-10-kannai-gg",
       "events": [
         {
           "event_id": 1680775,
           "event_slug": "tournament/gg-10-kannai-gg/event/kannai-gg-sp-1on1",
           "event_name": "kannai-gg/スマブラSP 1on1",
-          "num_entrants": 2,
+          "num_entrants": 3,
           "type": 1,
           "start_at": 1786957200
         }
