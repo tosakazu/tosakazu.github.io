@@ -88,6 +88,10 @@
   }
   #ptable .col-disc { width: 90px; color: #6b7280; font-family: ui-monospace, monospace; font-size: 12px; }
   #ptable .nodisc { color: #dc2626; }
+  .ovs-badge {
+    display: inline-block; padding: 1px 6px; border-radius: 9px; margin-left: 5px;
+    font-size: 10px; font-weight: 600; background: #e5e7eb; color: #6b7280; vertical-align: 1px;
+  }
   .manual-badge {
     display: inline-block; padding: 1px 6px; border-radius: 9px; margin-left: 5px;
     font-size: 10px; font-weight: 600; background: #dbeafe; color: #1d4ed8; vertical-align: 1px;
@@ -353,6 +357,7 @@
         '<td class="col-rank">' + (r.ens ? '#' + r.ens : '—') + '</td>' +
         '<td><a href="' + DATA_BASE + 'p/?id=' + r.uid + '" target="_blank" rel="noopener" ' +
           'style="color:inherit;text-decoration:none">' + esc(r.display) + '</a>' +
+          (OVERSEAS.has(r.uid) ? '<span class="ovs-badge">海外</span>' : '') +
           (r.prov ? '<span class="prov-badge">計測中</span>' : '') +
           (r.origin === 'manual' ? '<span class="manual-badge">手動</span>'
             : r.origin === 'csv' ? '<span class="csv-badge">CSV</span>' : '') + '</td>' +
