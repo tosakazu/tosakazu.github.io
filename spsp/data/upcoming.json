@@ -1,32 +1,9 @@
 {
-  "generated_at": 1786363229,
+  "generated_at": 1786374032,
   "country_code": "JP",
   "lookahead_days": 21,
   "count": 54,
   "tournaments": [
-    {
-      "tournament_id": 934151,
-      "tournament_slug": "tournament/5-104",
-      "tournament_name": "女王杯#5",
-      "start_at": 1786374000,
-      "end_at": 1786442400,
-      "is_online": false,
-      "city": "中野区",
-      "venue_name": "Pio, Tokyo",
-      "country_code": "JP",
-      "num_attendees": 33,
-      "url": "/tournament/5-104",
-      "events": [
-        {
-          "event_id": 1670065,
-          "event_slug": "tournament/5-104/event/singles-ssqm",
-          "event_name": "シングルス / Singles(SSQM)",
-          "num_entrants": 33,
-          "type": 1,
-          "start_at": 1786374000
-        }
-      ]
-    },
     {
       "tournament_id": 937210,
       "tournament_slug": "tournament/11-521",
@@ -37,14 +14,14 @@
       "city": "台東区",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 24,
+      "num_attendees": 22,
       "url": "/tournament/11-521",
       "events": [
         {
           "event_id": 1676160,
           "event_slug": "tournament/11-521/event/on",
           "event_name": "シングルス（１on１トーナメント）",
-          "num_entrants": 24,
+          "num_entrants": 22,
           "type": 1,
           "start_at": 1786417200
         }
@@ -83,14 +60,14 @@
       "city": "渋谷区",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 27,
+      "num_attendees": 25,
       "url": "/tournament/136-shibuya-tatsu",
       "events": [
         {
           "event_id": 1681796,
           "event_slug": "tournament/136-shibuya-tatsu/event/singles",
           "event_name": "Singles",
-          "num_entrants": 27,
+          "num_entrants": 25,
           "type": 1,
           "start_at": 1786442400
         }
@@ -290,14 +267,14 @@
       "city": "福岡市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 16,
+      "num_attendees": 17,
       "url": "/tournament/smash-150-1",
       "events": [
         {
           "event_id": 1681748,
           "event_slug": "tournament/smash-150-1/event/1on1",
           "event_name": "1on1トーナメント",
-          "num_entrants": 16,
+          "num_entrants": 17,
           "type": 1,
           "start_at": 1786617000
         }
@@ -359,14 +336,14 @@
       "city": "大分市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 2,
+      "num_attendees": 3,
       "url": "/tournament/17-17",
       "events": [
         {
           "event_id": 1685587,
           "event_slug": "tournament/17-17/event/1on1",
           "event_name": "1on1トーナメント",
-          "num_entrants": 2,
+          "num_entrants": 3,
           "type": 1,
           "start_at": 1786705200
         }
@@ -612,14 +589,14 @@
       "city": "横浜市",
       "venue_name": "おださがプラザ",
       "country_code": "JP",
-      "num_attendees": 1,
+      "num_attendees": 2,
       "url": "/tournament/gg-10-kannai-gg",
       "events": [
         {
           "event_id": 1680775,
           "event_slug": "tournament/gg-10-kannai-gg/event/kannai-gg-sp-1on1",
           "event_name": "kannai-gg/スマブラSP 1on1",
-          "num_entrants": 1,
+          "num_entrants": 2,
           "type": 1,
           "start_at": 1786957200
         }
@@ -1243,6 +1220,29 @@
           "num_entrants": 1,
           "type": 1,
           "start_at": 1788058800
+        }
+      ]
+    },
+    {
+      "tournament_id": 937955,
+      "tournament_slug": "tournament/31-538",
+      "tournament_name": "31(月)上野スマコミ#538(オープン)",
+      "start_at": 1788163200,
+      "end_at": 1788184800,
+      "is_online": false,
+      "city": "台東区",
+      "venue_name": "",
+      "country_code": "JP",
+      "num_attendees": 1,
+      "url": "/tournament/31-538",
+      "events": [
+        {
+          "event_id": 1677841,
+          "event_slug": "tournament/31-538/event/on",
+          "event_name": "シングルス（１on１トーナメント）",
+          "num_entrants": 1,
+          "type": 1,
+          "start_at": 1788163200
         }
       ]
     }
