@@ -435,7 +435,7 @@
   </div>
 
   <div class="footer" id="footer-info">
-    <span class="site-version" style="font-size:11px;color:#9ca3af">v 5002d65 · 2026-08-11 12:10 UTC</span>
+    <span class="site-version" style="font-size:11px;color:#9ca3af">v 2ecc5bb · 2026-08-11 14:27 UTC</span>
   </div>
 </main>
 
@@ -560,7 +560,9 @@ function render() {
   // 実質平日 = 実暦は土日祝だが計算上は平日扱いの特定シリーズ (大菊月等)。
   // プレ大会も計算上は平日扱いだが、タグは従来どおり 平日 + プレ大会 で表す。
   chips.push(TOURNEY.is_weekend
-    ? '<span class="chip wk">休日</span>'
+    ? (TOURNEY.is_weekend_real === false
+      ? '<span class="chip wk" title="お盆・年末年始の大規模大会のため、平日開催ですがランキング計算上は休日大会として扱われます">実質休日</span>'
+      : '<span class="chip wk">休日</span>')
     : (TOURNEY.is_weekend_real && !TOURNEY.is_pre
       ? '<span class="chip wd" title="土日祝の開催ですが、ランキング計算上は平日大会として扱われます">実質平日</span>'
       : '<span class="chip wd">平日</span>'));
