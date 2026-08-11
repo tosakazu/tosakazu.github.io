@@ -123,7 +123,11 @@
     <div class="section">
       <h2>オプション</h2>
       <label class="opt-row"><input type="checkbox" id="excl-overseas" checked> 海外勢を除く</label>
-      <label class="opt-row"><input type="checkbox" id="excl-prov"> 計測中を除く</label>
+      <label class="opt-row"><input type="checkbox" id="excl-prov" checked> 計測中を除く</label>
+      <label class="opt-row"><input type="checkbox" id="recent-only"> 直近
+        <input type="text" id="recent-months" value="12" inputmode="numeric" autocomplete="off"
+               style="width:44px;padding:3px 6px;font-size:13px;text-align:right">
+        ヶ月以内に大会参加した人のみ</label>
 
       <div style="margin-top:10px">
         <div class="muted">都道府県で限定</div>
@@ -199,6 +203,7 @@
   var OVERSEAS = new Set();
   var PREF = {};            // uid(str) -> 都道府県漢字
   var DISC = {};            // uid(str) -> discriminator
+  var LAST = {};            // uid(str) -> 最終大会参加日 "YYYY-MM-DD"
 
   var selPrefs = [];        // 選択済み都道府県 (追加順)
   var manualUids = [];      // 手動追加 uid (追加順)
@@ -267,11 +272,13 @@
     fetch(DATA_BASE + 'data/overseas.json').then(function (r) { return r.json(); }),
     fetch(DATA_BASE + 'data/player_prefectures.json').then(function (r) { return r.json(); }),
     fetch(DISC_URL).then(function (r) { return r.json(); }),
+    fetch(DATA_BASE + 'data/last_activity.json').then(function (r) { return r.json(); }),
   ]).then(function (res) {
     (res[1].uids || []).forEach(function (u) { OVERSEAS.add(u); });
     PREF = res[2] || {};
     DISC = res[3] || {};
     Object.keys(DISC).forEach(function (k) { DISC2UID[DISC[k].toLowerCase()] = parseInt(k, 10); });
+    LAST = res[4] || {};
     document.getElementById('loading').style.display = 'none';
     document.getElementById('card').style.display = '';
     setup();
@@ -287,6 +294,15 @@
     if (!nValid) n = 0;
     var exclOverseas = document.getElementById('excl-overseas').checked;
     var exclProv = document.getElementById('excl-prov').checked;
+    var recentOnly = document.getElementById('recent-only').checked;
+    var recentK = parseInt(document.getElementById('recent-months').value.trim(), 10);
+    var recentKValid = !isNaN(recentK) && recentK > 0;
+    var recentCutoff = null;
+    if (recentOnly && recentKValid) {
+      var cd = new Date();
+      cd.setMonth(cd.getMonth() - recentK);
+      recentCutoff = cd.toISOString().slice(0, 10);
+    }
     var prefSet = selPrefs.length ? new Set(selPrefs) : null;
     // 手動系 = 単体追加 + CSV 一括追加 (重複は単体追加を優先)
     var manualAll = manualUids.concat(csvUids.filter(function (u) { return manualUids.indexOf(u) < 0; }));
@@ -303,6 +319,7 @@
       if (removeSet.has(p.uid)) continue;           // 手動除去
       if (exclOverseas && OVERSEAS.has(p.uid)) continue;
       if (exclProv && p.prov) continue;
+      if (recentCutoff && !(LAST[String(p.uid)] >= recentCutoff)) continue;
       if (!DISC[String(p.uid)]) continue;            // disc 不明 (≒退会) は自動選定の対象外
       if (prefSet && !prefSet.has(PREF[String(p.uid)])) continue;
       auto.push({ uid: p.uid, display: p.display, ens: p.ens, prov: p.prov });
@@ -324,6 +341,7 @@
     var note = rows.length + ' 人 (手動 ' + nManual + ' · CSV ' + nCsv + ' · 自動 ' + auto.length + ')';
     var warns = [];
     if (!nValid) warns.push('出力人数が数値ではありません');
+    if (recentOnly && !recentKValid) warns.push('直近ヶ月数が正の数値ではありません (フィルタ未適用)');
     if (auto.length < autoN) warns.push('条件に合う選手が足りません (自動 ' + auto.length + '/' + autoN + ')');
     if (warns.length) note += ' <span class="warn">⚠ ' + warns.map(esc).join(' / ') + '</span>';
     document.getElementById('preview-note').innerHTML = note;
@@ -541,6 +559,8 @@
     document.getElementById('count').addEventListener('input', recompute);
     document.getElementById('excl-overseas').addEventListener('change', recompute);
     document.getElementById('excl-prov').addEventListener('change', recompute);
+    document.getElementById('recent-only').addEventListener('change', recompute);
+    document.getElementById('recent-months').addEventListener('input', recompute);
     document.querySelectorAll('input[name="manual-mode"]').forEach(function (r) {
       r.addEventListener('change', recompute);
     });

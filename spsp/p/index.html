@@ -171,7 +171,7 @@
   .hl-detail a:hover { text-decoration: underline; }
   .hl-detail .sep { color: #d1d5db; margin: 0 6px; }
   .hl-detail .dim { color: #9ca3af; }
-  /* タップで対戦履歴を展開できるハイライト (最大アップセット / 最大シード超え / 最長ルーザーズラン) */
+  /* タップで対戦履歴を展開できるハイライト (アップセット / シード超え / ルーザーズラン。1年以内に参加がある選手は1年窓、なければ全期間の最大) */
   .hl-group > .stat-row { cursor: pointer; }
   .hl-group .tour-matches { border-radius: 6px; margin-bottom: 4px; }
   .hl-counts {
@@ -710,7 +710,7 @@
   </div>
 
   <div class="footer" id="footer-info">
-    <span class="site-version" style="font-size:11px;color:#9ca3af">v f729f74 · 2026-08-11 04:21 UTC</span>
+    <span class="site-version" style="font-size:11px;color:#9ca3af">v 8225eb4 · 2026-08-11 06:06 UTC</span>
   </div>
 </main>
 
@@ -1391,7 +1391,7 @@ function render() {
       ? `<a href="../t/?id=${m.event_id}" style="color:#dc2626;text-decoration:none">${escapeHtml(m.tournament_name || '')}</a>`
       : escapeHtml(m.tournament_name || '');
     const scoreStr = (m.p_score != null && m.o_score != null) ? `${m.p_score}-${m.o_score}` : '';
-    hl.push(['⚡ 最大アップセット',
+    hl.push(['⚡ アップセット',
       `<div style="text-align:right">` +
         `<span class="hl-place"><span class="num" style="color:#16a34a">+${m.uf}</span><span class="frac">UF</span></span>` +
         `<div style="font-size:11px;color:#6b7280;margin-top:2px;line-height:1.5">` +
@@ -1409,7 +1409,7 @@ function render() {
     const tName = s.event_id
       ? `<a href="../t/?id=${s.event_id}" style="color:#dc2626;text-decoration:none">${escapeHtml(s.tournament_name || '')}</a>`
       : escapeHtml(s.tournament_name || '');
-    hl.push(['✨ 最大シード超え',
+    hl.push(['✨ シード超え',
       `<div style="text-align:right">` +
         `<span class="hl-place"><span class="num" style="color:#16a34a">+${s.spr}</span><span class="frac">SPR</span></span>` +
         `<div style="font-size:11px;color:#6b7280;margin-top:2px;line-height:1.5">` +
@@ -1428,7 +1428,7 @@ function render() {
     const placeStr = maxLR.place ? `最終 ${maxLR.place}位` : '';
     const nentStr = maxLR.nent ? `${maxLR.nent} 人規模` : '';
     const subParts = [placeStr, nentStr].filter(Boolean).join(' · ');
-    hl.push(['🏃‍♂️ 最長ルーザーズラン',
+    hl.push(['🏃‍♂️ ルーザーズラン',
       `<div style="text-align:right">` +
         `<span class="hl-place"><span class="num" style="color:#16a34a">${maxLR.run}</span><span class="frac">連勝</span></span>` +
         `<div style="font-size:11px;color:#6b7280;margin-top:2px;line-height:1.5">` +
