@@ -140,6 +140,14 @@
     // winners スコープでプール内順位 (snake 行番号) の可動制約 (kIntra と同じ規則) を
     // 追加するオプション。既定 OFF (= タイ帯不変のみが制約)。
     winnersPoolRankLimit: false,
+    // プール/ウェーブ固定 (ハード制約)。uid → 'pool' | 'wave'。
+    // 'pool' = 元ランキング位置の snake プールから動かさない (プール内変動は可)。
+    // 'wave' = 元ランキング位置のプールと同じウェーブのプール内でのみ動ける。
+    // 'wave' 指定には poolWaves が必須 (無指定は fail-loud で throw)。null = 固定なし。
+    seedLocks: null,
+    // プール index (0始まり) → ウェーブ index (0始まり) の配列。長さ = poolCount。
+    // ウェーブ = 連続するプールの塊 (A,B,C,… の連番アルファベット)。null = ウェーブなし。
+    poolWaves: null,
     // 探索
     mode: 'multistart-sa',               // 'hillclimb'|'sa'|'multistart-hillclimb'|'multistart-sa'
     restarts: 15,
@@ -303,6 +311,27 @@
     };
   }
 
+  // プール/ウェーブ固定 (seedLocks) の判定関数を構築。null = 固定なし。
+  // 基準は「元ランキング位置の snake プール」(= origRank から導出)。何回 swap を
+  // 重ねても各自の元プール/元ウェーブから出ない (可動制約と同じ origRank 基準)。
+  function buildLockCheck(params, P) {
+    const locks = params.seedLocks;
+    if (!locks) return null;
+    const uids = Object.keys(locks);
+    if (!uids.length) return null;
+    const waves = params.poolWaves || null;
+    const origRank = params._origRank || {};
+    return function (uid, newPool) {
+      const l = locks[uid];
+      if (!l) return true;
+      const orig = origRank[uid];
+      if (orig == null) return true;   // ランキング外 uid の指定は制約なし
+      const origPool = poolOfSeed(orig - 1, P);
+      if (l === 'pool') return newPool === origPool;
+      return waves[newPool] === waves[origPool];   // 'wave' (poolWaves は resolveParams で検証済み)
+    };
+  }
+
   function kInterFn(params) {
     if (typeof params.kInter === 'function') return params.kInter;
     if (Array.isArray(params.kInter)) {
@@ -355,12 +384,15 @@
     const shiftCap = shiftCapFn(params);
     const keepDe = params.keepDePlace === true;
     const origRank = params._origRank || {};
+    const lockCheck = buildLockCheck(params, P);
     function swapAllowed(order, i, j) {
       const pi = poolOfSeed(i, P), pj = poolOfSeed(j, P);
       const X = order[i], Y = order[j];
       const rowX = rowOfSeed(i, P) + 1, rowY = rowOfSeed(j, P) + 1; // 同じはず
       if (Math.abs(pj - initPool[X]) > kInter(rowX)) return false;   // X→pool pj
       if (Math.abs(pi - initPool[Y]) > kInter(rowY)) return false;   // Y→pool pi
+      // プール/ウェーブ固定 (inter swap は必ずプールが変わるので固定者は元プール/ウェーブ内のみ)
+      if (lockCheck && (!lockCheck(X, pj) || !lockCheck(Y, pi))) return false;
       if (maxShift != null) {
         if (Math.abs((j + 1) - (origRank[X] || (j + 1))) > maxShift) return false; // X→seed j+1
         if (Math.abs((i + 1) - (origRank[Y] || (i + 1))) > maxShift) return false; // Y→seed i+1
@@ -575,6 +607,7 @@
     const origRank = params._origRank || {};
     const maxShift = params.maxSeedShift != null ? params.maxSeedShift : null;
     const shiftCapW = shiftCapFn(params);
+    const lockCheckW = buildLockCheck(params, P);
     // 位置 (0始まり) → タイ帯。帯内の swap だけを近傍にする（末尾帯は N で切れていてよい）。
     const posByBand = {};
     const bandOfPos = new Array(N);
@@ -613,6 +646,8 @@
       if (poolRankLimit) {
         if (!rowOk(X, j) || !rowOk(Y, i)) return false;
       }
+      // プール/ウェーブ固定 (winners 位置 → snake プールで判定。P==1 は常にプール0で無制約)
+      if (lockCheckW && (!lockCheckW(X, poolOfSeed(j, P)) || !lockCheckW(Y, poolOfSeed(i, P)))) return false;
       return true;
     }
 
@@ -870,6 +905,29 @@
         }
         prev = v;
       });
+    }
+    // seedLocks: 値は 'pool' | 'wave' のみ。不正値が「無言で固定なし」にならないよう弾く。
+    if (out.seedLocks != null) {
+      if (typeof out.seedLocks !== 'object' || Array.isArray(out.seedLocks)) {
+        throw new Error('seedLocks は {uid: "pool"|"wave"} のオブジェクトまたは null にしてください。');
+      }
+      let hasWaveLock = false;
+      for (const uid of Object.keys(out.seedLocks)) {
+        const v = out.seedLocks[uid];
+        if (v !== 'pool' && v !== 'wave') {
+          throw new Error(`seedLocks[${uid}] は 'pool' か 'wave' にしてください (現値: ${v})`);
+        }
+        if (v === 'wave') hasWaveLock = true;
+      }
+      if (hasWaveLock && out.poolWaves == null) {
+        throw new Error("seedLocks の 'wave' 固定には poolWaves (プール→ウェーブ対応) が必要です。");
+      }
+    }
+    // poolWaves: 0 以上の数値配列のみ (長さ = poolCount の検証は optimize 側)。
+    if (out.poolWaves != null &&
+        (!Array.isArray(out.poolWaves) || out.poolWaves.length === 0 ||
+         out.poolWaves.some((w) => typeof w !== 'number' || !isFinite(w) || w < 0))) {
+      throw new Error('poolWaves は 0 以上の数値配列または null にしてください。');
     }
     // keepDePlace は truthy 文字列等が「無言で無効」にならないよう boolean に正規化。
     out.keepDePlace = !!out.keepDePlace;
@@ -1159,6 +1217,10 @@
     // モード別既定を適用（input.params が最優先）。
     const reqMode = (input.params && input.params.mode) || DEFAULT_PARAMS.mode;
     const params = resolveParams(Object.assign({}, MODE_DEFAULTS[reqMode] || {}, input.params));
+    // poolWaves はプール数と同じ長さのみ (ズレると固定判定が黙って壊れる)。
+    if (params.poolWaves != null && params.poolWaves.length !== P) {
+      throw new Error(`poolWaves の長さ (${params.poolWaves.length}) が poolCount (${P}) と一致しません。`);
+    }
     // 勝者側ブラケットスコープはプール構造を使わない（P は出力プール表示にのみ使用）。
     const winnersScope = params.bracketScope === 'winners';
     let gate = null;
@@ -1292,7 +1354,7 @@
     buildPairPenalty, derivePrefCounts, prefWeightFn, roundWeightFn, pairKey,
     scoreInterFull, scoreIntraPoolFull,
     poolsFromSeedOrder, seedOrderFromPools, gateFormat,
-    kInterFn, kIntraFn, shiftCapFn, resolveParams, winnersOptimize,
+    kInterFn, kIntraFn, shiftCapFn, resolveParams, winnersOptimize, buildLockCheck,
     DEFAULT_PARAMS, MODE_DEFAULTS, winnersRoundWeights,
   };
 
