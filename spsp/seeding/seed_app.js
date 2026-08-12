@@ -364,7 +364,12 @@ function orderedRecs() {
     return DATA.slice().sort((a, b) =>
       (pos.has(a.user_id) ? pos.get(a.user_id) : 1e9) - (pos.has(b.user_id) ? pos.get(b.user_id) : 1e9));
   }
-  return DATA.slice().sort((a, b) => (a.ranks[currentMethod] || 1e9) - (b.ranks[currentMethod] || 1e9));
+  // 手動調整なし: currentMethod 順 + 固定射影 (固定者は指定プール/ウェーブへ)。
+  const base = DATA.slice().sort((a, b) => (a.ranks[currentMethod] || 1e9) - (b.ranks[currentMethod] || 1e9));
+  const uids = _projectSeedLocks(base.map(r => r.user_id));
+  const pos = new Map(uids.map((u, i) => [u, i]));
+  return base.sort((a, b) =>
+    (pos.has(a.user_id) ? pos.get(a.user_id) : 1e9) - (pos.has(b.user_id) ? pos.get(b.user_id) : 1e9));
 }
 
 // ── 手動調整モード ─────────────────────────────────────────────
@@ -396,10 +401,26 @@ function manualApplyOp(arr, op) {
   }
   return a;
 }
+// 固定 (SEED_SPEC.locks の対象指定) を並びへ反映する読み取り時射影。
+// 手動 op には積まず、manualOrder / orderedRecs / 最適化の基準すべてで常に適用される
+// (= 最適化しなくても固定者は指定プール/ウェーブの位置に挿入ソート的に移動する)。
+// op 履歴と独立なので undo/redo・固定解除でそのまま元の並びに戻る。冪等。
+let _lockProjNotes = [];   // 直近の射影で満たせなかった固定の警告 (manualBarHtml で表示)
+function _projectSeedLocks(a) {
+  _lockProjNotes = [];
+  if (!SEED_SPEC || !SEED_SPEC.locks || !Object.keys(SEED_SPEC.locks).length) return a;
+  if (typeof document === 'undefined' || typeof window === 'undefined' || !window.SeedOptimizer) return a;
+  const P = Math.max(1, parseInt((document.getElementById('so-pools') || {}).value, 10) || 1);
+  const waveMap = currentWaveMap(P);
+  const r = enforceSeedLocks(a, SEED_SPEC.locks, P, waveMap,
+    (s, PP) => SeedOptimizer.poolOfSeed(s, PP));
+  _lockProjNotes = r.notes;
+  return r.order;
+}
 function manualOrder() {
   let a = MANUAL.base.slice();
   for (let k = 0; k < MANUAL.hpos; k++) a = manualApplyOp(a, MANUAL.ops[k]);
-  return a;
+  return _projectSeedLocks(a);
 }
 function manualMovedSet() {
   return new Set(MANUAL.ops.slice(0, MANUAL.hpos).map(o => o.uid));
@@ -508,8 +529,19 @@ function manualDiscard() {
 function manualBarHtml() {
   const btn = (mn, label, extra) =>
     `<button data-mn="${mn}" ${extra || ''} style="font-size:11px;padding:3px 10px;border:1px solid #d1d5db;border-radius:6px;background:#f9fafb;color:#374151;cursor:pointer">${label}</button>`;
+  // 固定射影の警告 (対象プール/ウェーブの空き不足など)。黙って握りつぶさない。
+  const projWarn = _lockProjNotes.length
+    ? `<span style="color:#b91c1c;font-size:11px;font-weight:600">⚠ 固定: ${escHtml(_lockProjNotes[0])}</span>` : '';
+  // プール数 / ウェーブ数 (被り回避パネルの so-pools / so-waves と同じ値。手動列のプール表示と
+  // プール/ウェーブ固定の枠がこれで決まるので、パネルを開かずここでも変更できるようにする)。
+  const _pv = (id, def) => { const v = parseInt((document.getElementById(id) || {}).value, 10); return Number.isFinite(v) ? v : def; };
+  const poolWaveInputs =
+    `<span style="font-size:11px;color:#6b7280;white-space:nowrap" title="プール数とウェーブ数 (被り回避最適化パネルと共通の設定)。手動列のプール表示とプール/ウェーブ固定の枠がこれで決まります。ウェーブは連続するプールを A,B,C… の塊に分けたもの">`
+    + `プール数 <input type="number" data-mn-pools min="1" max="128" step="1" value="${_pv('so-pools', 1)}" style="width:56px;padding:1px 4px;border:1px solid #d1d5db;border-radius:4px;font-size:11px">`
+    + ` ／ ウェーブ数 <input type="number" data-mn-waves min="1" max="26" step="1" value="${_pv('so-waves', 1)}" style="width:52px;padding:1px 4px;border:1px solid #d1d5db;border-radius:4px;font-size:11px">`
+    + `</span>`;
   if (!MANUAL) {
-    return `<button data-mn="unlock" style="font-size:12px;padding:5px 12px;border:1px solid #d1d5db;border-radius:6px;background:#f3f4f6;color:#6b7280;cursor:pointer">🔒 手動調整 — タップで編集開始</button>`;
+    return `<button data-mn="unlock" style="font-size:12px;padding:5px 12px;border:1px solid #d1d5db;border-radius:6px;background:#f3f4f6;color:#6b7280;cursor:pointer">🔒 手動調整 — タップで編集開始</button> ${projWarn}`;
   }
   const moved = manualMovedSet().size;
   if (MANUAL.editing) {
@@ -517,20 +549,29 @@ function manualBarHtml() {
     return `<div style="border:2px solid #fb923c;background:#fff7ed;border-radius:8px;padding:8px 10px;font-size:12px;display:flex;gap:8px;flex-wrap:wrap;align-items:center">`
       + `<span style="font-weight:700;color:#ea580c">✋ 手動調整モード</span>`
       + `<span style="color:#9a3412">${moved}人移動</span>`
+      + poolWaveInputs
+      + projWarn
+      // 操作ボタンは次の行に折り返す (flex-basis:100% で改行)。
+      + `<div style="flex-basis:100%;display:flex;gap:8px;flex-wrap:wrap">`
       + btn('undo', '↩ 元に戻す', canUndo ? '' : 'disabled')
       + btn('redo', '↪ やり直す', canRedo ? '' : 'disabled')
       + `<button data-mn="commit" style="font-size:11px;padding:3px 12px;border:none;border-radius:6px;background:#16a34a;color:#fff;font-weight:600;cursor:pointer">✅ 確定</button>`
       + btn('discard', '🗑 破棄')
-      + `<span style="color:#9ca3af;font-size:10px;flex-basis:100%">行の「選択」→ 挿入位置クリック か シード番号入力で移動。プレイヤー名クリックはプロフィールを新しいタブで開きます。状態はこのブラウザに自動保存 (1件・上書き)</span>`
+      + `</div>`
       + `</div>`;
   }
   const optNote = APPLIED_ORDER ? '（被り回避適用中 — 下の表は最適化後の順序）' : '';
   return `<div style="border:1px solid #f59e0b;background:#fffbeb;border-radius:8px;padding:6px 10px;font-size:12px;display:flex;gap:8px;flex-wrap:wrap;align-items:center">`
     + `<span style="font-weight:700;color:#b45309">✋ 手動調整 (${moved}人移動${MANUAL.src === 'csv' ? '・基準=CSV順' : (MANUAL.src === 'spec' ? '・基準=シード指定CSV' : '')})</span><span style="color:#9ca3af;font-size:10px">${optNote}</span>`
+    + poolWaveInputs
+    + projWarn
+    // 操作ボタンは次の行に折り返す (flex-basis:100% で改行)。
+    + `<div style="flex-basis:100%;display:flex;gap:8px;flex-wrap:wrap">`
     + btn('unlock', moved > 0 ? '✏ 編集を再開' : '✏ 編集を開始') + btn('discard', '🗑 破棄')
+    + `</div>`
     + `</div>`;
 }
-// 「固定設定」バー (📌クリックで manual-bar 直下に表示)。プール/ウェーブを指定して固定する。
+// 「プール/ウェーブ指定」バー (「プール指定」ボタンで対象行の直下に表示)。
 // 現在と違うプール/ウェーブを選んで適用すると、その中の最寄り位置へ行を移動 (通常の手動 op =
 // undo 可) してから固定する。「固定しない」で解除。
 function manualLockBarHtml() {
@@ -544,8 +585,10 @@ function manualLockBarHtml() {
   const pos = cur.indexOf(MANUAL.lockSel);
   const poolOf = (s) => (window.SeedOptimizer ? SeedOptimizer.poolOfSeed(s, P) : 0);
   const curPool = pos >= 0 ? poolOf(pos) : 0;
-  const lk = (SEED_SPEC && SEED_SPEC.locks) ? SEED_SPEC.locks[MANUAL.lockSel] : null;
-  const kind = MANUAL.lockKind || lk || 'pool';
+  const lkRaw = (SEED_SPEC && SEED_SPEC.locks) ? SEED_SPEC.locks[MANUAL.lockSel] : null;
+  const lkKind = lkRaw ? (lkRaw.kind || lkRaw) : null;
+  const lkTarget = (lkRaw && lkRaw.target != null) ? lkRaw.target : null;
+  const kind = MANUAL.lockKind || lkKind || 'pool';
   const selCss = 'padding:2px 6px;border:1px solid #d1d5db;border-radius:5px;font-size:12px;background:#fff';
   const kindSel = `<select data-mn-lock-kind style="${selCss}">`
     + `<option value="none"${kind === 'none' ? ' selected' : ''}>固定しない</option>`
@@ -554,18 +597,19 @@ function manualLockBarHtml() {
     + `</select>`;
   let targetSel = '';
   if (kind === 'pool') {
+    const sel = (kind === lkKind && lkTarget != null) ? lkTarget : curPool;
     targetSel = ` 対象 <select data-mn-lock-target style="${selCss}">` + Array.from({ length: P }, (_, p) =>
-      `<option value="${p}"${p === curPool ? ' selected' : ''}>${escHtml(poolLabel(p, waveMap))}</option>`).join('') + `</select>`;
+      `<option value="${p}"${p === sel ? ' selected' : ''}>${escHtml(poolLabel(p, waveMap))}</option>`).join('') + `</select>`;
   } else if (kind === 'wave') {
-    const curWave = waveMap[curPool];
+    const sel = (kind === lkKind && lkTarget != null) ? lkTarget : waveMap[curPool];
     targetSel = ` 対象 <select data-mn-lock-target style="${selCss}">` + Array.from({ length: W }, (_, w) =>
-      `<option value="${w}"${w === curWave ? ' selected' : ''}>${escHtml(waveLetter(w))}</option>`).join('') + `</select>`;
+      `<option value="${w}"${w === sel ? ' selected' : ''}>${escHtml(waveLetter(w))}</option>`).join('') + `</select>`;
   }
   return `<div style="margin-top:6px;background:#fef2f2;border:1px solid #fca5a5;border-radius:6px;padding:6px 10px;font-size:12px;display:flex;gap:6px;flex-wrap:wrap;align-items:center">`
-    + `<b>📌 ${name}</b> の固定: ${kindSel}${targetSel} `
+    + `<b>${name}</b> のプール/ウェーブ指定: ${kindSel}${targetSel} `
     + `<button data-mn="lock-apply" style="padding:2px 12px;border:none;border-radius:5px;background:#dc2626;color:#fff;font-weight:600;cursor:pointer">適用</button> `
     + `<button data-mn="lock-cancel" style="padding:2px 8px;border:1px solid #d1d5db;border-radius:5px;background:#fff;cursor:pointer">キャンセル</button>`
-    + `<span style="color:#9ca3af;font-size:10px;flex-basis:100%">固定した選手は被り回避最適化で指定プール/ウェーブから動きません。現在と違うプール/ウェーブを選ぶと、その中の最寄り位置へ行を移動します (元に戻すで取り消し可)${P < 2 ? '。⚠ プール数が1のため固定は効果がありません' : ''}</span>`
+    + `<span style="color:#9ca3af;font-size:10px;flex-basis:100%">固定した選手は指定プール/ウェーブの位置へ自動で移動し (最適化しなくても常に維持)、被り回避最適化でもそこから動きません。解除すると元の位置付近に戻ります${P < 2 ? '。⚠ プール数が1のため固定は効果がありません' : ''}</span>`
     + `</div>`;
 }
 // 「移動中」アクションバー (選択中のみ manual-bar 直下に表示)。
@@ -598,6 +642,22 @@ function decorateManualTable() {
     // 手動調整中 (編集中/確定後とも) はプレイヤー名クリックを新規タブに。
     tr.querySelectorAll('a.player-name').forEach((a) => { a.target = '_blank'; a.rel = 'noopener'; });
   });
+  // 固定設定バーは対象行のすぐ下に差し込む (画面上部まで戻らずに操作できる)。
+  if (editing && MANUAL.lockSel != null) {
+    const target = rows.find((tr) => manualParseUid(tr.dataset.uid) === MANUAL.lockSel);
+    if (target) {
+      const lr = document.createElement('tr');
+      lr.className = 'mn-lock-row';
+      lr.innerHTML = `<td colspan="${colspan}" style="padding:0;border:none">${manualLockBarHtml()}</td>`;
+      // 行クリック (詳細展開) に食われないようにする。
+      lr.addEventListener('click', (e) => e.stopPropagation());
+      let anchor = target;
+      if (anchor.nextElementSibling && anchor.nextElementSibling.classList.contains('detail-row')) {
+        anchor = anchor.nextElementSibling;
+      }
+      tbody.insertBefore(lr, anchor.nextElementSibling);
+    }
+  }
   if (editing && MANUAL.sel != null && rows.length) {
     const slotHtml = (attr) =>
       `<td colspan="${colspan}" style="padding:0;border:none"><div class="mn-slot" data-mn="slot" ${attr}>▾ ここに挿入</div></td>`;
@@ -673,12 +733,8 @@ function renderManualUI() {
   if (!bar) return;
   if (!DATA.length) { bar.style.display = 'none'; return; }
   bar.style.display = '';
-  let barHtml = manualBarHtml();
-  if (MANUAL && MANUAL.editing && MANUAL.sel != null) barHtml += manualActionBarHtml();
-  else if (MANUAL && MANUAL.editing && MANUAL.lockSel != null) barHtml += manualLockBarHtml();
-  bar.innerHTML = barHtml;
-
-  // per-render キャッシュ (MANUAL_COL の cell / 装飾が参照)。
+  // per-render キャッシュ (MANUAL_COL の cell / 装飾が参照)。バー描画より先に計算する
+  // (manualOrder → 固定射影の警告 _lockProjNotes をバーが表示するため)。
   if (MANUAL) {
     const order = manualOrder();
     _mnPos = new Map(order.map((u, i) => [u, i]));
@@ -690,6 +746,11 @@ function renderManualUI() {
   // プール表示コンテキスト (被り回避パネルのプール数/ウェーブ数から)。
   const _pcP = Math.max(1, parseInt((document.getElementById('so-pools') || {}).value, 10) || 1);
   _mnPoolCtx = _pcP >= 2 ? { P: _pcP, waveMap: currentWaveMap(_pcP) } : null;
+
+  // 固定設定バーは行の直下に出す (decorateManualTable)。ここは移動中バーのみ。
+  let barHtml = manualBarHtml();
+  if (MANUAL && MANUAL.editing && MANUAL.sel != null) barHtml += manualActionBarHtml();
+  bar.innerHTML = barHtml;
 
   const tbl = ensureTable();
   const wantManual = !!MANUAL && !APPLIED_ORDER;   // 被り回避適用中は通常表示 (最適化後順序)
@@ -750,13 +811,27 @@ const MANUAL_COL = {
       const pl = window.SeedOptimizer ? SeedOptimizer.poolOfSeed(pos, _mnPoolCtx.P) : 0;
       h += `<span style="font-size:10px;color:#9ca3af;white-space:nowrap" title="この順位のプール (プール数 ${_mnPoolCtx.P}・被り回避パネルの設定)">${escHtml(poolLabel(pl, _mnPoolCtx.waveMap))}</span>`;
     }
-    const lk = SEED_SPEC && SEED_SPEC.locks ? SEED_SPEC.locks[u] : null;
+    const lkRaw = SEED_SPEC && SEED_SPEC.locks ? SEED_SPEC.locks[u] : null;
+    const lkKind = lkRaw ? (lkRaw.kind || lkRaw) : null;
+    // 固定バッジの表記: 対象付きなら「A3固定」/「ウェーブA固定」、旧形式 (対象なし) は種別のみ。
+    let lkLabel = null, lkTitle = null;
+    if (lkKind) {
+      const tgt = (lkRaw && lkRaw.target != null) ? lkRaw.target : null;
+      if (lkKind === 'pool') {
+        lkLabel = tgt != null && _mnPoolCtx ? poolLabel(tgt, _mnPoolCtx.waveMap) + '固定' : 'プール固定';
+        lkTitle = 'プール固定' + (tgt != null && _mnPoolCtx ? ` (${poolLabel(tgt, _mnPoolCtx.waveMap)})` : '');
+      } else {
+        lkLabel = tgt != null ? 'ウェーブ' + waveLetter(tgt) + '固定' : 'ウェーブ固定';
+        lkTitle = 'ウェーブ固定' + (tgt != null ? ` (${waveLetter(tgt)})` : '');
+      }
+      lkTitle += ': 並びに常時反映され、被り回避最適化でも動かしません';
+    }
     if (MANUAL && MANUAL.editing) {
       const isLockSel = MANUAL.lockSel === u;
       h += `<button data-mn="select" data-uid="${escHtml(String(u))}" style="font-size:10px;padding:1px 8px;border:1px solid ${isSel ? '#ea580c' : '#d1d5db'};border-radius:5px;background:${isSel ? '#fb923c' : '#f9fafb'};color:${isSel ? '#fff' : '#374151'};cursor:pointer;white-space:nowrap">${isSel ? '選択中' : '選択'}</button>`;
-      h += `<button data-mn="lockopen" data-uid="${escHtml(String(u))}" title="プール/ウェーブ固定の設定を開く (固定は被り回避最適化で動かしません。プール/ウェーブを指定して固定できます)" style="font-size:10px;padding:1px 6px;border:1px solid ${(lk || isLockSel) ? '#dc2626' : '#d1d5db'};border-radius:5px;background:${isLockSel ? '#dc2626' : (lk ? '#fee2e2' : '#f9fafb')};color:${isLockSel ? '#fff' : (lk ? '#b91c1c' : '#9ca3af')};cursor:pointer;white-space:nowrap">${lk ? (lk === 'pool' ? '📌プール' : '📌ウェーブ') : '📌'}</button>`;
-    } else if (lk) {
-      h += `<span style="font-size:10px;color:#b91c1c;white-space:nowrap" title="${lk === 'pool' ? 'プール固定' : 'ウェーブ固定'}: 被り回避最適化で動かしません">📌${lk === 'pool' ? 'プール' : 'ウェーブ'}</span>`;
+      h += `<button data-mn="lockopen" data-uid="${escHtml(String(u))}" title="${lkTitle ? escHtml(lkTitle) + ' — クリックで変更' : 'プール/ウェーブを指定して固定する (指定した枠へ移動し、被り回避最適化でも動きません)'}" style="font-size:10px;padding:1px 6px;border:1px solid ${(lkKind || isLockSel) ? '#dc2626' : '#d1d5db'};border-radius:5px;background:${isLockSel ? '#dc2626' : (lkKind ? '#fee2e2' : '#f9fafb')};color:${isLockSel ? '#fff' : (lkKind ? '#b91c1c' : '#374151')};cursor:pointer;white-space:nowrap">${lkLabel ? escHtml(lkLabel) : 'プール指定'}</button>`;
+    } else if (lkKind) {
+      h += `<span style="font-size:10px;color:#b91c1c;white-space:nowrap" title="${escHtml(lkTitle)}">${escHtml(lkLabel)}</span>`;
     }
     h += `</div>`;
     return h;
@@ -1587,12 +1662,32 @@ function render() {
 // 手動調整のクリック操作 (動的要素はデリゲーションで拾う)。
 document.getElementById('manual-bar').addEventListener('click', manualClickHandler);
 // 固定設定バーの種別セレクト変更 → 対象セレクト (プール一覧/ウェーブ一覧) を組み直す。
-document.getElementById('manual-bar').addEventListener('change', (e) => {
+// バーは表 (行の直下) と manual-bar の両方に出し得るので両方で拾う。
+function _lockKindChangeHandler(e) {
   const el = e.target.closest('[data-mn-lock-kind]');
   if (el && MANUAL && MANUAL.editing && MANUAL.lockSel != null) {
     MANUAL.lockKind = el.value;
     renderManualUI();
   }
+}
+document.getElementById('manual-bar').addEventListener('change', _lockKindChangeHandler);
+document.getElementById('ranktable').addEventListener('change', _lockKindChangeHandler);
+// 手動調整バーのプール数 / ウェーブ数 → 被り回避パネルの入力 (so-pools/so-waves) に反映。
+// 値は 1 箇所 (パネル) が正なので、こちらは同期して再描画するだけ。
+document.getElementById('manual-bar').addEventListener('input', (e) => {
+  const p = e.target.closest('[data-mn-pools]'), w = e.target.closest('[data-mn-waves]');
+  if (!p && !w) return;
+  const src = p || w;
+  const dst = document.getElementById(p ? 'so-pools' : 'so-waves');
+  const v = parseInt(src.value, 10);
+  if (!dst || !Number.isFinite(v) || v < 1) return;
+  dst.value = String(v);
+  if (p) updateIntraToggleState();
+  renderManualUI();
+  // 再描画で input が作り直されるのでフォーカスとカーソルを戻す。
+  const again = document.getElementById('manual-bar')
+    .querySelector(p ? '[data-mn-pools]' : '[data-mn-waves]');
+  if (again) { again.focus(); again.select(); }
 });
 // プレイヤーページへのリンク (表・詳細展開内とも) は常に新しいタブで開く。
 document.getElementById('ranktable').addEventListener('click', (e) => {
@@ -2211,7 +2306,9 @@ async function runSeedOptimize() {
           (pos.has(a.user_id) ? pos.get(a.user_id) : 1e9) - (pos.has(b.user_id) ? pos.get(b.user_id) : 1e9));
       })()
     : DATA.slice().sort((a, b) => (a.ranks[currentMethod] || 1e9) - (b.ranks[currentMethod] || 1e9));
-  const ranking = baseRecs.map(r => r.user_id).filter(u => u != null);
+  // 固定射影を基準にも適用 (manualOrder 経由は適用済みだが冪等なので常にかける)。
+  // これで optimizer の origRank プール == 固定対象プールになり、ハード制約と整合する。
+  const ranking = _projectSeedLocks(baseRecs.map(r => r.user_id).filter(u => u != null));
   const displayOf = {};
   for (const r of DATA) displayOf[r.user_id] = r.display;
 
@@ -2280,7 +2377,10 @@ async function runSeedOptimize() {
   if (SEED_SPEC && SEED_SPEC.locks) {
     for (const k in SEED_SPEC.locks) {
       const u = manualParseUid(k);
-      if (rankingSet.has(u)) seedLocks[u] = SEED_SPEC.locks[k];
+      if (!rankingSet.has(u)) continue;
+      const v = SEED_SPEC.locks[k];
+      // optimizer へは種別のみ渡す ('pool'|'wave')。対象は射影済みの基準位置に反映済み。
+      seedLocks[u] = (v && v.kind) || v;
     }
   }
   const lockUids = Object.keys(seedLocks);
@@ -3200,6 +3300,50 @@ function buildSpecOrder(curOrder, pins, waveOf, P, waveMap, poolOf) {
   return { order: out, notes };
 }
 
+// 固定 (対象付き) を満たすよう並びを組み直す (純関数・挿入ソート方式)。
+//   order: uid 配列 / locks: {uid: {kind:'pool'|'wave', target} | 'pool'|'wave' (旧形式=移動なし)}
+//   / P: プール数 / waveMap: プール→ウェーブ / poolOf: (seedIdx0, P) => poolIdx。
+// 位置を前から埋め、固定者は対象プール/ウェーブのスロットが来るまで待つ (他は現在順のまま)。
+// 入力が既に固定を満たしていれば恒等 (冪等)。空き不足は notes で返し残りは現在順。
+function enforceSeedLocks(order, locks, P, waveMap, poolOf) {
+  const N = order.length;
+  const need = new Map();   // uid → {pool} | {wave}
+  for (const u of order) {
+    const l = locks[u];
+    if (!l) continue;
+    const kind = l.kind || l;
+    const target = (l && l.target != null) ? l.target : null;
+    if (target == null) continue;   // 旧形式/対象なし: 現位置のまま (移動しない)
+    need.set(u, kind === 'pool' ? { pool: target } : { wave: target });
+  }
+  if (!need.size) return { order: order.slice(), notes: [] };
+  const out = new Array(N).fill(null);
+  const notes = [];
+  const queue = order.slice();
+  let lockedLeft = 0;
+  for (const u of queue) if (need.has(u)) lockedLeft++;
+  for (let s = 0; s < N; s++) {
+    if (!lockedLeft) { out[s] = queue.shift(); continue; }   // 残り固定なし: そのまま流す
+    const pool = poolOf(s, P);
+    const wave = waveMap ? waveMap[pool] : 0;
+    let k = -1;
+    for (let q = 0; q < queue.length; q++) {
+      const nd = need.get(queue[q]);
+      if (!nd || (nd.pool != null ? nd.pool === pool : nd.wave === wave)) { k = q; break; }
+    }
+    if (k < 0) {   // 残りが全員他プール/ウェーブ固定 = 空き不足。以降は現在順で配置。
+      notes.push('固定を満たす空きが不足 (残りは現在順で配置)');
+      need.clear();
+      lockedLeft = 0;
+      k = 0;
+    }
+    const picked = queue.splice(k, 1)[0];
+    if (need.has(picked)) lockedLeft--;
+    out[s] = picked;
+  }
+  return { order: out, notes };
+}
+
 function _specStatus(html, isErr) {
   const el = document.getElementById('spec-status');
   if (el) { el.innerHTML = html || ''; el.style.color = isErr ? '#dc2626' : '#374151'; }
@@ -3290,12 +3434,39 @@ function applySpecRows(rows, label) {
     MANUAL = { base: order, ops: [], hpos: 0, committed: true, editing: false, sel: null, src: 'spec' };
     if (APPLIED_ORDER) { APPLIED_ORDER = null; clearSeedOptApplied(); }
     if (SEEDOPT_RESULT) resetSeedOptResultPanel('シード指定を適用したため被り回避の結果をクリアしました。再実行してください。');
+  } else if (Object.keys(locks).length && !MANUAL) {
+    // 固定のみの CSV: 現在の並びを手動調整として取り込む (手動列に射影後の位置と
+    // 📌バッジが出て、固定の効果が見えるようにする)。
+    MANUAL = { base: orderedRecs().map(r => r.user_id), ops: [], hpos: 0, committed: true, editing: false, sel: null, src: 'spec' };
+    if (APPLIED_ORDER) { APPLIED_ORDER = null; clearSeedOptApplied(); }
+  }
+  // 固定を {kind, target} 形式で確定する。対象 = ウェーブ列があればその値、無ければ
+  // 配置後の位置のプール/ウェーブ。以後は読み取り時射影が並びを常にこの対象へ寄せる。
+  const lockObjs = {};
+  if (Object.keys(locks).length) {
+    const placedOrder = (pins.size || waveOf.size)
+      ? MANUAL.base
+      : orderedRecs().map(r => r.user_id);
+    const poolOfS = (s) => (window.SeedOptimizer ? SeedOptimizer.poolOfSeed(s, P) : 0);
+    for (const k in locks) {
+      const u = manualParseUid(k);
+      const kind = locks[k];
+      let target;
+      if (kind === 'wave' && waveOf.has(u)) {
+        target = waveOf.get(u);
+      } else {
+        const pos = placedOrder.indexOf(u);
+        const pool = pos >= 0 ? poolOfS(pos) : 0;
+        target = kind === 'pool' ? pool : waveMap[pool];
+      }
+      lockObjs[u] = { kind, target };
+    }
   }
   SEED_SPEC = {
     label,
     pins: Object.fromEntries(pins),
     waves: Object.fromEntries(waveOf),
-    locks,
+    locks: lockObjs,
   };
   saveManual();
   render();
@@ -3359,44 +3530,22 @@ function _pruneSeedSpec() {
   if (!n(SEED_SPEC.locks) && !n(SEED_SPEC.pins) && !n(SEED_SPEC.waves)) SEED_SPEC = null;
 }
 
-// pos から最寄りの ok(slot)=true な位置 (純関数)。同距離なら上 (若いシード) 側を優先。
-function nearestLockSlot(pos, N, ok) {
-  if (ok(pos)) return pos;
-  for (let d = 1; d < N; d++) {
-    if (pos - d >= 0 && ok(pos - d)) return pos - d;
-    if (pos + d < N && ok(pos + d)) return pos + d;
-  }
-  return null;
-}
-
-// 固定設定バーの「適用」: 種別 (なし/プール/ウェーブ) と対象を読み、必要なら対象プール/
-// ウェーブ内の最寄り位置へ移動 (通常の手動 op = undo 可) してから SEED_SPEC.locks を更新。
+// 固定設定バーの「適用」: 種別 (なし/プール/ウェーブ) と対象を SEED_SPEC.locks に保存する。
+// 並びへの反映は読み取り時射影 (_projectSeedLocks) が常時行う = 最適化しなくても
+// 固定者は指定プール/ウェーブへ挿入ソート的に移動し、解除すれば元の位置付近に戻る。
 function applySeedLockChoice(uid) {
-  const bar = document.getElementById('manual-bar');
-  const kindEl = bar && bar.querySelector('[data-mn-lock-kind]');
-  const targetEl = bar && bar.querySelector('[data-mn-lock-target]');
+  // 固定バーは表 (行の直下) にある。以前の manual-bar 内も一応拾えるよう document 全体で探す。
+  const kindEl = document.querySelector('[data-mn-lock-kind]');
+  const targetEl = document.querySelector('[data-mn-lock-target]');
   const kind = kindEl ? kindEl.value : 'none';
   if (kind === 'none') {
     if (SEED_SPEC && SEED_SPEC.locks) delete SEED_SPEC.locks[uid];
     _pruneSeedSpec();
   } else {
     const target = targetEl ? parseInt(targetEl.value, 10) : 0;
-    const P = Math.max(1, parseInt((document.getElementById('so-pools') || {}).value, 10) || 1);
-    const waveMap = currentWaveMap(P);
-    const cur = manualOrder();
-    const pos = cur.indexOf(uid);
-    if (pos < 0) return;
-    const poolOf = (s) => (window.SeedOptimizer ? SeedOptimizer.poolOfSeed(s, P) : 0);
-    const ok = kind === 'pool'
-      ? (s) => poolOf(s) === target
-      : (s) => waveMap[poolOf(s)] === target;
-    if (!ok(pos)) {
-      const s = nearestLockSlot(pos, cur.length, ok);
-      if (s != null) manualPushOp(uid, s);   // saveManual + 再描画込み
-    }
     if (!SEED_SPEC) SEED_SPEC = { label: null, pins: {}, waves: {}, locks: {} };
     if (!SEED_SPEC.locks) SEED_SPEC.locks = {};
-    SEED_SPEC.locks[uid] = kind;
+    SEED_SPEC.locks[uid] = { kind, target: Number.isFinite(target) ? target : 0 };
   }
   MANUAL.lockSel = null;
   MANUAL.lockKind = null;

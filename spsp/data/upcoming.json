@@ -1,8 +1,8 @@
 {
-  "generated_at": 1786503628,
+  "generated_at": 1786514474,
   "country_code": "JP",
   "lookahead_days": 21,
-  "count": 52,
+  "count": 53,
   "tournaments": [
     {
       "tournament_id": 940218,
@@ -83,14 +83,14 @@
       "city": "和泉市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 31,
+      "num_attendees": 32,
       "url": "/tournament/innosuma-26",
       "events": [
         {
           "event_id": 1673154,
           "event_slug": "tournament/innosuma-26/event/sp-1on1",
           "event_name": "スマブラSP 1on1 トーナメント",
-          "num_entrants": 31,
+          "num_entrants": 33,
           "type": 1,
           "start_at": 1786593600
         }
@@ -106,7 +106,7 @@
       "city": "台東区",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 11,
+      "num_attendees": 14,
       "url": "/tournament/13-523",
       "events": [
         {
@@ -129,14 +129,14 @@
       "city": "渋谷区",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 17,
+      "num_attendees": 20,
       "url": "/tournament/shibuya-g-g-smash-weekly-75",
       "events": [
         {
           "event_id": 1683295,
           "event_slug": "tournament/shibuya-g-g-smash-weekly-75/event/singles",
           "event_name": "Singles",
-          "num_entrants": 17,
+          "num_entrants": 20,
           "type": 1,
           "start_at": 1786617000
         }
@@ -221,14 +221,14 @@
       "city": "台東区",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 19,
+      "num_attendees": 20,
       "url": "/tournament/14-524",
       "events": [
         {
           "event_id": 1676162,
           "event_slug": "tournament/14-524/event/on",
           "event_name": "シングルス（１on１トーナメント）",
-          "num_entrants": 19,
+          "num_entrants": 20,
           "type": 1,
           "start_at": 1786694400
         }
@@ -281,29 +281,6 @@
       ]
     },
     {
-      "tournament_id": 930331,
-      "tournament_slug": "tournament/sp7-4",
-      "tournament_name": "ヘルブラSP7",
-      "start_at": 1786752000,
-      "end_at": 1786784400,
-      "is_online": false,
-      "city": "大分市",
-      "venue_name": "",
-      "country_code": "JP",
-      "num_attendees": 20,
-      "url": "/tournament/sp7-4",
-      "events": [
-        {
-          "event_id": 1662462,
-          "event_slug": "tournament/sp7-4/event/1on1",
-          "event_name": "1on1トーナメント",
-          "num_entrants": 20,
-          "type": 1,
-          "start_at": 1786752000
-        }
-      ]
-    },
-    {
       "tournament_id": 924661,
       "tournament_slug": "tournament/-3119",
       "tournament_name": "第１９回グランドスラム",
@@ -327,6 +304,29 @@
       ]
     },
     {
+      "tournament_id": 930331,
+      "tournament_slug": "tournament/sp7-4",
+      "tournament_name": "ヘルブラSP7",
+      "start_at": 1786752000,
+      "end_at": 1786784400,
+      "is_online": false,
+      "city": "大分市",
+      "venue_name": "",
+      "country_code": "JP",
+      "num_attendees": 19,
+      "url": "/tournament/sp7-4",
+      "events": [
+        {
+          "event_id": 1662462,
+          "event_slug": "tournament/sp7-4/event/1on1",
+          "event_name": "1on1トーナメント",
+          "num_entrants": 19,
+          "type": 1,
+          "start_at": 1786752000
+        }
+      ]
+    },
+    {
       "tournament_id": 936034,
       "tournament_slug": "tournament/plum-4",
       "tournament_name": "PLUM#4",
@@ -336,14 +336,14 @@
       "city": "福岡市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 52,
+      "num_attendees": 50,
       "url": "/tournament/plum-4",
       "events": [
         {
           "event_id": 1673837,
           "event_slug": "tournament/plum-4/event/1on1",
           "event_name": "1on1トーナメント",
-          "num_entrants": 52,
+          "num_entrants": 50,
           "type": 1,
           "start_at": 1786755600
         }
@@ -580,6 +580,29 @@
       ]
     },
     {
+      "tournament_id": 942411,
+      "tournament_slug": "tournament/32-17",
+      "tournament_name": "雷影杯#32",
+      "start_at": 1787130000,
+      "end_at": 1787146200,
+      "is_online": false,
+      "city": "川崎市",
+      "venue_name": "",
+      "country_code": "JP",
+      "num_attendees": 1,
+      "url": "/tournament/32-17",
+      "events": [
+        {
+          "event_id": 1687239,
+          "event_slug": "tournament/32-17/event/super-smash-bros-ultimate-singles",
+          "event_name": "雷影杯",
+          "num_entrants": 1,
+          "type": 1,
+          "start_at": 1787130000
+        }
+      ]
+    },
+    {
       "tournament_id": 937950,
       "tournament_slug": "tournament/20-529",
       "tournament_name": "20(木)上野スマコミ#529(オープン)",
@@ -727,7 +750,7 @@
       "city": "渋谷区",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 287,
+      "num_attendees": 288,
       "url": "/tournament/shibuya-dairan-first-strike",
       "events": [
         {
@@ -1026,14 +1049,14 @@
       "city": "四日市市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 6,
+      "num_attendees": 7,
       "url": "/tournament/quattro-6",
       "events": [
         {
           "event_id": 1684288,
           "event_slug": "tournament/quattro-6/event/quattro",
           "event_name": "四闘-Quattro-",
-          "num_entrants": 6,
+          "num_entrants": 7,
           "type": 1,
           "start_at": 1787976000
         }
@@ -1141,7 +1164,7 @@
       "city": "東大阪市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 320,
+      "num_attendees": 322,
       "url": "/tournament/grand-wars-3-maesuma-grand-wars-3",
       "events": [
         {
