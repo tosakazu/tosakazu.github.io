@@ -615,12 +615,12 @@
       <div id="latestres-body"></div>
     </div>
 
-    <!-- ポイントシミュレーション: 次回出場予定の集計対象大会 + シミュレーションボタン
+    <!-- スコアシミュレーション: 次回出場予定の集計対象大会 + シミュレーションボタン
          (share-top 内だがシェア画像キャプチャ時は一時的に隠す) -->
     <div class="section" id="yosou-section" style="display:none">
       <h2 id="yosou-head" style="display:none">📅 次に出場予定の集計対象大会</h2>
       <div id="yosou-tour" style="display:none;font-size:13px;color:#374151;margin-bottom:8px"></div>
-      <a id="yosou-link" href="#" style="display:block;text-align:center;padding:8px;border:1px solid #dc2626;border-radius:8px;color:#dc2626;font-weight:600;text-decoration:none;font-size:13px">🔮 獲得ポイントをシミュレーションする</a>
+      <a id="yosou-link" href="#" style="display:block;text-align:center;padding:8px;border:1px solid #dc2626;border-radius:8px;color:#dc2626;font-weight:600;text-decoration:none;font-size:13px">🔮 スコアをシミュレーションする</a>
     </div>
 
     <div class="section">
@@ -710,7 +710,7 @@
   </div>
 
   <div class="footer" id="footer-info">
-    <span class="site-version" style="font-size:11px;color:#9ca3af">v adf8df3 · 2026-08-12 03:10 UTC</span>
+    <span class="site-version" style="font-size:11px;color:#9ca3af">v c9e2504 · 2026-08-12 06:10 UTC</span>
   </div>
 </main>
 
@@ -959,7 +959,7 @@ async function buildRivalsSection() {
   document.getElementById('rivals-section').style.display = '';
 }
 
-// ポイントシミュレーション: 次に出場予定の集計対象大会
+// スコアシミュレーション: 次に出場予定の集計対象大会
 // (エントラント登録済 & 現 Lv の加算対象) を出す。
 async function buildYosouSection() {
   if (!UID) return;

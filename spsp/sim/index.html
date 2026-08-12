@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>ポイントシミュレーション — SPSP</title>
+<title>スコアシミュレーション — SPSP</title>
 
 <style>
   * { box-sizing: border-box; }
@@ -159,7 +159,7 @@
 <div id="nav-root"></div>
 <script src="../nav.js"></script>
 <main>
-  <div class="page-title">🔮 ポイントシミュレーション</div>
+  <div class="page-title">🔮 スコアシミュレーション</div>
   <div id="loading">読み込み中… (プレイヤーデータ 約2MB)</div>
   <div id="content" style="display:none">
     <div id="sim-card">
@@ -469,7 +469,7 @@
     }
     var sc = PLAYER.scores, rk = PLAYER.ranks || {};
     var name = (MASTER.get(UID) || {}).display || ('uid:' + UID);
-    document.title = name + ' のポイントシミュレーション — SPSP';
+    document.title = name + ' のスコアシミュレーション — SPSP';
     var nameLink = document.getElementById('display');
     nameLink.textContent = name;
     nameLink.href = DATA_BASE + 'p/?uid=' + UID;
@@ -559,7 +559,13 @@
     card.innerHTML =
       '<div class="t-name">' + esc(ev.tournament_name) + '</div>' +
       '<div class="t-meta">' + dateStr(ev.start_at) + ' ・ ' + nent + '人' +
-      (ev.is_weekend ? '<span class="badge wk">休日</span>' : '<span class="badge wd">平日</span>') +
+      (ev.is_weekend
+        ? (ev.is_weekend_real === false
+            ? '<span class="badge wk" title="お盆・年末年始の大規模大会のため、平日開催ですがランキング計算上は休日大会として扱われます">実質休日</span>'
+            : '<span class="badge wk">休日</span>')
+        : (ev.is_weekend_real && !ev.is_pre
+            ? '<span class="badge wd" title="土日祝の開催ですが、ランキング計算上は平日大会として扱われます">実質平日</span>'
+            : '<span class="badge wd">平日</span>')) +
       (entered ? '<span class="badge wk">参加予定</span>' : '') +
       (g.pass ? '<span class="badge ok">集計対象</span>'
               : '<span class="badge ng">集計対象外</span> <span class="muted">' + esc(g.reason) + '</span>') +
