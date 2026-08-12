@@ -237,7 +237,7 @@ const SEED_APP_SKELETON_HTML = `
       <button id="spec-clear" style="background:#f3f4f6;color:#374151;border:1px solid #d1d5db;padding:8px 12px;border-radius:6px;font-size:12px;cursor:pointer">指定・固定をクリア</button>
     </div>
     <div style="font-size:11px;color:#6b7280;margin-top:5px;line-height:1.6">
-      プレイヤー列 (<b>uid</b> / <b>seedId</b> / <b>名前</b>) で参加者と照合し、指定列のある行だけ適用します:
+      プレイヤー列 (<b>uid</b> / <b>discriminator</b> / <b>seedId</b> / <b>名前</b>) で参加者と照合し、指定列のある行だけ適用します:
       <b>順位</b> (そのシード番号に配置) ／ <b>ウェーブ</b> (A,B,… または 1,2,… — そのウェーブのプールに配置) ／
       <b>固定</b> (「プール」or「ウェーブ」or 1 — 被り回避最適化で動かさない)。
       順位・ウェーブ指定は現在の並びを基準に組み直し、手動調整として取り込みます (後から行移動で微修正可)。
@@ -300,7 +300,7 @@ const SEED_APP_CONFIG = Object.assign({ mode: 'spsp' }, window.SEED_APP_CONFIG |
       + '<button id="csv-src-load" style="background:#2563eb;color:#fff;border:none;padding:8px 14px;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer">読み込み</button>'
       + '</div>'
       + '<div id="csv-src-status" style="font-size:11px;color:#6b7280;margin-top:5px;line-height:1.5">'
-      + '列は uid / seedId / 名前 のいずれかで参加者と照合します (順序は seed・順位列があればその昇順、無ければ行順)。'
+      + '列は uid / discriminator / seedId / 名前 のいずれかで参加者と照合します (順序は seed・順位列があればその昇順、無ければ行順)。'
       + '参加者取得済みなら読み込み時に基準へ反映、未取得なら取得後に自動反映されます。</div>';
     anchorEl.parentNode.insertBefore(div, anchorEl);
   }
@@ -530,6 +530,44 @@ function manualBarHtml() {
     + btn('unlock', moved > 0 ? '✏ 編集を再開' : '✏ 編集を開始') + btn('discard', '🗑 破棄')
     + `</div>`;
 }
+// 「固定設定」バー (📌クリックで manual-bar 直下に表示)。プール/ウェーブを指定して固定する。
+// 現在と違うプール/ウェーブを選んで適用すると、その中の最寄り位置へ行を移動 (通常の手動 op =
+// undo 可) してから固定する。「固定しない」で解除。
+function manualLockBarHtml() {
+  const recBy = new Map(DATA.map(r => [r.user_id, r]));
+  const rec = recBy.get(MANUAL.lockSel);
+  const name = escHtml(rec ? rec.display : String(MANUAL.lockSel));
+  const P = Math.max(1, parseInt((document.getElementById('so-pools') || {}).value, 10) || 1);
+  const waveMap = currentWaveMap(P);
+  const W = waveMap.reduce((m, w) => Math.max(m, w), 0) + 1;
+  const cur = manualOrder();
+  const pos = cur.indexOf(MANUAL.lockSel);
+  const poolOf = (s) => (window.SeedOptimizer ? SeedOptimizer.poolOfSeed(s, P) : 0);
+  const curPool = pos >= 0 ? poolOf(pos) : 0;
+  const lk = (SEED_SPEC && SEED_SPEC.locks) ? SEED_SPEC.locks[MANUAL.lockSel] : null;
+  const kind = MANUAL.lockKind || lk || 'pool';
+  const selCss = 'padding:2px 6px;border:1px solid #d1d5db;border-radius:5px;font-size:12px;background:#fff';
+  const kindSel = `<select data-mn-lock-kind style="${selCss}">`
+    + `<option value="none"${kind === 'none' ? ' selected' : ''}>固定しない</option>`
+    + `<option value="pool"${kind === 'pool' ? ' selected' : ''}>プール固定</option>`
+    + (W >= 2 ? `<option value="wave"${kind === 'wave' ? ' selected' : ''}>ウェーブ固定</option>` : '')
+    + `</select>`;
+  let targetSel = '';
+  if (kind === 'pool') {
+    targetSel = ` 対象 <select data-mn-lock-target style="${selCss}">` + Array.from({ length: P }, (_, p) =>
+      `<option value="${p}"${p === curPool ? ' selected' : ''}>${escHtml(poolLabel(p, waveMap))}</option>`).join('') + `</select>`;
+  } else if (kind === 'wave') {
+    const curWave = waveMap[curPool];
+    targetSel = ` 対象 <select data-mn-lock-target style="${selCss}">` + Array.from({ length: W }, (_, w) =>
+      `<option value="${w}"${w === curWave ? ' selected' : ''}>${escHtml(waveLetter(w))}</option>`).join('') + `</select>`;
+  }
+  return `<div style="margin-top:6px;background:#fef2f2;border:1px solid #fca5a5;border-radius:6px;padding:6px 10px;font-size:12px;display:flex;gap:6px;flex-wrap:wrap;align-items:center">`
+    + `<b>📌 ${name}</b> の固定: ${kindSel}${targetSel} `
+    + `<button data-mn="lock-apply" style="padding:2px 12px;border:none;border-radius:5px;background:#dc2626;color:#fff;font-weight:600;cursor:pointer">適用</button> `
+    + `<button data-mn="lock-cancel" style="padding:2px 8px;border:1px solid #d1d5db;border-radius:5px;background:#fff;cursor:pointer">キャンセル</button>`
+    + `<span style="color:#9ca3af;font-size:10px;flex-basis:100%">固定した選手は被り回避最適化で指定プール/ウェーブから動きません。現在と違うプール/ウェーブを選ぶと、その中の最寄り位置へ行を移動します (元に戻すで取り消し可)${P < 2 ? '。⚠ プール数が1のため固定は効果がありません' : ''}</span>`
+    + `</div>`;
+}
 // 「移動中」アクションバー (選択中のみ manual-bar 直下に表示)。
 function manualActionBarHtml() {
   const recBy = new Map(DATA.map(r => [r.user_id, r]));
@@ -555,6 +593,7 @@ function decorateManualTable() {
   rows.forEach((tr) => {
     const uid = manualParseUid(tr.dataset.uid);
     if (MANUAL.sel === uid) tr.style.background = '#ffedd5';
+    else if (MANUAL.lockSel === uid) tr.style.background = '#fee2e2';
     else if (_mnMoved.has(uid)) tr.style.background = '#fef9c3';
     // 手動調整中 (編集中/確定後とも) はプレイヤー名クリックを新規タブに。
     tr.querySelectorAll('a.player-name').forEach((a) => { a.target = '_blank'; a.rel = 'noopener'; });
@@ -593,9 +632,18 @@ function manualClickHandler(e) {
   if (act === 'select') {
     const uid = manualParseUid(el.dataset.uid);
     MANUAL.sel = (MANUAL.sel === uid) ? null : uid;
+    MANUAL.lockSel = null; MANUAL.lockKind = null;
     renderManualUI(); return;
   }
-  if (act === 'lockcycle') { cycleSeedLock(manualParseUid(el.dataset.uid)); return; }
+  if (act === 'lockopen') {
+    const uid = manualParseUid(el.dataset.uid);
+    MANUAL.lockSel = (MANUAL.lockSel === uid) ? null : uid;
+    MANUAL.lockKind = null;
+    MANUAL.sel = null;
+    renderManualUI(); return;
+  }
+  if (act === 'lock-apply') { if (MANUAL.lockSel != null) applySeedLockChoice(MANUAL.lockSel); return; }
+  if (act === 'lock-cancel') { MANUAL.lockSel = null; MANUAL.lockKind = null; renderManualUI(); return; }
   if (act === 'cancel-sel') { MANUAL.sel = null; renderManualUI(); return; }
   if (act === 'slot') {
     if (MANUAL.sel == null) return;
@@ -627,6 +675,7 @@ function renderManualUI() {
   bar.style.display = '';
   let barHtml = manualBarHtml();
   if (MANUAL && MANUAL.editing && MANUAL.sel != null) barHtml += manualActionBarHtml();
+  else if (MANUAL && MANUAL.editing && MANUAL.lockSel != null) barHtml += manualLockBarHtml();
   bar.innerHTML = barHtml;
 
   // per-render キャッシュ (MANUAL_COL の cell / 装飾が参照)。
@@ -703,8 +752,9 @@ const MANUAL_COL = {
     }
     const lk = SEED_SPEC && SEED_SPEC.locks ? SEED_SPEC.locks[u] : null;
     if (MANUAL && MANUAL.editing) {
+      const isLockSel = MANUAL.lockSel === u;
       h += `<button data-mn="select" data-uid="${escHtml(String(u))}" style="font-size:10px;padding:1px 8px;border:1px solid ${isSel ? '#ea580c' : '#d1d5db'};border-radius:5px;background:${isSel ? '#fb923c' : '#f9fafb'};color:${isSel ? '#fff' : '#374151'};cursor:pointer;white-space:nowrap">${isSel ? '選択中' : '選択'}</button>`;
-      h += `<button data-mn="lockcycle" data-uid="${escHtml(String(u))}" title="固定の切替: なし → プール固定 → ウェーブ固定 (ウェーブ数2以上のとき) → なし。固定は被り回避最適化で動かしません" style="font-size:10px;padding:1px 6px;border:1px solid ${lk ? '#dc2626' : '#d1d5db'};border-radius:5px;background:${lk ? '#fee2e2' : '#f9fafb'};color:${lk ? '#b91c1c' : '#9ca3af'};cursor:pointer;white-space:nowrap">${lk ? (lk === 'pool' ? '📌プール' : '📌ウェーブ') : '📌'}</button>`;
+      h += `<button data-mn="lockopen" data-uid="${escHtml(String(u))}" title="プール/ウェーブ固定の設定を開く (固定は被り回避最適化で動かしません。プール/ウェーブを指定して固定できます)" style="font-size:10px;padding:1px 6px;border:1px solid ${(lk || isLockSel) ? '#dc2626' : '#d1d5db'};border-radius:5px;background:${isLockSel ? '#dc2626' : (lk ? '#fee2e2' : '#f9fafb')};color:${isLockSel ? '#fff' : (lk ? '#b91c1c' : '#9ca3af')};cursor:pointer;white-space:nowrap">${lk ? (lk === 'pool' ? '📌プール' : '📌ウェーブ') : '📌'}</button>`;
     } else if (lk) {
       h += `<span style="font-size:10px;color:#b91c1c;white-space:nowrap" title="${lk === 'pool' ? 'プール固定' : 'ウェーブ固定'}: 被り回避最適化で動かしません">📌${lk === 'pool' ? 'プール' : 'ウェーブ'}</span>`;
     }
@@ -747,6 +797,30 @@ function ensureTable() {
   return TABLE;
 }
 
+// discriminator (start.gg 固有ID) 照合用。uid→disc は nightly 生成の discriminators.json
+// (優先枠作成ページと同じデータ)。取得失敗は DISC_LOAD_ERROR に保持し、CSV に
+// discriminator 列があるのに照合できないときだけ fail-loud でエラーにする。
+let DISCRIMINATORS = null;      // {uid(str): disc} | null (未取得/取得失敗)
+let DISC_LOAD_ERROR = null;
+let _DISC_PROMISE = null;
+let _DISC2UID = null;           // disc(小文字) → uid (遅延構築)
+function loadDiscriminators() {
+  if (_DISC_PROMISE) return _DISC_PROMISE;
+  _DISC_PROMISE = fetch('../data/discriminators.json', { cache: 'no-cache' })
+    .then(r => { if (!r.ok) throw new Error('discriminators.json HTTP ' + r.status); return r.json(); })
+    .then(j => { DISCRIMINATORS = j; return j; })
+    .catch(e => { DISC_LOAD_ERROR = String((e && e.message) || e); return null; });
+  return _DISC_PROMISE;
+}
+function _disc2uid() {
+  if (_DISC2UID || !DISCRIMINATORS) return _DISC2UID;
+  _DISC2UID = new Map();
+  for (const k in DISCRIMINATORS) _DISC2UID.set(String(DISCRIMINATORS[k]).toLowerCase(), Number(k));
+  return _DISC2UID;
+}
+// CSV セル値 → 正規化 discriminator ("#abc123" / 大文字も許容)。
+function _csvNormDisc(v) { return String(v).trim().replace(/^#/, '').toLowerCase(); }
+
 async function loadMasterData() {
   if (MASTER_MAP) return MASTER_MAP;
   const status = document.getElementById('status');
@@ -781,6 +855,8 @@ async function loadMasterData() {
       MASTER_MAP.set(rec.user_id, rec);
     } catch (e) {}
   }
+  // discriminator 索引 (照合の任意ソース)。失敗しても続行 (照合時に fail-loud)。
+  await loadDiscriminators();
   status.textContent = `マスター取得完了 (${MASTER_MAP.size} 名、${(performance.now()-t0).toFixed(0)}ms)`;
   return MASTER_MAP;
 }
@@ -906,7 +982,7 @@ const SEEDS_QUERY = `
           entrant {
             id name
             participants {
-              user { id }
+              user { id discriminator }
               player { id gamerTag prefix }
             }
           }
@@ -926,7 +1002,7 @@ const ENTRANTS_QUERY = `
         nodes {
           id name
           participants {
-            user { id }
+            user { id discriminator }
             player { id gamerTag prefix }
           }
         }
@@ -1009,17 +1085,18 @@ async function fetchAllEntrants(token, eventSlug, progressFn) {
 function entrantNodeToInfo(node) {
   const ent = node || {};
   const parts = ent.participants || [];
-  let uid = null, gamerTag = ent.name || '', prefix = '';
+  let uid = null, gamerTag = ent.name || '', prefix = '', disc = null;
   if (parts.length) {
     const p0 = parts[0];
     if (p0.user && p0.user.id != null) uid = Number(p0.user.id);
+    if (p0.user && p0.user.discriminator) disc = String(p0.user.discriminator);
     if (p0.player) {
       gamerTag = p0.player.gamerTag || gamerTag;
       prefix = p0.player.prefix || '';
     }
   }
   const display = prefix ? (prefix + ' | ' + gamerTag) : gamerTag;
-  return { seedId: null, originalSeed: null, userId: canonicalUserId(uid), display, entrantId: ent.id != null ? Number(ent.id) : null };
+  return { seedId: null, originalSeed: null, userId: canonicalUserId(uid), display, discriminator: disc, entrantId: ent.id != null ? Number(ent.id) : null };
 }
 
 function seedNodeToInfo(seedNode) {
@@ -1027,17 +1104,18 @@ function seedNodeToInfo(seedNode) {
   const sn = seedNode.seedNum;
   const ent = seedNode.entrant || {};
   const parts = ent.participants || [];
-  let uid = null, gamerTag = ent.name || '', prefix = '';
+  let uid = null, gamerTag = ent.name || '', prefix = '', disc = null;
   if (parts.length) {
     const p0 = parts[0];
     if (p0.user && p0.user.id != null) uid = Number(p0.user.id);
+    if (p0.user && p0.user.discriminator) disc = String(p0.user.discriminator);
     if (p0.player) {
       gamerTag = p0.player.gamerTag || gamerTag;
       prefix = p0.player.prefix || '';
     }
   }
   const display = prefix ? (prefix + ' | ' + gamerTag) : gamerTag;
-  return { seedId: sid, originalSeed: sn, userId: canonicalUserId(uid), display, entrantId: ent.id != null ? Number(ent.id) : null };
+  return { seedId: sid, originalSeed: sn, userId: canonicalUserId(uid), display, discriminator: disc, entrantId: ent.id != null ? Number(ent.id) : null };
 }
 
 function filterAndRerank(seedInfos) {
@@ -1055,6 +1133,7 @@ function filterAndRerank(seedInfos) {
       rec.seedId = si.seedId;
       rec.original_seed = si.originalSeed;
       rec.entrantId = si.entrantId;
+      rec.discriminator = si.discriminator || null;   // start.gg 参加者データ由来 (CSV 照合用)
       ranked.push(rec);
     } else {
       missing.push(si);
@@ -1078,6 +1157,7 @@ function filterAndRerank(seedInfos) {
       seedId: si.seedId,
       original_seed: si.originalSeed,
       entrantId: si.entrantId,
+      discriminator: si.discriminator || null,
       ranks: {
         // ensemble は event-local の連番 (最下位扱い)。tjpr/bt_gated は global 不明なので null
         ensemble: next, tjpr: null, bt_gated: null,
@@ -1506,6 +1586,14 @@ function render() {
 }
 // 手動調整のクリック操作 (動的要素はデリゲーションで拾う)。
 document.getElementById('manual-bar').addEventListener('click', manualClickHandler);
+// 固定設定バーの種別セレクト変更 → 対象セレクト (プール一覧/ウェーブ一覧) を組み直す。
+document.getElementById('manual-bar').addEventListener('change', (e) => {
+  const el = e.target.closest('[data-mn-lock-kind]');
+  if (el && MANUAL && MANUAL.editing && MANUAL.lockSel != null) {
+    MANUAL.lockKind = el.value;
+    renderManualUI();
+  }
+});
 // プレイヤーページへのリンク (表・詳細展開内とも) は常に新しいタブで開く。
 document.getElementById('ranktable').addEventListener('click', (e) => {
   const a = e.target.closest('a');
@@ -2688,32 +2776,68 @@ function _csvSortedRows(rows) {
 // CSV 列名 (小文字比較)。csv モードの基準 CSV と 📌シード指定 CSV で共通。
 const CSV_NAME_COLS = ['player', 'name', 'display', 'tag', 'プレイヤー', '名前'];
 const CSV_SEAT_COLS = ['seednum', 'seed_num', 'seed', 'phaseseed', 'phase_seed', '順位', 'シード'];
+const CSV_DISC_COLS = ['discriminator', 'disc'];
 
 // DATA から CSV 照合用の索引を作る (uid / seedId / 正規化名)。uid null 行は uid 照合不可。
+// 正規化名 (タグ省略) が複数参加者に重なる名前は dupNames に載せ、名前照合ではエラー扱いにする
+// (黙って先勝ちの1人に照合すると別人にシードを付けかねないため)。
 function _csvRecLookups() {
   const byUid = new Map(DATA.filter(r => r.user_id != null).map(r => [r.user_id, r]));
   const bySeedId = new Map(DATA.filter(r => r.seedId != null).map(r => [String(r.seedId), r]));
   const byName = new Map();
+  const dupNames = new Set();
   for (const r of DATA) {
     const n = _csvNormName(r.display || '');
-    if (n && !byName.has(n)) byName.set(n, r);
+    if (!n) continue;
+    if (byName.has(n)) dupNames.add(n);
+    else byName.set(n, r);
   }
-  return { byUid, bySeedId, byName };
+  // discriminator → rec (disc は一意)。第一ソースは参加者データそのもの
+  // (start.gg user.discriminator = rec.discriminator。DB 未登録の参加者も照合できる)。
+  // rec に disc が無いとき (CSV 単独リスト構築など) は discriminators.json で補完。
+  // どちらのソースも無いときだけ null (= disc 列があれば discUnavailable エラー)。
+  let hasOwnDisc = false;
+  const byDisc = new Map();
+  for (const r of DATA) {
+    if (r.user_id == null) continue;
+    let d = r.discriminator || null;
+    if (d) hasOwnDisc = true;
+    else if (DISCRIMINATORS) d = DISCRIMINATORS[String(r.user_id)] || null;
+    if (d) byDisc.set(String(d).toLowerCase(), r);
+  }
+  return { byUid, bySeedId, byName, dupNames,
+           byDisc: (hasOwnDisc || DISCRIMINATORS) ? byDisc : null };
 }
-// CSV 1 行 → 参加者 rec (照合不可なら null)。優先: uid 列 → seedId 列 → 名前列 (タグ省略照合)。
+// CSV 1 行 → {rec, ambiguousName, discUnavailable}。
+// 優先: uid 列 → discriminator 列 → seedId 列 → 名前列 (タグ省略照合)。
+//   rec = 照合できた参加者 (不可なら null)。
+//   ambiguousName = 名前照合で同名の参加者が複数いた場合にその名前 (呼び出し側でエラーにする)。
+//   discUnavailable = discriminator 列があるのに discriminators.json が無くて照合不能
+//                     (呼び出し側でエラーにする。黙って名前照合等に劣化させない)。
 function _csvMatchRow(row, lk) {
-  let rec = null;
   const uid = _csvPick(row, ['uid', 'user_id', 'userid']);
-  if (uid != null) rec = lk.byUid.get(canonicalUserId(Number(uid))) || lk.byUid.get(Number(uid)) || null;
-  if (!rec) {
-    const sid = _csvPick(row, ['seedid', 'seed_id', 'sid']);
-    if (sid != null) rec = lk.bySeedId.get(String(parseInt(sid, 10))) || lk.bySeedId.get(sid) || null;
+  if (uid != null) {
+    const rec = lk.byUid.get(canonicalUserId(Number(uid))) || lk.byUid.get(Number(uid)) || null;
+    if (rec) return { rec, ambiguousName: null };
   }
-  if (!rec) {
-    const nm = _csvPick(row, CSV_NAME_COLS);
-    if (nm != null) rec = lk.byName.get(_csvNormName(nm)) || null;
+  const dv = _csvPick(row, CSV_DISC_COLS);
+  if (dv != null) {
+    if (!lk.byDisc) return { rec: null, ambiguousName: null, discUnavailable: true };
+    const rec = lk.byDisc.get(_csvNormDisc(dv)) || null;
+    if (rec) return { rec, ambiguousName: null };
   }
-  return rec;
+  const sid = _csvPick(row, ['seedid', 'seed_id', 'sid']);
+  if (sid != null) {
+    const rec = lk.bySeedId.get(String(parseInt(sid, 10))) || lk.bySeedId.get(sid) || null;
+    if (rec) return { rec, ambiguousName: null };
+  }
+  const nm = _csvPick(row, CSV_NAME_COLS);
+  if (nm != null) {
+    const n = _csvNormName(nm);
+    if (lk.dupNames.has(n)) return { rec: null, ambiguousName: nm };
+    return { rec: lk.byName.get(n) || null, ambiguousName: null };
+  }
+  return { rec: null, ambiguousName: null };
 }
 function _csvRowLabel(row) {
   return _csvPick(row, CSV_NAME_COLS.concat(['uid', 'user_id', 'seedid'])) || '(不明行)';
@@ -2725,8 +2849,13 @@ function csvRowsToOrder(rows) {
   const order = [];
   const used = new Set();
   const unmatched = [];
+  const ambiguous = [];   // 名前照合で複数参加者に該当した名前 (エラー扱い、適用しない)
+  let discUnavailable = false;   // disc 列があるのに discriminators.json 無し (エラー扱い)
   for (const row of _csvSortedRows(rows)) {
-    const rec = _csvMatchRow(row, lk);
+    const m = _csvMatchRow(row, lk);
+    if (m.discUnavailable) { discUnavailable = true; continue; }
+    if (m.ambiguousName != null) { ambiguous.push(m.ambiguousName); continue; }
+    const rec = m.rec;
     if (rec && !used.has(rec.user_id)) { order.push(rec.user_id); used.add(rec.user_id); }
     else if (!rec) unmatched.push(_csvRowLabel(row));
   }
@@ -2734,7 +2863,7 @@ function csvRowsToOrder(rows) {
   const rest = DATA.slice()
     .sort((a, b) => (a.ranks[currentMethod] || 1e9) - (b.ranks[currentMethod] || 1e9))
     .map(r => r.user_id).filter(u => !used.has(u));
-  return { order: order.concat(rest), matched: order.length, unmatched, restCount: rest.length };
+  return { order: order.concat(rest), matched: order.length, unmatched, ambiguous, discUnavailable, restCount: rest.length };
 }
 function _csvStatus(msg, isErr) {
   const el = document.getElementById('csv-src-status');
@@ -2750,7 +2879,17 @@ function applyCsvOrderIfReady(fromFetch) {
   }
   if (!fromFetch && MANUAL && manualMovedSet().size > 0 &&
       !confirm('CSV 順を基準に再適用すると、現在の手動調整 (履歴含む) は破棄されます。よろしいですか？')) return;
-  const { order, matched, unmatched, restCount } = csvRowsToOrder(CSV_SOURCE.rows);
+  const { order, matched, unmatched, ambiguous, discUnavailable, restCount } = csvRowsToOrder(CSV_SOURCE.rows);
+  if (discUnavailable) {
+    _csvStatus(`discriminator 列がありますが照合データ (discriminators.json) を取得できていないため適用しません` +
+      `${DISC_LOAD_ERROR ? ` (${DISC_LOAD_ERROR})` : ''}。再読み込みするか uid / 名前列で指定してください。`, true);
+    return;
+  }
+  if (ambiguous.length) {
+    _csvStatus(`名前が複数の参加者に該当するため適用しません: ${[...new Set(ambiguous)].slice(0, 5).join(', ')}${ambiguous.length > 5 ? ' …' : ''}` +
+      ' — 該当行に uid / discriminator / seedId 列を付けて区別してください。', true);
+    return;
+  }
   if (!matched) { _csvStatus('CSV の行を参加者と1件も照合できませんでした (uid / seedId / 名前列を確認してください)。', true); return; }
   MANUAL = { base: order, ops: [], hpos: 0, committed: true, editing: false, sel: null, src: 'csv' };
   saveManual(); renderManualUI();
@@ -2780,6 +2919,12 @@ function _masterNameIdx() {
 async function buildParticipantsFromCsv() {
   const status = document.getElementById('status');
   await loadMasterData();
+  // discriminator 列があるのに照合データが無い場合は fail-loud (黙って名前照合に劣化させない)。
+  if (!DISCRIMINATORS && CSV_SOURCE.rows.some(row => _csvPick(row, CSV_DISC_COLS) != null)) {
+    if (status) status.textContent = '❌ discriminator 列がありますが照合データ (discriminators.json) を' +
+      `取得できていないため読み込めません${DISC_LOAD_ERROR ? ` (${DISC_LOAD_ERROR})` : ''}。`;
+    return;
+  }
   const nameIdx = _masterNameIdx();
   const seedInfos = [];
   const seen = new Set();
@@ -2790,6 +2935,13 @@ async function buildParticipantsFromCsv() {
     if (uidV != null) {
       const u = canonicalUserId(Number(uidV));
       if (MASTER_MAP.has(u)) userId = u;
+    }
+    if (userId == null) {
+      const dV = _csvPick(row, CSV_DISC_COLS);
+      if (dV != null && DISCRIMINATORS) {
+        const u = _disc2uid().get(_csvNormDisc(dV));
+        if (u != null && MASTER_MAP.has(canonicalUserId(u))) userId = canonicalUserId(u);
+      }
     }
     const nameV = _csvPick(row, ['player', 'name', 'display', 'tag', 'プレイヤー', '名前']);
     if (userId == null && nameV != null) {
@@ -3068,10 +3220,14 @@ function applySpecRows(rows, label) {
   const W = waveMap.reduce((mx, w) => Math.max(mx, w), 0) + 1;
   const lk = _csvRecLookups();
   const pins = new Map(), waveOf = new Map(), locks = {};
-  const unmatched = [], problems = [];
+  const unmatched = [], problems = [], ambiguous = [];
+  let discUnavailable = false;
   let matchedRows = 0;
   for (const row of rows) {
-    const rec = _csvMatchRow(row, lk);
+    const m = _csvMatchRow(row, lk);
+    if (m.discUnavailable) { discUnavailable = true; continue; }
+    const rec = m.rec;
+    if (m.ambiguousName != null) { ambiguous.push(m.ambiguousName); continue; }
     if (!rec) { unmatched.push(_csvRowLabel(row)); continue; }
     if (rec.user_id == null) { problems.push(`${rec.display}: uid 不明のため指定できません`); continue; }
     matchedRows++;
@@ -3105,6 +3261,19 @@ function applySpecRows(rows, label) {
     } else if (fx) {
       locks[u] = fx;
     }
+  }
+  // discriminator 列があるのに照合データが無い = エラー (黙って名前照合等に劣化させない)。
+  if (discUnavailable) {
+    _specStatus(`discriminator 列がありますが照合データ (discriminators.json) を取得できていないため適用しません` +
+      `${DISC_LOAD_ERROR ? ` (${escHtml(DISC_LOAD_ERROR)})` : ''}。再読み込みするか uid / 名前列で指定してください。`, true);
+    return;
+  }
+  // 名前の被り = エラー (何も適用しない)。黙って別人に指定が付くのを防ぐ。
+  if (ambiguous.length) {
+    _specStatus(`名前が複数の参加者に該当するため適用しません: ` +
+      `${[...new Set(ambiguous)].slice(0, 5).map(escHtml).join(', ')}${ambiguous.length > 5 ? ' …' : ''}` +
+      ' — 該当行に uid / discriminator / seedId 列を付けて区別してください。', true);
+    return;
   }
   if (!matchedRows) {
     _specStatus('CSV の行を参加者と1件も照合できませんでした (uid / seedId / 名前列を確認してください)。', true);
@@ -3183,20 +3352,54 @@ function clearSeedSpec() {
   _specStatus('指定・固定をクリアしました (並び自体は現在の手動調整のまま。並びも戻す場合は手動調整を破棄してください)。');
 }
 
-// 手動調整の行の📌: なし → プール固定 → ウェーブ固定 (ウェーブ数2以上のとき) → なし。
-function cycleSeedLock(uid) {
-  if (!SEED_SPEC) SEED_SPEC = { label: null, pins: {}, waves: {}, locks: {} };
-  const locks = SEED_SPEC.locks || (SEED_SPEC.locks = {});
-  const cur = locks[uid] || null;
-  const P = Math.max(1, parseInt((document.getElementById('so-pools') || {}).value, 10) || 1);
-  const W = currentWaveMap(P).reduce((mx, w) => Math.max(mx, w), 0) + 1;
-  let next = null;
-  if (cur == null) next = 'pool';
-  else if (cur === 'pool' && W >= 2) next = 'wave';
-  if (next) locks[uid] = next;
-  else delete locks[uid];
+// SEED_SPEC が空になったら null に戻す (保存・表示の簡素化)。
+function _pruneSeedSpec() {
+  if (!SEED_SPEC) return;
   const n = (o) => Object.keys(o || {}).length;
   if (!n(SEED_SPEC.locks) && !n(SEED_SPEC.pins) && !n(SEED_SPEC.waves)) SEED_SPEC = null;
+}
+
+// pos から最寄りの ok(slot)=true な位置 (純関数)。同距離なら上 (若いシード) 側を優先。
+function nearestLockSlot(pos, N, ok) {
+  if (ok(pos)) return pos;
+  for (let d = 1; d < N; d++) {
+    if (pos - d >= 0 && ok(pos - d)) return pos - d;
+    if (pos + d < N && ok(pos + d)) return pos + d;
+  }
+  return null;
+}
+
+// 固定設定バーの「適用」: 種別 (なし/プール/ウェーブ) と対象を読み、必要なら対象プール/
+// ウェーブ内の最寄り位置へ移動 (通常の手動 op = undo 可) してから SEED_SPEC.locks を更新。
+function applySeedLockChoice(uid) {
+  const bar = document.getElementById('manual-bar');
+  const kindEl = bar && bar.querySelector('[data-mn-lock-kind]');
+  const targetEl = bar && bar.querySelector('[data-mn-lock-target]');
+  const kind = kindEl ? kindEl.value : 'none';
+  if (kind === 'none') {
+    if (SEED_SPEC && SEED_SPEC.locks) delete SEED_SPEC.locks[uid];
+    _pruneSeedSpec();
+  } else {
+    const target = targetEl ? parseInt(targetEl.value, 10) : 0;
+    const P = Math.max(1, parseInt((document.getElementById('so-pools') || {}).value, 10) || 1);
+    const waveMap = currentWaveMap(P);
+    const cur = manualOrder();
+    const pos = cur.indexOf(uid);
+    if (pos < 0) return;
+    const poolOf = (s) => (window.SeedOptimizer ? SeedOptimizer.poolOfSeed(s, P) : 0);
+    const ok = kind === 'pool'
+      ? (s) => poolOf(s) === target
+      : (s) => waveMap[poolOf(s)] === target;
+    if (!ok(pos)) {
+      const s = nearestLockSlot(pos, cur.length, ok);
+      if (s != null) manualPushOp(uid, s);   // saveManual + 再描画込み
+    }
+    if (!SEED_SPEC) SEED_SPEC = { label: null, pins: {}, waves: {}, locks: {} };
+    if (!SEED_SPEC.locks) SEED_SPEC.locks = {};
+    SEED_SPEC.locks[uid] = kind;
+  }
+  MANUAL.lockSel = null;
+  MANUAL.lockKind = null;
   saveManual();
   renderManualUI();
   renderSpecStatus();
