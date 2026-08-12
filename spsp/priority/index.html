@@ -151,6 +151,7 @@
         <div class="chips" id="padd-chips"></div>
         <div style="margin-top:8px">
           <label class="csv-btn">CSV から一括追加<input type="file" id="csv-file" accept=".csv,text/csv,text/plain" hidden></label>
+          <button type="button" class="csv-btn" id="csv-tpl-btn">テンプレート</button>
           <span id="csv-note" class="csv-note"></span>
         </div>
         <div class="radio-group">
@@ -168,6 +169,7 @@
         <div class="chips" id="prem-chips"></div>
         <div style="margin-top:8px">
           <label class="csv-btn">CSV から一括除去<input type="file" id="csv-rem-file" accept=".csv,text/csv,text/plain" hidden></label>
+          <button type="button" class="csv-btn" id="csv-rem-tpl-btn">テンプレート</button>
           <span id="csv-rem-note" class="csv-note"></span>
         </div>
       </div>
@@ -372,6 +374,33 @@
     s = String(s == null ? '' : s);
     return /[",\n]/.test(s) ? '"' + s.replace(/"/g, '""') + '"' : s;
   }
+  // テンプレートの記入例 (実在しない disc = 先頭7桁が 0)。読み込み時は無視し警告する。
+  // 出力は ASCII 名にする: Shift_JIS 前提で CSV を開くアプリ (Excel for Mac 等) でも
+  // 化けないため。判定側は旧テンプレの日本語名も引き続き例として扱う。
+  var TPL_OUT_NAMES = ['Taro Yamada', 'Hanako Suzuki'];
+  var TPL_NAMES = TPL_OUT_NAMES.concat(['山田太郎', '鈴木花子']);
+  function isTemplateDisc(disc) { return !!disc && /^0{7}[0-9a-f]$/i.test(disc); }
+  function isTemplateSampleRow(row, disc) {
+    if (isTemplateDisc(disc)) return true;
+    return (row || []).some(function (c) { return TPL_NAMES.indexOf(String(c || '').trim()) >= 0; });
+  }
+  function downloadBlob(text, filename) {
+    var blob = new Blob(['\uFEFF' + text], { type: 'text/csv;charset=utf-8' });
+    var a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    URL.revokeObjectURL(a.href);
+  }
+  // name は照合に使わない (discriminator のみ)。2 行目で name 空欄可を示す。
+  function downloadTemplate() {
+    downloadBlob('name,discriminator\r\n'
+      + TPL_OUT_NAMES[0] + ',="00000000"\r\n'
+      + ',="00000001"\r\n',
+      'priority_template.csv');
+  }
   function downloadCsv() {
     var lines = ['name,discriminator'];
     currentRows.forEach(function (r) {
@@ -380,17 +409,10 @@
       var disc = DISC[String(r.uid)] || '';
       lines.push(csvField(r.display) + ',' + (disc ? '="' + disc + '"' : ''));
     });
-    // BOM 付き UTF-8 (= Excel で文字化けしないように)
-    var blob = new Blob(['\uFEFF' + lines.join('\r\n') + '\r\n'], { type: 'text/csv' });
-    var a = document.createElement('a');
-    a.href = URL.createObjectURL(blob);
     var d = new Date();
     var pad = function (x) { return String(x).padStart(2, '0'); };
-    a.download = 'priority_' + d.getFullYear() + pad(d.getMonth() + 1) + pad(d.getDate()) + '.csv';
-    document.body.appendChild(a);
-    a.click();
-    a.remove();
-    URL.revokeObjectURL(a.href);
+    downloadBlob(lines.join('\r\n') + '\r\n',
+      'priority_' + d.getFullYear() + pad(d.getMonth() + 1) + pad(d.getDate()) + '.csv');
   }
 
   // ---- チップ描画 ----
@@ -461,10 +483,12 @@
         '<span style="color:#b45309">discriminator 列が見つかりません</span>';
       return;
     }
-    var added = 0, dup = 0;
+    var added = 0, dup = 0, sample = 0;
     for (var i = found.start; i < rows.length; i++) {
       var v = cellDisc(rows[i][found.col]);
       if (!v) continue;
+      // テンプレートの記入例が残っている行は無視 (警告は下の note に出す)。
+      if (isTemplateSampleRow(rows[i], v)) { sample++; continue; }
       var uid = DISC2UID[v.toLowerCase()];
       if (uid === undefined) {
         if (target.unknown.indexOf(v) < 0) target.unknown.push(v);
@@ -474,7 +498,8 @@
       target.list.push(uid);
       added++;
     }
-    renderCsvNote(target, '今回 +' + added + (dup ? ' (重複スキップ ' + dup + ')' : ''));
+    renderCsvNote(target, '今回 +' + added + (dup ? ' (重複スキップ ' + dup + ')' : '') +
+      (sample ? ' <span style="color:#b45309">テンプレートの記入例 ' + sample + ' 行を無視</span>' : ''));
     recompute();
   }
 
@@ -570,6 +595,8 @@
       r.addEventListener('change', recompute);
     });
     document.getElementById('dl-btn').addEventListener('click', downloadCsv);
+    document.getElementById('csv-tpl-btn').addEventListener('click', downloadTemplate);
+    document.getElementById('csv-rem-tpl-btn').addEventListener('click', downloadTemplate);
 
     // 都道府県サジェスト
     var pin = document.getElementById('pref-input');

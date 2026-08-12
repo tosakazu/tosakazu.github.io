@@ -234,17 +234,25 @@ const SEED_APP_SKELETON_HTML = `
       <span style="font-size:11px;color:#6b7280">or</span>
       <input type="file" id="spec-src-file" accept=".csv,text/csv" style="font-size:11px">
       <button id="spec-src-load" style="background:#2563eb;color:#fff;border:none;padding:8px 14px;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer">読み込み</button>
+      <button id="spec-tpl" style="background:#f3f4f6;color:#374151;border:1px solid #d1d5db;padding:8px 12px;border-radius:6px;font-size:12px;cursor:pointer">テンプレート</button>
       <button id="spec-clear" style="background:#f3f4f6;color:#374151;border:1px solid #d1d5db;padding:8px 12px;border-radius:6px;font-size:12px;cursor:pointer">指定・固定をクリア</button>
     </div>
     <div style="font-size:11px;color:#6b7280;margin-top:5px;line-height:1.6">
-      プレイヤー列 (<b>uid</b> / <b>discriminator</b> / <b>seedId</b> / <b>名前</b>) で参加者と照合し、指定列のある行だけ適用します:
-      <b>順位</b> (そのシード番号に配置) ／ <b>ウェーブ</b> (A,B,… または 1,2,… — そのウェーブのプールに配置) ／
-      <b>固定</b> (「プール」or「ウェーブ」or 1 — 被り回避最適化で動かさない)。
+      プレイヤー列 (<b>uid</b> / <b>discriminator</b> / <b>seedId</b> / <b>name</b>) で参加者と照合し、指定列のある行だけ適用します:
+      <b>seed</b> (そのシード番号に配置) ／ <b>wave</b> (A,B,… または 1,2,… — そのウェーブのプールに配置) ／
+      <b>lock</b> (pool / wave — 指定した枠から動かさない)。
       順位・ウェーブ指定は現在の並びを基準に組み直し、手動調整として取り込みます (後から行移動で微修正可)。
-      プール数・ウェーブ数は被り回避パネルの値を使います。
+      <b>「💾 作業状況を保存」で書き出した CSV もここから読み込めます</b> — シード順・固定・プール数/ウェーブ数が
+      そのまま復元されるので、作業の再開や他の人との共有に使えます。
     </div>
     <div id="spec-status" style="font-size:11px;color:#374151;margin-top:5px;line-height:1.6"></div>
   </details>
+</div>
+
+<!-- 作業状況の保存 (現在のシード順 + 固定を CSV に。読み込みは 📌 パネル側) -->
+<div id="work-bar" style="display:none;margin:10px 0 0">
+  <button id="spec-export" style="background:#16a34a;color:#fff;border:none;padding:6px 14px;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer">💾 作業状況を保存 (CSV)</button>
+  <span id="work-note" style="font-size:11px;color:#6b7280;margin-left:8px"></span>
 </div>
 
 <!-- 手動調整モード: ロック解除で通常のランキング表のまま並べ替えできる (自動保存/undo/redo) -->
@@ -298,9 +306,10 @@ const SEED_APP_CONFIG = Object.assign({ mode: 'spsp' }, window.SEED_APP_CONFIG |
       + '<span style="font-size:11px;color:#6b7280">or</span>'
       + '<input type="file" id="csv-src-file" accept=".csv,text/csv" style="font-size:11px">'
       + '<button id="csv-src-load" style="background:#2563eb;color:#fff;border:none;padding:8px 14px;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer">読み込み</button>'
+      + '<button id="csv-tpl" style="background:#f3f4f6;color:#374151;border:1px solid #d1d5db;padding:8px 12px;border-radius:6px;font-size:12px;cursor:pointer">テンプレート</button>'
       + '</div>'
       + '<div id="csv-src-status" style="font-size:11px;color:#6b7280;margin-top:5px;line-height:1.5">'
-      + '列は uid / discriminator / seedId / 名前 のいずれかで参加者と照合します (順序は seed・順位列があればその昇順、無ければ行順)。'
+      + '列は uid / discriminator / seedId / name のいずれかで参加者と照合します (順序は seed 列があればその昇順、無ければ行順)。'
       + '参加者取得済みなら読み込み時に基準へ反映、未取得なら取得後に自動反映されます。</div>';
     anchorEl.parentNode.insertBefore(div, anchorEl);
   }
@@ -405,7 +414,19 @@ function manualApplyOp(arr, op) {
 // 手動 op には積まず、manualOrder / orderedRecs / 最適化の基準すべてで常に適用される
 // (= 最適化しなくても固定者は指定プール/ウェーブの位置に挿入ソート的に移動する)。
 // op 履歴と独立なので undo/redo・固定解除でそのまま元の並びに戻る。冪等。
-let _lockProjNotes = [];   // 直近の射影で満たせなかった固定の警告 (manualBarHtml で表示)
+// uid 配列 → 表示名の列挙 (多いときは先頭 3 人 + 「ほか N 人」)。
+function namesOfUids(uids, max = 3) {
+  if (!uids || !uids.length) return '';
+  const byUid = new Map(DATA.map(r => [r.user_id, r]));
+  const names = uids.map(u => {
+    const rec = byUid.get(manualParseUid(u));
+    return (rec && rec.display) || `uid:${u}`;
+  });
+  const head = names.slice(0, max).join('、');
+  return names.length > max ? `${head} ほか ${names.length - max}人` : head;
+}
+
+let _lockProjNotes = [];   // 直近の射影で枠が足りなかった固定の説明 (manualBarHtml で表示)
 function _projectSeedLocks(a) {
   _lockProjNotes = [];
   if (!SEED_SPEC || !SEED_SPEC.locks || !Object.keys(SEED_SPEC.locks).length) return a;
@@ -414,7 +435,16 @@ function _projectSeedLocks(a) {
   const waveMap = currentWaveMap(P);
   const r = enforceSeedLocks(a, SEED_SPEC.locks, P, waveMap,
     (s, PP) => SeedOptimizer.poolOfSeed(s, PP));
-  _lockProjNotes = r.notes;
+  // 枠不足は「どこが何人分足りないか + 誰が反映されないか」を出す。
+  // 枠 0 = 現在のプール数/ウェーブ数にその対象が無い (設定変更や前回の固定が残っている)。
+  _lockProjNotes = (r.overflow || []).map((o) => {
+    const label = o.kind === 'pool' ? poolLabel(o.target, waveMap) : 'ウェーブ' + waveLetter(o.target);
+    const who = namesOfUids(o.dropped);
+    if (o.cap === 0) {
+      return `${label} は現在の${o.kind === 'pool' ? `プール数 (${P})` : `ウェーブ数 (${waveMap.reduce((m, w) => Math.max(m, w), 0) + 1})`}に無いため、${who} の固定を無視しています`;
+    }
+    return `${label} は ${o.cap}人分の枠に ${o.want}人を固定。${who} は指定を反映できません`;
+  });
   return r.order;
 }
 function manualOrder() {
@@ -442,11 +472,13 @@ function saveManual() {
 function restoreManualForEvent() {
   MANUAL = null;
   SEED_SPEC = null;
+  _lockProjNotes = [];   // 前の大会の固定警告を持ち越さない
   try {
     const raw = localStorage.getItem(MANUAL_LS_KEY);
-    if (raw) {
+    const key = manualEventKey();
+    if (raw && key != null) {   // イベント不明 (key=null) では復元しない (別大会の取り違え防止)
       const s = JSON.parse(raw);
-      if (s && s.eventKey === manualEventKey()) {
+      if (s && s.eventKey === key) {
         const cur = new Set(DATA.map(r => r.user_id));
         if (Array.isArray(s.base) && s.base.length === cur.size && s.base.every(u => cur.has(u))) {
           MANUAL = {
@@ -501,8 +533,8 @@ function manualUnlock() {
     MANUAL = { base: orderedRecs().map(r => r.user_id), ops: [], hpos: 0, committed: false, editing: true, sel: null };
   } else {
     // 再編集: MANUAL (op 履歴・undo/redo 位置) をそのまま保持する。
-    // 被り回避適用中でも base には畳み込まない (最適化は確定後に再実行できるが、
-    // 手動の履歴はここでしか持っていないため優先)。
+    // 被り回避は「最後に別枠でかける処理」なので base には畳み込まない
+    // (適用は解除され、手動調整を確定してから再実行する)。
     MANUAL.editing = true;
     MANUAL.sel = null;
   }
@@ -529,9 +561,11 @@ function manualDiscard() {
 function manualBarHtml() {
   const btn = (mn, label, extra) =>
     `<button data-mn="${mn}" ${extra || ''} style="font-size:11px;padding:3px 10px;border:1px solid #d1d5db;border-radius:6px;background:#f9fafb;color:#374151;cursor:pointer">${label}</button>`;
-  // 固定射影の警告 (対象プール/ウェーブの空き不足など)。黙って握りつぶさない。
+  // 固定の枠不足 / 対象消失。黙って握りつぶさず、その場で解除できるようにする。
   const projWarn = _lockProjNotes.length
-    ? `<span style="color:#b91c1c;font-size:11px;font-weight:600">⚠ 固定: ${escHtml(_lockProjNotes[0])}</span>` : '';
+    ? `<span style="color:#b91c1c;font-size:11px;font-weight:600">⚠ ${_lockProjNotes.map(escHtml).join(' ／ ')}</span>`
+      + `<button data-mn="clear-locks" style="font-size:10px;padding:2px 8px;border:1px solid #fca5a5;border-radius:5px;background:#fff;color:#b91c1c;cursor:pointer">固定を解除</button>`
+    : '';
   // プール数 / ウェーブ数 (被り回避パネルの so-pools / so-waves と同じ値。手動列のプール表示と
   // プール/ウェーブ固定の枠がこれで決まるので、パネルを開かずここでも変更できるようにする)。
   const _pv = (id, def) => { const v = parseInt((document.getElementById(id) || {}).value, 10); return Number.isFinite(v) ? v : def; };
@@ -684,6 +718,11 @@ function manualClickHandler(e) {
   if (!el || el.disabled) return;
   const act = el.dataset.mn;
   if (act === 'unlock') { manualUnlock(); return; }
+  if (act === 'clear-locks') {
+    if (SEED_SPEC) { delete SEED_SPEC.locks; _pruneSeedSpec(); }
+    saveManual(); render(); renderSpecStatus();
+    return;
+  }
   if (!MANUAL) return;
   if (act === 'undo') { MANUAL.hpos = Math.max(0, MANUAL.hpos - 1); MANUAL.sel = null; saveManual(); renderManualUI(); return; }
   if (act === 'redo') { MANUAL.hpos = Math.min(MANUAL.ops.length, MANUAL.hpos + 1); MANUAL.sel = null; saveManual(); renderManualUI(); return; }
@@ -731,8 +770,14 @@ let _mnTableMode = false;   // テーブルに手動列が入っているか
 function renderManualUI() {
   const bar = document.getElementById('manual-bar');
   if (!bar) return;
-  if (!DATA.length) { bar.style.display = 'none'; return; }
+  const workBar = document.getElementById('work-bar');
+  if (!DATA.length) {
+    bar.style.display = 'none';
+    if (workBar) workBar.style.display = 'none';
+    return;
+  }
   bar.style.display = '';
+  if (workBar) workBar.style.display = '';
   // per-render キャッシュ (MANUAL_COL の cell / 装飾が参照)。バー描画より先に計算する
   // (manualOrder → 固定射影の警告 _lockProjNotes をバーが表示するため)。
   if (MANUAL) {
@@ -742,6 +787,9 @@ function renderManualUI() {
     _mnMoved = manualMovedSet();
   } else {
     _mnPos = new Map(); _mnBase = new Map(); _mnMoved = new Set();
+    // 手動調整が無くても固定は出力順に効くので、現在の並びで警告状態を計算し直す
+    // (これをしないと前回計算時の警告が残り続ける)。
+    orderedRecs();
   }
   // プール表示コンテキスト (被り回避パネルのプール数/ウェーブ数から)。
   const _pcP = Math.max(1, parseInt((document.getElementById('so-pools') || {}).value, 10) || 1);
@@ -893,8 +941,11 @@ function _disc2uid() {
   for (const k in DISCRIMINATORS) _DISC2UID.set(String(DISCRIMINATORS[k]).toLowerCase(), Number(k));
   return _DISC2UID;
 }
-// CSV セル値 → 正規化 discriminator ("#abc123" / 大文字も許容)。
-function _csvNormDisc(v) { return String(v).trim().replace(/^#/, '').toLowerCase(); }
+// CSV セル値 → 正規化 discriminator。"#abc12345" / 大文字のほか、優先枠作成ページの
+// 出力形式 ="abc12345" (Excel の指数表記化よけ。パース後は =abc12345) も受け付ける。
+function _csvNormDisc(v) {
+  return String(v).trim().replace(/^=/, '').replace(/^"|"$/g, '').replace(/^#/, '').toLowerCase();
+}
 
 async function loadMasterData() {
   if (MASTER_MAP) return MASTER_MAP;
@@ -2877,6 +2928,27 @@ function _csvSortedRows(rows) {
 const CSV_NAME_COLS = ['player', 'name', 'display', 'tag', 'プレイヤー', '名前'];
 const CSV_SEAT_COLS = ['seednum', 'seed_num', 'seed', 'phaseseed', 'phase_seed', '順位', 'シード'];
 const CSV_DISC_COLS = ['discriminator', 'disc'];
+// テンプレートの記入例 (実在しない disc = 先頭7桁が 0)。読み込み時は無視し警告を出す。
+// 出力は ASCII 名にする: Shift_JIS 前提で CSV を開くアプリ (Excel for Mac 等) でも
+// 化けないため。判定側は旧テンプレの日本語名も引き続き例として扱う。
+const CSV_TPL_OUT_NAMES = ['Taro Yamada', 'Hanako Suzuki'];
+const CSV_TPL_NAMES = CSV_TPL_OUT_NAMES.concat(['山田太郎', '鈴木花子']);
+function isCsvTemplateSample(row) {
+  const nm = _csvPick(row, CSV_NAME_COLS);
+  if (nm != null && CSV_TPL_NAMES.indexOf(String(nm).trim()) >= 0) return true;
+  const d = _csvPick(row, CSV_DISC_COLS);
+  return d != null && /^0{7}[0-9a-f]$/i.test(_csvNormDisc(d));
+}
+// CSV テンプレートをダウンロードする (BOM 付き UTF-8 = Excel で文字化けしない)。
+function downloadCsvTemplate(lines, filename) {
+  const blob = new Blob(['\uFEFF' + lines.join('\r\n') + '\r\n'],
+    { type: 'text/csv;charset=utf-8' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = filename;
+  document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
+}
 
 // DATA から CSV 照合用の索引を作る (uid / seedId / 正規化名)。uid null 行は uid 照合不可。
 // 正規化名 (タグ省略) が複数参加者に重なる名前は dupNames に載せ、名前照合ではエラー扱いにする
@@ -2951,7 +3023,9 @@ function csvRowsToOrder(rows) {
   const unmatched = [];
   const ambiguous = [];   // 名前照合で複数参加者に該当した名前 (エラー扱い、適用しない)
   let discUnavailable = false;   // disc 列があるのに discriminators.json 無し (エラー扱い)
+  let sampleRows = 0;            // テンプレートの記入例が残っていた行 (無視 + 警告)
   for (const row of _csvSortedRows(rows)) {
+    if (isCsvTemplateSample(row)) { sampleRows++; continue; }
     const m = _csvMatchRow(row, lk);
     if (m.discUnavailable) { discUnavailable = true; continue; }
     if (m.ambiguousName != null) { ambiguous.push(m.ambiguousName); continue; }
@@ -2963,7 +3037,8 @@ function csvRowsToOrder(rows) {
   const rest = DATA.slice()
     .sort((a, b) => (a.ranks[currentMethod] || 1e9) - (b.ranks[currentMethod] || 1e9))
     .map(r => r.user_id).filter(u => !used.has(u));
-  return { order: order.concat(rest), matched: order.length, unmatched, ambiguous, discUnavailable, restCount: rest.length };
+  return { order: order.concat(rest), matched: order.length, unmatched, ambiguous, discUnavailable,
+           sampleRows, restCount: rest.length };
 }
 function _csvStatus(msg, isErr) {
   const el = document.getElementById('csv-src-status');
@@ -2979,7 +3054,7 @@ function applyCsvOrderIfReady(fromFetch) {
   }
   if (!fromFetch && MANUAL && manualMovedSet().size > 0 &&
       !confirm('CSV 順を基準に再適用すると、現在の手動調整 (履歴含む) は破棄されます。よろしいですか？')) return;
-  const { order, matched, unmatched, ambiguous, discUnavailable, restCount } = csvRowsToOrder(CSV_SOURCE.rows);
+  const { order, matched, unmatched, ambiguous, discUnavailable, sampleRows, restCount } = csvRowsToOrder(CSV_SOURCE.rows);
   if (discUnavailable) {
     _csvStatus(`discriminator 列がありますが照合データ (discriminators.json) を取得できていないため適用しません` +
       `${DISC_LOAD_ERROR ? ` (${DISC_LOAD_ERROR})` : ''}。再読み込みするか uid / 名前列で指定してください。`, true);
@@ -2992,9 +3067,15 @@ function applyCsvOrderIfReady(fromFetch) {
   }
   if (!matched) { _csvStatus('CSV の行を参加者と1件も照合できませんでした (uid / seedId / 名前列を確認してください)。', true); return; }
   MANUAL = { base: order, ops: [], hpos: 0, committed: true, editing: false, sel: null, src: 'csv' };
+  // 後から読み込んだ CSV が最新の作業なので、適用済みの被り回避結果は解除する
+  // (これをしないと CSV 順が出力に反映されない)。
+  if (APPLIED_ORDER) { APPLIED_ORDER = null; clearSeedOptApplied(); }
+  if (SEEDOPT_RESULT) resetSeedOptResultPanel('CSV を読み込んだため被り回避の結果をクリアしました。再実行してください。');
   saveManual(); renderManualUI();
   let msg = `✅ ${CSV_SOURCE.label}: ${matched}人を照合し基準順位に反映しました。`;
   if (restCount) msg += ` CSV に無い参加者 ${restCount}人は SPSP 順で末尾。`;
+  if (settingNotes.length) msg += ` (CSV の設定で${settingNotes.join('・')})`;
+  if (sampleRows) msg += ` ⚠ テンプレートの記入例 ${sampleRows}行は無視しました。`;
   if (unmatched.length) msg += ` 未照合 ${unmatched.length}行: ${unmatched.slice(0, 5).join(', ')}${unmatched.length > 5 ? ' …' : ''}`;
   _csvStatus(msg, false);
   const st = document.getElementById('status');
@@ -3028,8 +3109,10 @@ async function buildParticipantsFromCsv() {
   const nameIdx = _masterNameIdx();
   const seedInfos = [];
   const seen = new Set();
+  let sampleRows = 0;   // テンプレートの記入例が残っていた行 (無視 + 警告)
   let synth = 0;   // uid 不明行用の合成 id (負数・重複防止)
   _csvSortedRows(CSV_SOURCE.rows).forEach((row, i) => {
+    if (isCsvTemplateSample(row)) { sampleRows++; return; }
     let userId = null;
     const uidV = _csvPick(row, ['uid', 'user_id', 'userid']);
     if (uidV != null) {
@@ -3076,6 +3159,7 @@ async function buildParticipantsFromCsv() {
   document.getElementById('meta-info').textContent = `${CSV_SOURCE.label} (start.gg 未接続)`;
   if (status) status.textContent =
     `CSV から ${records.length} 名を表示 (SPSP 照合 ${rankedCount} 名 + DB 不在 ${missingCount} 名)。` +
+    (sampleRows ? ` ⚠ テンプレートの記入例 ${sampleRows}行は無視しました。` : '') +
     ` CSV ダウンロード・被り回避・手動調整が使えます。start.gg に適用するには大会 URL から参加者を取得してください。`;
   document.getElementById('csv-btn').disabled = false;
   // 適用は可能 (押した時に大会 URL から seedId を自動取得する)。
@@ -3129,6 +3213,13 @@ async function loadCsvSource() {
 if (SEED_APP_CONFIG.mode === 'csv') {
   const btn = document.getElementById('csv-src-load');
   if (btn) btn.addEventListener('click', loadCsvSource);
+  const tpl = document.getElementById('csv-tpl');
+  // seed は任意 (省略時は行順。2 行目が空欄可の例)。
+  if (tpl) tpl.addEventListener('click', () => downloadCsvTemplate([
+    'name,discriminator,seed',
+    `${CSV_TPL_OUT_NAMES[0]},="00000000",1`,
+    `${CSV_TPL_OUT_NAMES[1]},="00000001",`,
+  ], 'spsp_seed_template.csv'));
 }
 
 // ── ウェーブ (= 連続するプールの塊 A,B,C,…) ─────────────────────────
@@ -3266,7 +3357,7 @@ function parseFixValue(v, hasWave) {
 //   P: プール数 / waveMap: プール→ウェーブ / poolOf: (seedIdx0, P) => poolIdx。
 // ピンはそのシード位置に固定配置し、残りは現在順のまま空き位置へ。ウェーブ指定者は
 // そのウェーブのプールに落ちる最初の空き位置まで待つ (= 現在順位付近に収まる)。
-// 満たせない指定は notes で返す (黙って握りつぶさない)。
+// 満たせない指定は notes (人が読める説明) で返す (黙って握りつぶさない)。
 function buildSpecOrder(curOrder, pins, waveOf, P, waveMap, poolOf) {
   const N = curOrder.length;
   const out = new Array(N).fill(null);
@@ -3282,6 +3373,7 @@ function buildSpecOrder(curOrder, pins, waveOf, P, waveMap, poolOf) {
   }
   const wanted = new Map(waveOf);
   const queue = curOrder.filter((u) => !pinned.has(u));
+  let waveGaveUp = 0;   // ウェーブの枠が足りず指定を諦めた人数
   for (let s = 0; s < N; s++) {
     if (out[s] != null) continue;
     const wv = waveMap ? waveMap[poolOf(s, P)] : 0;
@@ -3290,13 +3382,13 @@ function buildSpecOrder(curOrder, pins, waveOf, P, waveMap, poolOf) {
       const want = wanted.get(queue[q]);
       if (want == null || want === wv) { k = q; break; }
     }
-    if (k < 0) {   // 残りが全員他ウェーブ指定 = 空き不足。以降は指定を諦めて現在順で配置。
-      notes.push('ウェーブ指定を満たす空きが不足 (残りは現在順で配置)');
-      wanted.clear();
-      k = 0;
-    }
-    out[s] = queue.splice(k, 1)[0];
+    // 置ける人が居ない (= そのウェーブの枠が足りない) ときは先頭の 1 人だけ諦める。
+    if (k < 0) k = 0;
+    const picked = queue.splice(k, 1)[0];
+    if (wanted.has(picked) && wanted.get(picked) !== wv) { waveGaveUp++; wanted.delete(picked); }
+    out[s] = picked;
   }
+  if (waveGaveUp) notes.push(`ウェーブの枠が足りず ${waveGaveUp}人は指定どおりに置けませんでした`);
   return { order: out, notes };
 }
 
@@ -3304,7 +3396,8 @@ function buildSpecOrder(curOrder, pins, waveOf, P, waveMap, poolOf) {
 //   order: uid 配列 / locks: {uid: {kind:'pool'|'wave', target} | 'pool'|'wave' (旧形式=移動なし)}
 //   / P: プール数 / waveMap: プール→ウェーブ / poolOf: (seedIdx0, P) => poolIdx。
 // 位置を前から埋め、固定者は対象プール/ウェーブのスロットが来るまで待つ (他は現在順のまま)。
-// 入力が既に固定を満たしていれば恒等 (冪等)。空き不足は notes で返し残りは現在順。
+// 入力が既に固定を満たしていれば恒等 (冪等)。枠が足りない対象は overflow で返す
+// ({kind, target, cap, want})。入りきらない人は元の位置に残す。
 function enforceSeedLocks(order, locks, P, waveMap, poolOf) {
   const N = order.length;
   const need = new Map();   // uid → {pool} | {wave}
@@ -3316,12 +3409,37 @@ function enforceSeedLocks(order, locks, P, waveMap, poolOf) {
     if (target == null) continue;   // 旧形式/対象なし: 現位置のまま (移動しない)
     need.set(u, kind === 'pool' ? { pool: target } : { wave: target });
   }
-  if (!need.size) return { order: order.slice(), notes: [] };
+  if (!need.size) return { order: order.slice(), overflow: [] };
+  // 枠数 (= その対象に落ちるシード位置の数) と固定人数を数え、超過分を overflow で返す。
+  const capOf = new Map();   // 'pool:3' → 枠数
+  for (let s2 = 0; s2 < N; s2++) {
+    const pool = poolOf(s2, P);
+    const wave = waveMap ? waveMap[pool] : 0;
+    capOf.set('pool:' + pool, (capOf.get('pool:' + pool) || 0) + 1);
+    capOf.set('wave:' + wave, (capOf.get('wave:' + wave) || 0) + 1);
+  }
+  const wantOf = new Map();
+  need.forEach((nd) => {
+    const key = nd.pool != null ? 'pool:' + nd.pool : 'wave:' + nd.wave;
+    wantOf.set(key, (wantOf.get(key) || 0) + 1);
+  });
+  const overflow = [];
+  wantOf.forEach((want, key) => {
+    const cap = capOf.get(key) || 0;
+    if (want > cap) {
+      const [kind, t] = key.split(':');
+      // uids は「その対象に固定された全員」。実際に諦めた人は下の配置ループで dropped に入る。
+      const uids = [];
+      need.forEach((nd, u) => {
+        if ((nd.pool != null ? 'pool:' + nd.pool : 'wave:' + nd.wave) === key) uids.push(u);
+      });
+      overflow.push({ kind, target: Number(t), cap, want, uids, dropped: [] });
+    }
+  });
+  const overflowByKey = new Map(overflow.map((o) => [o.kind + ':' + o.target, o]));
   const out = new Array(N).fill(null);
-  const notes = [];
   const queue = order.slice();
-  let lockedLeft = 0;
-  for (const u of queue) if (need.has(u)) lockedLeft++;
+  let lockedLeft = need.size;
   for (let s = 0; s < N; s++) {
     if (!lockedLeft) { out[s] = queue.shift(); continue; }   // 残り固定なし: そのまま流す
     const pool = poolOf(s, P);
@@ -3331,17 +3449,24 @@ function enforceSeedLocks(order, locks, P, waveMap, poolOf) {
       const nd = need.get(queue[q]);
       if (!nd || (nd.pool != null ? nd.pool === pool : nd.wave === wave)) { k = q; break; }
     }
-    if (k < 0) {   // 残りが全員他プール/ウェーブ固定 = 空き不足。以降は現在順で配置。
-      notes.push('固定を満たす空きが不足 (残りは現在順で配置)');
-      need.clear();
-      lockedLeft = 0;
-      k = 0;
-    }
+    // 置ける人が居ない (= 枠不足) ときは先頭の 1 人だけ諦めてここに置く。
+    // 他の固定は活かす (以前は全部諦めていた)。
+    const gaveUp = k < 0;
+    if (gaveUp) k = 0;
     const picked = queue.splice(k, 1)[0];
-    if (need.has(picked)) lockedLeft--;
+    if (need.has(picked)) {
+      if (gaveUp) {   // 指定どおりに置けなかった人 (= 誰が影響を受けたか) を記録
+        const nd = need.get(picked);
+        const o = overflowByKey.get(nd.pool != null ? 'pool:' + nd.pool : 'wave:' + nd.wave);
+        if (o) o.dropped.push(picked);
+      }
+      need.delete(picked); lockedLeft--;
+    }
     out[s] = picked;
   }
-  return { order: out, notes };
+  // 対象が存在しない (cap 0) 場合は全員が指定を反映できていない。
+  for (const o of overflow) if (o.cap === 0) o.dropped = o.uids.slice();
+  return { order: out, overflow };
 }
 
 function _specStatus(html, isErr) {
@@ -3359,6 +3484,19 @@ function renderSpecStatus() {
 // spec CSV の行を適用: 照合 → 順位/ウェーブ/固定を抽出 → 並び組み直し + SEED_SPEC 更新。
 function applySpecRows(rows, label) {
   if (!DATA.length) { _specStatus('先に参加者を読み込んでください。', true); return; }
+  // 作業状況 CSV (エクスポート) の pools / waves 列があれば設定に反映してから解釈する。
+  // 共有された CSV を読むだけで同じプール構成になる。
+  const settingNotes = [];
+  for (const [col, id, label2] of [['pools', 'so-pools', 'プール数'], ['waves', 'so-waves', 'ウェーブ数']]) {
+    const row = rows.find((r) => _csvPick(r, [col]) != null);
+    const v = row ? parseInt(_csvPick(row, [col]), 10) : NaN;
+    const el = document.getElementById(id);
+    if (el && Number.isFinite(v) && v >= 1 && String(v) !== String(el.value)) {
+      el.value = String(v);
+      settingNotes.push(`${label2}を ${v} に変更`);
+    }
+  }
+  if (settingNotes.length) updateIntraToggleState();
   const P = Math.max(1, parseInt((document.getElementById('so-pools') || {}).value, 10) || 1);
   const waveMap = currentWaveMap(P);
   const W = waveMap.reduce((mx, w) => Math.max(mx, w), 0) + 1;
@@ -3366,8 +3504,10 @@ function applySpecRows(rows, label) {
   const pins = new Map(), waveOf = new Map(), locks = {};
   const unmatched = [], problems = [], ambiguous = [];
   let discUnavailable = false;
+  let sampleRows = 0;   // テンプレートの記入例が残っていた行 (無視 + 警告)
   let matchedRows = 0;
   for (const row of rows) {
+    if (isCsvTemplateSample(row)) { sampleRows++; continue; }
     const m = _csvMatchRow(row, lk);
     if (m.discUnavailable) { discUnavailable = true; continue; }
     const rec = m.rec;
@@ -3472,6 +3612,8 @@ function applySpecRows(rows, label) {
   render();
   let msg = `✅ ${escHtml(label)}: ${matchedRows}行を照合 — ` +
     `順位指定 ${pins.size} / ウェーブ指定 ${waveOf.size} / 固定 ${Object.keys(locks).length}名。`;
+  if (settingNotes.length) msg += ` (CSV の設定で${settingNotes.join('・')})`;
+  if (sampleRows) msg += ` ⚠ テンプレートの記入例 ${sampleRows}行は無視しました。`;
   if (unmatched.length) {
     msg += ` 未照合 ${unmatched.length}行: ${unmatched.slice(0, 5).map(escHtml).join(', ')}${unmatched.length > 5 ? ' …' : ''}`;
   }
@@ -3513,6 +3655,53 @@ async function loadSpecSource() {
   } catch (e) {
     _specStatus('読み込みエラー: ' + escHtml((e && e.message) ? e.message : e), true);
   }
+}
+
+// 現在の作業状況 (シード順 + 固定 + プール/ウェーブ設定) を CSV に書き出す。
+// 読み込み側 (applySpecRows) が理解する列だけを使うので、そのままインポートすれば
+// 同じ状態を再現できる = 他の人との共有に使える。
+//   seed  : シード番号 (順序の復元に使う)
+//   name / discriminator / uid : 参加者の照合 (uid → disc → name の順で使われる)
+//   lock  : pool / wave / 空 (固定の種別。対象は seed 順から決まる)
+//   pool  : 参考表示 (A3 / P3。読み込み時は無視される)
+//   pools / waves : プール数・ウェーブ数 (1 行目のみ。読み込み時に設定へ反映)
+function exportSeedWorkCsv() {
+  if (!DATA.length) { _specStatus('参加者が読み込まれていません。', true); return; }
+  const recs = orderedRecs();
+  const P = Math.max(1, parseInt((document.getElementById('so-pools') || {}).value, 10) || 1);
+  const waveMap = currentWaveMap(P);
+  const W = waveMap.reduce((m, w) => Math.max(m, w), 0) + 1;
+  const locks = (SEED_SPEC && SEED_SPEC.locks) || {};
+  const field = (v) => {
+    const s = String(v == null ? '' : v);
+    return /[",\r\n]/.test(s) ? '"' + s.replace(/"/g, '""') + '"' : s;
+  };
+  const lines = ['seed,name,discriminator,uid,lock,pool,pools,waves'];
+  recs.forEach((r, i) => {
+    const lk = locks[r.user_id];
+    const kind = lk ? (lk.kind || lk) : '';
+    // disc は ="..." で書く (Excel / Sheets が指数表記の数値に化けさせるのを防ぐ)。
+    const disc = r.discriminator || (DISCRIMINATORS && DISCRIMINATORS[String(r.user_id)]) || '';
+    lines.push([
+      i + 1,
+      field(r.display),
+      disc ? '="' + disc + '"' : '',
+      (r.user_id != null && r.user_id > 0) ? r.user_id : '',
+      kind,
+      field(P >= 2 ? poolLabel(SeedOptimizer.poolOfSeed(i, P), waveMap) : ''),
+      i === 0 ? P : '',
+      i === 0 ? W : '',
+    ].join(','));
+  });
+  const name = ((EVENT_CONTEXT && EVENT_CONTEXT.eventName) || (CSV_SOURCE && CSV_SOURCE.label) || 'seed')
+    .replace(/[^\w\-]/g, '_').slice(0, 40);
+  downloadCsvTemplate(lines, `spsp_seed_work_${name}.csv`);
+  const nLock = recs.filter(r => locks[r.user_id]).length;
+  const msg = `${recs.length}人のシード順${nLock ? ` + 固定 ${nLock}人` : ''}` +
+    `${APPLIED_ORDER ? ' (被り回避を適用した並び)' : ''} を保存しました。読み込めば同じ状態を再現できます。`;
+  const note = document.getElementById('work-note');
+  if (note) note.textContent = '✅ ' + msg;
+  _specStatus('💾 ' + msg);
 }
 
 function clearSeedSpec() {
@@ -3558,6 +3747,15 @@ function applySeedLockChoice(uid) {
 (function () {
   const loadBtn = document.getElementById('spec-src-load');
   if (loadBtn) loadBtn.addEventListener('click', () => { loadSpecSource(); });
+  const tplBtn = document.getElementById('spec-tpl');
+  // seed / wave / lock はすべて任意 (2 行目が空欄可の例)。
+  if (tplBtn) tplBtn.addEventListener('click', () => downloadCsvTemplate([
+    'name,discriminator,seed,wave,lock',
+    `${CSV_TPL_OUT_NAMES[0]},="00000000",1,A,pool`,
+    `${CSV_TPL_OUT_NAMES[1]},="00000001",,,wave`,
+  ], 'spsp_seed_spec_template.csv'));
+  const exportBtn = document.getElementById('spec-export');
+  if (exportBtn) exportBtn.addEventListener('click', exportSeedWorkCsv);
   const clearBtn = document.getElementById('spec-clear');
   if (clearBtn) clearBtn.addEventListener('click', clearSeedSpec);
   // プール数/ウェーブ数の変更は手動列のプール表示 (A3/P3) に反映する。
