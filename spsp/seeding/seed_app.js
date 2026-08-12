@@ -252,6 +252,7 @@ const SEED_APP_SKELETON_HTML = `
 <!-- 作業状況の保存 (現在のシード順 + 固定を CSV に。読み込みは 📌 パネル側) -->
 <div id="work-bar" style="display:none;margin:10px 0 0">
   <button id="spec-export" style="background:#16a34a;color:#fff;border:none;padding:6px 14px;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer">💾 作業状況を保存 (CSV)</button>
+  <button id="bracket-preview" title="現在のシード順で組んだトーナメントを別ページでプレビューします (URL を共有すれば同じ画面が開けます)" style="background:#7c3aed;color:#fff;border:none;padding:6px 14px;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer;margin-left:6px">🏆 トーナメントプレビュー</button>
   <span id="work-note" style="font-size:11px;color:#6b7280;margin-left:8px"></span>
 </div>
 
@@ -3704,6 +3705,46 @@ function exportSeedWorkCsv() {
   _specStatus('💾 ' + msg);
 }
 
+// 🏆 トーナメントプレビュー: 現在の出力順 (orderedRecs) + プール数/ウェーブを
+// ペイロード化して site/bracket/ へのリンクを発行する (別タブ + クリップボード)。
+// フェーズ区切り (Top カット) の追加はプレビューページ側で編集できる。
+async function issueBracketPreview() {
+  const note = document.getElementById('work-note');
+  const say = (m) => { if (note) note.textContent = m; };
+  if (!DATA.length) { say('参加者が読み込まれていません。'); return; }
+  if (typeof SeedShare === 'undefined') { say('❌ seed_share.js が読み込まれていません。'); return; }
+  try {
+    const recs = orderedRecs();
+    const P = Math.max(1, parseInt((document.getElementById('so-pools') || {}).value, 10) || 1);
+    const waveMap = currentWaveMap(P);
+    const uids = recs.map((r) => (r.user_id != null && r.user_id > 0) ? r.user_id : null);
+    const names = {};
+    recs.forEach((r, i) => {
+      // SPSP DB に居ない参加者だけ表示名を同梱 (登録者は players/<uid>.json から復元できる)
+      if (uids[i] == null || !MASTER_MAP || !MASTER_MAP.has(uids[i])) {
+        names[String(i)] = r.display || (uids[i] != null ? 'uid:' + uids[i] : '参加者' + (i + 1));
+      }
+    });
+    const payload = {
+      v: 1,
+      ev: (EVENT_CONTEXT && EVENT_CONTEXT.eventName) || (CSV_SOURCE && CSV_SOURCE.label) || 'シードプレビュー',
+      src: SEED_APP_CONFIG.mode,
+      phases: [{ name: P >= 2 ? '予選' : 'ブラケット', pools: P, adv: 2 }],
+      wv: waveMap,
+      uids, names,
+    };
+    const blob = await SeedShare.encodePayload(payload);
+    const url = new URL('../bracket/', location.href).toString() + SeedShare.buildFragment({ ph: 0, wd: 1 }, blob);
+    window.open(url, '_blank', 'noopener');
+    let copied = false;
+    try { await navigator.clipboard.writeText(url); copied = true; } catch (e) { /* clipboard 不可の環境 */ }
+    say(`🏆 プレビューを開きました (${recs.length}人 / URL ${url.length.toLocaleString()}字${copied ? '・コピー済み' : ''})。` +
+      'Top カットの区切りはプレビューページの「フェーズ構成」で設定できます。');
+  } catch (e) {
+    say('❌ プレビュー発行に失敗: ' + (e && e.message));
+  }
+}
+
 function clearSeedSpec() {
   if (!SEED_SPEC) { _specStatus('クリアする指定・固定はありません。'); return; }
   SEED_SPEC = null;
@@ -3756,6 +3797,8 @@ function applySeedLockChoice(uid) {
   ], 'spsp_seed_spec_template.csv'));
   const exportBtn = document.getElementById('spec-export');
   if (exportBtn) exportBtn.addEventListener('click', exportSeedWorkCsv);
+  const bracketBtn = document.getElementById('bracket-preview');
+  if (bracketBtn) bracketBtn.addEventListener('click', issueBracketPreview);
   const clearBtn = document.getElementById('spec-clear');
   if (clearBtn) clearBtn.addEventListener('click', clearSeedSpec);
   // プール数/ウェーブ数の変更は手動列のプール表示 (A3/P3) に反映する。

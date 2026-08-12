@@ -1,32 +1,9 @@
 {
-  "generated_at": 1786525232,
+  "generated_at": 1786536029,
   "country_code": "JP",
   "lookahead_days": 21,
-  "count": 51,
+  "count": 50,
   "tournaments": [
-    {
-      "tournament_id": 940475,
-      "tournament_slug": "tournament/dsw-64",
-      "tournament_name": "新京都DSW#64",
-      "start_at": 1786532400,
-      "end_at": 1786543200,
-      "is_online": false,
-      "city": "京都市",
-      "venue_name": "",
-      "country_code": "JP",
-      "num_attendees": 28,
-      "url": "/tournament/dsw-64",
-      "events": [
-        {
-          "event_id": 1683195,
-          "event_slug": "tournament/dsw-64/event/singletournament",
-          "event_name": "SingleTournament",
-          "num_entrants": 28,
-          "type": 1,
-          "start_at": 1786532400
-        }
-      ]
-    },
     {
       "tournament_id": 935694,
       "tournament_slug": "tournament/innosuma-26",

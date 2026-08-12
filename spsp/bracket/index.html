@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>トーナメントプレビュー | スマメイト以外の非公式レートSP (SPSP)</title>
+<link rel="stylesheet" href="bracket_app.css">
+</head>
+<body>
+<div id="bp-root">
+  <header class="bp-header">
+    <h1>🏆 トーナメントプレビュー</h1>
+    <div id="bp-event" class="bp-event"></div>
+    <div class="bp-note">
+      シード通りに勝ち上がった場合の予測ブラケットです (勝者側のみ。敗者側は今後対応)。
+      アドレスバーの URL を共有すれば、誰でも同じ画面をそのまま開けます。
+    </div>
+  </header>
+
+  <div id="bp-error" class="bp-error" hidden></div>
+
+  <div id="bp-controls" hidden>
+    <nav id="bp-phase-tabs" class="bp-tabs"></nav>
+    <div class="bp-row">
+      <label class="bp-poolpick">プール
+        <button id="bp-pool-prev" class="bp-btn" title="前のプール">◀</button>
+        <select id="bp-pool-select"></select>
+        <button id="bp-pool-next" class="bp-btn" title="次のプール">▶</button>
+      </label>
+      <span id="bp-pool-info" class="bp-poolinfo"></span>
+      <label class="bp-check"><input type="checkbox" id="bp-lb"> 敗者側も表示</label>
+      <label class="bp-check"><input type="checkbox" id="bp-wd" checked> 平日大会の対戦も含める</label>
+      <button id="bp-copy-url" class="bp-btn">🔗 URLをコピー</button>
+      <button id="bp-csv-save" class="bp-btn" title="現在の内容 (シード順・フェーズ構成・表示状態) を CSV に保存します。下の CSV 読み込みで復元できます">💾 CSV保存</button>
+      <span id="bp-url-len" class="bp-urllen"></span>
+    </div>
+    <details class="bp-panel" id="bp-phase-editor">
+      <summary>⚙ フェーズ構成 (予選→Top カットの区切り)</summary>
+      <div class="bp-panel-body">
+        <div id="bp-phase-rows"></div>
+        <div class="bp-row">
+          <button id="bp-phase-add" class="bp-btn">+ フェーズ追加</button>
+          <button id="bp-phase-apply" class="bp-btn bp-btn-primary">適用</button>
+          <span id="bp-phase-status" class="bp-inline-status"></span>
+        </div>
+        <div class="bp-hint">
+          進出予測は「シード通り」前提です。次フェーズは進出者を全体シード順で組み直します
+          (start.gg の自動進出のデフォルトと同じ組み合わせになります)。
+        </div>
+      </div>
+    </details>
+  </div>
+
+  <details class="bp-panel" id="bp-csv-panel">
+    <summary>📄 作業状況 CSV を読み込む (URL が長すぎる大会向け)</summary>
+    <div class="bp-panel-body">
+      <p class="bp-hint">
+        シードページの「💾 作業状況を保存 (CSV)」で書き出したファイルを読み込むと、
+        URL がなくてもプレビューできます (Discord 等でファイル共有する場合はこちら)。
+      </p>
+      <input type="file" id="bp-csv-file" accept=".csv,text/csv">
+      <span id="bp-csv-status" class="bp-inline-status"></span>
+    </div>
+  </details>
+
+  <div id="bp-status" class="bp-status"></div>
+  <div id="bp-bracket" class="bp-bracket"></div>
+  <div id="bp-pop" class="bp-pop" hidden></div>
+</div>
+<script src="../seeding/seed_optimizer.js"></script>
+<script src="../seeding/seed_data.js"></script>
+<script src="../seeding/seed_share.js"></script>
+<script src="bracket_core.js"></script>
+<script src="bracket_app.js"></script>
+</body>
+</html>
