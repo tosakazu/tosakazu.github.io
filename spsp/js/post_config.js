@@ -32,6 +32,6 @@
 
     // ダブルメイン圏の判定閾値 (characters[].pct のトップとの差)。
     // gas/config.gs の DOUBLE_MAIN_PCT_GAP と同じ値にすること (テストが検査する)。
-    DOUBLE_MAIN_PCT_GAP: 0.10,
+    DOUBLE_MAIN_PCT_GAP: 0.20,
   };
 })(typeof window !== 'undefined' ? window : globalThis);

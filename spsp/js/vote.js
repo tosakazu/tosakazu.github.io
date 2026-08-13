@@ -29,32 +29,6 @@
   try { DEBUG = new URLSearchParams(location.search).get('debug') === '1'; } catch (_) { /* noop */ }
 
 
-  // ファイター番号順 (マリオ=01 から)。エコーは本体の直後、統合表記 (ピーチ / デイジー 等)
-  // は本体の位置に置く。site/data/char_emoji.json の全キャラを網羅していることを
-  // tests/post/page.test.cjs が検査する。
-  var FIGHTER_ORDER = [
-    'マリオ', 'ドンキーコング', 'リンク',
-    'サムス / ダークサムス', 'ダークサムス',
-    'ヨッシー', 'カービィ', 'フォックス', 'ピカチュウ', 'ルイージ', 'ネス',
-    'キャプテン・ファルコン', 'プリン',
-    'ピーチ / デイジー', 'デイジー',
-    'クッパ', 'アイスクライマー', 'シーク', 'ゼルダ', 'ドクターマリオ', 'ピチュー',
-    'ファルコ', 'マルス', 'ルキナ', 'こどもリンク', 'ガノンドロフ', 'ミュウツー',
-    'ロイ', 'クロム', 'Mr. Game & Watch', 'メタナイト',
-    'ピット / ブラックピット', 'ブラックピット',
-    'ゼロスーツサムス', 'ワリオ', 'スネーク', 'アイク', 'ポケモントレーナー',
-    'ディディーコング', 'リュカ', 'ソニック', 'デデデ', 'ピクミン&オリマー',
-    'ルカリオ', 'ロボット', 'トゥーンリンク', 'ウルフ', 'むらびと', 'ロックマン',
-    'Wii Fit トレーナー', 'ロゼッタ&チコ', 'リトル・マック', 'ゲッコウガ',
-    '格闘Mii', '剣術Mii', '射撃Mii',
-    'パルテナ', 'パックマン', 'ルフレ', 'シュルク', 'クッパJr.', 'ダックハント',
-    'リュウ', 'ケン', 'クラウド', 'カムイ', 'ベヨネッタ', 'インクリング', 'リドリー',
-    'シモン / リヒター', 'リヒター',
-    'キングクルール', 'しずえ', 'ガオガエン', 'パックンフラワー', 'ジョーカー',
-    '勇者', 'バンジョー&カズーイ', 'テリー', 'ベレト/ベレス', 'ミェンミェン',
-    'スティーブ', 'セフィロス', 'ホムラ/ヒカリ', 'カズヤ', 'ソラ',
-  ];
-
   /** ひらがな→カタカナ + 小文字化 (キャラ名の自由入力用の正規化)。 */
   function normChar(sIn) {
     return String(sIn).replace(/[ぁ-ゖ]/g, function (c) {
@@ -68,7 +42,9 @@
   var selected = null;     // { uid, display }
   var playersIndex = null; // [{ uid, display, low, ens }]
   var charList = null;
-  var selCharId = null;  // グリッドで選択中のキャラ
+  var selCharId = null;      // グリッドで選択中のキャラ
+  var lastCandidates = null; // 選択中の選手のダブルメイン候補 (null = 全キャラ)
+  var debugAs = null;        // デバッグで「この選手として」投票する {uid, display}
 
   /**
    * 文字列と {hl: 名前} の配列を要素として流し込む。名前のハイライトは
@@ -235,6 +211,31 @@
     });
   }
 
+  /**
+   * ダブルメイン圏の候補キャラを認証前の画面にチップで見せる。
+   * 絵文字はキャラ一覧から引く (取得失敗しても名前だけで出す)。
+   */
+  function renderAuthCands(candidates) {
+    els.authCands.textContent = '';
+    if (!candidates || !candidates.length) return;
+    var put = function (byId) {
+      els.authCands.textContent = '';
+      candidates.forEach(function (cand) {
+        var chip = document.createElement('span');
+        chip.className = 'cand-chip';
+        var c = byId && byId[cand.id];
+        chip.textContent = (c && c.emoji ? c.emoji + ' ' : '') + cand.name;
+        els.authCands.appendChild(chip);
+      });
+    };
+    put(null); // まず名前だけで即表示
+    loadCharList().then(function () {
+      var byId = {};
+      charList.forEach(function (c) { byId[c.id] = c; });
+      put(byId); // 絵文字付きに差し替え
+    }).catch(function () { /* チップは補助表示なので失敗は無視 */ });
+  }
+
   /** 未ログイン: 選手を選んだ → 可否を先に見せる。 */
   function selectPlayer(sel) {
     selected = sel;
@@ -253,13 +254,16 @@
             ['投票できるのは、キャラ情報が無い選手か、メインキャラ判定が僅差の選手のみです。現在の登録: ', { hl: names }], true);
           return;
         }
+        lastCandidates = r.state === 'double' ? r.candidates : null;
         if (r.state === 'double') {
           var parts = ['「', { hl: sel.display }, '」は'];
           r.candidates.forEach(function (c) { parts.push('「', { hl: c.name }, '」'); });
-          parts.push('のメインキャラ判定が僅差です。本人確認のうえ、どれをメインとするか投票できます (本人のアカウントでログインする必要があります)。');
+          parts.push('のメインキャラ判定が僅差です。本人確認のうえ、この中からどれをメインとするか投票できます (本人のアカウントでログインする必要があります)。');
           setRich(els.authMsg, parts);
+          renderAuthCands(r.candidates);
         } else {
           setRich(els.authMsg, ['「', { hl: sel.display }, '」はキャラ投票の対象です。本人確認のため start.gg で認証してください (本人のアカウントでログインする必要があります)。']);
+          renderAuthCands(null);
         }
         showSection('auth');
       })
@@ -302,6 +306,8 @@
 
   function backToSelect() {
     selected = null;
+    lastCandidates = null;
+    debugAs = null;
     setStatus('', '');
     showSection('select');
     ensureIndex();
@@ -350,10 +356,40 @@
     AUTH.clear();
     session = null;
     selected = null;
+    lastCandidates = null;
+    debugAs = null;
     render();
   }
 
   // ── 投票フォーム ──
+
+  var charListPromise = null;
+
+  /** キャラ一覧 (絵文字付き・ファイター番号順) を 1 回だけ読む。 */
+  function loadCharList() {
+    if (charListPromise) return charListPromise;
+    charListPromise = fetch('data/char_emoji.json')
+      .then(function (res) {
+        if (!res.ok) throw new Error('http ' + res.status);
+        return res.json();
+      })
+      .then(function (json) {
+        charList = Object.keys(json).map(function (id) {
+          return { id: id, name: json[id].name, emoji: json[id].emoji || '' };
+        });
+        // 並びは公式ファイター番号順 (js/fighter_number.js。キャラ別ランキングと共有)
+        var FN = window.FIGHTER_NUMBER || {};
+        charList.forEach(function (c) {
+          c.ord = FN[c.id] !== undefined ? FN[c.id] : 9999; // 未知の id は末尾
+        });
+        charList.sort(function (a, b) {
+          return a.ord - b.ord || a.name.localeCompare(b.name, 'ja');
+        });
+        return charList;
+      });
+    charListPromise.catch(function () { charListPromise = null; }); // 失敗時は再試行できるように
+    return charListPromise;
+  }
 
   /**
    * candidates が配列 (ダブルメイン圏) なら、その候補だけを選択肢に出す。
@@ -372,28 +408,8 @@
       els.formHint.hidden = true;
     }
 
-    if (charList) {
-      buildOptions(candidates);
-      return;
-    }
-    fetch('data/char_emoji.json')
-      .then(function (res) {
-        if (!res.ok) throw new Error('http ' + res.status);
-        return res.json();
-      })
-      .then(function (json) {
-        charList = Object.keys(json).map(function (id) {
-          return { id: id, name: json[id].name, emoji: json[id].emoji || '' };
-        });
-        charList.forEach(function (c) {
-          var i = FIGHTER_ORDER.indexOf(c.name);
-          c.ord = i === -1 ? 9999 : i;
-        });
-        charList.sort(function (a, b) {
-          return a.ord - b.ord || a.name.localeCompare(b.name, 'ja');
-        });
-        buildOptions(candidates);
-      })
+    loadCharList()
+      .then(function () { buildOptions(candidates); })
       .catch(function () {
         setStatus('error', 'キャラ一覧の取得に失敗しました。再読み込みしてください。');
       });
@@ -469,6 +485,8 @@
         token: session ? session.token : null,
         charId: charId,
         debug: DEBUG ? 1 : undefined,
+        debugUid: (DEBUG && !session && debugAs) ? debugAs.uid : undefined,
+        debugTag: (DEBUG && !session && debugAs) ? debugAs.display : undefined,
       }),
     }).then(function (res) {
       return res.json();
@@ -540,10 +558,12 @@
       results: $('vt-results'),
       idxStatus: $('vt-idx-status'),
       authMsg: $('vt-auth-msg'),
+      authCands: $('vt-auth-cands'),
       formHint: $('vt-form-hint'),
       debugBanner: $('vt-debug-banner'),
       debugFormBtn: $('vt-debug-form-btn'),
       debugSkipBtn: $('vt-debug-skip-btn'),
+      debugAuthBtn: $('vt-debug-auth-btn'),
       backBtn: $('vt-back-btn'),
       back2Btn: $('vt-back2-btn'),
       loginBtn: $('vt-login-btn'),
@@ -566,8 +586,22 @@
       els.debugBanner.hidden = false;
       els.debugFormBtn.hidden = false;
       els.debugSkipBtn.hidden = false;
-      els.debugFormBtn.addEventListener('click', function () { showForm(null); });
-      els.debugSkipBtn.addEventListener('click', function () { showForm(null); });
+      els.debugAuthBtn.hidden = false;
+      // 選手指定なしで直接フォーム (user_id=debug で記録)
+      els.debugFormBtn.addEventListener('click', function () {
+        debugAs = null;
+        showForm(null);
+      });
+      // 資格なし画面から: 選択中の選手として (資格判定は無視)
+      els.debugSkipBtn.addEventListener('click', function () {
+        debugAs = selected;
+        showForm(null);
+      });
+      // 認証だけスキップ: 選択中の選手として、候補制限は生かしたまま
+      els.debugAuthBtn.addEventListener('click', function () {
+        debugAs = selected;
+        showForm(lastCandidates);
+      });
     }
     els.backBtn.addEventListener('click', backToSelect);
     els.back2Btn.addEventListener('click', backToSelect);
