@@ -189,7 +189,7 @@
         if (r.state === 'double') {
           var cn = r.candidates.map(function (c) { return '「' + c.name + '」'; }).join('');
           els.authMsg.textContent =
-            '「' + sel.display + '」は ' + cn + ' のメインキャラ判定が僅差です。本人確認のうえ、どちらをメインとするか投票できます (本人のアカウントでログインする必要があります)。';
+            '「' + sel.display + '」は' + cn + 'のメインキャラ判定が僅差です。本人確認のうえ、どれをメインとするか投票できます (本人のアカウントでログインする必要があります)。';
         } else {
           els.authMsg.textContent =
             '「' + sel.display + '」はキャラ投票の対象です。本人確認のため start.gg で認証してください (本人のアカウントでログインする必要があります)。';

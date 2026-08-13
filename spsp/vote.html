@@ -113,6 +113,7 @@
     </div>
 
     <div id="vt-form" hidden>
+      <p class="inel-detail" id="vt-form-hint" hidden style="margin-bottom:8px"></p>
       <select id="vt-char"></select>
       <button id="vt-vote-btn" type="button">このキャラで投票</button>
     </div>
@@ -121,8 +122,10 @@
   </div>
 
   <p class="note">
-    投票できるのは、<strong>まだ SPSP のデータベースに使用キャラ情報が無い選手のみ</strong>です
-    (キャラ情報は大会での使用データから自動集計されるため、データがある選手は投票の対象外です)。<br>
+    投票できるのは、<strong>まだ SPSP のデータベースに使用キャラ情報が無い選手</strong>と、
+    <strong>メインキャラ判定が僅差の選手 (ダブルメイン圏)</strong> です
+    (キャラ情報は大会での使用データから自動集計されるため、メインが明確な選手は投票の対象外です。
+    ダブルメイン圏の投票も、その後の使用データで判定が明確になった場合は使用データの方が優先されます)。<br>
     投票すると start.gg のユーザー名が一緒に記録されます。反映は次回の更新時 (数時間おき) です。
   </p>
 </main>
