@@ -1,5 +1,5 @@
 {
-  "generated_at": 1786624457,
+  "generated_at": 1786627014,
   "country_code": "JP",
   "lookahead_days": 21,
   "count": 48,
@@ -396,29 +396,6 @@
       ]
     },
     {
-      "tournament_id": 942411,
-      "tournament_slug": "tournament/32-17",
-      "tournament_name": "雷影杯#32",
-      "start_at": 1787130000,
-      "end_at": 1787146200,
-      "is_online": false,
-      "city": "川崎市",
-      "venue_name": "",
-      "country_code": "JP",
-      "num_attendees": 1,
-      "url": "/tournament/32-17",
-      "events": [
-        {
-          "event_id": 1687239,
-          "event_slug": "tournament/32-17/event/super-smash-bros-ultimate-singles",
-          "event_name": "雷影杯",
-          "num_entrants": 1,
-          "type": 1,
-          "start_at": 1787130000
-        }
-      ]
-    },
-    {
       "tournament_id": 942693,
       "tournament_slug": "tournament/weekly-smash-party-242",
       "tournament_name": "Weekly Smash Party ～スマパ～ #242",
@@ -436,6 +413,29 @@
           "event_slug": "tournament/weekly-smash-party-242/event/special-1on1-ultimate-singles",
           "event_name": "SPECIAL 1on1/ Ultimate Singles",
           "num_entrants": 7,
+          "type": 1,
+          "start_at": 1787130000
+        }
+      ]
+    },
+    {
+      "tournament_id": 942411,
+      "tournament_slug": "tournament/32-17",
+      "tournament_name": "雷影杯#32",
+      "start_at": 1787130000,
+      "end_at": 1787146200,
+      "is_online": false,
+      "city": "川崎市",
+      "venue_name": "",
+      "country_code": "JP",
+      "num_attendees": 2,
+      "url": "/tournament/32-17",
+      "events": [
+        {
+          "event_id": 1687239,
+          "event_slug": "tournament/32-17/event/super-smash-bros-ultimate-singles",
+          "event_name": "雷影杯",
+          "num_entrants": 2,
           "type": 1,
           "start_at": 1787130000
         }
@@ -704,14 +704,14 @@
       "city": "福岡市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 92,
+      "num_attendees": 93,
       "url": "/tournament/kowloon-18-5",
       "events": [
         {
           "event_id": 1673913,
           "event_slug": "tournament/kowloon-18-5/event/kowloon_sp",
           "event_name": "KOWLOON_SP",
-          "num_entrants": 92,
+          "num_entrants": 93,
           "type": 1,
           "start_at": 1787446800
         }
