@@ -195,8 +195,10 @@
       .nav-user .nav-user-trigger { color:#6b7280; display:inline-flex; align-items:center;
                                     line-height:0; padding:4px 8px; }
       .nav-user.has-current .nav-user-trigger { color:#dc2626; background:#f3f4f6; }
-      /* アイコンが nav の左寄りにあるので、メニューは既定 (左揃え) のままでよい。 */
-      .nav-user .nav-menu { min-width:160px; }
+      /* このアイコンは nav の一番右にあるので、メニューは左揃えだと画面外へ
+         はみ出して切れる。アイコンの右端に揃えて左へ開く。 */
+      .nav-user .nav-menu { min-width:160px; left:auto; right:0;
+                            max-width:calc(100vw - 24px); }
       .nav-news-panel { display:none; position:absolute; top:100%; right:0;
                         background:#fff; border:1px solid #e5e7eb;
                         border-radius:6px; box-shadow:0 4px 12px rgba(0,0,0,.08);
@@ -225,9 +227,16 @@
         .nav a, .nav-trigger { padding:3px 6px; font-size:12px; }
         .nav .meta { width:100%; margin-left:0; font-size:10px; }
         .nav-menu { min-width:160px; }
-        /* News panel: 画面右上に固定し viewport からはみ出さないように. */
-        .nav-news-panel { position:fixed; top:48px; right:8px; left:auto;
+        /* News panel: 画面右上に固定し viewport からはみ出さないように.
+           top は開くときに JS がアイコンの実測位置へ寄せる (placePanel)。
+           ここの値はその前の 1 フレーム用。 */
+        .nav-news-panel { position:fixed; top:calc(var(--nav-height) + 2px);
+                          right:8px; left:auto;
                           width:auto; max-width:calc(100vw - 16px); }
+        /* 選手メニューも同じ扱い. nav が 2 行に折り返しても被らないよう、
+           実測した nav の高さ (--nav-height) の下に出す. */
+        .nav-user .nav-menu { position:fixed; top:calc(var(--nav-height) + 2px);
+                              right:8px; left:auto; max-width:calc(100vw - 16px); }
       }
       @media (max-width:380px) {
         .nav .brand, .nav .brand a { font-size:13px; }
@@ -382,6 +391,51 @@
     setTimeout(populateMetaInfo, 0);
   }
 
+  // ── アイコンのメニュー (お知らせ / 選手向け) の位置合わせ ──
+  //
+  // この 2 つは幅が広くて右端にあるため、狭い画面では CSS で position:fixed に
+  // している。ただし CSS だけだと上端を「nav 全体の下」にしか揃えられず、
+  // モバイルでは meta 行が折り返して nav が 2 行になるので、アイコンから
+  // 離れた低い位置に出てしまう。開くときにアイコンの実測位置へ寄せる。
+  //
+  // 対象はこの 2 つだけ (= CSS で fixed にしているもの)。ほかのメニューは
+  // absolute のままで、もともとボタンの真下に出ている。
+  const NARROW_PX = 720;   // nav.js の @media (max-width:720px) と同じ値にすること
+  const ICON_DROPDOWNS = '.nav-news, .nav-user';
+
+  function panelOf(drop) {
+    return drop.querySelector('.nav-menu, .nav-news-panel');
+  }
+  function resetPlacement(drop) {
+    const panel = drop.matches(ICON_DROPDOWNS) ? panelOf(drop) : null;
+    if (!panel) return;
+    panel.style.top = '';
+    panel.style.left = '';
+    panel.style.right = '';
+  }
+  function placePanel(drop) {
+    if (!drop.matches(ICON_DROPDOWNS)) return;
+    const panel = panelOf(drop);
+    const trigger = drop.querySelector('.nav-trigger');
+    if (!panel || !trigger) return;
+    resetPlacement(drop);
+    if (window.innerWidth > NARROW_PX) return;   // 広い画面は CSS (absolute) のまま
+    const t = trigger.getBoundingClientRect();
+    if (!t.height) return;                       // 測れないなら CSS に任せる
+    panel.style.top = Math.round(t.bottom + 4) + 'px';
+    // まずアイコンの右端に揃え、画面右からはみ出さないところまで戻す
+    panel.style.right = Math.max(8, Math.round(window.innerWidth - t.right)) + 'px';
+    // 幅が広くて左にはみ出すなら、右揃えをやめて左端に寄せる
+    if (panel.getBoundingClientRect().left < 8) {
+      panel.style.right = 'auto';
+      panel.style.left = '8px';
+    }
+  }
+  // 画面幅が変わったら開いているものを測り直す (= 回転・URL バーの伸縮)
+  window.addEventListener('resize', () => {
+    document.querySelectorAll('.nav-dropdown.open').forEach(placePanel);
+  });
+
   // Click-to-toggle dropdown (mobile-friendly).
   document.addEventListener('click', (e) => {
     const trigger = e.target.closest('.nav-trigger');
@@ -390,12 +444,14 @@
       const wasOpen = drop.classList.contains('open');
       document.querySelectorAll('.nav-dropdown.open').forEach(d => {
         d.classList.remove('open');
+        resetPlacement(d);
         const t = d.querySelector('.nav-trigger');
         if (t) t.setAttribute('aria-expanded', 'false');
       });
       if (!wasOpen) {
         drop.classList.add('open');
         trigger.setAttribute('aria-expanded', 'true');
+        placePanel(drop);
         if (drop.classList.contains('nav-news')) markNewsOpened();
       }
       e.stopPropagation();
@@ -404,6 +460,7 @@
     if (!e.target.closest('.nav-menu') && !e.target.closest('.nav-news-panel')) {
       document.querySelectorAll('.nav-dropdown.open').forEach(d => {
         d.classList.remove('open');
+        resetPlacement(d);
         const t = d.querySelector('.nav-trigger');
         if (t) t.setAttribute('aria-expanded', 'false');
       });
