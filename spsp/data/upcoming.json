@@ -1,55 +1,9 @@
 {
-  "generated_at": 1786612591,
+  "generated_at": 1786622428,
   "country_code": "JP",
   "lookahead_days": 21,
-  "count": 50,
+  "count": 48,
   "tournaments": [
-    {
-      "tournament_id": 938904,
-      "tournament_slug": "tournament/hit-189-maesuma-hit-189",
-      "tournament_name": "マエスマ'HIT#189 / Maesuma'HIT#189",
-      "start_at": 1786615200,
-      "end_at": 1786629600,
-      "is_online": false,
-      "city": "大阪市",
-      "venue_name": "",
-      "country_code": "JP",
-      "num_attendees": 38,
-      "url": "/tournament/hit-189-maesuma-hit-189",
-      "events": [
-        {
-          "event_id": 1679815,
-          "event_slug": "tournament/hit-189-maesuma-hit-189/event/singles-tournament",
-          "event_name": "Singles Tournament",
-          "num_entrants": 38,
-          "type": 1,
-          "start_at": 1786615200
-        }
-      ]
-    },
-    {
-      "tournament_id": 939841,
-      "tournament_slug": "tournament/smash-150-1",
-      "tournament_name": "Smash薬院#150",
-      "start_at": 1786617000,
-      "end_at": 1786629600,
-      "is_online": false,
-      "city": "福岡市",
-      "venue_name": "",
-      "country_code": "JP",
-      "num_attendees": 22,
-      "url": "/tournament/smash-150-1",
-      "events": [
-        {
-          "event_id": 1681748,
-          "event_slug": "tournament/smash-150-1/event/1on1",
-          "event_name": "1on1トーナメント",
-          "num_entrants": 22,
-          "type": 1,
-          "start_at": 1786617000
-        }
-      ]
-    },
     {
       "tournament_id": 936641,
       "tournament_slug": "tournament/growup_6",
@@ -543,14 +497,14 @@
       "city": "渋谷区",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 1,
+      "num_attendees": 2,
       "url": "/tournament/shibuya-g-g-smash-weekly-76",
       "events": [
         {
           "event_id": 1687894,
           "event_slug": "tournament/shibuya-g-g-smash-weekly-76/event/singles",
           "event_name": "Singles",
-          "num_entrants": 1,
+          "num_entrants": 2,
           "type": 1,
           "start_at": 1787221800
         }

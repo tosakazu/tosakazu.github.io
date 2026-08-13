@@ -23,11 +23,6 @@
 
   var SEL_KEY = 'spsp_vote_sel'; // OAuth リダイレクトをまたいで選択を覚える
 
-  // ?debug=1 : 認証・資格判定を飛ばして UI を確認できる。投票は status='debug' で
-  // 記録され、ビルドには採用されない (gas/vote.gs)。ページ未公開のため鍵は無し。
-  var DEBUG = false;
-  try { DEBUG = new URLSearchParams(location.search).get('debug') === '1'; } catch (_) { /* noop */ }
-
 
   /** ひらがな→カタカナ + 小文字化 (キャラ名の自由入力用の正規化)。 */
   function normChar(sIn) {
@@ -44,7 +39,6 @@
   var charList = null;
   var selCharId = null;      // グリッドで選択中のキャラ
   var lastCandidates = null; // 選択中の選手のダブルメイン候補 (null = 全キャラ)
-  var debugAs = null;        // デバッグで「この選手として」投票する {uid, display}
 
   /**
    * 文字列と {hl: 名前} の配列を要素として流し込む。名前のハイライトは
@@ -312,7 +306,6 @@
   function backToSelect() {
     selected = null;
     lastCandidates = null;
-    debugAs = null;
     setStatus('', '');
     showSection('select');
     ensureIndex();
@@ -362,7 +355,6 @@
     session = null;
     selected = null;
     lastCandidates = null;
-    debugAs = null;
     render();
   }
 
@@ -489,23 +481,18 @@
         action: 'vote',
         token: session ? session.token : null,
         charId: charId,
-        debug: DEBUG ? 1 : undefined,
-        debugUid: (DEBUG && !session && debugAs) ? debugAs.uid : undefined,
-        debugTag: (DEBUG && !session && debugAs) ? debugAs.display : undefined,
       }),
     }).then(function (res) {
       return res.json();
     }).then(function (json) {
       els.voteBtn.disabled = false;
       if (json && json.ok) {
-        setStatus('ok', json.debug
-          ? json.charName + ' でデバッグ投票を記録しました (status=debug。サイトには反映されません)。'
-          : json.charName + ' で投票を受け付けました。サイトへの反映は次回の更新時になります。');
+        setStatus('ok', json.charName + ' で投票を受け付けました。サイトへの反映は次回の更新時になります。');
         return;
       }
       var code = json && json.error && json.error.code;
       var msg = (json && json.error && json.error.message) ? json.error.message : '投票に失敗しました。';
-      if (code === 'auth_failed' && !DEBUG) {
+      if (code === 'auth_failed') {
         AUTH.clear();
         session = null;
         render();
@@ -565,10 +552,6 @@
       authMsg: $('vt-auth-msg'),
       authCands: $('vt-auth-cands'),
       formHint: $('vt-form-hint'),
-      debugBanner: $('vt-debug-banner'),
-      debugFormBtn: $('vt-debug-form-btn'),
-      debugSkipBtn: $('vt-debug-skip-btn'),
-      debugAuthBtn: $('vt-debug-auth-btn'),
       backBtn: $('vt-back-btn'),
       back2Btn: $('vt-back2-btn'),
       loginBtn: $('vt-login-btn'),
@@ -587,27 +570,6 @@
 
     els.search.addEventListener('input', renderResults);
     els.charSearch.addEventListener('input', applyCharFilter);
-    if (DEBUG) {
-      els.debugBanner.hidden = false;
-      els.debugFormBtn.hidden = false;
-      els.debugSkipBtn.hidden = false;
-      els.debugAuthBtn.hidden = false;
-      // 選手指定なしで直接フォーム (user_id=debug で記録)
-      els.debugFormBtn.addEventListener('click', function () {
-        debugAs = null;
-        showForm(null);
-      });
-      // 資格なし画面から: 選択中の選手として (資格判定は無視)
-      els.debugSkipBtn.addEventListener('click', function () {
-        debugAs = selected;
-        showForm(null);
-      });
-      // 認証だけスキップ: 選択中の選手として、候補制限は生かしたまま
-      els.debugAuthBtn.addEventListener('click', function () {
-        debugAs = selected;
-        showForm(lastCandidates);
-      });
-    }
     els.backBtn.addEventListener('click', backToSelect);
     els.back2Btn.addEventListener('click', backToSelect);
     els.loginBtn.addEventListener('click', startLogin);

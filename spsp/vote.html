@@ -24,12 +24,6 @@
     border: 1px solid #e5e7eb; border-radius: 12px; padding: 16px 14px;
   }
 
-  /* ── デバッグバナー ── */
-  main #vt-debug-banner {
-    margin: 0 0 12px; padding: 8px 12px; font-size: 12px;
-    background: #fffbeb; color: #92400e; border: 1.5px dashed #fbbf24; border-radius: 8px;
-  }
-
   /* ── ログイン中 ── */
   main #vt-who {
     display: flex; align-items: center; justify-content: space-between;
@@ -139,10 +133,6 @@
   <h1>キャラ投票</h1>
   <p class="subtitle">自分のメイン使用キャラを報告できます (start.gg の選手認証が必要)。</p>
 
-  <div id="vt-debug-banner" hidden>
-    🐞 <strong>デバッグモード</strong> — 認証や資格判定を飛ばして UI を確認できます。
-    この状態の投票は <code>debug</code> として記録され、サイトには反映されません。
-  </div>
 
   <div id="card">
     <div id="vt-who" hidden>
@@ -155,7 +145,6 @@
       <input id="vt-search" type="search" placeholder="選手名で検索" autocomplete="off">
       <div id="vt-results"></div>
       <p class="hint" id="vt-idx-status"></p>
-      <p class="actions"><button id="vt-debug-form-btn" class="sub mini" type="button" hidden>投票フォームを直接開く (デバッグ)</button></p>
     </div>
 
     <div id="vt-check" hidden>
@@ -167,7 +156,6 @@
       <p class="inel-detail" id="vt-inel-detail"></p>
       <div class="actions">
         <button id="vt-back-btn" class="sub" type="button">別の選手を選ぶ</button>
-        <button id="vt-debug-skip-btn" class="sub mini" type="button" hidden>資格判定を無視して開く (デバッグ)</button>
       </div>
     </div>
 
@@ -177,7 +165,6 @@
       <div class="actions">
         <button id="vt-login-btn" type="button">start.gg で本人確認して投票に進む</button>
         <button id="vt-back2-btn" class="sub" type="button">選び直す</button>
-        <button id="vt-debug-auth-btn" class="sub mini" type="button" hidden>認証をスキップして投票 (デバッグ)</button>
       </div>
       <p id="vt-canonical" hidden>
         <a href="https://tosakazu.github.io/spsp/vote.html">正規のページを開く</a>
