@@ -75,6 +75,7 @@
     if (/\/events\//.test(p))        return 'events';
     if (/\/sim\//.test(p))           return 'sim';
     if (/\/news\//.test(p))          return 'news';
+    if (/\/vote\.html$/.test(p))     return 'vote';
     if (/\/p\//.test(p))             return 'player';
     if (/\/t\//.test(p))             return 'tournament';
     return 'ranking';
@@ -133,6 +134,14 @@
           <a class="news-section-foot" href="${prefix}news/">すべて見る →</a>
         </div>
       </div>
+      <div class="nav-dropdown nav-user${cur === 'vote' ? ' has-current' : ''}">
+        <button type="button" class="nav-trigger nav-user-trigger${cur === 'vote' ? ' current' : ''}" aria-haspopup="true" aria-expanded="false" aria-label="選手向けメニュー">
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+        </button>
+        <div class="nav-menu" role="menu">
+          <a href="${prefix}vote.html"${cur === 'vote' ? ' class="current"' : ''} role="menuitem">キャラ投票</a>
+        </div>
+      </div>
       <span class="meta" id="meta-info"></span>
     </nav>`;
 
@@ -182,6 +191,12 @@
       .nav-news-bell.has-unread::before { content:''; position:absolute; top:-2px; left:-2px;
                                             width:7px; height:7px; background:#fca5a5;
                                             border-radius:50%; }
+      /* User dropdown (= 選手本人が使う操作をまとめる). ベルと同じ見た目に揃える. */
+      .nav-user .nav-user-trigger { color:#6b7280; display:inline-flex; align-items:center;
+                                    line-height:0; padding:4px 8px; }
+      .nav-user.has-current .nav-user-trigger { color:#dc2626; background:#f3f4f6; }
+      /* アイコンが nav の左寄りにあるので、メニューは既定 (左揃え) のままでよい。 */
+      .nav-user .nav-menu { min-width:160px; }
       .nav-news-panel { display:none; position:absolute; top:100%; right:0;
                         background:#fff; border:1px solid #e5e7eb;
                         border-radius:6px; box-shadow:0 4px 12px rgba(0,0,0,.08);
