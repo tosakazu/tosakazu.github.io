@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>投稿 — SPSP</title>
+<!-- 公開前。ナビからも未リンク。公開時に外す (docs/DEPLOY.md 参照) -->
+<meta name="robots" content="noindex">
+
+<style>
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Hiragino Sans", sans-serif;
+    background: #ffffff; color: #111827; font-size: 14px;
+    -webkit-text-size-adjust: 100%;
+  }
+  main { max-width: 560px; margin: 0 auto; padding: 16px; }
+  h1 { font-size: 18px; font-weight: 700; margin: 2px 0 4px; }
+  .subtitle { color: #6b7280; font-size: 12px; margin: 0 0 12px; }
+
+  #card {
+    background: linear-gradient(180deg, #fafafa 0%, #ffffff 30%, #ffffff 100%);
+    border: 1px solid #e5e7eb; border-radius: 12px; padding: 16px 14px;
+  }
+
+  textarea {
+    width: 100%; min-height: 160px; padding: 10px; font-size: 14px;
+    font-family: inherit; line-height: 1.6; resize: vertical;
+    border: 1px solid #d1d5db; border-radius: 8px;
+  }
+  .row { display: flex; align-items: center; justify-content: space-between; margin-top: 8px; gap: 10px; }
+  #post-count { color: #9ca3af; font-size: 12px; font-variant-numeric: tabular-nums; }
+  #post-count.over { color: #b91c1c; font-weight: 600; }
+
+  button {
+    padding: 9px 16px; font-size: 14px; font-weight: 600; color: #fff;
+    background: #2563eb; border: 0; border-radius: 8px; cursor: pointer;
+  }
+  button:disabled { background: #9ca3af; cursor: default; }
+
+  .status { margin-top: 12px; padding: 9px 11px; border-radius: 8px; font-size: 13px; }
+  .status[hidden] { display: none; }
+  .status.ok { background: #ecfdf5; color: #065f46; border: 1px solid #a7f3d0; }
+  .status.error { background: #fef2f2; color: #991b1b; border: 1px solid #fecaca; }
+
+  .note { color: #6b7280; font-size: 12px; margin-top: 12px; line-height: 1.7; }
+  #post-canonical[hidden] { display: none; }
+  #post-canonical { margin-top: 8px; font-size: 12px; }
+</style>
+</head>
+<body>
+<div id="nav-root"></div>
+
+<main>
+  <h1>投稿</h1>
+  <p class="subtitle">start.gg のアカウントで認証して投稿します。</p>
+
+  <div id="card">
+    <textarea id="post-body" placeholder="本文を入力"></textarea>
+    <div class="row">
+      <span id="post-count"></span>
+      <button id="post-submit" type="button">start.gg で認証して投稿</button>
+    </div>
+    <div id="post-status" class="status" hidden></div>
+    <p id="post-canonical" hidden>
+      <a href="https://tosakazu.github.io/spsp/post.html">正規の投稿ページを開く</a>
+    </p>
+  </div>
+
+  <p class="note">
+    投稿すると start.gg のユーザー名が一緒に記録されます。<br>
+    サイトへの反映は次回の更新時 (数時間おき) です。すぐには表示されません。
+  </p>
+</main>
+
+<script src="nav.js"></script>
+<script src="js/post_config.js"></script>
+<script src="js/oauth_state.js"></script>
+<script src="js/post.js"></script>
+</body>
+</html>
