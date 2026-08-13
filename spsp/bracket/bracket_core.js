@@ -59,7 +59,11 @@
   //   a/b/w/l はローカルシード or null (bye)。drop = そのラウンドの b 側が
   //   勝者側 WR何回戦 の敗者か (major ラウンドのみ。表示バッジ用)。
   //   wTotal/lTotal = 打ち切り前のラウンド数 (「決勝」等の表示名を変えないため)。
-  function poolDoubleElim(M, adv) {
+  // lbStart = 敗者側スタートの人数 (下位シードから)。トップカット等で
+  // 「予選1位は勝者側、2位以下は敗者側から」という構成を再現する。
+  function poolDoubleElim(M, adv, lbStart) {
+    const d = Math.max(0, Math.min(lbStart | 0, Math.max(0, M - 2)));
+    if (d > 0) return truncateForAdvance(splitStartDoubleElim(M, d), M, adv);
     if (M < 2) return truncateForAdvance({ B: M < 1 ? 0 : 2, winners: poolRounds(M).rounds, losers: [], gf: null }, M, adv);
     const base = poolRounds(M);
     const B = base.B;
@@ -90,40 +94,7 @@
     }
     // 以降 j=2..k: major (WRj 敗者ドロップ, 1:1) → minor (ペア) …最後は major で終わる
     for (let j = 2; j <= k; j++) {
-      let drops = winners[j - 1].map((m) => m.l);
-      const n = drops.length;
-      // 落ちる先 = L(2j)。j=2:全反転 / j=3:半分ごと反転 / j=4:半分入替 / j>=5:そのまま
-      if (j === 2) {
-        drops = drops.slice().reverse();
-      } else if (j === 3 && n > 1) {
-        const h = n / 2;
-        drops = drops.slice(0, h).reverse().concat(drops.slice(h).reverse());
-      } else if (j === 4 && n > 1) {
-        const h = n / 2;
-        drops = drops.slice(h).concat(drops.slice(0, h));
-      }
-      const major = [];
-      const next = [];
-      for (let i = 0; i < cur.length; i++) {
-        const a = cur[i], b = drops[i];
-        const w = (a == null) ? b : (b == null) ? a : Math.min(a, b);
-        major.push({ a, b, w, l: (a != null && b != null) ? Math.max(a, b) : null, drop: j });
-        next.push(w);
-      }
-      losers.push(major);
-      cur = next;
-      if (cur.length > 1) {                 // minor でペア
-        const minor = [];
-        const nn = [];
-        for (let i = 0; i < cur.length; i += 2) {
-          const a = cur[i], b = cur[i + 1];
-          const w = (a == null) ? b : (b == null) ? a : Math.min(a, b);
-          minor.push({ a, b, w, l: (a != null && b != null) ? Math.max(a, b) : null });
-          nn.push(w);
-        }
-        losers.push(minor);
-        cur = nn;
-      }
+      cur = pushMajorMinor(losers, cur, winners[j - 1].map((m) => m.l), j, j);
     }
     const wbChamp = winners[k - 1][0].w;
     const lbChamp = cur[0];
@@ -131,20 +102,135 @@
     return truncateForAdvance({ B, winners, losers, gf }, M, adv);
   }
 
+  function mkMatch(a, b, extra) {
+    const w = (a == null) ? b : (b == null) ? a : Math.min(a, b);
+    return Object.assign({ a, b, w, l: (a != null && b != null) ? Math.max(a, b) : null }, extra || null);
+  }
+
+  // WRj 敗者の並び替え (落ちる先の敗者側ラウンド番号基準の規則)。
+  function permuteDrops(drops, j) {
+    const n = drops.length;
+    if (j === 2) return drops.slice().reverse();
+    if (n <= 1) return drops;
+    const h = n / 2;
+    if (j === 3) return drops.slice(0, h).reverse().concat(drops.slice(h).reverse());
+    if (j === 4) return drops.slice(h).concat(drops.slice(0, h));
+    return drops;
+  }
+
+  // major (勝者側 WRj の敗者が 1:1 で落ちてくる) → minor (敗者側どうしのペア) を積む。
+  // 返り値 = minor 後の生存者列。
+  function pushMajorMinor(losers, cur, dropsRaw, wRound, permKey) {
+    const drops = permuteDrops(dropsRaw, permKey);
+    const major = [], next = [];
+    for (let i = 0; i < cur.length; i++) {
+      const m = mkMatch(cur[i], drops[i], { drop: wRound });
+      major.push(m); next.push(m.w);
+    }
+    losers.push(major);
+    cur = next;
+    if (cur.length > 1) {
+      const minor = [], nn = [];
+      for (let i = 0; i < cur.length; i += 2) {
+        const m = mkMatch(cur[i], cur[i + 1]);
+        minor.push(m); nn.push(m.w);
+      }
+      losers.push(minor);
+      cur = nn;
+    }
+    return cur;
+  }
+
+  // ── 敗者側スタートありのプール (トップカット等) ────────────────
+  // 上位 w = M-d 人が勝者側、下位 d 人が敗者側から始まる構成。
+  // 敗者側直入り d 人は **上位半分 A × 下位半分 B** で必ず当たる
+  // (start.gg 実プール 74 件中 72 件で成立)。A[i] の相手 = B[perm(i)]。
+  //
+  // perm は「n (= d/2) と target (= 勝者側 WR1 の敗者数)」で変わり、
+  // 同じ形でも大会によって食い違う場合がある (規則としては閉じていない)。
+  // ここでは **篝火 / ウメブラ の実ブラケットで観測した並び**を採用する
+  // (LB_ENTRY_PERM。括弧内は観測プール数)。表に無い形は下の式にフォールバック。
+  const LB_ENTRY_PERM = {
+    '8:8': [6, 7, 4, 5, 2, 3, 0, 1],                                    // 勝16+敗16 (篝火3/他1)
+    '16:8': [5, 4, 7, 6, 1, 0, 3, 2, 13, 12, 15, 14, 9, 8, 11, 10],     // 勝16+敗32 (篝火2/ウメブラ7)
+    '16:16': [14, 15, 12, 13, 10, 11, 8, 9, 6, 7, 4, 5, 2, 3, 0, 1],    // 勝32+敗32 (ウメブラ1。
+                                                                        //   篝火1 は全反転で食い違うため
+                                                                        //   8:8 と同じ「2つ組の反転」を採る)
+    '32:16': [10, 11, 8, 9, 14, 15, 12, 13, 2, 3, 0, 1, 6, 7, 4, 5,     // 勝32+敗64 (篝火10)
+      26, 27, 24, 25, 30, 31, 28, 29, 18, 19, 16, 17, 22, 23, 20, 21],
+  };
+
+  function permLbEntry(i, n, target) {
+    const tbl = LB_ENTRY_PERM[n + ':' + target];
+    if (tbl && tbl.length === n) return tbl[i];
+    // 表に無い形: 4人組の中で 2 つ組を入れ替える (勝8+敗16 系で観測した並びの一般化)
+    const j = (n >= 4 && i < 8) ? (i ^ 2) : (i ^ 1);
+    return j < n ? j : i;
+  }
+
+  // 敗者側直入り d 人を、最初の敗者側ラウンドのスロット列にする。
+  // target = 勝者側 WR1 の敗者数 (= Bw/2)。d が target 以下ならそのまま並べる。
+  function lbEntrySlots(w, d, target) {
+    if (d <= target) {
+      const out = [];
+      for (let i = 0; i < target; i++) out.push(i < d ? w + 1 + i : null);
+      return out;
+    }
+    let D = target;
+    while (D < d) D *= 2;
+    const n = D / 2;
+    const seed = (i) => (i < d ? w + 1 + i : null);
+    const slots = [];
+    for (let i = 0; i < n; i++) {
+      slots.push(seed(i));                       // A = 直入り勢の上位半分
+      slots.push(seed(n + permLbEntry(i, n, target)));   // B = 下位半分 (規則で並べ替え)
+    }
+    return slots;
+  }
+
+  function splitStartDoubleElim(M, d) {
+    const w = M - d;
+    const base = poolRounds(w);
+    const Bw = base.B;
+    const winners = base.rounds.map((ms) => ms.map((m) => mkMatch(m.a, m.b)));
+    const k = winners.length;
+    const target = Math.max(1, Bw / 2);
+    const losers = [];
+    let cur = lbEntrySlots(w, d, target);
+    while (cur.length > target) {          // 直入り勢だけで戦う前半ラウンド
+      const round = [], next = [];
+      for (let i = 0; i < cur.length; i += 2) {
+        const m = mkMatch(cur[i], cur[i + 1]);
+        round.push(m); next.push(m.w);
+      }
+      losers.push(round);
+      cur = next;
+    }
+    // 以降は標準と同じ major → minor の交互。WR1 の敗者から合流する。
+    for (let j = 1; j <= k; j++) {
+      // 合流1回目 (WR1 の敗者) を標準構成の j=2 相当として扱う
+      cur = pushMajorMinor(losers, cur, winners[j - 1].map((m) => m.l), j, j + 1);
+    }
+    return { B: Bw, winners, losers, lbStart: d, gf: mkMatch(winners[k - 1][0].w, cur[0]) };
+  }
+
   // 実施順に並べたラウンド列。W1 → L1 → W2 → L(major) → L(minor) → W3 → … → GF。
   // major = 勝者側から敗者が落ちてくるラウンド (drop 付き)、minor = 敗者側どうし。
+  // 敗者側スタートありの構成では、直入り勢だけの前半ラウンドが勝者側より先に来る。
   function playOrder(de) {
     const seq = [];
     if (!de.winners.length) return seq;
-    seq.push({ k: 'W', i: 0 });
-    let li = 0;
-    if (de.losers.length) seq.push({ k: 'L', i: li++ });        // L1 (WR1 敗者)
-    for (let j = 1; j < de.winners.length; j++) {
-      seq.push({ k: 'W', i: j });
-      if (li < de.losers.length) seq.push({ k: 'L', i: li++ });  // WR(j+1) 敗者が落ちる major
-      const nxt = de.losers[li];
-      if (nxt && !(nxt[0] && nxt[0].drop)) seq.push({ k: 'L', i: li++ });   // 続く minor
-    }
+    let wNext = 0;
+    const emitW = (upto) => {
+      while (wNext < upto && wNext < de.winners.length) seq.push({ k: 'W', i: wNext++ });
+    };
+    if (!de.lbStart) emitW(1);           // 標準構成: L1 は WR1 の敗者なので WR1 が先
+    de.losers.forEach((round, i) => {
+      const drop = round[0] && round[0].drop;
+      if (drop) emitW(drop);             // その major に必要な勝者側ラウンドまで進める
+      seq.push({ k: 'L', i });
+    });
+    emitW(de.winners.length);
     if (de.gf) seq.push({ k: 'G' });
     return seq;
   }
@@ -154,7 +240,7 @@
   // 残り人数が adv 以下になったラウンドまでを残す。bye の試合は誰も落とさない。
   function truncateForAdvance(de, M, adv) {
     const out = Object.assign({}, de, {
-      wTotal: de.winners.length, lTotal: de.losers.length, cut: false, advancers: null,
+      wTotal: de.winners.length, lTotal: de.losers.length, cut: false, advancers: null, undefeated: null,
     });
     if (!(adv > 0) || !(M > adv)) return out;
     const elimOf = (round) => round.reduce((n, m) => n + ((m.a != null && m.b != null) ? 1 : 0), 0);
@@ -167,10 +253,17 @@
       else { keepGf = true; remain -= 1; }
       if (remain <= adv) { cutAt = s; break; }
     }
-    // 進出が決まった後も、次に脱落者が出るまでの勝者側ラウンドは実施される
-    // (誰も落とさないが順位を決めるため)。実ブラケット (りぷぶらSP15 予選 11人6抜け /
-    // 篝火15 Phase1 21人 : 勝者側が1ラウンド分先まで進む) と一致させるための扱い。
-    for (let s = cutAt + 1; s < seq.length && seq[s].k === 'W'; s++) keepW = seq[s].i + 1;
+    // minor (敗者側どうし) で打ち切った場合だけ、続く勝者側ラウンドも実施される。
+    // 次のドロップを供給する勝者側ラウンドは既に走っているため。major で打ち切った
+    // ときは供給済みなので勝者側も止まる。実ブラケット4件と一致する扱い:
+    //   minor で終わる例: りぷぶらSP15 予選 (11人6抜け) / 篝火15 Phase1 A100 (21人12抜け)
+    //   major で終わる例: りぷぶらSP15 Aクラス (48人8抜け) / 篝火15 Phase2 D100 (24人3抜け)
+    const cutStep = seq[cutAt];
+    const cutMinor = cutStep && cutStep.k === 'L' &&
+      !(de.losers[cutStep.i][0] && de.losers[cutStep.i][0].drop);
+    if (cutMinor) {
+      for (let s = cutAt + 1; s < seq.length && seq[s].k === 'W'; s++) keepW = seq[s].i + 1;
+    }
     if (keepW === de.winners.length && keepL === de.losers.length && keepGf) return out;
     const elim = new Set();
     for (let i = 0; i < keepL; i++) {
@@ -181,11 +274,28 @@
     }
     const advancers = [];
     for (let s = 1; s <= M; s++) if (!elim.has(s)) advancers.push(s);
+    // 通過者のうち「無敗のまま」通過した人 = 次フェーズを勝者側から始める人。
+    // 敗者側スタート勢は 1 敗の扱いなので、ここには入らない。
+    const lost = new Set(lbStart(de));
+    const rounds = de.winners.slice(0, keepW).concat(de.losers.slice(0, keepL));
+    for (const r of rounds) for (const m of r) if (m.a != null && m.b != null && m.l != null) lost.add(m.l);
+    if (keepGf && de.gf && de.gf.a != null && de.gf.b != null) {
+      lost.add(de.gf.a === de.gf.w ? de.gf.b : de.gf.a);
+    }
     out.winners = de.winners.slice(0, keepW);
     out.losers = de.losers.slice(0, keepL);
     out.gf = keepGf ? de.gf : null;
     out.cut = true;
     out.advancers = advancers;
+    out.undefeated = advancers.filter((s) => !lost.has(s));
+    return out;
+  }
+
+  // 敗者側スタート勢のローカルシード列 (= 最初から 1 敗相当の扱い)。
+  function lbStart(de) {
+    const out = [];
+    if (!de.lbStart) return out;
+    for (const m of de.losers[0] || []) { if (m.a != null) out.push(m.a); if (m.b != null) out.push(m.b); }
     return out;
   }
 

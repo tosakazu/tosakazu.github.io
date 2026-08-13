@@ -7,11 +7,13 @@
 // 設計: docs/seed_preview_design.md §2
 //
 // ペイロード (v:1):
-//   { v:1, ev, src, phases:[{name,pools,adv}], wv:[poolIdx→waveIdx]?, prog?,
+//   { v:1, ev, src, phases:[{name,pools,adv,lb?}], wv:[poolIdx→waveIdx]?, prog?,
 //     uids:[uid|null...], names:{index:string} }
 //   - シード番号 = uids の index + 1。
-//   - names は「uid が null」または「発行時に SPSP DB に居なかった uid」の index のみ
-//     (登録者の表示名は players/<uid>.json の display から復元する)。
+//   - names は原則 全参加者分 (プレビュー側が players/<uid>.json を取れなくても
+//     名前が出せるように)。URL が長くなる規模では DB 未登録者のみに縮小する。
+//   - phases[].lb = 1プールあたり敗者側スタートの人数 (下位シードから)。
+//     省略/0 = 全員勝者側スタート。トップカットの「予選2位は敗者側から」用。
 //   - プール数は phases[*].pools が正。wv の長さは phases[0].pools と一致必須。
 //   - prog は進出割当パターンの予約フィールド (省略 = start.gg デフォルト =
 //     期待強度順。docs 参照。現状これ以外の値は未定義)。
@@ -34,7 +36,9 @@
 
   function base64urlToBytes(s) {
     if (typeof s !== 'string' || /[^A-Za-z0-9_-]/.test(s)) {
-      throw new Error('共有データ (d=) が base64url ではありません');
+      const junk = typeof s === 'string' ? (s.match(/[^A-Za-z0-9_-]/g) || []).slice(0, 3).join('') : '';
+      throw new Error('共有データ (d=) に使えない文字が入っています' +
+        (junk ? ` ("${junk}" など)。URL の途中で改行が入っていないか確認してください` : ''));
     }
     const b64 = s.replace(/-/g, '+').replace(/_/g, '/') + '='.repeat((4 - (s.length % 4)) % 4);
     const bin = H.atob(b64);
@@ -61,9 +65,17 @@
     return _pipe(bytes, new H.CompressionStream('deflate-raw'));
   }
 
+  // 展開に失敗する原因はほぼ「URL が最後まで貼られていない」。
+  // ブラウザは中身のないエラー (Chrome は "Failed to fetch") しか返さないので言い換える。
   async function inflateRawBytes(bytes) {
     _requireCompression();
-    return _pipe(bytes, new H.DecompressionStream('deflate-raw'));
+    try {
+      return await _pipe(bytes, new H.DecompressionStream('deflate-raw'));
+    } catch (e) {
+      throw new Error(`共有データを展開できません (${bytes.length}バイト)。` +
+        'URL が途中で切れている可能性があります — アドレスバーの末尾まで含めてコピーし直すか、' +
+        '作業状況 CSV での共有をお試しください');
+    }
   }
 
   // ───────────────────────── ペイロード検証 ─────────────────────────
@@ -91,6 +103,13 @@
       if (typeof p.name !== 'string' || !p.name.trim()) errors.push(`${tag}: 名前がありません`);
       if (!_isInt(p.pools) || p.pools < 1) { errors.push(`${tag}: プール数が不正 (${p.pools})`); continue; }
       if (p.pools > cur) errors.push(`${tag}: プール数 ${p.pools} が参加人数 ${cur} を超えています`);
+      if (p.lb != null) {
+        const maxPool = Math.ceil(cur / p.pools);
+        if (!_isInt(p.lb) || p.lb < 0) errors.push(`${tag}: 敗者側スタート人数が不正 (${p.lb})`);
+        else if (p.lb > maxPool - 2) {
+          errors.push(`${tag}: 敗者側スタート ${p.lb}人 が多すぎます (1プール ${maxPool}人 なので ${Math.max(0, maxPool - 2)}人 まで)`);
+        }
+      }
       const isFinal = f === phases.length - 1;
       if (!isFinal) {
         if (!_isInt(p.adv) || p.adv < 1) {
@@ -164,9 +183,10 @@
   }
 
   // ───────────────────────── URL フラグメント ─────────────────────────
-  // '#v=1&ph=0&pool=A3&wd=1&lb=0&d=<blob>'。view は blob の外 (表示状態の共有用)。
+  // '#v=1&ph=0&pool=A3&wd=1&lb=0&hi=12&d=<blob>'。view は blob の外 (表示状態の共有用)。
   function parseFragment(hash) {
-    const s = String(hash || '').replace(/^#/, '');
+    // 貼り付け時に折り返しの改行・空白が混ざることがあるので落とす
+    const s = String(hash || '').replace(/^#/, '').replace(/\s+/g, '');
     const q = new URLSearchParams(s);
     const num = (k, dflt) => {
       const v = q.get(k);
@@ -181,6 +201,7 @@
         pool: q.get('pool') || null,
         wd: num('wd', 1),
         lb: num('lb', 0),
+        hi: num('hi', null),      // 注目する参加者 (シード index-1)。次フェーズへの遷移で使う
       },
       d: q.get('d') || null,
     };
@@ -193,6 +214,7 @@
     if (view && view.pool) q.set('pool', view.pool);
     q.set('wd', String(view && view.wd != null ? view.wd : 1));
     if (view && view.lb) q.set('lb', String(view.lb));
+    if (view && view.hi != null) q.set('hi', String(view.hi));
     q.set('d', d);
     return '#' + q.toString();
   }

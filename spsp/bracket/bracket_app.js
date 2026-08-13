@@ -32,11 +32,12 @@
   const STATE = {
     payload: null,
     blob: null,           // 現在の payload の base64url (URL の d=)
-    view: { ph: 0, pool: null, wd: 1, lb: 0 },
+    view: { ph: 0, pool: null, wd: 1, lb: 0, hi: null },
     prefsRaw: null,       // uid(str) -> 都道府県 (生値。表示用)
     overseas: null,       // Set<uid> (海外勢)
     players: new Map(),   // uid -> json | {__missing:true} | {__error:msg}
     poolAgg: new Map(),   // "ph:pool:wd:N" -> buildSeedData の結果
+    charByUid: new Map(), // uid -> {name, emoji} (メイン使用キャラ)
     renderToken: 0,       // 非同期描画の競合ガード
   };
 
@@ -79,7 +80,29 @@
       const ov = await fetchJson('../data/overseas.json');
       STATE.overseas = new Set((ov && ov.uids) || []);
     } catch (e) { STATE.overseas = new Set(); warns.push('海外勢データの取得に失敗: ' + e.message); }
+    // メイン使用キャラの絵文字 (プレイヤーページと同じ定義: character_index の
+    // main_by_char を逆引きして char_emoji の絵文字を引く)。無くても表示は続ける。
+    try {
+      const [idx, emo] = await Promise.all([
+        fetchJson('../data/character_index.json'),
+        fetchJson('../data/char_emoji.json'),
+      ]);
+      const mbc = idx && idx.main_by_char;
+      if (mbc && emo && !emo.__missing) {
+        for (const cid in mbc) {
+          const c = emo[cid];
+          if (!c || !c.emoji) continue;
+          for (const u of mbc[cid] || []) STATE.charByUid.set(Number(u), c);
+        }
+      }
+    } catch (e) { warns.push('キャラデータの取得に失敗: ' + e.message); }
     return warns;
+  }
+
+  // メイン使用キャラ ({name, emoji}) or null
+  function mainCharOf(gi) {
+    const uid = uidOf(gi);
+    return (uid != null && STATE.charByUid.get(uid)) || null;
   }
 
   // 取得済み判定。__error (通信断・5xx) は一時的なことが多いので未取得扱いにして
@@ -234,8 +257,11 @@
     const members = pools[poolIdx];           // globalIdx (0始まり) 昇順 = ローカルシード順
     const M = members.length;
     const adv = advOfPhase(ph);
+    const lbIn = lbOfPhase(ph, M);
     $('bp-pool-info').textContent = `${labels[poolIdx]}: ${M}人` +
       (ph > 0 ? ' (シード通り進出の予測メンバー)' : '') +
+      (lbIn > 0 ? ` / 勝者側スタート${M - lbIn}人・敗者側スタート${lbIn}人` : '') +
+      (ph > 0 ? ` / 前フェーズの無敗通過 ${undefeatedCount(ph - 1)}人` : '') +
       (adv > 0 && adv < M ? ` / 上位${adv}人が通過 (通過が決まるところまで表示)` : '');
 
     const host = $('bp-bracket');
@@ -274,14 +300,48 @@
     return Math.max(0, p.adv | 0);
   }
 
+  // 前フェーズを**無敗のまま**通過した人数 (= 次フェーズを勝者側から始める人数)。
+  // 1敗して通過した人を勝者側に置くと「敗者側から勝者側に上がる」ことになるので、
+  // 敗者側スタートの既定値はこれで決める。
+  const _undefCache = new Map();
+  function undefeatedCount(ph) {
+    const key = ph + ':' + STATE.payload.uids.length + ':' + JSON.stringify(STATE.payload.phases);
+    if (_undefCache.has(key)) return _undefCache.get(key);
+    const counts = phaseCounts();
+    const P = Math.max(1, STATE.payload.phases[ph].pools | 0);
+    const pools = C.phasePools(counts[ph], P);
+    let n = 0;
+    for (const members of pools) {
+      if (!members.length) continue;
+      const de = C.poolDoubleElim(members.length, advOfPhase(ph), lbOfPhase(ph, members.length));
+      n += de.undefeated ? de.undefeated.length : 1;
+    }
+    _undefCache.set(key, n);
+    return n;
+  }
+
+  // そのフェーズの1プールあたり敗者側スタート人数。
+  // 明示指定 (phases[].lb) が無ければ「前フェーズを無敗で通過した人だけが勝者側」。
+  function lbOfPhase(ph, poolSize) {
+    const p = STATE.payload.phases[ph];
+    const cap = Math.max(0, poolSize - 2);
+    if (p.lb != null) return Math.max(0, Math.min(p.lb | 0, cap));
+    if (ph === 0) return 0;
+    const wb = Math.ceil(undefeatedCount(ph - 1) / Math.max(1, p.pools | 0));
+    return Math.max(0, Math.min(poolSize - wb, cap));
+  }
+
   function drawBracket(host, members, agg) {
-    const de = C.poolDoubleElim(members.length, advOfPhase(currentPhase()));
+    const ph = currentPhase();
+    // 出どころチップは枠の左外に出るので、フェーズ1以降は左に余白を足す
+    host.classList.toggle('has-prev', ph > 0);
+    const de = C.poolDoubleElim(members.length, advOfPhase(ph), lbOfPhase(ph, members.length));
     const showLb = STATE.view.lb === 1 && de.losers.length > 0;
-    const ctx = { members, agg };
+    const ctx = { members, agg, de, lastAt: lastAppearance(de, 'last'), firstAt: lastAppearance(de, 'first') };
     // GF 列は敗者側を出していて、かつ GF が実施される (= 優勝まで戦う) ときだけ
-    let html = renderWinnersSection(de, ctx, showLb && de.gf != null);
+    let html = renderWinnersSection(de, ctx, showLb && played(de.gf));
     if (showLb) {
-      html += '<div class="bp-sec-label">敗者側ブラケット <span class="bp-sec-note">(ドロップ位置は start.gg 標準ブラケットの実データと一致することを検証済み)</span></div>';
+      html += '<div class="bp-sec-label">敗者側ブラケット</div>';
       html += renderLosersSection(de, ctx);
     } else if (STATE.view.lb === 1) {
       html += '<div class="bp-hint">このプールには敗者側がありません。</div>';
@@ -296,18 +356,37 @@
     const unnamed = members.filter((gi) => !resolvedName(gi));
     const parts = [];
     if (missing.length) parts.push(`SPSP 未登録/データなし ${missing.length}人`);
+    // 取得失敗があるときだけ再取得ボタンを出す (普段は出す意味がない)
+    $('bp-reload').hidden = !errored.length;
     if (errored.length) {
       const why = STATE.players.get(errored[0]).__error;
-      parts.push(`⚠ 選手データの取得失敗 ${errored.length}人 (${why}) — 「🔄 再取得」で再試行できます`);
+      parts.push(`⚠ 選手データの取得失敗 ${errored.length}人 (${why}) — 右上の「🔄 選手データを再取得」で取り直せます`);
     }
     if (unnamed.length) {
       parts.push(`⚠ 名前が分からない参加者 ${unnamed.length}人: ` +
         unnamed.slice(0, 10).map((gi) => `シード${gi + 1} (${describeNameGap(gi)})`).join(', ') +
         (unnamed.length > 10 ? ' …' : ''));
     }
+    const split = splitStartWarning(currentPhase(), members.length);
+    if (split) parts.push(split);
     if (agg && agg.meta && agg.meta.weekdayExcludedMatches) parts.push(`平日大会の対戦 ${agg.meta.weekdayExcludedMatches} 件を除外中`);
     if (aggWarn) parts.push(aggWarn);
     return parts.join(' / ');
+  }
+
+  // 勝者側スタート人数が「前フェーズを無敗で通過した人数」と食い違っていたら知らせる。
+  // 食い違い自体は設定として許すが (実際にそう組む大会もある)、黙って通さない。
+  function splitStartWarning(ph, M) {
+    if (ph === 0 || !M) return '';
+    const u = undefeatedCount(ph - 1);
+    const P = Math.max(1, STATE.payload.phases[ph].pools | 0);
+    const want = Math.max(0, Math.min(Math.ceil(u / P), M - 0));
+    const wb = M - lbOfPhase(ph, M);
+    if (wb === want) return '';
+    return `⚠ 前フェーズを無敗で通過したのは ${u}人 (1プールあたり ${want}人) ですが、` +
+      `勝者側スタートは ${wb}人 の設定です — ` +
+      (wb > want ? '1敗で通過した人が勝者側から始まります' : '無敗で通過した人が敗者側から始まります') +
+      ' (フェーズ構成の「敗者側スタート」で調整)';
   }
 
   // 名前が出せない理由 (共有データにも players/<uid>.json にも無い、のどれか)
@@ -334,8 +413,8 @@
     for (let r = 0; r < R; r++) {
       // 表示名は打ち切り前のラウンド数基準 (2人抜けプールの最終戦を「決勝」と呼ばない)
       const title = withGf && r === R - 1 ? '勝者側決勝' : C.roundName(r + 1, de.wTotal);
-      const cells = de.winners[r].map((m, i) =>
-        matchDiv(m, ctx, TITLE_H + center(r, i) - MATCH_H / 2, null)).join('');
+      const cells = de.winners[r].map((m, i) => (played(m)
+        ? matchDiv(m, ctx, TITLE_H + center(r, i) - MATCH_H / 2, null, `W:${r}:${i}`) : '')).join('');
       cols += `<div class="bp-round" style="left:${r * (COLW + GAP)}px">` +
         `<div class="bp-round-title">${esc(title)}</div>${cells}</div>`;
     }
@@ -348,8 +427,9 @@
 
     let svgs = '';
     for (let r = 1; r < R; r++) {
-      const paths = de.winners[r].map((m, i) => elbowPath(
-        TITLE_H + center(r - 1, 2 * i), TITLE_H + center(r - 1, 2 * i + 1), TITLE_H + center(r, i))).join('');
+      const paths = de.winners[r].map((m, i) => (played(m) ? connector(
+        TITLE_H + center(r - 1, 2 * i), TITLE_H + center(r - 1, 2 * i + 1), TITLE_H + center(r, i),
+        played(de.winners[r - 1][2 * i]), played(de.winners[r - 1][2 * i + 1])) : '')).join('');
       svgs += linkSvg(r, height, paths);
     }
     if (withGf) {
@@ -371,9 +451,9 @@
 
     let cols = '';
     rounds.forEach((matches, li) => {
-      const cells = matches.map((m, i) => matchDiv(
+      const cells = matches.map((m, i) => (played(m) ? matchDiv(
         m, ctx, TITLE_H + center(li, i) - MATCH_H / 2,
-        m.drop ? `↓勝者側${C.roundName(m.drop, k)}` : null)).join('');
+        m.drop ? `↓勝者側${C.roundName(m.drop, k)}` : null, `L:${li}:${i}`) : '')).join('');
       cols += `<div class="bp-round bp-lb" style="left:${li * (COLW + GAP)}px">` +
         `<div class="bp-round-title">${esc(C.lbRoundName(li, de.lTotal))}</div>${cells}</div>`;
     });
@@ -384,12 +464,14 @@
       if (counts[li] === counts[li - 1]) {
         // major: 1:1 の直線 (ドロップ側は勝者側から来るのでバッジのみ)
         paths = rounds[li].map((m, i) => {
+          if (!played(m) || !played(rounds[li - 1][i])) return '';
           const y1 = TITLE_H + center(li - 1, i), y2 = TITLE_H + center(li, i);
           return `<path d="M0 ${y1} C ${GAP / 2} ${y1} ${GAP / 2} ${y2} ${GAP} ${y2}"/>`;
         }).join('');
       } else {
-        paths = rounds[li].map((m, i) => elbowPath(
-          TITLE_H + center(li - 1, 2 * i), TITLE_H + center(li - 1, 2 * i + 1), TITLE_H + center(li, i))).join('');
+        paths = rounds[li].map((m, i) => (played(m) ? connector(
+          TITLE_H + center(li - 1, 2 * i), TITLE_H + center(li - 1, 2 * i + 1), TITLE_H + center(li, i),
+          played(rounds[li - 1][2 * i]), played(rounds[li - 1][2 * i + 1])) : '')).join('');
       }
       svgs += linkSvg(li, height, paths);
     }
@@ -402,29 +484,198 @@
       `viewBox="0 0 ${GAP} ${height}" xmlns="http://www.w3.org/2000/svg">${paths}</svg>`;
   }
 
-  // 2 本の入力 (y1,y2) → 出力 (yt) のエルボー接続
-  function elbowPath(y1, y2, yt) {
+  // 実施される試合か (片方でも空きなら bye = 非表示)
+  function played(m) { return !!(m && m.a != null && m.b != null); }
+
+  // 2 本の入力 (y1,y2) → 出力 (yt) の接続。bye で消えた側からは線を引かない。
+  function connector(y1, y2, yt, v1, v2) {
     const h = GAP / 2;
-    return `<path d="M0 ${y1} H ${h} V ${yt} H ${GAP}"/><path d="M0 ${y2} H ${h} V ${yt}"/>`;
+    if (v1 && v2) return `<path d="M0 ${y1} H ${h} V ${yt} H ${GAP}"/><path d="M0 ${y2} H ${h} V ${yt}"/>`;
+    if (v1) return `<path d="M0 ${y1} H ${h} V ${yt} H ${GAP}"/>`;
+    if (v2) return `<path d="M0 ${y2} H ${h} V ${yt} H ${GAP}"/>`;
+    return '';
   }
 
-  function slotHtml(local, m, ctx, dropBadge, isB) {
+  function slotHtml(local, m, ctx, dropBadge, isB, key) {
     if (local == null) {
-      return `<div class="bp-slot bp-bye"><span class="bp-seed"></span><span class="bp-name">BYE</span></div>`;
+      return '<div class="bp-slot bp-bye"><div class="bp-line">' +
+        '<span class="bp-seed"></span><span class="bp-name">BYE</span></div></div>';
     }
     const gi = ctx.members[local - 1];
     const uid = uidOf(gi);
     const pj = uid != null ? STATE.players.get(uid) : null;
     const nodb = uid == null || (pj && (pj.__missing || pj.__error));
     const res = residenceOf(gi);
-    const cls = 'bp-slot' + (m.w === local ? ' bp-win' : '') + (nodb ? ' bp-nodb' : '');
-    return `<div class="${cls}"><span class="bp-seed">${gi + 1}</span>` +
+    const hi = STATE.view.hi === gi;
+    const cls = 'bp-slot' + (m.w === local ? ' bp-win' : '') + (nodb ? ' bp-nodb' : '') + (hi ? ' bp-hi' : '');
+    // その選手が最後に出る試合なら、次フェーズのどこから始まるかを出す
+    const last = key != null && ctx.lastAt && ctx.lastAt.get(local) === key + (isB ? ':b' : ':a');
+    const ch = mainCharOf(gi);
+    // 名前の下 (同じ枠の中) に並べるタグ: 居住地・落ちる先・落ちてきた元
+    const tags = [
+      isB && dropBadge ? dropFromBadge(ctx, m, local, dropBadge) : '',
+      dropToBadge(ctx, m, local, gi, key),
+      res ? `<span class="bp-res">${esc(res)}</span>` : '',
+    ].filter(Boolean).join('');
+    const first = key != null && ctx.firstAt && ctx.firstAt.get(local) === key + (isB ? ':b' : ':a');
+    return `<div class="${cls}">` +
+      '<div class="bp-line">' +
+      `<span class="bp-seed">${gi + 1}</span>` +
+      (ch ? `<span class="bp-char" title="${esc(ch.name)}">${esc(ch.emoji)}</span>` : '') +
       `<span class="bp-name" data-gi="${gi}">${esc(nameOf(gi))}</span>` +
-      (isB && dropBadge ? `<span class="bp-drop">${esc(dropBadge)}</span>` : '') +
-      (res ? `<span class="bp-res">${esc(res)}</span>` : '') + '</div>';
+      '</div>' +
+      (tags ? `<div class="bp-tags">${tags}</div>` : '') +
+      // フェーズをまたぐ導線は枠の外 (出どころ=左 / 進出先=右)
+      (first ? prevChip(gi) : '') +
+      (last ? nextChip(gi) : '') + '</div>';
   }
 
-  function matchDiv(m, ctx, top, dropBadge) {
+  // 敗者側 major の「↓勝者側○回戦」。元の試合が分かればクリックで飛べるようにする。
+  function dropFromBadge(ctx, m, local, label) {
+    const r = (m.drop | 0) - 1;
+    const src = (ctx.de.winners[r] || []).findIndex((wm) => wm.l === local);
+    if (src < 0) return `<span class="bp-drop">${esc(label)}</span>`;
+    return `<button class="bp-drop bp-jump" data-jump="W:${r}:${src}" data-jump-gi="${ctx.members[local - 1]}"` +
+      ` title="落ちてきた元の試合へ">${esc(label)}</button>`;
+  }
+
+  // 勝者側の枠に「負けたら敗者側○回戦へ」。クリックでその試合へ飛ぶ。
+  function dropToBadge(ctx, m, local, gi, key) {
+    if (key == null || key[0] !== 'W' || m.l !== local) return '';   // 負ける側だけに出す
+    // 落ちる先 = その選手が敗者側で最初に現れる試合 (組まれていなければ出さない)
+    const li = ctx.de.losers.findIndex((round) => round.some((lm) => lm.a === local || lm.b === local));
+    if (li < 0) return '';
+    const mi = ctx.de.losers[li].findIndex((lm) => lm.a === local || lm.b === local);
+    return `<button class="bp-dropto bp-jump" data-jump="L:${li}:${mi}" data-jump-gi="${gi}"` +
+      ` title="ここで負けたときに落ちる試合へ">↓ ${esc(C.lbRoundName(li, ctx.de.lTotal))}</button>`;
+  }
+
+  // 指定の試合までスクロールし、その選手をハイライトする。
+  // 敗者側が非表示なら表示に切り替えてから飛ぶ。
+  function jumpToMatch(key, gi) {
+    if (key[0] === 'L' && STATE.view.lb !== 1) {
+      STATE.view.lb = 1;
+      $('bp-lb').checked = true;
+    }
+    STATE.view.hi = gi;
+    hidePop();
+    renderAll();
+    let tries = 0;
+    const tick = () => {
+      const el = document.querySelector(`.bp-match[data-key="${key}"]`);
+      if (el) {
+        el.scrollIntoView({ block: 'center', inline: 'center', behavior: 'smooth' });
+        el.classList.add('bp-flash');
+        return;
+      }
+      if (tries++ < 20) setTimeout(tick, 50);
+    };
+    tick();
+  }
+
+  // 次フェーズの入り口 (プール・シード番号・勝者側/敗者側スタート) を示すチップ。
+  // クリックでそのフェーズ・プールを開き、本人をハイライトする。
+  function nextChip(gi) {
+    const d = nextDest(gi);
+    if (!d) return '';
+    return `<button class="bp-next" data-next="${gi}" title="${esc(d.phaseName)} の ${esc(d.pool)} を開く">` +
+      `→ ${esc(d.pool)} #${d.localSeed}${d.side === 'losers' ? ' 敗者側' : ''}</button>`;
+  }
+
+  // 前フェーズのどのプールから来たか。フェーズ0なら null。
+  function prevSource(gi) {
+    const ph = currentPhase();
+    if (ph === 0) return null;
+    const counts = phaseCounts();
+    const pp = STATE.payload.phases[ph - 1];
+    const P = Math.max(1, pp.pools | 0);
+    const poolIdx = O.poolOfSeed(gi, P);
+    const members = C.phasePools(counts[ph - 1], P)[poolIdx];
+    return {
+      ph: ph - 1, pool: poolLabels(ph - 1)[poolIdx], localSeed: members.indexOf(gi) + 1,
+      phaseName: pp.name || `フェーズ${ph}`,
+    };
+  }
+
+  // 前フェーズの出どころチップ (その選手が現フェーズで最初に出る枠に付ける)。
+  function prevChip(gi) {
+    const s = prevSource(gi);
+    if (!s || s.localSeed < 1) return '';
+    return `<button class="bp-prev" data-prev="${gi}" title="${esc(s.phaseName)} の ${esc(s.pool)} を開く">` +
+      `← ${esc(s.pool)} #${s.localSeed}</button>`;
+  }
+
+  function gotoPrevPhase(gi) {
+    const s = prevSource(gi);
+    if (!s) return;
+    STATE.view.ph = s.ph;
+    STATE.view.pool = s.pool;
+    STATE.view.hi = gi;
+    hidePop();
+    renderAll();
+    scrollToHighlight();
+  }
+
+  function scrollToHighlight() {
+    let tries = 0;
+    const tick = () => {
+      const el = document.querySelector('.bp-slot.bp-hi');
+      if (el) { el.scrollIntoView({ block: 'center', inline: 'center', behavior: 'smooth' }); return; }
+      if (tries++ < 20) setTimeout(tick, 50);
+    };
+    tick();
+  }
+
+  // gi (現フェーズのグローバル index) が次フェーズでどこに入るか。進出しないなら null。
+  function nextDest(gi) {
+    const ph = currentPhase();
+    if (ph >= STATE.payload.phases.length - 1) return null;
+    const counts = phaseCounts();
+    const nextN = counts[ph + 1];
+    if (!(gi < nextN)) return null;
+    const np = STATE.payload.phases[ph + 1];
+    const P = Math.max(1, np.pools | 0);
+    const poolIdx = O.poolOfSeed(gi, P);
+    const membersNext = C.phasePools(nextN, P)[poolIdx];
+    const localSeed = membersNext.indexOf(gi) + 1;
+    const lb = lbOfPhase(ph + 1, membersNext.length);
+    return {
+      ph: ph + 1, pool: poolLabels(ph + 1)[poolIdx], localSeed,
+      side: (lb > 0 && localSeed > membersNext.length - lb) ? 'losers' : 'winners',
+      phaseName: np.name || `フェーズ${ph + 2}`,
+    };
+  }
+
+  // 次フェーズのそのプールを開き、本人をハイライトして画面内に入れる。
+  function gotoNextPhase(gi) {
+    const d = nextDest(gi);
+    if (!d) return;
+    STATE.view.ph = d.ph;
+    STATE.view.pool = d.pool;
+    STATE.view.hi = gi;
+    hidePop();
+    renderAll();
+    scrollToHighlight();   // 描画は非同期なので出るまで待つ
+  }
+
+  // 各選手が最後に登場する枠 (そこに次フェーズのチップを付ける)。
+  function lastAppearance(de, which) {
+    const map = new Map();
+    const keepFirst = which === 'first';
+    const put = (s, k) => { if (s != null && !(keepFirst && map.has(s))) map.set(s, k); };
+    for (const step of C.playOrder(de)) {
+      const rows = step.k === 'W' ? de.winners[step.i] : (step.k === 'L' ? de.losers[step.i] : null);
+      if (!rows) continue;
+      rows.forEach((m, i) => {
+        if (m.a == null || m.b == null) return;      // bye は表示しないので付けない
+        const key = `${step.k}:${step.i}:${i}`;
+        put(m.a, key + ':a'); put(m.b, key + ':b');
+      });
+    }
+    return map;
+  }
+
+  function matchDiv(m, ctx, top, dropBadge, key) {
     let flags = '';
     if (m.a != null && m.b != null) {
       const ga = ctx.members[m.a - 1], gb = ctx.members[m.b - 1];
@@ -452,8 +703,8 @@
       }
     }
     const ghost = (m.a == null && m.b == null) ? ' bp-ghost' : '';
-    return `<div class="bp-match${ghost}" style="top:${top}px">` +
-      slotHtml(m.a, m, ctx, dropBadge, false) + slotHtml(m.b, m, ctx, dropBadge, true) +
+    return `<div class="bp-match${ghost}"${key ? ` data-key="${key}"` : ''} style="top:${top}px">` +
+      slotHtml(m.a, m, ctx, dropBadge, false, key) + slotHtml(m.b, m, ctx, dropBadge, true, key) +
       (flags ? `<div class="bp-flags">${flags}</div>` : '') + '</div>';
   }
 
@@ -479,7 +730,9 @@
     const uid = uidOf(gi);
     const pj = uid != null ? STATE.players.get(uid) : null;
     const name = nameOf(gi);
-    let h = `<h3>${esc(name)} <span class="bp-pop-sub">シード ${gi + 1}</span></h3>`;
+    const mainCh = mainCharOf(gi);
+    let h = `<h3>${mainCh ? esc(mainCh.emoji) + ' ' : ''}${esc(name)} ` +
+      `<span class="bp-pop-sub">シード ${gi + 1}${mainCh ? ' ・ ' + esc(mainCh.name) : ''}</span></h3>`;
     if (uid == null) return h + '<div class="bp-pop-sub">SPSP 未登録の参加者 (uid なし)。名前は共有データの表記です。</div>';
     if (pj && pj.__error) return h + `<div class="bp-pop-sub">選手データの取得に失敗しました (${esc(pj.__error)})。再読み込みで再試行されます。</div>`;
     if (!pj || pj.__missing) {
@@ -529,18 +782,37 @@
         `<label class="bp-f"><span>各プール進出</span>` +
         `<input type="number" data-f="adv" value="${p.adv || 0}" min="0" inputmode="numeric"` +
         `${isFinal ? ' disabled title="最終フェーズでは使いません"' : ''}></label>` +
+        `<label class="bp-f"><span title="下位シードから何人が敗者側スタートか (予選2位は敗者側から、等)">敗者側スタート</span>` +
+        `<input type="number" data-f="lb" value="${effectiveLb(i)}" min="0" inputmode="numeric"></label>` +
         `<span class="bp-count">${counts[i] != null ? counts[i] + '人' : ''}</span>` +
         (STATE.payload.phases.length > 1 ? `<button class="bp-btn" data-del="${i}">削除</button>` : '') +
         '</div>';
     }).join('');
   }
 
+  // エディタに出す敗者側スタート人数 (未指定なら既定値を見せる)。
+  function effectiveLb(ph) {
+    const counts = phaseCounts();
+    const P = Math.max(1, STATE.payload.phases[ph].pools | 0);
+    const pools = C.phasePools(counts[ph], P);
+    const size = pools.length && pools[0].length ? pools[0].length : counts[ph];
+    return lbOfPhase(ph, size);
+  }
+
   function readPhaseEditor() {
-    return [...$('bp-phase-rows').querySelectorAll('.bp-phase-row')].map((row) => ({
-      name: row.querySelector('[data-f="name"]').value.trim(),
-      pools: parseInt(row.querySelector('[data-f="pools"]').value, 10),
-      adv: parseInt(row.querySelector('[data-f="adv"]').value, 10) || 0,
-    }));
+    return [...$('bp-phase-rows').querySelectorAll('.bp-phase-row')].map((row, i) => {
+      const out = {
+        name: row.querySelector('[data-f="name"]').value.trim(),
+        pools: parseInt(row.querySelector('[data-f="pools"]').value, 10),
+        adv: parseInt(row.querySelector('[data-f="adv"]').value, 10) || 0,
+      };
+      // 敗者側スタートは既定値のままなら持たせない = 前フェーズの結果に追従し続ける。
+      // 明示的に別の数を入れたときだけ固定値として保存する。
+      const typed = parseInt(row.querySelector('[data-f="lb"]').value, 10) || 0;
+      if (i < STATE.payload.phases.length && typed !== effectiveLb(i)) out.lb = typed;
+      else if (i >= STATE.payload.phases.length && typed) out.lb = typed;
+      return out;
+    });
   }
 
   async function applyPhases(phases) {
@@ -619,10 +891,12 @@
       if (!b) return;
       STATE.view.ph = parseInt(b.dataset.ph, 10);
       STATE.view.pool = null;
+      STATE.view.hi = null;
       renderTabs(); renderPoolSelect(); renderBracket();
     });
     $('bp-pool-select').addEventListener('change', () => {
       STATE.view.pool = $('bp-pool-select').value;
+      STATE.view.hi = null;
       renderBracket();
     });
     const movePool = (d) => {
@@ -630,6 +904,7 @@
       const i = Math.max(0, labels.indexOf(STATE.view.pool));
       const ni = (i + d + labels.length) % labels.length;
       STATE.view.pool = labels[ni];
+      STATE.view.hi = null;
       renderPoolSelect(); renderBracket();
     };
     $('bp-pool-prev').addEventListener('click', () => movePool(-1));
@@ -680,8 +955,24 @@
     });
     // ポップアップ (プレイヤー概要 / 直近対戦の詳細)
     $('bp-bracket').addEventListener('click', (e) => {
+      // 次フェーズチップ: そのフェーズ・プールを開いて本人をハイライト
+      const nx = e.target.closest('.bp-next[data-next]');
+      if (nx) { gotoNextPhase(parseInt(nx.dataset.next, 10)); return; }
+      const pv = e.target.closest('.bp-prev[data-prev]');
+      if (pv) { gotoPrevPhase(parseInt(pv.dataset.prev, 10)); return; }
+      const jump = e.target.closest('.bp-jump[data-jump]');
+      if (jump) { jumpToMatch(jump.dataset.jump, parseInt(jump.dataset.jumpGi, 10)); return; }
       const nameEl = e.target.closest('.bp-name[data-gi]');
-      if (nameEl) { showPop(nameEl, playerPopHtml(parseInt(nameEl.dataset.gi, 10))); return; }
+      if (nameEl) {
+        // 名前クリック = その選手をハイライト (もう一度で解除) + 概要ポップアップ
+        const gi = parseInt(nameEl.dataset.gi, 10);
+        STATE.view.hi = (STATE.view.hi === gi) ? null : gi;
+        const html = playerPopHtml(gi);
+        renderBracket();
+        const again = [...document.querySelectorAll('.bp-name[data-gi="' + gi + '"]')][0] || nameEl;
+        showPop(again, html);
+        return;
+      }
       const flag = e.target.closest('.bp-flag-recent[data-pair]');
       if (flag) {
         const [ua, ub] = flag.dataset.pair.split(':').map(Number);

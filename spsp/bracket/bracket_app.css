@@ -74,13 +74,14 @@ body {
 }
 
 /* ── ブラケット (絶対配置 + SVG 接続線) ── */
-.bp-bracket { overflow-x: auto; padding: 8px 4px 24px; }
+/* 進出先チップは枠の右外、出どころチップは左外に出るので、その分の余白を確保する */
+.bp-bracket { overflow-x: auto; padding: 8px 122px 24px 4px; }
+.bp-bracket.has-prev { padding-left: 106px; }
 .bp-sec { position: relative; margin: 4px 0 10px; }
 .bp-sec-label {
   font-size: 12px; font-weight: 700; color: #374151; margin: 18px 0 2px;
   padding-top: 12px; border-top: 1px dashed #d1d5db;
 }
-.bp-sec-note { font-weight: 400; font-size: 10px; color: #9ca3af; }
 
 .bp-round { position: absolute; top: 0; width: 232px; height: 100%; }
 .bp-round-title {
@@ -97,12 +98,21 @@ body {
 }
 .bp-match.bp-ghost { opacity: .35; }
 .bp-slot {
-  display: flex; align-items: center; gap: 6px; padding: 0 9px; height: 27px;
+  position: relative;                 /* 枠外チップ (bp-prev / bp-next) の基準 */
+  display: flex; flex-direction: column; justify-content: center; gap: 1px;
+  padding: 3px 9px; min-height: 27px;
 }
+.bp-slot .bp-line { display: flex; align-items: center; gap: 6px; min-width: 0; }
+/* 名前の下に置くタグ (居住地・落ちる先・落ちてきた元)。シード番号ぶん右へ寄せる */
+.bp-slot .bp-tags { display: flex; flex-wrap: wrap; gap: 3px; margin-left: 30px; }
 .bp-slot + .bp-slot { border-top: 1px solid #f1f5f9; }
 .bp-slot .bp-seed {
   font-size: 10px; color: #94a3b8; min-width: 24px; text-align: right;
   font-variant-numeric: tabular-nums;
+}
+.bp-slot .bp-char {
+  font-size: 12px; line-height: 1; flex: none; width: 1.15em; text-align: center;
+  cursor: default;
 }
 .bp-slot .bp-name {
   font-size: 12px; color: #1f2937; white-space: nowrap; overflow: hidden;
@@ -115,8 +125,21 @@ body {
 }
 .bp-slot .bp-drop {
   font-size: 9px; color: #92400e; background: #fef3c7; border-radius: 4px;
-  padding: 1px 4px; white-space: nowrap;
+  padding: 1px 4px; white-space: nowrap; border: 1px solid transparent;
+  font-family: inherit; line-height: 1.5;
 }
+/* 負けたときに落ちる先 (勝者側の枠に出す) */
+.bp-slot .bp-dropto {
+  font-size: 9px; color: #7c2d12; background: #ffedd5; border: 1px solid #fed7aa;
+  border-radius: 4px; padding: 1px 4px; white-space: nowrap;
+  font-family: inherit; line-height: 1.5;
+}
+.bp-jump { cursor: pointer; }
+.bp-jump:hover { filter: brightness(.94); }
+/* 飛んだ先を一瞬光らせる */
+@keyframes bp-flash { from { box-shadow: 0 0 0 3px #fbbf24; } to { box-shadow: 0 0 0 3px transparent; } }
+.bp-match.bp-flash { animation: bp-flash 1.4s ease-out 1; }
+@media (prefers-reduced-motion: reduce) { .bp-match.bp-flash { animation: none; box-shadow: 0 0 0 3px #fbbf24; } }
 .bp-slot.bp-win { background: #f0f6ff; }
 .bp-slot.bp-win .bp-name { font-weight: 700; color: #1e40af; }
 .bp-slot.bp-win:first-child { border-radius: 8px 8px 0 0; box-shadow: inset 3px 0 0 #2563eb; }
@@ -124,6 +147,30 @@ body {
 .bp-slot.bp-bye { color: #c7cdd6; }
 .bp-slot.bp-bye .bp-name { color: #c7cdd6; cursor: default; }
 .bp-slot.bp-nodb .bp-name { color: #64748b; }
+/* 次フェーズの入り口 (クリックでそのプールへ) */
+.bp-slot .bp-next {
+  font-size: 9px; color: #065f46; background: #d1fae5; border: 1px solid #a7f3d0;
+  border-radius: 4px; padding: 1px 5px; white-space: nowrap; cursor: pointer;
+  font-family: inherit; line-height: 1.5;
+}
+.bp-slot .bp-next:hover { background: #a7f3d0; }
+.bp-slot .bp-next {
+  position: absolute; left: 100%; margin-left: 7px; top: 50%; transform: translateY(-50%);
+  z-index: 2;
+}
+/* 前フェーズの出どころ (クリックでそこへ戻る) */
+.bp-slot .bp-prev {
+  font-size: 9px; color: #3730a3; background: #e0e7ff; border: 1px solid #c7d2fe;
+  border-radius: 4px; padding: 1px 5px; white-space: nowrap; cursor: pointer;
+  font-family: inherit; line-height: 1.5;
+}
+.bp-slot .bp-prev:hover { background: #c7d2fe; }
+.bp-slot .bp-prev {
+  position: absolute; right: 100%; margin-right: 7px; top: 50%; transform: translateY(-50%);
+  z-index: 2;
+}
+.bp-match .bp-slot.bp-hi { background: #fff7ed; box-shadow: inset 0 0 0 2px #f59e0b; }
+.bp-match .bp-slot.bp-hi .bp-name { font-weight: 700; }
 .bp-flags {
   position: absolute; left: 6px; right: 6px; top: 100%; margin-top: 2px;
   display: flex; flex-wrap: nowrap; gap: 4px; overflow: hidden;
