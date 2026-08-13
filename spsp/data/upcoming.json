@@ -1,5 +1,5 @@
 {
-  "generated_at": 1786600439,
+  "generated_at": 1786603792,
   "country_code": "JP",
   "lookahead_days": 21,
   "count": 52,
@@ -589,14 +589,14 @@
       "city": "渋谷区",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 0,
+      "num_attendees": 1,
       "url": "/tournament/shibuya-g-g-smash-weekly-76",
       "events": [
         {
           "event_id": 1687894,
           "event_slug": "tournament/shibuya-g-g-smash-weekly-76/event/singles",
           "event_name": "Singles",
-          "num_entrants": 0,
+          "num_entrants": 1,
           "type": 1,
           "start_at": 1787221800
         }
@@ -681,14 +681,14 @@
       "city": "観音寺市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 153,
+      "num_attendees": 154,
       "url": "/tournament/big-lagoon-with",
       "events": [
         {
           "event_id": 1659077,
           "event_slug": "tournament/big-lagoon-with/event/big-lagoon-with",
           "event_name": "BIG LAGOON with 銭スマ",
-          "num_entrants": 153,
+          "num_entrants": 154,
           "type": 1,
           "start_at": 1787360400
         }
@@ -773,7 +773,7 @@
       "city": "豊橋市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 12,
+      "num_attendees": 13,
       "url": "/tournament/22-21",
       "events": [
         {
@@ -1026,14 +1026,14 @@
       "city": "四日市市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 8,
+      "num_attendees": 10,
       "url": "/tournament/quattro-6",
       "events": [
         {
           "event_id": 1684288,
           "event_slug": "tournament/quattro-6/event/quattro",
           "event_name": "四闘-Quattro-",
-          "num_entrants": 8,
+          "num_entrants": 10,
           "type": 1,
           "start_at": 1787976000
         }

@@ -61,6 +61,7 @@
     try {
       sessionStorage.setItem(S.NONCE_KEY, nonce);
       sessionStorage.setItem(S.DRAFT_KEY, v.body);
+      sessionStorage.setItem(S.INTENT_KEY, 'post'); // 前の login フローの残骸を上書き
     } catch (_) {
       setStatus('error', 'ブラウザの保存領域が使えないため投稿できません (プライベートモード等)。');
       return;

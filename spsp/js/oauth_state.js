@@ -7,6 +7,9 @@
 
   var NONCE_KEY = 'spsp_oauth_nonce';
   var DRAFT_KEY = 'spsp_draft';
+  // 認可から戻ったとき callback が何をするか ('post' | 'login')。
+  // 無ければ 'post' (後方互換)。callback は読み取り後すぐ消す。
+  var INTENT_KEY = 'spsp_oauth_intent';
 
   // ── base64url (UTF-8 安全) ──
   // state は URL のクエリに載るので、+ / = を含まない base64url を使う。
@@ -65,9 +68,14 @@
     return r;
   }
 
-  /** 戻り先に ?posted=1 を付ける (既存のクエリを壊さない)。 */
+  /** 戻り先に ?<flag>=1 を付ける (既存のクエリを壊さない)。 */
+  function withFlag(path, flag) {
+    return path + (path.indexOf('?') === -1 ? '?' : '&') + flag + '=1';
+  }
+
+  /** 戻り先に ?posted=1 を付ける。 */
   function withPosted(path) {
-    return path + (path.indexOf('?') === -1 ? '?' : '&') + 'posted=1';
+    return withFlag(path, 'posted');
   }
 
   /**
@@ -123,9 +131,11 @@
   var API = {
     NONCE_KEY: NONCE_KEY,
     DRAFT_KEY: DRAFT_KEY,
+    INTENT_KEY: INTENT_KEY,
     encodeState: encodeState,
     decodeState: decodeState,
     safeReturnPath: safeReturnPath,
+    withFlag: withFlag,
     withPosted: withPosted,
     validateBody: validateBody,
     buildAuthorizeUrl: buildAuthorizeUrl,

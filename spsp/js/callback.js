@@ -14,6 +14,7 @@
 
   var CFG = window.SPSP_POST_CONFIG;
   var S = window.SpspOAuthState;
+  var AUTH = window.SpspAuth;
 
   function show(kind, title, detail, backPath) {
     var root = document.getElementById('cb-root');
@@ -77,7 +78,26 @@
 
     var back = S.safeReturnPath(st.r, CFG.CANONICAL_BASE); // INV-7
 
-    // ── 4. 下書き ──
+    // フローの種別 (post = 投稿 / login = ログインだけしてページに戻る)。
+    // 読んだらすぐ消す (放置すると次の別フローに紛れ込む)。
+    var intent = null;
+    try {
+      intent = sessionStorage.getItem(S.INTENT_KEY);
+      sessionStorage.removeItem(S.INTENT_KEY);
+    } catch (_) { /* intent は null のまま */ }
+
+    var missing = S.missingConfig(CFG);
+    if (missing.length) {
+      show('error', '設定エラー', '投稿機能はまだ設定されていません。', back);
+      return;
+    }
+
+    if (intent === 'login') {
+      runLogin(code, back);
+      return;
+    }
+
+    // ── 4. 下書き (post フロー) ──
     var body = null;
     try {
       body = sessionStorage.getItem(S.DRAFT_KEY);
@@ -86,12 +106,6 @@
     if (!body) {
       show('error', '下書きが見つかりません',
         '投稿する本文が残っていません。投稿ページからやり直してください。', back);
-      return;
-    }
-
-    var missing = S.missingConfig(CFG);
-    if (missing.length) {
-      show('error', '設定エラー', '投稿機能はまだ設定されていません。', back);
       return;
     }
 
@@ -122,6 +136,35 @@
       show('error', '投稿できませんでした', msg, back);
     }).catch(function () {
       show('error', '投稿できませんでした',
+        '通信に失敗しました。時間をおいてやり直してください。', back);
+    });
+  }
+
+  /**
+   * login フロー: code をセッショントークンに替えて localStorage に保存し、
+   * 元のページに ?login=1 で戻る。シートには何も書かれない。
+   */
+  function runLogin(code, back) {
+    fetch(CFG.GAS_ENDPOINT, {
+      method: 'POST',
+      redirect: 'follow',
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+      body: JSON.stringify({ action: 'login', code: code }),
+    }).then(function (res) {
+      return res.json();
+    }).then(function (json) {
+      if (json && json.ok && json.token && json.user) {
+        AUTH.save({ token: json.token, user: json.user, exp: json.exp });
+        try { sessionStorage.removeItem(S.NONCE_KEY); } catch (_) { /* noop */ }
+        location.replace(S.withFlag(back, 'login'));
+        return;
+      }
+      var msg = (json && json.error && json.error.message)
+        ? json.error.message
+        : '認証に失敗しました。';
+      show('error', 'ログインできませんでした', msg, back);
+    }).catch(function () {
+      show('error', 'ログインできませんでした',
         '通信に失敗しました。時間をおいてやり直してください。', back);
     });
   }

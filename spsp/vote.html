@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>キャラ投票 — SPSP</title>
+<!-- 公開前。ナビからも未リンク。公開時に外す (docs/DEPLOY.md 参照) -->
+<meta name="robots" content="noindex">
+
+<style>
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Hiragino Sans", sans-serif;
+    background: #ffffff; color: #111827; font-size: 14px;
+    -webkit-text-size-adjust: 100%;
+  }
+  main { max-width: 560px; margin: 0 auto; padding: 16px; }
+  h1 { font-size: 18px; font-weight: 700; margin: 2px 0 4px; }
+  .subtitle { color: #6b7280; font-size: 12px; margin: 0 0 12px; }
+
+  #card {
+    background: linear-gradient(180deg, #fafafa 0%, #ffffff 30%, #ffffff 100%);
+    border: 1px solid #e5e7eb; border-radius: 12px; padding: 16px 14px;
+  }
+
+  button {
+    padding: 9px 16px; font-size: 14px; font-weight: 600; color: #fff;
+    background: #2563eb; border: 0; border-radius: 8px; cursor: pointer;
+  }
+  button:disabled { background: #9ca3af; cursor: default; }
+  button.ghost {
+    background: transparent; color: #6b7280; font-weight: 400;
+    padding: 4px 8px; font-size: 12px; text-decoration: underline;
+  }
+
+  select {
+    width: 100%; padding: 9px 10px; font-size: 15px;
+    border: 1px solid #d1d5db; border-radius: 8px; background: #fff;
+    margin-bottom: 10px;
+  }
+
+  input[type="search"] {
+    width: 100%; padding: 9px 10px; font-size: 15px;
+    border: 1px solid #d1d5db; border-radius: 8px;
+    margin-bottom: 8px;
+  }
+  #vt-results { display: flex; flex-direction: column; gap: 4px; }
+  .vt-result {
+    text-align: left; background: #f9fafb; color: #111827; font-weight: 400;
+    border: 1px solid #e5e7eb; border-radius: 8px; padding: 8px 10px;
+  }
+  .vt-result:hover { background: #eff6ff; border-color: #bfdbfe; }
+  .hint { color: #9ca3af; font-size: 11px; margin-top: 6px; }
+
+  .status { margin-top: 12px; padding: 9px 11px; border-radius: 8px; font-size: 13px; }
+  .status[hidden] { display: none; }
+  .status.ok { background: #ecfdf5; color: #065f46; border: 1px solid #a7f3d0; }
+  .status.error { background: #fef2f2; color: #991b1b; border: 1px solid #fecaca; }
+
+  #vt-who { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; font-size: 13px; }
+  #vt-who[hidden] { display: none; }
+  #vt-who-name { font-weight: 600; }
+
+  .inel-title { font-weight: 700; color: #991b1b; margin: 0 0 6px; }
+  .inel-detail { color: #6b7280; font-size: 13px; line-height: 1.7; margin: 0; }
+
+  .note { color: #6b7280; font-size: 12px; margin-top: 12px; line-height: 1.7; }
+  #vt-canonical[hidden] { display: none; }
+  #vt-canonical { margin-top: 8px; font-size: 12px; }
+  [hidden] { display: none; }
+</style>
+</head>
+<body>
+<div id="nav-root"></div>
+
+<main>
+  <h1>キャラ投票</h1>
+  <p class="subtitle">自分のメイン使用キャラを報告できます (start.gg の選手認証が必要)。</p>
+
+  <div id="card">
+    <div id="vt-who" hidden>
+      <span>ログイン中: <span id="vt-who-name"></span></span>
+      <button id="vt-logout-btn" class="ghost" type="button">ログアウト</button>
+    </div>
+
+    <div id="vt-select">
+      <p class="inel-detail" style="margin-bottom:8px">
+        まず自分の選手名を検索してください。投票できるかどうかを先に確認できます。
+      </p>
+      <input id="vt-search" type="search" placeholder="選手名で検索" autocomplete="off">
+      <div id="vt-results"></div>
+      <p class="hint" id="vt-idx-status"></p>
+    </div>
+
+    <div id="vt-check" hidden>
+      <p class="inel-detail">投票できるか確認しています…</p>
+    </div>
+
+    <div id="vt-ineligible" hidden>
+      <p class="inel-title" id="vt-inel-title"></p>
+      <p class="inel-detail" id="vt-inel-detail"></p>
+      <p style="margin-top:10px"><button id="vt-back-btn" class="ghost" type="button">別の選手を選ぶ</button></p>
+    </div>
+
+    <div id="vt-auth" hidden>
+      <p class="inel-detail" id="vt-auth-msg" style="margin-bottom:10px"></p>
+      <button id="vt-login-btn" type="button">start.gg で本人確認して投票に進む</button>
+      <button id="vt-back2-btn" class="ghost" type="button">選び直す</button>
+      <p id="vt-canonical" hidden>
+        <a href="https://tosakazu.github.io/spsp/vote.html">正規のページを開く</a>
+      </p>
+    </div>
+
+    <div id="vt-form" hidden>
+      <select id="vt-char"></select>
+      <button id="vt-vote-btn" type="button">このキャラで投票</button>
+    </div>
+
+    <div id="vt-status" class="status" hidden></div>
+  </div>
+
+  <p class="note">
+    投票できるのは、<strong>まだ SPSP のデータベースに使用キャラ情報が無い選手のみ</strong>です
+    (キャラ情報は大会での使用データから自動集計されるため、データがある選手は投票の対象外です)。<br>
+    投票すると start.gg のユーザー名が一緒に記録されます。反映は次回の更新時 (数時間おき) です。
+  </p>
+</main>
+
+<script src="nav.js"></script>
+<script src="js/post_config.js"></script>
+<script src="js/oauth_state.js"></script>
+<script src="js/auth.js"></script>
+<script src="js/vote.js"></script>
+</body>
+</html>
