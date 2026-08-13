@@ -45,9 +45,13 @@
   }
 
   // ダブルイリミネーション一式: 勝者側 + 敗者側 + グランドファイナル。
-  // 敗者側は教科書的構造 (minor/major 交互)。ドロップ順は「最初のドロップは反転、
-  // 以降は反転と半回転を交互」の標準パターン (WR1 で当たったペアの即再戦を回避)。
-  // start.gg の実ルーティングは大会設定依存なので近似である旨を UI に注記すること。
+  // 敗者側は minor/major 交互の標準構造。ドロップ (WRj 敗者の並び替え) は
+  // start.gg の実ブラケット (prereq グラフ) から解読した規則:
+  //   落ちる先の敗者側ラウンド番号 L(2j) 基準で
+  //   L4 = 全反転 / L6 = 半分ごとに反転 / L8 = 半分入替 / L10 以降 = そのまま。
+  // スマパ#241 (64人フルDE)・新京都DSW#64 (28人)・渋谷達#136 (24人) の全ラウンド一致で
+  // 検証済み (敗者側直入りのカスタム構成でも同じラウンド番号規則だった)。
+  // L10 以降が大人数になる超大型 (B=256 級) の深部は実例が無く「そのまま」と仮定。
   // 返り値: { B, winners:[[{a,b,w,l}...]], losers:[[{a,b,w,l,drop}...]], gf:{a,b,w}|null }
   //   a/b/w/l はローカルシード or null (bye)。drop = そのラウンドの b 側が
   //   勝者側 WR何回戦 の敗者か (major ラウンドのみ。表示バッジ用)。
@@ -82,10 +86,15 @@
     // 以降 j=2..k: major (WRj 敗者ドロップ, 1:1) → minor (ペア) …最後は major で終わる
     for (let j = 2; j <= k; j++) {
       let drops = winners[j - 1].map((m) => m.l);
-      const di = j - 2;                     // 0始まりのドロップ回数
-      if (di % 2 === 0) drops = drops.slice().reverse();
-      else if (drops.length > 1) {          // 半回転
-        const h = drops.length / 2;
+      const n = drops.length;
+      // 落ちる先 = L(2j)。j=2:全反転 / j=3:半分ごと反転 / j=4:半分入替 / j>=5:そのまま
+      if (j === 2) {
+        drops = drops.slice().reverse();
+      } else if (j === 3 && n > 1) {
+        const h = n / 2;
+        drops = drops.slice(0, h).reverse().concat(drops.slice(h).reverse());
+      } else if (j === 4 && n > 1) {
+        const h = n / 2;
         drops = drops.slice(h).concat(drops.slice(0, h));
       }
       const major = [];

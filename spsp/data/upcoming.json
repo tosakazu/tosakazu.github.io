@@ -1,5 +1,5 @@
 {
-  "generated_at": 1786536029,
+  "generated_at": 1786546832,
   "country_code": "JP",
   "lookahead_days": 21,
   "count": 50,
@@ -83,14 +83,14 @@
       "city": "大阪市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 30,
+      "num_attendees": 31,
       "url": "/tournament/hit-189-maesuma-hit-189",
       "events": [
         {
           "event_id": 1679815,
           "event_slug": "tournament/hit-189-maesuma-hit-189/event/singles-tournament",
           "event_name": "Singles Tournament",
-          "num_entrants": 30,
+          "num_entrants": 31,
           "type": 1,
           "start_at": 1786615200
         }

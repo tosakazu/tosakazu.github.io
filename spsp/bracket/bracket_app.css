@@ -1,11 +1,11 @@
 /* bracket_app.css — トーナメントプレビュー */
 * { box-sizing: border-box; }
 body {
-  margin: 0; background: #f5f6f8; color: #1f2937;
+  margin: 0; background: #f3f5f8; color: #1f2937;
   font-family: "Hiragino Sans", "Noto Sans JP", Meiryo, sans-serif;
   font-size: 13px;
 }
-#bp-root { max-width: 1400px; margin: 0 auto; padding: 12px 14px 40px; }
+#bp-root { max-width: 1500px; margin: 0 auto; padding: 12px 14px 40px; }
 
 .bp-header h1 { font-size: 19px; margin: 4px 0 2px; }
 .bp-event { font-size: 14px; font-weight: 600; color: #374151; }
@@ -49,33 +49,62 @@ body {
 .bp-phase-row input[type="number"] { width: 64px; padding: 2px 6px; border: 1px solid #d1d5db; border-radius: 5px; }
 .bp-phase-row .bp-count { color: #6b7280; font-size: 11px; min-width: 70px; }
 
-/* ── ブラケット ── */
-.bp-bracket { display: flex; gap: 26px; overflow-x: auto; padding: 10px 4px 20px; align-items: stretch; }
-.bp-round { display: flex; flex-direction: column; min-width: 224px; }
-.bp-round-title { font-size: 11px; font-weight: 700; color: #6b7280; text-align: center; padding-bottom: 6px; }
-.bp-round-body { flex: 1; display: flex; flex-direction: column; justify-content: space-around; gap: 8px; }
-.bp-match { position: relative; background: #fff; border: 1px solid #e5e7eb; border-radius: 8px; overflow: visible; }
-.bp-match::after {   /* 次ラウンドへの接続ヒント */
-  content: ''; position: absolute; right: -27px; top: 50%; width: 26px; height: 1px; background: #cbd5e1;
+/* ── ブラケット (絶対配置 + SVG 接続線) ── */
+.bp-bracket { overflow-x: auto; padding: 8px 4px 24px; }
+.bp-sec { position: relative; margin: 4px 0 10px; }
+.bp-sec-label {
+  font-size: 12px; font-weight: 700; color: #374151; margin: 18px 0 2px;
+  padding-top: 12px; border-top: 1px dashed #d1d5db;
 }
-.bp-round:last-child .bp-match::after { display: none; }
+.bp-sec-note { font-weight: 400; font-size: 10px; color: #9ca3af; }
+
+.bp-round { position: absolute; top: 0; width: 232px; height: 100%; }
+.bp-round-title {
+  font-size: 11px; font-weight: 700; color: #64748b; text-align: center;
+  height: 26px; line-height: 22px; letter-spacing: .04em;
+}
+.bp-links { position: absolute; top: 0; pointer-events: none; }
+.bp-links path { fill: none; stroke: #b6c2d4; stroke-width: 1.5; }
+
+.bp-match {
+  position: absolute; left: 0; width: 100%;
+  background: #fff; border: 1px solid #dfe4ec; border-radius: 9px;
+  box-shadow: 0 1px 2px rgba(15, 23, 42, .05);
+}
+.bp-match.bp-ghost { opacity: .35; }
 .bp-slot {
-  display: flex; align-items: center; gap: 6px; padding: 4px 8px; min-height: 26px; cursor: default;
+  display: flex; align-items: center; gap: 6px; padding: 0 9px; height: 27px;
 }
 .bp-slot + .bp-slot { border-top: 1px solid #f1f5f9; }
-.bp-slot .bp-seed { font-size: 10px; color: #9ca3af; min-width: 26px; text-align: right; }
-.bp-slot .bp-name { font-size: 12px; color: #1f2937; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; flex: 1; cursor: pointer; }
-.bp-slot .bp-name:hover { text-decoration: underline; }
-.bp-slot .bp-res { font-size: 9px; color: #6b7280; background: #f3f4f6; border-radius: 4px; padding: 1px 4px; white-space: nowrap; }
-.bp-slot.bp-win { background: #f0f7ff; }
-.bp-slot.bp-win .bp-name { font-weight: 700; }
-.bp-slot.bp-bye { color: #c0c6cf; }
-.bp-slot.bp-bye .bp-name { color: #c0c6cf; cursor: default; }
-.bp-slot.bp-nodb .bp-name { color: #6b7280; }
-.bp-flags { display: flex; flex-wrap: wrap; gap: 4px; padding: 2px 8px 4px; border-top: 1px dashed #f1f5f9; }
-.bp-flag {
-  font-size: 9px; border-radius: 4px; padding: 1px 5px; white-space: nowrap;
+.bp-slot .bp-seed {
+  font-size: 10px; color: #94a3b8; min-width: 24px; text-align: right;
+  font-variant-numeric: tabular-nums;
 }
+.bp-slot .bp-name {
+  font-size: 12px; color: #1f2937; white-space: nowrap; overflow: hidden;
+  text-overflow: ellipsis; flex: 1; cursor: pointer;
+}
+.bp-slot .bp-name:hover { text-decoration: underline; }
+.bp-slot .bp-res {
+  font-size: 9px; color: #64748b; background: #f1f5f9; border-radius: 4px;
+  padding: 1px 4px; white-space: nowrap;
+}
+.bp-slot .bp-drop {
+  font-size: 9px; color: #92400e; background: #fef3c7; border-radius: 4px;
+  padding: 1px 4px; white-space: nowrap;
+}
+.bp-slot.bp-win { background: #f0f6ff; }
+.bp-slot.bp-win .bp-name { font-weight: 700; color: #1e40af; }
+.bp-slot.bp-win:first-child { border-radius: 8px 8px 0 0; box-shadow: inset 3px 0 0 #2563eb; }
+.bp-slot.bp-win:nth-child(2) { border-radius: 0 0 8px 8px; box-shadow: inset 3px 0 0 #2563eb; }
+.bp-slot.bp-bye { color: #c7cdd6; }
+.bp-slot.bp-bye .bp-name { color: #c7cdd6; cursor: default; }
+.bp-slot.bp-nodb .bp-name { color: #64748b; }
+.bp-flags {
+  position: absolute; left: 6px; right: 6px; top: 100%; margin-top: 2px;
+  display: flex; flex-wrap: nowrap; gap: 4px; overflow: hidden;
+}
+.bp-flag { font-size: 9px; border-radius: 4px; padding: 1px 5px; white-space: nowrap; }
 .bp-flag-region { background: #fee2e2; color: #b91c1c; }
 .bp-flag-recent { background: #fef3c7; color: #92400e; cursor: pointer; }
 .bp-flag-recent:hover { outline: 1px solid #f59e0b; }
@@ -85,7 +114,7 @@ body {
   position: absolute; z-index: 50; background: #fff; border: 1px solid #d1d5db; border-radius: 10px;
   box-shadow: 0 8px 24px rgba(0,0,0,.14); padding: 10px 12px; max-width: 340px; font-size: 12px;
 }
-.bp-pop h3 { margin: 0 0 4px; font-size: 13px; }
+.bp-pop h3 { margin: 0 0 4px; font-size: 13px; padding-right: 16px; }
 .bp-pop table { border-collapse: collapse; font-size: 11px; margin-top: 4px; }
 .bp-pop td { padding: 1px 8px 1px 0; color: #374151; white-space: nowrap; }
 .bp-pop .bp-pop-sub { color: #6b7280; font-size: 11px; }
