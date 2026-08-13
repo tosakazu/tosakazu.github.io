@@ -23,12 +23,70 @@
 
   var SEL_KEY = 'spsp_vote_sel'; // OAuth リダイレクトをまたいで選択を覚える
 
+  // ?debug=1 : 認証・資格判定を飛ばして UI を確認できる。投票は status='debug' で
+  // 記録され、ビルドには採用されない (gas/vote.gs)。ページ未公開のため鍵は無し。
+  var DEBUG = false;
+  try { DEBUG = new URLSearchParams(location.search).get('debug') === '1'; } catch (_) { /* noop */ }
+
+
+  // ファイター番号順 (マリオ=01 から)。エコーは本体の直後、統合表記 (ピーチ / デイジー 等)
+  // は本体の位置に置く。site/data/char_emoji.json の全キャラを網羅していることを
+  // tests/post/page.test.cjs が検査する。
+  var FIGHTER_ORDER = [
+    'マリオ', 'ドンキーコング', 'リンク',
+    'サムス / ダークサムス', 'ダークサムス',
+    'ヨッシー', 'カービィ', 'フォックス', 'ピカチュウ', 'ルイージ', 'ネス',
+    'キャプテン・ファルコン', 'プリン',
+    'ピーチ / デイジー', 'デイジー',
+    'クッパ', 'アイスクライマー', 'シーク', 'ゼルダ', 'ドクターマリオ', 'ピチュー',
+    'ファルコ', 'マルス', 'ルキナ', 'こどもリンク', 'ガノンドロフ', 'ミュウツー',
+    'ロイ', 'クロム', 'Mr. Game & Watch', 'メタナイト',
+    'ピット / ブラックピット', 'ブラックピット',
+    'ゼロスーツサムス', 'ワリオ', 'スネーク', 'アイク', 'ポケモントレーナー',
+    'ディディーコング', 'リュカ', 'ソニック', 'デデデ', 'ピクミン&オリマー',
+    'ルカリオ', 'ロボット', 'トゥーンリンク', 'ウルフ', 'むらびと', 'ロックマン',
+    'Wii Fit トレーナー', 'ロゼッタ&チコ', 'リトル・マック', 'ゲッコウガ',
+    '格闘Mii', '剣術Mii', '射撃Mii',
+    'パルテナ', 'パックマン', 'ルフレ', 'シュルク', 'クッパJr.', 'ダックハント',
+    'リュウ', 'ケン', 'クラウド', 'カムイ', 'ベヨネッタ', 'インクリング', 'リドリー',
+    'シモン / リヒター', 'リヒター',
+    'キングクルール', 'しずえ', 'ガオガエン', 'パックンフラワー', 'ジョーカー',
+    '勇者', 'バンジョー&カズーイ', 'テリー', 'ベレト/ベレス', 'ミェンミェン',
+    'スティーブ', 'セフィロス', 'ホムラ/ヒカリ', 'カズヤ', 'ソラ',
+  ];
+
+  /** ひらがな→カタカナ + 小文字化 (キャラ名の自由入力用の正規化)。 */
+  function normChar(sIn) {
+    return String(sIn).replace(/[ぁ-ゖ]/g, function (c) {
+      return String.fromCharCode(c.charCodeAt(0) + 0x60);
+    }).toLowerCase();
+  }
+
   var $ = function (id) { return document.getElementById(id); };
   var els = {};
   var session = null;
   var selected = null;     // { uid, display }
   var playersIndex = null; // [{ uid, display, low, ens }]
   var charList = null;
+  var selCharId = null;  // グリッドで選択中のキャラ
+
+  /**
+   * 文字列と {hl: 名前} の配列を要素として流し込む。名前のハイライトは
+   * <strong class="hl"> で行い、innerHTML は使わない (名前は任意文字列)。
+   */
+  function setRich(el, parts) {
+    el.textContent = '';
+    (Array.isArray(parts) ? parts : [parts]).forEach(function (p) {
+      if (p && typeof p === 'object' && p.hl !== undefined) {
+        var st = document.createElement('strong');
+        st.className = 'hl';
+        st.textContent = p.hl;
+        el.appendChild(st);
+      } else {
+        el.appendChild(document.createTextNode(String(p)));
+      }
+    });
+  }
 
   function setStatus(kind, msg) {
     els.status.className = 'status ' + kind;
@@ -112,7 +170,16 @@
       var btn = document.createElement('button');
       btn.type = 'button';
       btn.className = 'vt-result';
-      btn.textContent = p.display + (p.ens ? ' (' + p.ens + '位)' : '');
+      var nm = document.createElement('span');
+      nm.className = 'nm';
+      nm.textContent = p.display;
+      btn.appendChild(nm);
+      if (p.ens) {
+        var rk = document.createElement('span');
+        rk.className = 'rank';
+        rk.textContent = p.ens + '位';
+        btn.appendChild(rk);
+      }
       btn.addEventListener('click', function () { selectPlayer({ uid: p.uid, display: p.display }); });
       els.results.appendChild(btn);
     });
@@ -182,17 +249,17 @@
         }
         if (r.state === 'char_exists') {
           var names = r.chars.map(function (c) { return c.name; }).join(' / ');
-          showIneligible('「' + sel.display + '」はメインキャラが明確なため投票できません。',
-            '投票できるのは、キャラ情報が無い選手か、メインキャラ判定が僅差の選手のみです。現在の登録: ' + names, true);
+          showIneligible(['「', { hl: sel.display }, '」はメインキャラが明確なため投票できません。'],
+            ['投票できるのは、キャラ情報が無い選手か、メインキャラ判定が僅差の選手のみです。現在の登録: ', { hl: names }], true);
           return;
         }
         if (r.state === 'double') {
-          var cn = r.candidates.map(function (c) { return '「' + c.name + '」'; }).join('');
-          els.authMsg.textContent =
-            '「' + sel.display + '」は' + cn + 'のメインキャラ判定が僅差です。本人確認のうえ、どれをメインとするか投票できます (本人のアカウントでログインする必要があります)。';
+          var parts = ['「', { hl: sel.display }, '」は'];
+          r.candidates.forEach(function (c) { parts.push('「', { hl: c.name }, '」'); });
+          parts.push('のメインキャラ判定が僅差です。本人確認のうえ、どれをメインとするか投票できます (本人のアカウントでログインする必要があります)。');
+          setRich(els.authMsg, parts);
         } else {
-          els.authMsg.textContent =
-            '「' + sel.display + '」はキャラ投票の対象です。本人確認のため start.gg で認証してください (本人のアカウントでログインする必要があります)。';
+          setRich(els.authMsg, ['「', { hl: sel.display }, '」はキャラ投票の対象です。本人確認のため start.gg で認証してください (本人のアカウントでログインする必要があります)。']);
         }
         showSection('auth');
       })
@@ -209,13 +276,13 @@
       .then(function (r) {
         if (r.state === 'not_player') {
           showIneligible('キャラ投票は SPSP にデータがある選手のみ行えます。',
-            'ログイン中の start.gg アカウント (' + AUTH.displayName(session) + ') は SPSP のデータベースに見つかりませんでした。大会結果が取り込まれると投票できるようになります。', false);
+            ['ログイン中の start.gg アカウント (', { hl: AUTH.displayName(session) }, ') は SPSP のデータベースに見つかりませんでした。大会結果が取り込まれると投票できるようになります。'], false);
           return;
         }
         if (r.state === 'char_exists') {
           var names = r.chars.map(function (c) { return c.name; }).join(' / ');
           showIneligible('メインキャラが明確なため投票できません。',
-            '投票できるのは、キャラ情報が無い選手か、メインキャラ判定が僅差の選手のみです。現在の登録: ' + names, false);
+            ['投票できるのは、キャラ情報が無い選手か、メインキャラ判定が僅差の選手のみです。現在の登録: ', { hl: names }], false);
           return;
         }
         showForm(r.candidates);
@@ -227,8 +294,8 @@
   }
 
   function showIneligible(title, detail, allowBack) {
-    els.inelTitle.textContent = title;
-    els.inelDetail.textContent = detail;
+    setRich(els.inelTitle, title);
+    setRich(els.inelDetail, detail);
     els.backBtn.hidden = !allowBack;
     showSection('ineligible');
   }
@@ -295,10 +362,10 @@
   function showForm(candidates) {
     showSection('form');
     if (candidates && candidates.length) {
-      els.formHint.textContent =
-        'メインキャラ判定が僅差のため、' +
-        candidates.map(function (c) { return '「' + c.name + '」'; }).join('') +
-        ' の中からどれをメインとするか投票できます。';
+      var hintParts = ['メインキャラ判定が僅差のため、'];
+      candidates.forEach(function (c) { hintParts.push('「', { hl: c.name }, '」'); });
+      hintParts.push(' の中からどれをメインとするか投票できます。');
+      setRich(els.formHint, hintParts);
       els.formHint.hidden = false;
     } else {
       els.formHint.textContent = '';
@@ -318,7 +385,13 @@
         charList = Object.keys(json).map(function (id) {
           return { id: id, name: json[id].name, emoji: json[id].emoji || '' };
         });
-        charList.sort(function (a, b) { return a.name.localeCompare(b.name, 'ja'); });
+        charList.forEach(function (c) {
+          var i = FIGHTER_ORDER.indexOf(c.name);
+          c.ord = i === -1 ? 9999 : i;
+        });
+        charList.sort(function (a, b) {
+          return a.ord - b.ord || a.name.localeCompare(b.name, 'ja');
+        });
         buildOptions(candidates);
       })
       .catch(function () {
@@ -327,28 +400,59 @@
   }
 
   function buildOptions(candidates) {
+    els.charSearch.value = '';
     var allowed = null;
     if (candidates && candidates.length) {
       allowed = {};
       candidates.forEach(function (c) { allowed[c.id] = true; });
     }
-    els.select_.innerHTML = '';
-    var opt0 = document.createElement('option');
-    opt0.value = '';
-    opt0.textContent = 'キャラを選択…';
-    els.select_.appendChild(opt0);
+    selCharId = null;
+    els.grid.textContent = '';
     charList.forEach(function (c) {
       if (allowed && !allowed[c.id]) return;
-      var opt = document.createElement('option');
-      opt.value = c.id;
-      opt.textContent = (c.emoji ? c.emoji + ' ' : '') + c.name;
-      els.select_.appendChild(opt);
+      var btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'vt-char';
+      btn.dataset.id = c.id;
+      btn.dataset.name = c.name;
+      var em = document.createElement('span');
+      em.className = 'em';
+      em.textContent = c.emoji || '🎮';
+      var nm = document.createElement('span');
+      nm.className = 'nm';
+      nm.textContent = c.name;
+      btn.appendChild(em);
+      btn.appendChild(nm);
+      btn.addEventListener('click', function () {
+        selCharId = c.id;
+        var prev = els.grid.querySelector('.sel');
+        if (prev) prev.classList.remove('sel');
+        btn.classList.add('sel');
+      });
+      els.grid.appendChild(btn);
     });
+  }
+
+  function applyCharFilter() {
+    var q = normChar(els.charSearch.value.trim());
+    var visible = [];
+    Array.from(els.grid.children).forEach(function (btn) {
+      var hit = !q || normChar(btn.dataset.name || '').indexOf(q) !== -1;
+      btn.hidden = !hit;
+      if (hit) visible.push(btn);
+    });
+    // 1 件に絞れたらそのまま選択扱いにする (自由入力での選択)
+    if (q && visible.length === 1) {
+      selCharId = visible[0].dataset.id;
+      var prev = els.grid.querySelector('.sel');
+      if (prev && prev !== visible[0]) prev.classList.remove('sel');
+      visible[0].classList.add('sel');
+    }
   }
 
   function submitVote() {
     setStatus('', '');
-    var charId = els.select_.value;
+    var charId = selCharId;
     if (!charId) {
       setStatus('error', 'キャラを選択してください。');
       return;
@@ -360,18 +464,25 @@
       method: 'POST',
       redirect: 'follow',
       headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-      body: JSON.stringify({ action: 'vote', token: session.token, charId: charId }),
+      body: JSON.stringify({
+        action: 'vote',
+        token: session ? session.token : null,
+        charId: charId,
+        debug: DEBUG ? 1 : undefined,
+      }),
     }).then(function (res) {
       return res.json();
     }).then(function (json) {
       els.voteBtn.disabled = false;
       if (json && json.ok) {
-        setStatus('ok', json.charName + ' で投票を受け付けました。サイトへの反映は次回の更新時になります。');
+        setStatus('ok', json.debug
+          ? json.charName + ' でデバッグ投票を記録しました (status=debug。サイトには反映されません)。'
+          : json.charName + ' で投票を受け付けました。サイトへの反映は次回の更新時になります。');
         return;
       }
       var code = json && json.error && json.error.code;
       var msg = (json && json.error && json.error.message) ? json.error.message : '投票に失敗しました。';
-      if (code === 'auth_failed') {
+      if (code === 'auth_failed' && !DEBUG) {
         AUTH.clear();
         session = null;
         render();
@@ -402,8 +513,8 @@
     var sel = takeSel();
     if (sel && sel.uid !== session.user.id) {
       showIneligible('認証したアカウントが選択した選手と一致しません。',
-        '選択: ' + sel.display + ' / 認証: ' + AUTH.displayName(session) +
-        '。本人のアカウントで認証し直すには、いったんログアウトしてください。', false);
+        ['選択: ', { hl: sel.display }, ' / 認証: ', { hl: AUTH.displayName(session) },
+          '。本人のアカウントで認証し直すには、いったんログアウトしてください。'], false);
       return;
     }
     checkSelf();
@@ -430,12 +541,16 @@
       idxStatus: $('vt-idx-status'),
       authMsg: $('vt-auth-msg'),
       formHint: $('vt-form-hint'),
+      debugBanner: $('vt-debug-banner'),
+      debugFormBtn: $('vt-debug-form-btn'),
+      debugSkipBtn: $('vt-debug-skip-btn'),
       backBtn: $('vt-back-btn'),
       back2Btn: $('vt-back2-btn'),
       loginBtn: $('vt-login-btn'),
       logoutBtn: $('vt-logout-btn'),
       voteBtn: $('vt-vote-btn'),
-      select_: $('vt-char'),
+      grid: $('vt-char-grid'),
+      charSearch: $('vt-char-search'),
       status: $('vt-status'),
       who: $('vt-who'),
       whoName: $('vt-who-name'),
@@ -446,6 +561,14 @@
     if (!els.select) return;
 
     els.search.addEventListener('input', renderResults);
+    els.charSearch.addEventListener('input', applyCharFilter);
+    if (DEBUG) {
+      els.debugBanner.hidden = false;
+      els.debugFormBtn.hidden = false;
+      els.debugSkipBtn.hidden = false;
+      els.debugFormBtn.addEventListener('click', function () { showForm(null); });
+      els.debugSkipBtn.addEventListener('click', function () { showForm(null); });
+    }
     els.backBtn.addEventListener('click', backToSelect);
     els.back2Btn.addEventListener('click', backToSelect);
     els.loginBtn.addEventListener('click', startLogin);
