@@ -1,5 +1,5 @@
 {
-  "generated_at": 1786546832,
+  "generated_at": 1786557635,
   "country_code": "JP",
   "lookahead_days": 21,
   "count": 50,
@@ -60,14 +60,14 @@
       "city": "渋谷区",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 23,
+      "num_attendees": 24,
       "url": "/tournament/shibuya-g-g-smash-weekly-75",
       "events": [
         {
           "event_id": 1683295,
           "event_slug": "tournament/shibuya-g-g-smash-weekly-75/event/singles",
           "event_name": "Singles",
-          "num_entrants": 23,
+          "num_entrants": 24,
           "type": 1,
           "start_at": 1786617000
         }
@@ -83,14 +83,14 @@
       "city": "大阪市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 31,
+      "num_attendees": 32,
       "url": "/tournament/hit-189-maesuma-hit-189",
       "events": [
         {
           "event_id": 1679815,
           "event_slug": "tournament/hit-189-maesuma-hit-189/event/singles-tournament",
           "event_name": "Singles Tournament",
-          "num_entrants": 31,
+          "num_entrants": 32,
           "type": 1,
           "start_at": 1786615200
         }
@@ -198,14 +198,14 @@
       "city": "熊谷市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 20,
+      "num_attendees": 21,
       "url": "/tournament/flyhigh-28-96-1",
       "events": [
         {
           "event_id": 1680317,
           "event_slug": "tournament/flyhigh-28-96-1/event/fly-high-96",
           "event_name": "Fly High!! 96人トーナメント 埼玉県熊谷市スマブラ大会",
-          "num_entrants": 20,
+          "num_entrants": 21,
           "type": 1,
           "start_at": 1786719600
         }
@@ -267,14 +267,14 @@
       "city": "福岡市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 50,
+      "num_attendees": 51,
       "url": "/tournament/plum-4",
       "events": [
         {
           "event_id": 1673837,
           "event_slug": "tournament/plum-4/event/1on1",
           "event_name": "1on1トーナメント",
-          "num_entrants": 50,
+          "num_entrants": 51,
           "type": 1,
           "start_at": 1786755600
         }
@@ -635,14 +635,14 @@
       "city": "観音寺市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 151,
+      "num_attendees": 152,
       "url": "/tournament/big-lagoon-with",
       "events": [
         {
           "event_id": 1659077,
           "event_slug": "tournament/big-lagoon-with/event/big-lagoon-with",
           "event_name": "BIG LAGOON with 銭スマ",
-          "num_entrants": 151,
+          "num_entrants": 152,
           "type": 1,
           "start_at": 1787360400
         }
@@ -681,7 +681,7 @@
       "city": "渋谷区",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 288,
+      "num_attendees": 289,
       "url": "/tournament/shibuya-dairan-first-strike",
       "events": [
         {
@@ -704,14 +704,14 @@
       "city": "和歌山市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 8,
+      "num_attendees": 9,
       "url": "/tournament/3-153",
       "events": [
         {
           "event_id": 1672471,
           "event_slug": "tournament/3-153/event/sp-1on1",
           "event_name": "スマブラSP 1on1 トーナメント",
-          "num_entrants": 8,
+          "num_entrants": 9,
           "type": 1,
           "start_at": 1787371200
         }
@@ -957,14 +957,14 @@
       "city": "荒川区",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 230,
+      "num_attendees": 231,
       "url": "/tournament/vic-seekers-1",
       "events": [
         {
           "event_id": 1660866,
           "event_slug": "tournament/vic-seekers-1/event/ultimate-singles",
           "event_name": "Ultimate Singles",
-          "num_entrants": 222,
+          "num_entrants": 223,
           "type": 1,
           "start_at": 1787970600
         }

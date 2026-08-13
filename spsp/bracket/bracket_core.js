@@ -52,11 +52,15 @@
   // スマパ#241 (64人フルDE)・新京都DSW#64 (28人)・渋谷達#136 (24人) の全ラウンド一致で
   // 検証済み (敗者側直入りのカスタム構成でも同じラウンド番号規則だった)。
   // L10 以降が大人数になる超大型 (B=256 級) の深部は実例が無く「そのまま」と仮定。
-  // 返り値: { B, winners:[[{a,b,w,l}...]], losers:[[{a,b,w,l,drop}...]], gf:{a,b,w}|null }
+  // adv = そのプールから進出する人数 (予選プール)。渡すと**進出者が確定した時点で
+  // 打ち切る** (2人抜けのプールに GF は無い、等)。省略 / 0 / M 以上 = 優勝まで (最終フェーズ)。
+  // 返り値: { B, winners:[[{a,b,w,l}...]], losers:[[{a,b,w,l,drop}...]], gf:{a,b,w}|null,
+  //           wTotal, lTotal, cut, advancers:[ローカルシード]|null }
   //   a/b/w/l はローカルシード or null (bye)。drop = そのラウンドの b 側が
   //   勝者側 WR何回戦 の敗者か (major ラウンドのみ。表示バッジ用)。
-  function poolDoubleElim(M) {
-    if (M < 2) return { B: M < 1 ? 0 : 2, winners: poolRounds(M).rounds, losers: [], gf: null };
+  //   wTotal/lTotal = 打ち切り前のラウンド数 (「決勝」等の表示名を変えないため)。
+  function poolDoubleElim(M, adv) {
+    if (M < 2) return truncateForAdvance({ B: M < 1 ? 0 : 2, winners: poolRounds(M).rounds, losers: [], gf: null }, M, adv);
     const base = poolRounds(M);
     const B = base.B;
     // 勝者側に敗者 (l) を付与
@@ -67,7 +71,8 @@
     const k = winners.length;              // WR 数 = log2(B)
     if (B === 2) {
       // 2人ブラケット: 敗者側なし。GF = 決勝の再戦相当は表示しない (winners のみ)
-      return { B, winners, gf: { a: winners[0][0].w, b: winners[0][0].l, w: winners[0][0].w }, losers: [] };
+      return truncateForAdvance(
+        { B, winners, gf: { a: winners[0][0].w, b: winners[0][0].l, w: winners[0][0].w }, losers: [] }, M, adv);
     }
     const losers = [];
     // L1 (minor): WR1 敗者を隣接ペアで
@@ -123,7 +128,65 @@
     const wbChamp = winners[k - 1][0].w;
     const lbChamp = cur[0];
     const gf = { a: wbChamp, b: lbChamp, w: (wbChamp == null) ? lbChamp : (lbChamp == null) ? wbChamp : Math.min(wbChamp, lbChamp) };
-    return { B, winners, losers, gf };
+    return truncateForAdvance({ B, winners, losers, gf }, M, adv);
+  }
+
+  // 実施順に並べたラウンド列。W1 → L1 → W2 → L(major) → L(minor) → W3 → … → GF。
+  // major = 勝者側から敗者が落ちてくるラウンド (drop 付き)、minor = 敗者側どうし。
+  function playOrder(de) {
+    const seq = [];
+    if (!de.winners.length) return seq;
+    seq.push({ k: 'W', i: 0 });
+    let li = 0;
+    if (de.losers.length) seq.push({ k: 'L', i: li++ });        // L1 (WR1 敗者)
+    for (let j = 1; j < de.winners.length; j++) {
+      seq.push({ k: 'W', i: j });
+      if (li < de.losers.length) seq.push({ k: 'L', i: li++ });  // WR(j+1) 敗者が落ちる major
+      const nxt = de.losers[li];
+      if (nxt && !(nxt[0] && nxt[0].drop)) seq.push({ k: 'L', i: li++ });   // 続く minor
+    }
+    if (de.gf) seq.push({ k: 'G' });
+    return seq;
+  }
+
+  // 進出 adv 人が決まった時点でラウンドを打ち切る。
+  // 脱落するのは敗者側 (と GF) の試合だけなので、実施順に脱落数を積んで
+  // 残り人数が adv 以下になったラウンドまでを残す。bye の試合は誰も落とさない。
+  function truncateForAdvance(de, M, adv) {
+    const out = Object.assign({}, de, {
+      wTotal: de.winners.length, lTotal: de.losers.length, cut: false, advancers: null,
+    });
+    if (!(adv > 0) || !(M > adv)) return out;
+    const elimOf = (round) => round.reduce((n, m) => n + ((m.a != null && m.b != null) ? 1 : 0), 0);
+    const seq = playOrder(de);
+    let remain = M, keepW = 0, keepL = 0, keepGf = false, cutAt = seq.length;
+    for (let s = 0; s < seq.length; s++) {
+      const step = seq[s];
+      if (step.k === 'W') { keepW = step.i + 1; continue; }      // 勝者側では誰も落ちない
+      if (step.k === 'L') { keepL = step.i + 1; remain -= elimOf(de.losers[step.i]); }
+      else { keepGf = true; remain -= 1; }
+      if (remain <= adv) { cutAt = s; break; }
+    }
+    // 進出が決まった後も、次に脱落者が出るまでの勝者側ラウンドは実施される
+    // (誰も落とさないが順位を決めるため)。実ブラケット (りぷぶらSP15 予選 11人6抜け /
+    // 篝火15 Phase1 21人 : 勝者側が1ラウンド分先まで進む) と一致させるための扱い。
+    for (let s = cutAt + 1; s < seq.length && seq[s].k === 'W'; s++) keepW = seq[s].i + 1;
+    if (keepW === de.winners.length && keepL === de.losers.length && keepGf) return out;
+    const elim = new Set();
+    for (let i = 0; i < keepL; i++) {
+      for (const m of de.losers[i]) if (m.a != null && m.b != null && m.l != null) elim.add(m.l);
+    }
+    if (keepGf && de.gf && de.gf.a != null && de.gf.b != null) {
+      elim.add(de.gf.a === de.gf.w ? de.gf.b : de.gf.a);
+    }
+    const advancers = [];
+    for (let s = 1; s <= M; s++) if (!elim.has(s)) advancers.push(s);
+    out.winners = de.winners.slice(0, keepW);
+    out.losers = de.losers.slice(0, keepL);
+    out.gf = keepGf ? de.gf : null;
+    out.cut = true;
+    out.advancers = advancers;
+    return out;
   }
 
   // 実際に発生する予測マッチアップ (bye を除く)。[{r, a, b}] (r は 1始まり、a < b)。
@@ -161,7 +224,7 @@
     return '敗者側' + (idx + 1) + '回戦';
   }
 
-  const API = { phasePools, poolRounds, poolDoubleElim, poolMatchups, roundName, lbRoundName, fmtRelDays };
+  const API = { phasePools, poolRounds, poolDoubleElim, poolMatchups, playOrder, roundName, lbRoundName, fmtRelDays };
   global.BracketCore = API;
   if (typeof module !== 'undefined' && module.exports) module.exports = API;
 })(typeof window !== 'undefined' ? window : (typeof self !== 'undefined' ? self : globalThis));

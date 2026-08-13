@@ -44,10 +44,34 @@ body {
 .bp-panel-body { padding: 4px 12px 10px; }
 .bp-hint { font-size: 11px; color: #6b7280; margin: 4px 0; }
 .bp-inline-status { font-size: 11px; color: #374151; }
-.bp-phase-row { display: flex; align-items: center; gap: 6px; margin: 3px 0; font-size: 12px; }
-.bp-phase-row input[type="text"] { width: 110px; padding: 2px 6px; border: 1px solid #d1d5db; border-radius: 5px; }
-.bp-phase-row input[type="number"] { width: 64px; padding: 2px 6px; border: 1px solid #d1d5db; border-radius: 5px; }
-.bp-phase-row .bp-count { color: #6b7280; font-size: 11px; min-width: 70px; }
+/* フェーズ構成の1行。ラベル付きの列を並べ、幅が足りなければ折り返す */
+.bp-phase-row { display: flex; flex-wrap: wrap; align-items: flex-end; gap: 4px 10px; margin: 6px 0; font-size: 12px; }
+.bp-f { display: inline-flex; flex-direction: column; gap: 2px; }
+.bp-f > span { font-size: 10px; color: #6b7280; }
+.bp-phase-row input[type="text"] { width: 130px; padding: 3px 6px; border: 1px solid #d1d5db; border-radius: 5px; }
+.bp-phase-row input[type="number"] { width: 76px; padding: 3px 6px; border: 1px solid #d1d5db; border-radius: 5px; }
+.bp-phase-row .bp-count { color: #6b7280; font-size: 11px; min-width: 52px; padding-bottom: 4px; }
+.bp-phase-row .bp-btn { margin-bottom: 1px; }
+
+/* ── スマホ幅 ──
+   ・フェーズ行はカード化して縦積み (横に潰れて崩れるのを防ぐ)
+   ・入力の文字は 16px。これ未満だと iOS Safari がフォーカス時に自動ズームし、
+     ページ全体がずれたまま戻らなくなる */
+@media (max-width: 600px) {
+  #bp-root { padding: 10px 10px 32px; }
+  .bp-phase-row {
+    border: 1px solid #e5e7eb; border-radius: 8px; padding: 8px 10px;
+    background: #fafbfc; gap: 8px;
+  }
+  .bp-f { flex: 1 1 92px; min-width: 0; }
+  .bp-f-name { flex: 1 1 100%; }
+  .bp-phase-row input[type="text"],
+  .bp-phase-row input[type="number"] { width: 100%; font-size: 16px; padding: 5px 7px; }
+  .bp-phase-row .bp-count { flex: 1 1 100%; min-width: 0; padding: 0; }
+  .bp-phase-row .bp-btn { flex: 0 0 auto; }
+  #bp-pool-select { font-size: 16px; max-width: 44vw; }
+  .bp-panel-body { padding: 4px 10px 10px; }
+}
 
 /* ── ブラケット (絶対配置 + SVG 接続線) ── */
 .bp-bracket { overflow-x: auto; padding: 8px 4px 24px; }

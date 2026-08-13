@@ -82,8 +82,15 @@
     return warns;
   }
 
+  // 取得済み判定。__error (通信断・5xx) は一時的なことが多いので未取得扱いにして
+  // 次の描画で再試行する (__missing = 404 = DB 未登録は確定なので再試行しない)。
+  function playerLoaded(uid) {
+    const p = STATE.players.get(uid);
+    return p != null && !p.__error;
+  }
+
   async function ensurePlayers(uids, onProgress) {
-    const targets = uids.filter((u) => u != null && !STATE.players.has(u));
+    const targets = uids.filter((u) => u != null && !playerLoaded(u));
     let done = 0;
     const queue = targets.slice();
     async function worker() {
@@ -209,6 +216,10 @@
   }
 
   // ── 描画: ブラケット本体 ─────────────────────────────────
+  // 名前は共有データ (payload.names) だけで出せるので、**選手 JSON の取得を待たずに
+  // まず描画する**。居住地・直近対戦のバッジは取得完了後の再描画で付く。
+  // (上位帯の players/<uid>.json は 1 人 0.5〜1.7MB あり、64 人プールでは数十 MB になる。
+  //  ここを待つと回線次第で真っ白なまま・失敗すると名前まで出ない、という状態になっていた)
   async function renderBracket() {
     const token = ++STATE.renderToken;
     const ph = currentPhase();
@@ -222,17 +233,28 @@
 
     const members = pools[poolIdx];           // globalIdx (0始まり) 昇順 = ローカルシード順
     const M = members.length;
-    $('bp-pool-info').textContent = `${labels[poolIdx]}: ${M}人` + (ph > 0 ? ' (シード通り進出の予測メンバー)' : '');
+    const adv = advOfPhase(ph);
+    $('bp-pool-info').textContent = `${labels[poolIdx]}: ${M}人` +
+      (ph > 0 ? ' (シード通り進出の予測メンバー)' : '') +
+      (adv > 0 && adv < M ? ` / 上位${adv}人が通過 (通過が決まるところまで表示)` : '');
 
     const host = $('bp-bracket');
     if (M === 0) { host.innerHTML = '<div class="bp-hint">このプールに参加者がいません。</div>'; return; }
 
-    // 選手 JSON を取得してから描画 (名前・国名・直近対戦に必要)
     const uids = members.map((gi) => uidOf(gi)).filter((u) => u != null);
-    setStatus('選手データ取得中…');
-    await ensurePlayers(uids, (d, t) => { if (token === STATE.renderToken) setStatus(`選手データ取得中 ${d}/${t}…`); });
-    if (token !== STATE.renderToken) return;
-    let agg = null;
+    const cachedAgg = STATE.poolAgg.get(aggKey(ph, poolIdx)) || null;
+    drawBracket(host, members, cachedAgg);
+
+    // ここから先は付加情報 (居住地・直近対戦・プロフィール) の取得
+    const pending = uids.filter((u) => !playerLoaded(u));
+    if (pending.length) {
+      setStatus(`選手データ取得中 0/${pending.length}…`);
+      await ensurePlayers(uids, (d, t) => {
+        if (token === STATE.renderToken) setStatus(`選手データ取得中 ${d}/${t}…`);
+      });
+      if (token !== STATE.renderToken) return;
+    }
+    let agg = cachedAgg;
     let aggWarn = '';
     try {
       agg = await getPoolAgg(uids, aggKey(ph, poolIdx));
@@ -241,23 +263,23 @@
     }
     if (token !== STATE.renderToken) return;
 
-    // ステータス行 (fail-loud: 未登録と取得失敗を区別して明示)
-    const missing = uids.filter((u) => { const p = STATE.players.get(u); return p && p.__missing; });
-    const errored = uids.filter((u) => { const p = STATE.players.get(u); return p && p.__error; });
-    const unnamed = members.filter((gi) => !resolvedName(gi));
-    const statusParts = [];
-    if (missing.length) statusParts.push(`SPSP 未登録/データなし ${missing.length}人`);
-    if (errored.length) statusParts.push(`⚠ 選手データの取得失敗 ${errored.length}人 (再読み込みで再試行されます)`);
-    if (unnamed.length) statusParts.push(`⚠ 名前を復元できない参加者 ${unnamed.length}人 (uid: ${unnamed.map((gi) => uidOf(gi)).join(', ')})`);
-    if (agg && agg.meta && agg.meta.weekdayExcludedMatches) statusParts.push(`平日大会の対戦 ${agg.meta.weekdayExcludedMatches} 件を除外中`);
-    if (aggWarn) statusParts.push(aggWarn);
-    setStatus(statusParts.join(' / '));
+    drawBracket(host, members, agg);
+    setStatus(statusLine(members, uids, agg, aggWarn));
+  }
 
-    const de = C.poolDoubleElim(M);
+  // そのフェーズの1プールあたり進出人数 (最終フェーズは 0 = 優勝まで)。
+  function advOfPhase(ph) {
+    const p = STATE.payload.phases[ph];
+    if (ph === STATE.payload.phases.length - 1) return 0;
+    return Math.max(0, p.adv | 0);
+  }
+
+  function drawBracket(host, members, agg) {
+    const de = C.poolDoubleElim(members.length, advOfPhase(currentPhase()));
     const showLb = STATE.view.lb === 1 && de.losers.length > 0;
     const ctx = { members, agg };
-
-    let html = renderWinnersSection(de, ctx, showLb);
+    // GF 列は敗者側を出していて、かつ GF が実施される (= 優勝まで戦う) ときだけ
+    let html = renderWinnersSection(de, ctx, showLb && de.gf != null);
     if (showLb) {
       html += '<div class="bp-sec-label">敗者側ブラケット <span class="bp-sec-note">(ドロップ位置は start.gg 標準ブラケットの実データと一致することを検証済み)</span></div>';
       html += renderLosersSection(de, ctx);
@@ -265,6 +287,38 @@
       html += '<div class="bp-hint">このプールには敗者側がありません。</div>';
     }
     host.innerHTML = html;
+  }
+
+  // ステータス行 (fail-loud: 未登録・取得失敗・名前なしを理由付きで区別する)
+  function statusLine(members, uids, agg, aggWarn) {
+    const missing = uids.filter((u) => { const p = STATE.players.get(u); return p && p.__missing; });
+    const errored = uids.filter((u) => { const p = STATE.players.get(u); return p && p.__error; });
+    const unnamed = members.filter((gi) => !resolvedName(gi));
+    const parts = [];
+    if (missing.length) parts.push(`SPSP 未登録/データなし ${missing.length}人`);
+    if (errored.length) {
+      const why = STATE.players.get(errored[0]).__error;
+      parts.push(`⚠ 選手データの取得失敗 ${errored.length}人 (${why}) — 「🔄 再取得」で再試行できます`);
+    }
+    if (unnamed.length) {
+      parts.push(`⚠ 名前が分からない参加者 ${unnamed.length}人: ` +
+        unnamed.slice(0, 10).map((gi) => `シード${gi + 1} (${describeNameGap(gi)})`).join(', ') +
+        (unnamed.length > 10 ? ' …' : ''));
+    }
+    if (agg && agg.meta && agg.meta.weekdayExcludedMatches) parts.push(`平日大会の対戦 ${agg.meta.weekdayExcludedMatches} 件を除外中`);
+    if (aggWarn) parts.push(aggWarn);
+    return parts.join(' / ');
+  }
+
+  // 名前が出せない理由 (共有データにも players/<uid>.json にも無い、のどれか)
+  function describeNameGap(gi) {
+    const uid = uidOf(gi);
+    if (uid == null) return '共有データに名前なし';
+    const pj = STATE.players.get(uid);
+    if (!pj) return `uid ${uid}: 未取得`;
+    if (pj.__error) return `uid ${uid}: 取得失敗 ${pj.__error}`;
+    if (pj.__missing) return `uid ${uid}: SPSP DB になし`;
+    return `uid ${uid}: 選手データに表示名なし`;
   }
 
   // 勝者側 (+GF) セクション。列 = WR1..WRk (+GF)。
@@ -278,7 +332,8 @@
 
     let cols = '';
     for (let r = 0; r < R; r++) {
-      const title = withGf && r === R - 1 ? '勝者側決勝' : C.roundName(r + 1, R);
+      // 表示名は打ち切り前のラウンド数基準 (2人抜けプールの最終戦を「決勝」と呼ばない)
+      const title = withGf && r === R - 1 ? '勝者側決勝' : C.roundName(r + 1, de.wTotal);
       const cells = de.winners[r].map((m, i) =>
         matchDiv(m, ctx, TITLE_H + center(r, i) - MATCH_H / 2, null)).join('');
       cols += `<div class="bp-round" style="left:${r * (COLW + GAP)}px">` +
@@ -312,7 +367,7 @@
     const height = TITLE_H + secH;
     const width = rounds.length * COLW + (rounds.length - 1) * GAP;
     const center = (li, m) => (m + 0.5) * (secH / counts[li]);
-    const k = de.winners.length;
+    const k = de.wTotal;                    // 表示名は打ち切り前基準
 
     let cols = '';
     rounds.forEach((matches, li) => {
@@ -320,7 +375,7 @@
         m, ctx, TITLE_H + center(li, i) - MATCH_H / 2,
         m.drop ? `↓勝者側${C.roundName(m.drop, k)}` : null)).join('');
       cols += `<div class="bp-round bp-lb" style="left:${li * (COLW + GAP)}px">` +
-        `<div class="bp-round-title">${esc(C.lbRoundName(li, rounds.length))}</div>${cells}</div>`;
+        `<div class="bp-round-title">${esc(C.lbRoundName(li, de.lTotal))}</div>${cells}</div>`;
     });
 
     let svgs = '';
@@ -467,9 +522,13 @@
     $('bp-phase-rows').innerHTML = STATE.payload.phases.map((p, i) => {
       const isFinal = i === STATE.payload.phases.length - 1;
       return `<div class="bp-phase-row" data-idx="${i}">` +
-        `<input type="text" data-f="name" value="${esc(p.name)}" placeholder="フェーズ名">` +
-        `プール数 <input type="number" data-f="pools" value="${p.pools}" min="1">` +
-        `各プール進出 <input type="number" data-f="adv" value="${p.adv || 0}" min="0"${isFinal ? ' disabled title="最終フェーズでは使いません"' : ''}>` +
+        `<label class="bp-f bp-f-name"><span>フェーズ名</span>` +
+        `<input type="text" data-f="name" value="${esc(p.name)}" placeholder="予選"></label>` +
+        `<label class="bp-f"><span>プール数</span>` +
+        `<input type="number" data-f="pools" value="${p.pools}" min="1" inputmode="numeric"></label>` +
+        `<label class="bp-f"><span>各プール進出</span>` +
+        `<input type="number" data-f="adv" value="${p.adv || 0}" min="0" inputmode="numeric"` +
+        `${isFinal ? ' disabled title="最終フェーズでは使いません"' : ''}></label>` +
         `<span class="bp-count">${counts[i] != null ? counts[i] + '人' : ''}</span>` +
         (STATE.payload.phases.length > 1 ? `<button class="bp-btn" data-del="${i}">削除</button>` : '') +
         '</div>';
@@ -593,6 +652,12 @@
       setTimeout(() => { $('bp-copy-url').textContent = '🔗 URLをコピー'; }, 1800);
     });
     $('bp-csv-save').addEventListener('click', exportCsv);
+    // 取得失敗した選手データだけ捨てて取り直す (404 = DB 未登録は確定なので残す)
+    $('bp-reload').addEventListener('click', () => {
+      for (const [u, p] of [...STATE.players.entries()]) if (p && p.__error) STATE.players.delete(u);
+      STATE.poolAgg.clear();
+      renderBracket();
+    });
     $('bp-phase-add').addEventListener('click', () => {
       const phases = readPhaseEditor();
       phases.push({ name: 'Top ' + (phases.length + 1), pools: 1, adv: 0 });

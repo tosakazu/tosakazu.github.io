@@ -3708,6 +3708,10 @@ function exportSeedWorkCsv() {
 // 🏆 トーナメントプレビュー: 現在の出力順 (orderedRecs) + プール数/ウェーブを
 // ペイロード化して site/bracket/ へのリンクを発行する (別タブ + クリップボード)。
 // フェーズ区切り (Top カット) の追加はプレビューページ側で編集できる。
+// プレビュー URL の長さ上限 (これを超えたら名前の同梱を DB 未登録者だけに落とす)。
+// プレビュー側も 9,500 字超で「共有には CSV 推奨」と出すので、それと揃えている。
+const BRACKET_URL_BUDGET = 9500;
+
 async function issueBracketPreview() {
   const note = document.getElementById('work-note');
   const say = (m) => { if (note) note.textContent = m; };
@@ -3718,12 +3722,18 @@ async function issueBracketPreview() {
     const P = Math.max(1, parseInt((document.getElementById('so-pools') || {}).value, 10) || 1);
     const waveMap = currentWaveMap(P);
     const uids = recs.map((r) => (r.user_id != null && r.user_id > 0) ? r.user_id : null);
-    const names = {};
+    // 表示名。uid が無い参加者は URL に名前が無いと誰か分からなくなるので必ず入れる。
+    const nameAt = (r, i) => r.display || (uids[i] == null ? '参加者' + (i + 1) : '');
+    // 名前は原則 全員分を URL に載せる。プレビュー側が players/<uid>.json を
+    // 取れなくても (回線・DB 未登録・上位帯の巨大 JSON) 名前だけは必ず出せるようにするため。
+    // 規模が大きく URL が共有に耐えなくなる場合だけ、DB 登録者を落として uid 復元に任せる
+    // (そのときはプール当たりの人数が小さいので、プレビュー側の取得も軽い)。
+    const fullNames = {}, minimalNames = {};
     recs.forEach((r, i) => {
-      // SPSP DB に居ない参加者だけ表示名を同梱 (登録者は players/<uid>.json から復元できる)
-      if (uids[i] == null || !MASTER_MAP || !MASTER_MAP.has(uids[i])) {
-        names[String(i)] = r.display || (uids[i] != null ? 'uid:' + uids[i] : '参加者' + (i + 1));
-      }
+      const nm = nameAt(r, i);
+      if (!nm) return;
+      fullNames[String(i)] = nm;
+      if (uids[i] == null || !MASTER_MAP || !MASTER_MAP.has(uids[i])) minimalNames[String(i)] = nm;
     });
     const payload = {
       v: 1,
@@ -3731,14 +3741,23 @@ async function issueBracketPreview() {
       src: SEED_APP_CONFIG.mode,
       phases: [{ name: P >= 2 ? '予選' : 'ブラケット', pools: P, adv: 2 }],
       wv: waveMap,
-      uids, names,
+      uids, names: fullNames,
     };
-    const blob = await SeedShare.encodePayload(payload);
-    const url = new URL('../bracket/', location.href).toString() + SeedShare.buildFragment({ ph: 0, wd: 1 }, blob);
+    const bracketUrl = new URL('../bracket/', location.href).toString();
+    let blob = await SeedShare.encodePayload(payload);
+    let url = bracketUrl + SeedShare.buildFragment({ ph: 0, wd: 1 }, blob);
+    let trimmed = false;
+    if (url.length > BRACKET_URL_BUDGET) {
+      payload.names = minimalNames;
+      blob = await SeedShare.encodePayload(payload);
+      url = bracketUrl + SeedShare.buildFragment({ ph: 0, wd: 1 }, blob);
+      trimmed = true;
+    }
     window.open(url, '_blank', 'noopener');
     let copied = false;
     try { await navigator.clipboard.writeText(url); copied = true; } catch (e) { /* clipboard 不可の環境 */ }
     say(`🏆 プレビューを開きました (${recs.length}人 / URL ${url.length.toLocaleString()}字${copied ? '・コピー済み' : ''})。` +
+      (trimmed ? ' 人数が多いため URL には SPSP 未登録者の名前だけを入れ、登録者名はプレビュー側で復元します。' : '') +
       'Top カットの区切りはプレビューページの「フェーズ構成」で設定できます。');
   } catch (e) {
     say('❌ プレビュー発行に失敗: ' + (e && e.message));
