@@ -144,6 +144,13 @@ body {
 .bp-slot.bp-win .bp-name { font-weight: 700; color: #1e40af; }
 .bp-slot.bp-win:first-child { border-radius: 8px 8px 0 0; box-shadow: inset 3px 0 0 #2563eb; }
 .bp-slot.bp-win:nth-child(2) { border-radius: 0 0 8px 8px; box-shadow: inset 3px 0 0 #2563eb; }
+/* 敗者側は勝者側と同じ青だと見分けがつかないので、勝ち上がりの色を橙系にする */
+.bp-lb .bp-match { border-color: #ecdfd0; }
+.bp-lb .bp-slot.bp-win { background: #fff7ed; }
+.bp-lb .bp-slot.bp-win .bp-name { color: #9a3412; }
+.bp-lb .bp-slot.bp-win:first-child { box-shadow: inset 3px 0 0 #ea580c; }
+.bp-lb .bp-slot.bp-win:nth-child(2) { box-shadow: inset 3px 0 0 #ea580c; }
+.bp-lb .bp-round-title { color: #a16207; }
 .bp-slot.bp-bye { color: #c7cdd6; }
 .bp-slot.bp-bye .bp-name { color: #c7cdd6; cursor: default; }
 .bp-slot.bp-nodb .bp-name { color: #64748b; }
@@ -169,8 +176,18 @@ body {
   position: absolute; right: 100%; margin-right: 7px; top: 50%; transform: translateY(-50%);
   z-index: 2;
 }
-.bp-match .bp-slot.bp-hi { background: #fff7ed; box-shadow: inset 0 0 0 2px #f59e0b; }
-.bp-match .bp-slot.bp-hi .bp-name { font-weight: 700; }
+/* 選手を追うときのハイライト。勝者側の青・敗者側の橙のどちらとも違う黄にする。
+   敗者側の勝ち上がり (.bp-lb .bp-slot.bp-win:first-child 等) のほうが詳細度が高いので、
+   同等以上のセレクタで上書きしないとハイライトが見えなくなる。 */
+.bp-match .bp-slot.bp-hi,
+.bp-match .bp-slot.bp-hi:first-child,
+.bp-match .bp-slot.bp-hi:nth-child(2),
+.bp-lb .bp-match .bp-slot.bp-hi:first-child,
+.bp-lb .bp-match .bp-slot.bp-hi:nth-child(2) {
+  background: #fef9c3; box-shadow: inset 0 0 0 2px #ca8a04;
+}
+.bp-match .bp-slot.bp-hi .bp-name,
+.bp-lb .bp-match .bp-slot.bp-hi .bp-name { font-weight: 700; color: #713f12; }
 .bp-flags {
   position: absolute; left: 6px; right: 6px; top: 100%; margin-top: 2px;
   display: flex; flex-wrap: nowrap; gap: 4px; overflow: hidden;

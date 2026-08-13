@@ -124,6 +124,23 @@
     return errors;
   }
 
+  // 最終フェーズのプールが 2 つ以上あると、そこで大会が終わらない (合流先が無い)。
+  // その場合は 1 プールの次フェーズを自動で足す。N = 全参加人数。
+  function withFinalPhase(phases, N) {
+    const out = (phases || []).map((p) => Object.assign({}, p));
+    const last = out[out.length - 1];
+    if (!last || (last.pools | 0) <= 1) return out;
+    if (!((last.adv | 0) >= 1)) last.adv = 2;
+    const cur = phaseEntrantCounts(out, N)[out.length - 1];
+    let adv = last.adv | 0;
+    while (adv > 1 && adv * (last.pools | 0) >= cur) adv--;   // カットになるところまで詰める
+    // 1人抜けでもカットにならない (プール数 >= 人数) なら足しようがないのでそのまま
+    if (adv * (last.pools | 0) >= cur) return phases.map((p) => Object.assign({}, p));
+    last.adv = adv;
+    out.push({ name: 'TOP' + adv * (last.pools | 0), pools: 1, adv: 0 });
+    return out;
+  }
+
   function validatePayload(p) {
     const errors = [];
     if (!p || typeof p !== 'object') return ['ペイロードがオブジェクトではありません'];
@@ -369,7 +386,7 @@
       v: 1,
       ev: evName || opts.ev || 'CSV 読み込み',
       src: 'csv',
-      phases: phases || [{ name: P >= 2 ? '予選' : 'ブラケット', pools: P, adv: 2 }],
+      phases: withFinalPhase(phases || [{ name: P >= 2 ? '予選' : 'ブラケット', pools: P, adv: 2 }], uids.length),
       wv: wvArr || chunkWaveMap(P, Math.max(1, W)),
       uids,
       names,
@@ -416,7 +433,7 @@
   }
 
   const API = {
-    encodePayload, decodePayload, validatePayload, validatePhases, phaseEntrantCounts,
+    encodePayload, decodePayload, validatePayload, validatePhases, phaseEntrantCounts, withFinalPhase,
     parseFragment, buildFragment,
     chunkWaveMap, waveLetter, poolLabel,
     parseCsv, workCsvToPayload, buildWorkCsv,

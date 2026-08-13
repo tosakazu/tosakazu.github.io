@@ -507,6 +507,15 @@ function restoreManualForEvent() {
       }
     }
   } catch (e) { MANUAL = null; SEED_SPEC = null; }
+  // 手動調整は既定でオン。復元が無ければ現在の出力順を基準に開いておく
+  // (オフにしておく理由が無いので、わざわざ「編集を開始」を押させない)。
+  if (!MANUAL && DATA.length) {
+    MANUAL = { base: orderedRecs().map((r) => r.user_id), ops: [], hpos: 0,
+               committed: false, editing: true, sel: null };
+  } else if (MANUAL) {
+    MANUAL.editing = true;
+    MANUAL.sel = null;
+  }
   renderManualUI();
   renderSpecStatus();
   // csv モード: 参加者が揃ったので読み込み済み CSV 順を基準に反映 (復元済み手動調整は優先)。
@@ -576,7 +585,11 @@ function manualBarHtml() {
     + ` ／ ウェーブ数 <input type="number" data-mn-waves min="1" max="26" step="1" value="${_pv('so-waves', 1)}" style="width:52px;padding:1px 4px;border:1px solid #d1d5db;border-radius:4px;font-size:11px">`
     + `</span>`;
   if (!MANUAL) {
-    return `<button data-mn="unlock" style="font-size:12px;padding:5px 12px;border:1px solid #d1d5db;border-radius:6px;background:#f3f4f6;color:#6b7280;cursor:pointer">🔒 手動調整 — タップで編集開始</button> ${projWarn}`;
+    // 破棄した直後などの状態。プール数/ウェーブ数はここでも触れるようにしておく
+    // (手動調整と関係なく、プール表示や固定の枠を決める設定なので)。
+    return `<div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">`
+      + `<button data-mn="unlock" style="font-size:12px;padding:5px 12px;border:1px solid #d1d5db;border-radius:6px;background:#f3f4f6;color:#6b7280;cursor:pointer">✏ 手動調整を開始</button>`
+      + poolWaveInputs + projWarn + `</div>`;
   }
   const moved = manualMovedSet().size;
   if (MANUAL.editing) {
@@ -2877,6 +2890,9 @@ function finishSeedOptimize(result, displayOf, note, ranking, interInfo) {
 function applySeedOptimize() {
   if (!SEEDOPT_RESULT || !SEEDOPT_RESULT.seedOrder) return;
   APPLIED_ORDER = SEEDOPT_RESULT.seedOrder.slice();
+  // 被り回避を適用したら手動編集は閉じる (表は最適化後の順序になるので、
+  // 編集バーだけ出したままだと状態が食い違う)。編集の再開で適用が解除される。
+  if (MANUAL && MANUAL.editing) { MANUAL.editing = false; MANUAL.committed = true; MANUAL.sel = null; }
   // 表示順も最適化後に合わせる。
   const pos = new Map(APPLIED_ORDER.map((u, i) => [u, i]));
   DATA.sort((a, b) =>
@@ -3739,7 +3755,8 @@ async function issueBracketPreview() {
       v: 1,
       ev: (EVENT_CONTEXT && EVENT_CONTEXT.eventName) || (CSV_SOURCE && CSV_SOURCE.label) || 'シードプレビュー',
       src: SEED_APP_CONFIG.mode,
-      phases: [{ name: P >= 2 ? '予選' : 'ブラケット', pools: P, adv: 2 }],
+      // プールが 2 つ以上なら、その先の 1 プールのフェーズまで作る (そこで終われないため)
+      phases: SeedShare.withFinalPhase([{ name: P >= 2 ? '予選' : 'ブラケット', pools: P, adv: 2 }], recs.length),
       wv: waveMap,
       uids, names: fullNames,
     };

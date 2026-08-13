@@ -28,6 +28,8 @@
   const PITCH = 104;     // 1回戦の縦ピッチ
   const MATCH_H = 58;    // カードの基準高 (スロット2段。バッジは下にはみ出す)
   const TITLE_H = 26;    // ラウンド見出しの高さ
+  const SLOT_DY = 13;    // カード中心から見た上段/下段スロットのおおよその中心
+  const slotY = (centerY, bottom) => centerY + (bottom ? SLOT_DY : -SLOT_DY);
 
   const STATE = {
     payload: null,
@@ -427,14 +429,21 @@
 
     let svgs = '';
     for (let r = 1; r < R; r++) {
-      const paths = de.winners[r].map((m, i) => (played(m) ? connector(
-        TITLE_H + center(r - 1, 2 * i), TITLE_H + center(r - 1, 2 * i + 1), TITLE_H + center(r, i),
-        played(de.winners[r - 1][2 * i]), played(de.winners[r - 1][2 * i + 1])) : '')).join('');
+      const paths = de.winners[r].map((m, i) => {
+        if (!played(m)) return '';
+        const cy = TITLE_H + center(r, i);
+        const src = [de.winners[r - 1][2 * i], de.winners[r - 1][2 * i + 1]];
+        // 上の試合の勝者 → 上段 / 下の試合の勝者 → 下段 (勝者側は a=勝ち上がりで固定)
+        return [0, 1].map((k) => (played(src[k])
+          ? link(slotY(TITLE_H + center(r - 1, 2 * i + k), false), slotY(cy, k === 1))
+          : '')).join('');
+      }).join('');
       svgs += linkSvg(r, height, paths);
     }
     if (withGf) {
       const y = TITLE_H + center(R - 1, 0);
-      svgs += linkSvg(R, height, `<path d="M0 ${y} H ${GAP}"/>`);
+      // 勝者側決勝の勝者 → GF 上段。敗者側優勝の枠は左に対応する枠が無いので線は引かない。
+      svgs += linkSvg(R, height, link(slotY(y, false), slotY(y, false)));
     }
     return `<div class="bp-sec" style="width:${width}px;height:${height}px">${cols}${svgs}</div>`;
   }
@@ -447,32 +456,36 @@
     const height = TITLE_H + secH;
     const width = rounds.length * COLW + (rounds.length - 1) * GAP;
     const center = (li, m) => (m + 0.5) * (secH / counts[li]);
-    const k = de.wTotal;                    // 表示名は打ち切り前基準
 
     let cols = '';
     rounds.forEach((matches, li) => {
-      const cells = matches.map((m, i) => (played(m) ? matchDiv(
-        m, ctx, TITLE_H + center(li, i) - MATCH_H / 2,
-        m.drop ? `↓勝者側${C.roundName(m.drop, k)}` : null, `L:${li}:${i}`) : '')).join('');
+      const cells = matches.map((m, i) => (played(m)
+        ? matchDiv(m, ctx, TITLE_H + center(li, i) - MATCH_H / 2, null, `L:${li}:${i}`, true) : '')).join('');
       cols += `<div class="bp-round bp-lb" style="left:${li * (COLW + GAP)}px">` +
         `<div class="bp-round-title">${esc(C.lbRoundName(li, de.lTotal))}</div>${cells}</div>`;
     });
 
     let svgs = '';
     for (let li = 1; li < rounds.length; li++) {
-      let paths = '';
-      if (counts[li] === counts[li - 1]) {
-        // major: 1:1 の直線 (ドロップ側は勝者側から来るのでバッジのみ)
-        paths = rounds[li].map((m, i) => {
-          if (!played(m) || !played(rounds[li - 1][i])) return '';
-          const y1 = TITLE_H + center(li - 1, i), y2 = TITLE_H + center(li, i);
-          return `<path d="M0 ${y1} C ${GAP / 2} ${y1} ${GAP / 2} ${y2} ${GAP} ${y2}"/>`;
-        }).join('');
-      } else {
-        paths = rounds[li].map((m, i) => (played(m) ? connector(
-          TITLE_H + center(li - 1, 2 * i), TITLE_H + center(li - 1, 2 * i + 1), TITLE_H + center(li, i),
-          played(rounds[li - 1][2 * i]), played(rounds[li - 1][2 * i + 1])) : '')).join('');
-      }
+      const major = counts[li] === counts[li - 1];   // 勝者側から 1 人ずつ落ちてくるラウンド
+      const paths = rounds[li].map((m, i) => {
+        if (!played(m)) return '';
+        const cy = TITLE_H + center(li, i);
+        // 表示は勝ち上がる側を上段にしているので、a/b がどちらの段かはここで決まる
+        const bTop = m.b != null && m.w === m.b;
+        const yA = slotY(cy, bTop), yB = slotY(cy, !bTop);
+        if (major) {
+          // a = 前ラウンドの勝ち上がりだけ線を引く。b = 勝者側から落ちてくる側は
+          // 左に対応する枠が無いので線は引かない (どこから来たかは枠内のバッジで示す)。
+          const from = rounds[li - 1][i];
+          return played(from) ? link(slotY(TITLE_H + center(li - 1, i), false), yA) : '';
+        }
+        // 敗者側どうしのペアリング: 上の試合の勝者 → a / 下の試合の勝者 → b
+        const src = [rounds[li - 1][2 * i], rounds[li - 1][2 * i + 1]];
+        return [0, 1].map((k) => (played(src[k])
+          ? link(slotY(TITLE_H + center(li - 1, 2 * i + k), false), k === 0 ? yA : yB)
+          : '')).join('');
+      }).join('');
       svgs += linkSvg(li, height, paths);
     }
     return `<div class="bp-sec" style="width:${width}px;height:${height}px">${cols}${svgs}</div>`;
@@ -487,13 +500,11 @@
   // 実施される試合か (片方でも空きなら bye = 非表示)
   function played(m) { return !!(m && m.a != null && m.b != null); }
 
-  // 2 本の入力 (y1,y2) → 出力 (yt) の接続。bye で消えた側からは線を引かない。
-  function connector(y1, y2, yt, v1, v2) {
+  // 前の列のスロット (y1) → この列のスロット (y2) を結ぶ折れ線 (水平→垂直→水平)。
+  // カード中心ではなく**スロット単位**で結ぶので、誰が次のどの枠に入るかが線で追える。
+  function link(y1, y2) {
     const h = GAP / 2;
-    if (v1 && v2) return `<path d="M0 ${y1} H ${h} V ${yt} H ${GAP}"/><path d="M0 ${y2} H ${h} V ${yt}"/>`;
-    if (v1) return `<path d="M0 ${y1} H ${h} V ${yt} H ${GAP}"/>`;
-    if (v2) return `<path d="M0 ${y2} H ${h} V ${yt} H ${GAP}"/>`;
-    return '';
+    return `<path d="M0 ${y1} H ${h} V ${y2} H ${GAP}"/>`;
   }
 
   function slotHtml(local, m, ctx, dropBadge, isB, key) {
@@ -511,10 +522,11 @@
     // その選手が最後に出る試合なら、次フェーズのどこから始まるかを出す
     const last = key != null && ctx.lastAt && ctx.lastAt.get(local) === key + (isB ? ':b' : ':a');
     const ch = mainCharOf(gi);
-    // 名前の下 (同じ枠の中) に並べるタグ: 居住地・落ちる先・落ちてきた元
+    // 名前の下 (同じ枠の中) に並べるタグ: 落ちてきた元・落ちる先・居住地
     const tags = [
-      isB && dropBadge ? dropFromBadge(ctx, m, local, dropBadge) : '',
+      dropFromBadge(ctx, local, gi, key),
       dropToBadge(ctx, m, local, gi, key),
+      isB && dropBadge ? `<span class="bp-drop">${esc(dropBadge)}</span>` : '',
       res ? `<span class="bp-res">${esc(res)}</span>` : '',
     ].filter(Boolean).join('');
     const first = key != null && ctx.firstAt && ctx.firstAt.get(local) === key + (isB ? ':b' : ':a');
@@ -530,13 +542,20 @@
       (last ? nextChip(gi) : '') + '</div>';
   }
 
-  // 敗者側 major の「↓勝者側○回戦」。元の試合が分かればクリックで飛べるようにする。
-  function dropFromBadge(ctx, m, local, label) {
-    const r = (m.drop | 0) - 1;
-    const src = (ctx.de.winners[r] || []).findIndex((wm) => wm.l === local);
-    if (src < 0) return `<span class="bp-drop">${esc(label)}</span>`;
-    return `<button class="bp-drop bp-jump" data-jump="W:${r}:${src}" data-jump-gi="${ctx.members[local - 1]}"` +
-      ` title="落ちてきた元の試合へ">${esc(label)}</button>`;
+  // 敗者側の枠に「↓勝者側○回戦」。その選手が敗者側で初めて出る枠にだけ出し、
+  // クリックで落ちてきた元の試合へ飛べるようにする。
+  // ドロップ戦 (major) だけでなく、敗者側1回戦のようなペアリング戦にも出る。
+  // 敗者側スタート勢は勝者側に出ていないので何も出さない。
+  function dropFromBadge(ctx, local, gi, key) {
+    if (key == null || key[0] !== 'L') return '';
+    const li = parseInt(key.split(':')[1], 10);
+    const firstLb = ctx.de.losers.findIndex((round) => round.some((lm) => lm.a === local || lm.b === local));
+    if (firstLb !== li) return '';                       // 敗者側での初登場だけ
+    const r = ctx.de.winners.findIndex((round) => round.some((wm) => wm.l === local));
+    if (r < 0) return '';                                // 敗者側スタート
+    const mi = ctx.de.winners[r].findIndex((wm) => wm.l === local);
+    return `<button class="bp-drop bp-jump" data-jump="W:${r}:${mi}" data-jump-gi="${gi}"` +
+      ` title="落ちてきた元の試合へ">↓勝者側${esc(C.roundName(r + 1, ctx.de.wTotal))}</button>`;
   }
 
   // 勝者側の枠に「負けたら敗者側○回戦へ」。クリックでその試合へ飛ぶ。
@@ -675,7 +694,9 @@
     return map;
   }
 
-  function matchDiv(m, ctx, top, dropBadge, key) {
+  // winnerFirst: 勝ち上がる側を上のスロットに描く (敗者側は a=生存者/b=ドロップ の並びなので、
+  // そのままだと勝つ側が下に来てしまう。勝者側は元から上が勝ち上がる)
+  function matchDiv(m, ctx, top, dropBadge, key, winnerFirst) {
     let flags = '';
     if (m.a != null && m.b != null) {
       const ga = ctx.members[m.a - 1], gb = ctx.members[m.b - 1];
@@ -703,8 +724,11 @@
       }
     }
     const ghost = (m.a == null && m.b == null) ? ' bp-ghost' : '';
+    const slotA = slotHtml(m.a, m, ctx, dropBadge, false, key);
+    const slotB = slotHtml(m.b, m, ctx, dropBadge, true, key);
+    const swap = winnerFirst && m.b != null && m.w === m.b;
     return `<div class="bp-match${ghost}"${key ? ` data-key="${key}"` : ''} style="top:${top}px">` +
-      slotHtml(m.a, m, ctx, dropBadge, false, key) + slotHtml(m.b, m, ctx, dropBadge, true, key) +
+      (swap ? slotB + slotA : slotA + slotB) +
       (flags ? `<div class="bp-flags">${flags}</div>` : '') + '</div>';
   }
 
@@ -713,6 +737,8 @@
     const pop = $('bp-pop');
     pop.innerHTML = '<span class="bp-pop-close">✕</span>' + html;
     pop.hidden = false;
+    const card = anchor.closest && anchor.closest('.bp-match');
+    pop.dataset.anchor = (card && card.dataset.key) || '';
     const r = anchor.getBoundingClientRect();
     const top = r.bottom + window.scrollY + 6;
     let left = r.left + window.scrollX;
@@ -815,8 +841,11 @@
     });
   }
 
-  async function applyPhases(phases) {
+  async function applyPhases(phasesIn) {
     const st = $('bp-phase-status');
+    // 最後のフェーズが 2 プール以上ならそこで終われないので、次フェーズを自動で足す
+    const phases = S.withFinalPhase(phasesIn, STATE.payload.uids.length);
+    const added = phases.length > phasesIn.length;
     const errors = S.validatePhases(phases, STATE.payload.uids.length);
     if (errors.length) { st.textContent = '❌ ' + errors.join(' / '); return; }
     const oldP0 = STATE.payload.phases[0].pools;
@@ -831,7 +860,7 @@
     STATE.poolAgg.clear();
     STATE.view.ph = Math.min(STATE.view.ph, phases.length - 1);
     STATE.view.pool = null;
-    st.textContent = '✅ 適用しました';
+    st.textContent = '✅ 適用しました' + (added ? ` (プールが2つ以上あるので「${phases[phases.length - 1].name}」を追加)` : '');
     renderAll();
   }
 
@@ -862,6 +891,7 @@
       STATE.payload = payload;
       STATE.blob = await S.encodePayload(payload);
       STATE.players.clear(); STATE.poolAgg.clear();
+      await ensureFinalPhase();
       STATE.view = view || { ph: 0, pool: null, wd: STATE.view.wd, lb: STATE.view.lb };
       clearError();
       st.textContent = `✅ ${payload.uids.length}人を読み込みました` + (warnings.length ? ' / ⚠ ' + warnings.join(' / ') : '');
@@ -871,6 +901,15 @@
       st.textContent = '';
       showError('CSV を読み込めませんでした: ' + e.message);
     }
+  }
+
+  // 最終フェーズが 2 プール以上なら次フェーズを補って blob を作り直す。
+  // 単一フェーズで発行された古い共有 URL もこれで正しい構成になる。
+  async function ensureFinalPhase() {
+    const fixed = S.withFinalPhase(STATE.payload.phases, STATE.payload.uids.length);
+    if (fixed.length === STATE.payload.phases.length) return;
+    STATE.payload.phases = fixed;
+    STATE.blob = await S.encodePayload(STATE.payload);
   }
 
   // ── 全体描画 ────────────────────────────────────────────
@@ -966,11 +1005,16 @@
       if (nameEl) {
         // 名前クリック = その選手をハイライト (もう一度で解除) + 概要ポップアップ
         const gi = parseInt(nameEl.dataset.gi, 10);
+        const card = nameEl.closest('.bp-match');
+        const mk = card && card.dataset.key;
         STATE.view.hi = (STATE.view.hi === gi) ? null : gi;
         const html = playerPopHtml(gi);
         renderBracket();
-        const again = [...document.querySelectorAll('.bp-name[data-gi="' + gi + '"]')][0] || nameEl;
-        showPop(again, html);
+        // 再描画で元の要素は消えるので、**押した試合と同じカード**の枠を基準に開く
+        // (先頭の出現を使うと、敗者側で押しても勝者側の位置に出てしまう)
+        const anchor = (mk && document.querySelector(`.bp-match[data-key="${mk}"] .bp-name[data-gi="${gi}"]`))
+          || document.querySelector(`.bp-name[data-gi="${gi}"]`) || nameEl;
+        showPop(anchor, html);
         return;
       }
       const flag = e.target.closest('.bp-flag-recent[data-pair]');
@@ -1003,6 +1047,7 @@
     try {
       STATE.payload = await S.decodePayload(frag.d);
       STATE.blob = frag.d;
+      await ensureFinalPhase();
     } catch (e) {
       showError('共有データを読み込めませんでした: ' + e.message);
       $('bp-csv-panel').open = true;
