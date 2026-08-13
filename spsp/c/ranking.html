@@ -343,16 +343,28 @@ function buildData() {
   return ranked;
 }
 
+// キャラ投票 (本人申告) で決まったメインは pct を持たない (= 使用実績が無い).
+// docs/post_feature_design.md §12 / v3/v4/char_vote.py.
+const _mainPct = (rec) => {
+  const c = (rec.characters || [])[0];
+  return c && typeof c.pct === 'number' ? c.pct : null;
+};
+
 const CHAR_EXTRA_COLUMNS = [
   { id: 'char_pct', label: '使用率', sortable: true, sortKey: 'char_pct', css: 'col-other-rank',
+    // 昇順ソートなので -pct で使用率の高い順。実績なし (投票由来) は 0 で末尾へ。
     value: (rec) => {
-      const c = (rec.characters || [])[0];
-      return -(c ? c.pct : 0);
+      const p = _mainPct(rec);
+      return p === null ? 0 : -p;
     },
     cell: (rec) => {
       const c = (rec.characters || [])[0];
       if (!c) return '–';
-      return `${(c.pct * 100).toFixed(0)}%`;
+      const p = _mainPct(rec);
+      if (p === null) {
+        return '<span style="color:#9ca3af" title="大会での使用データが無く、本人の申告で登録されたキャラです">自己申告</span>';
+      }
+      return `${(p * 100).toFixed(0)}%`;
     },
   },
 ];

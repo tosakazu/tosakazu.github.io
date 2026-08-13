@@ -710,7 +710,7 @@
   </div>
 
   <div class="footer" id="footer-info">
-    <span class="site-version" style="font-size:11px;color:#9ca3af">v 3ba97cd · 2026-08-13 16:45 UTC</span>
+    <span class="site-version" style="font-size:11px;color:#9ca3af">v 9afad93 · 2026-08-13 18:10 UTC</span>
   </div>
 </main>
 
@@ -1277,7 +1277,10 @@ function render() {
       // 使用キャラ名の前にキャラ絵文字 (char_emoji.json, char_id キー) を表示。
       const ce = CHAR_EMOJI && (CHAR_EMOJI[c.id] || CHAR_EMOJI[canonicalId]);
       const emoji = (ce && ce.emoji) ? ce.emoji + ' ' : '';
-      let html = `<a href="../c/ranking.html?char=${canonicalId}" style="color:${color};font-weight:${weight};text-decoration:none">${emoji}${c.name}</a>`;
+      // 大会での使用データが無く本人申告で入ったキャラは pct を持たない
+      // (docs/post_feature_design.md §12)。
+      const title = typeof c.pct === 'number' ? '' : ' title="本人の申告で登録されたキャラです"';
+      let html = `<a href="../c/ranking.html?char=${canonicalId}"${title} style="color:${color};font-weight:${weight};text-decoration:none">${emoji}${c.name}</a>`;
       if (isMain && SUB && SUB.char) {
         html += `<a href="../c/ranking.html?char=${canonicalId}" ` +
           `style="margin-left:5px;color:#9ca3af;font-size:11px;text-decoration:none">#${SUB.char.rank}</a>`;

@@ -177,23 +177,28 @@
 
   /**
    * characters から「投票できる候補」を返す (GAS 側 voteCandidates_ と同じ規則)。
-   *   null → データ無し (全キャラ可) / [] → 明確なメイン (不可) /
+   *   null → 使用実績が無い (全キャラ可) / [] → 明確なメイン (不可) /
    *   [{id,name}..] → ダブルメイン圏 (この中からのみ)
+   *
+   * - 基準は **最大 pct** (先頭ではない)。ビルドが投票採用で並びを変えるため、
+   *   characters[0] が最大 pct とは限らない (v3/v4/char_vote.py)。
+   * - pct を持たないエントリ (= 投票由来。ビルドが使用実績ゼロの人に足したもの) は
+   *   実績として数えない。実績が 1 つも無ければ null (= 再投票可)。
    */
   function voteCandidates(chars) {
     if (!chars || !chars.length) return null;
-    var top = Number(chars[0] && chars[0].pct);
-    if (!isFinite(top)) return [];
-    var out = [];
+    var measured = [];
     for (var i = 0; i < chars.length; i++) {
-      var p = Number(chars[i].pct);
-      if (!isFinite(p)) continue;
-      if (top - p <= CFG.DOUBLE_MAIN_PCT_GAP) {
-        var id = chars[i].id;
-        if (id === undefined || id === null) continue;
-        out.push({ id: String(id), name: String(chars[i].name || '') });
+      var p = Number(chars[i] && chars[i].pct);
+      if (isFinite(p) && chars[i].id !== undefined && chars[i].id !== null) {
+        measured.push({ id: String(chars[i].id), name: String(chars[i].name || ''), pct: p });
       }
     }
+    if (!measured.length) return null; // 投票由来のみ = 実績なし扱い
+    var top = -Infinity;
+    measured.forEach(function (c) { if (c.pct > top) top = c.pct; });
+    var out = measured.filter(function (c) { return top - c.pct <= CFG.DOUBLE_MAIN_PCT_GAP; })
+      .map(function (c) { return { id: c.id, name: c.name }; });
     return out.length >= 2 ? out : [];
   }
 

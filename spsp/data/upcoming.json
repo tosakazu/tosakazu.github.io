@@ -1,55 +1,9 @@
 {
-  "generated_at": 1786606561,
+  "generated_at": 1786611634,
   "country_code": "JP",
   "lookahead_days": 21,
-  "count": 52,
+  "count": 50,
   "tournaments": [
-    {
-      "tournament_id": 937211,
-      "tournament_slug": "tournament/13-523",
-      "tournament_name": "13(木)上野スマコミ#523(オープン)",
-      "start_at": 1786608000,
-      "end_at": 1786629600,
-      "is_online": false,
-      "city": "台東区",
-      "venue_name": "",
-      "country_code": "JP",
-      "num_attendees": 15,
-      "url": "/tournament/13-523",
-      "events": [
-        {
-          "event_id": 1676161,
-          "event_slug": "tournament/13-523/event/on",
-          "event_name": "シングルス（１on１トーナメント）",
-          "num_entrants": 15,
-          "type": 1,
-          "start_at": 1786608000
-        }
-      ]
-    },
-    {
-      "tournament_id": 940525,
-      "tournament_slug": "tournament/shibuya-g-g-smash-weekly-75",
-      "tournament_name": "Shibuya G.G.Smash Weekly 75",
-      "start_at": 1786611600,
-      "end_at": 1786627800,
-      "is_online": false,
-      "city": "渋谷区",
-      "venue_name": "",
-      "country_code": "JP",
-      "num_attendees": 27,
-      "url": "/tournament/shibuya-g-g-smash-weekly-75",
-      "events": [
-        {
-          "event_id": 1683295,
-          "event_slug": "tournament/shibuya-g-g-smash-weekly-75/event/singles",
-          "event_name": "Singles",
-          "num_entrants": 27,
-          "type": 1,
-          "start_at": 1786617000
-        }
-      ]
-    },
     {
       "tournament_id": 938904,
       "tournament_slug": "tournament/hit-189-maesuma-hit-189",
@@ -189,29 +143,6 @@
       ]
     },
     {
-      "tournament_id": 924661,
-      "tournament_slug": "tournament/-3119",
-      "tournament_name": "第１９回グランドスラム",
-      "start_at": 1786752000,
-      "end_at": 1786795200,
-      "is_online": false,
-      "city": "名古屋市",
-      "venue_name": "",
-      "country_code": "JP",
-      "num_attendees": 488,
-      "url": "/tournament/-3119",
-      "events": [
-        {
-          "event_id": 1651150,
-          "event_slug": "tournament/-3119/event/grand-slum",
-          "event_name": "grand slum",
-          "num_entrants": 488,
-          "type": 1,
-          "start_at": 1786752000
-        }
-      ]
-    },
-    {
       "tournament_id": 930331,
       "tournament_slug": "tournament/sp7-4",
       "tournament_name": "ヘルブラSP7",
@@ -229,6 +160,29 @@
           "event_slug": "tournament/sp7-4/event/1on1",
           "event_name": "1on1トーナメント",
           "num_entrants": 20,
+          "type": 1,
+          "start_at": 1786752000
+        }
+      ]
+    },
+    {
+      "tournament_id": 924661,
+      "tournament_slug": "tournament/-3119",
+      "tournament_name": "第１９回グランドスラム",
+      "start_at": 1786752000,
+      "end_at": 1786795200,
+      "is_online": false,
+      "city": "名古屋市",
+      "venue_name": "",
+      "country_code": "JP",
+      "num_attendees": 488,
+      "url": "/tournament/-3119",
+      "events": [
+        {
+          "event_id": 1651150,
+          "event_slug": "tournament/-3119/event/grand-slum",
+          "event_name": "grand slum",
+          "num_entrants": 488,
           "type": 1,
           "start_at": 1786752000
         }
@@ -359,14 +313,14 @@
       "city": "台東区",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 5,
+      "num_attendees": 6,
       "url": "/tournament/16-525",
       "events": [
         {
           "event_id": 1677062,
           "event_slug": "tournament/16-525/event/on",
           "event_name": "シングルス（１on１トーナメント）",
-          "num_entrants": 5,
+          "num_entrants": 6,
           "type": 1,
           "start_at": 1786849200
         }
@@ -474,14 +428,14 @@
       "city": "渋谷区",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 3,
+      "num_attendees": 6,
       "url": "/tournament/137-shibuya-tatsu",
       "events": [
         {
           "event_id": 1686577,
           "event_slug": "tournament/137-shibuya-tatsu/event/singles",
           "event_name": "Singles",
-          "num_entrants": 3,
+          "num_entrants": 6,
           "type": 1,
           "start_at": 1787047200
         }
@@ -796,14 +750,14 @@
       "city": "福岡市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 91,
+      "num_attendees": 92,
       "url": "/tournament/kowloon-18-5",
       "events": [
         {
           "event_id": 1673913,
           "event_slug": "tournament/kowloon-18-5/event/kowloon_sp",
           "event_name": "KOWLOON_SP",
-          "num_entrants": 91,
+          "num_entrants": 92,
           "type": 1,
           "start_at": 1787446800
         }
