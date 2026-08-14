@@ -1,11 +1,11 @@
 {
-  "eval_date": "2026-08-14",
-  "generated_at": "2026-08-14T21:09:45.774711",
-  "computation_time_s": 117.8,
-  "n_tournaments_total": 5033,
+  "eval_date": "2026-08-15",
+  "generated_at": "2026-08-15T00:09:04.208080",
+  "computation_time_s": 114.3,
+  "n_tournaments_total": 5034,
   "n_tournaments_small": 102,
   "min_entrants_for_ranking": 5,
-  "n_players": 22068,
+  "n_players": 22073,
   "lookback_days": 2920,
   "jjpr_lookback_days": 730,
   "snapshot_days": [
@@ -72,13 +72,13 @@
     2880
   ],
   "score_ranges": {
-    "tjpr_elo_max": 91.49562718679545,
+    "tjpr_elo_max": 91.3712107217422,
     "bt_gated_elo_max": 2753.164108464075,
     "tjpr_elo_offset": 44.0,
     "bt_gated_elo_floor": 250.0,
-    "tjpr_n_ranked": 14674,
+    "tjpr_n_ranked": 14676,
     "tjpr_radar_alpha": 8.0,
-    "bt_n_ranked": 22067,
+    "bt_n_ranked": 22072,
     "spr_upper_max": 2.5,
     "spr_neg_max": 1.0,
     "uf_upper_max": 1.0,
@@ -119,7 +119,7 @@
     "TJPR_ELO_SCALE": 17.5,
     "TJPR_ELO_OFFSET": 0.0,
     "BT_ELO_OFFSET": 0.0,
-    "TJPR_MAX_SCORE": 261.4160776765584,
+    "TJPR_MAX_SCORE": 261.0606020621206,
     "TJPR_ELO_SCALE_BASE": 0.35
   },
   "ranking_method": "V4_Glicko2_ens_LV_pure_singlepass_LV1_5_LV2_9_LV3wk_LV4_nent32",

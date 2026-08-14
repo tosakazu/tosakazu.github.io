@@ -1,5 +1,5 @@
 {
-  "generated_at": 1786676472,
+  "generated_at": 1786687243,
   "country_code": "JP",
   "lookahead_days": 21,
   "count": 48,
@@ -290,14 +290,14 @@
       "city": "横浜市",
       "venue_name": "おださがプラザ",
       "country_code": "JP",
-      "num_attendees": 3,
+      "num_attendees": 4,
       "url": "/tournament/gg-10-kannai-gg",
       "events": [
         {
           "event_id": 1680775,
           "event_slug": "tournament/gg-10-kannai-gg/event/kannai-gg-sp-1on1",
           "event_name": "kannai-gg/スマブラSP 1on1",
-          "num_entrants": 3,
+          "num_entrants": 4,
           "type": 1,
           "start_at": 1786957200
         }
@@ -336,14 +336,14 @@
       "city": "札幌市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 3,
+      "num_attendees": 4,
       "url": "/tournament/epochi",
       "events": [
         {
           "event_id": 1687029,
           "event_slug": "tournament/epochi/event/ultimate-singles",
           "event_name": "Ultimate Singles",
-          "num_entrants": 3,
+          "num_entrants": 4,
           "type": 1,
           "start_at": 1787043600
         }
@@ -451,14 +451,14 @@
       "city": "台東区",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 3,
+      "num_attendees": 4,
       "url": "/tournament/20-529",
       "events": [
         {
           "event_id": 1677836,
           "event_slug": "tournament/20-529/event/on",
           "event_name": "シングルス（１on１トーナメント）",
-          "num_entrants": 3,
+          "num_entrants": 4,
           "type": 1,
           "start_at": 1787212800
         }
@@ -543,14 +543,14 @@
       "city": "久留米市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 5,
+      "num_attendees": 6,
       "url": "/tournament/in-kurume",
       "events": [
         {
           "event_id": 1685534,
           "event_slug": "tournament/in-kurume/event/1on1",
           "event_name": "1on1トーナメント",
-          "num_entrants": 5,
+          "num_entrants": 6,
           "type": 1,
           "start_at": 1787306400
         }
@@ -612,7 +612,7 @@
       "city": "渋谷区",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 283,
+      "num_attendees": 284,
       "url": "/tournament/shibuya-dairan-first-strike",
       "events": [
         {
@@ -842,14 +842,14 @@
       "city": "京都市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 2,
+      "num_attendees": 48,
       "url": "/tournament/16-34",
       "events": [
         {
           "event_id": 1684776,
           "event_slug": "tournament/16-34/event/ultmate-singles",
           "event_name": "Ultmate Singles",
-          "num_entrants": 2,
+          "num_entrants": 48,
           "type": 1,
           "start_at": 1787880600
         }
