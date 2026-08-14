@@ -125,7 +125,7 @@ const SEED_APP_SKELETON_HTML = `
       <span id="so-format-label" style="font-size:11px;color:#9ca3af"></span>
       <button id="so-run" style="background:#2563eb;color:#fff;border:none;padding:8px 16px;border-radius:6px;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit">最適化を実行</button>
       <button id="so-stop" disabled style="background:#6b7280;color:#fff;border:none;padding:8px 14px;border-radius:6px;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;display:none">中断して結果を反映</button>
-      <button id="so-apply" disabled style="background:#16a34a;color:#fff;border:none;padding:8px 14px;border-radius:6px;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;display:none">この結果を適用</button>
+      <button id="so-cancel" title="最適化を無かったことにして、実行する直前の並びとレポート表示に戻します" style="background:#fff;color:#374151;border:1px solid #d1d5db;padding:8px 14px;border-radius:6px;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;display:none">最適化を取り消す</button>
     </div>
     <div style="display:flex;gap:16px;flex-wrap:wrap;align-items:center;margin-top:10px;font-size:12px;color:#374151">
       <label title="2プール以上のとき、プール内の当たり回戦も最適化する（プレイヤーのプール内順位を少し動かす）。1プールでは常に実行＝指定不可"><input type="checkbox" id="so-enable-intra" checked> プール内変動</label>
@@ -252,7 +252,7 @@ const SEED_APP_SKELETON_HTML = `
 <!-- 作業状況の保存 (現在のシード順 + 固定を CSV に。読み込みは 📌 パネル側) -->
 <div id="work-bar" style="display:none;margin:10px 0 0">
   <button id="spec-export" style="background:#16a34a;color:#fff;border:none;padding:6px 14px;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer">💾 作業状況を保存 (CSV)</button>
-  <button id="bracket-preview" title="現在のシード順で組んだトーナメントを別ページでプレビューします (URL を共有すれば同じ画面が開けます)" style="background:#7c3aed;color:#fff;border:none;padding:6px 14px;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer;margin-left:6px">🏆 トーナメントプレビュー</button>
+  <button id="bracket-preview" title="現在のシード順 (被り回避を実行済みならその結果) で組んだトーナメントを別ページでプレビューします。URL を共有すれば同じ画面が開けます" style="background:#7c3aed;color:#fff;border:none;padding:6px 14px;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer;margin-left:6px">🏆 トーナメントプレビュー</button>
   <span id="work-note" style="font-size:11px;color:#6b7280;margin-left:8px"></span>
 </div>
 
@@ -358,8 +358,12 @@ function canonicalUserId(uid) {
 }
 // 直近フェッチした event 情報 (phaseId, eventName, entrant list, etc.)
 let EVENT_CONTEXT = null;
-// 被り回避最適化を「適用」した場合のシード順 (= uid 配列)。null なら currentMethod 順。
+// 被り回避最適化のシード順 (= uid 配列)。null なら currentMethod 順。
+// 最適化が完了した時点で自動的にここへ入る (= 実行したら反映される)。
+// CSV / start.gg 適用 / トーナメントプレビューはすべてこれを見る。
 let APPLIED_ORDER = null;
+// 「最適化を取り消す」で戻る状態。最適化を反映する直前に取る。
+let PRE_OPT = null;   // { order: [uid], manual: MANUAL の複製 | null }
 
 // CSV / start.gg 適用で使うシード出力順。優先度: 被り回避適用 > 手動調整 > currentMethod 順。
 // 手動調整は編集中でも現在の並びを出力に使う (確定は「編集を終える」の意味)。
@@ -548,7 +552,7 @@ function manualUnlock() {
     MANUAL.editing = true;
     MANUAL.sel = null;
   }
-  if (APPLIED_ORDER) { APPLIED_ORDER = null; clearSeedOptApplied(); }
+  dropAppliedOrder();
   if (SEEDOPT_RESULT) resetSeedOptResultPanel('手動調整モードに入ったため被り回避の結果をクリアしました。確定後に再実行してください。');
   saveManual(); renderManualUI();
 }
@@ -608,7 +612,7 @@ function manualBarHtml() {
       + `</div>`
       + `</div>`;
   }
-  const optNote = APPLIED_ORDER ? '（被り回避適用中 — 下の表は最適化後の順序）' : '';
+  const optNote = APPLIED_ORDER ? '（被り回避を反映中 — 下の表は最適化後の順序）' : '';
   return `<div style="border:1px solid #f59e0b;background:#fffbeb;border-radius:8px;padding:6px 10px;font-size:12px;display:flex;gap:8px;flex-wrap:wrap;align-items:center">`
     + `<span style="font-weight:700;color:#b45309">✋ 手動調整 (${moved}人移動${MANUAL.src === 'csv' ? '・基準=CSV順' : (MANUAL.src === 'spec' ? '・基準=シード指定CSV' : '')})</span><span style="color:#9ca3af;font-size:10px">${optNote}</span>`
     + poolWaveInputs
@@ -1658,7 +1662,7 @@ async function performSeedFetch(token, ev, phaseId) {
     poolCount: (_phase && _phase.groupCount) ? _phase.groupCount : null,  // 取得できたプール数
     waves,   // {poolCount, waveCount, poolToWave, letters, identifiers} | {error} | null
   };
-  APPLIED_ORDER = null;   // 新規取得で被り回避の適用をリセット
+  dropAppliedOrder({ render: false });   // 新規取得で被り回避の反映をリセット
   // Repopulate DATA in place (preserve reference)
   DATA.length = 0;
   for (const r of records) DATA.push(r);
@@ -1694,7 +1698,7 @@ async function performEntrantsFetch(token, ev) {
     poolCount: null,     // phase 未作成 → プール数不明
     waves: null,         // phase 未作成 → ウェーブ不明 (手動設定可)
   };
-  APPLIED_ORDER = null;
+  dropAppliedOrder({ render: false });
   DATA.length = 0;
   for (const r of records) DATA.push(r);
   document.getElementById('meta-info').textContent = `${ev.name} (参加者一覧 / ブラケット未作成)`;
@@ -1791,7 +1795,7 @@ document.getElementById('method-tabs').addEventListener('click', e => {
   document.querySelectorAll('.method-tab').forEach(t => t.classList.remove('active'));
   tab.classList.add('active');
   currentMethod = tab.dataset.method;
-  if (APPLIED_ORDER) { APPLIED_ORDER = null; clearSeedOptApplied(); }  // 基準が変わるので適用解除
+  dropAppliedOrder();  // 基準が変わるので適用解除
   // 被り回避の結果も基準ランキング前提なので破棄（残すと再適用できない死に状態になる）。
   if (SEEDOPT_RESULT) resetSeedOptResultPanel('基準ランキングが変わったため被り回避の結果をクリアしました。再実行してください。');
   // 手動調整も旧基準前提なので破棄 (保存も消す)。
@@ -2204,7 +2208,7 @@ function showEventPickerInline(tournamentSlug, events) {
     });
   });
   document.getElementById('so-stop').addEventListener('click', stopSeedOptimize);
-  document.getElementById('so-apply').addEventListener('click', applySeedOptimize);
+  document.getElementById('so-cancel').addEventListener('click', cancelSeedOptimize);
   document.getElementById('so-mode').addEventListener('change', applyModeDefaults);
   document.getElementById('so-orderpow').addEventListener('input', () => {
     document.getElementById('so-orderpow-val').textContent = document.getElementById('so-orderpow').value;
@@ -2330,8 +2334,7 @@ function initSeedOptPanel() {
   prefillShiftLimits(DATA.length);
   document.getElementById('so-report').innerHTML = '';
   document.getElementById('so-progress').textContent = '';
-  document.getElementById('so-apply').style.display = 'none';
-  document.getElementById('so-apply').disabled = true;
+  showOptCancelBtn(false);
   SEEDOPT_ROUND_STATS = [];
   updateIntraToggleState();
   SEEDOPT_RESULT = null;
@@ -2346,6 +2349,27 @@ function clearSeedOptApplied() {
   render();
 }
 
+/** 「最適化を取り消す」ボタンの表示。 */
+function showOptCancelBtn(on) {
+  const b = document.getElementById('so-cancel');
+  if (!b) return;
+  b.style.display = on ? '' : 'none';
+  b.disabled = !on;
+}
+
+/**
+ * 反映中の最適化順を解除する (= 基準ランキングが変わったとき)。
+ * 取り消しボタンで戻る先も一緒に捨てる (基準が変わっているので戻せない)。
+ * opts.render === false なら描画しない (DATA 入れ替え中など)。
+ */
+function dropAppliedOrder(opts) {
+  const had = !!APPLIED_ORDER;
+  APPLIED_ORDER = null;
+  PRE_OPT = null;
+  showOptCancelBtn(false);
+  if (had && (!opts || opts.render !== false)) clearSeedOptApplied();
+}
+
 function escHtml(s) {
   return String(s == null ? '' : s).replace(/[&<>"']/g, c =>
     ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
@@ -2356,8 +2380,7 @@ async function runSeedOptimize() {
   const progress = document.getElementById('so-progress');
   const reportEl = document.getElementById('so-report');
   reportEl.innerHTML = '';
-  document.getElementById('so-apply').style.display = 'none';
-  document.getElementById('so-apply').disabled = true;
+  showOptCancelBtn(false);
 
   const poolCount = Math.max(1, parseInt(document.getElementById('so-pools').value, 10) || 1);
   const format = soFormat();   // start.gg bracketType から自動
@@ -2588,12 +2611,15 @@ function stopSeedOptimize() {
 function resetSeedOptResultPanel(msg) {
   SEEDOPT_RESULT = null;
   const r = document.getElementById('so-report'); if (r) r.innerHTML = '';
-  const a = document.getElementById('so-apply'); if (a) { a.style.display = 'none'; a.disabled = true; }
+  showOptCancelBtn(false);
   const p = document.getElementById('so-progress'); if (p) p.textContent = msg || '';
 }
 function cleanupSeedOptWorker() {
   document.getElementById('so-run').disabled = false;
   document.getElementById('so-stop').style.display = 'none';
+  // 実行開始時に隠した取り消しボタンを戻す。前回の反映が残ったまま失敗・中断した
+  // ときに「反映中なのに取り消せない」状態にしないため。
+  showOptCancelBtn(!!APPLIED_ORDER);
   if (SEEDOPT_WORKER) {
     // terminate 前にハンドラを外す: キュー済みの done/error が terminate 後に
     // 届いて古い結果を描画するのを防ぐ。
@@ -2881,17 +2907,28 @@ function finishSeedOptimize(result, displayOf, note, ranking, interInfo) {
     });
   }
   if (!interInfo) {
-    const applyBtn = document.getElementById('so-apply');
-    applyBtn.style.display = '';
-    applyBtn.disabled = false;
+    // 完了したら自動で反映する。「最適化したのにプレビューや CSV が元のまま」を
+    // 起こさないため (2026-08-14)。戻したいときは「最適化を取り消す」。
+    applySeedOptimize();
   }
 }
 
+/**
+ * 最適化の結果を反映する。**完了時に自動で呼ばれる** (= 実行したら反映される)。
+ * 戻したいときは「最適化を取り消す」(cancelSeedOptimize)。
+ */
 function applySeedOptimize() {
   if (!SEEDOPT_RESULT || !SEEDOPT_RESULT.seedOrder) return;
+  // 取り消し用に、反映する直前の並びと手動調整の状態を控えておく。
+  if (!PRE_OPT) {
+    PRE_OPT = {
+      order: DATA.map((r) => r.user_id),
+      manual: MANUAL ? JSON.parse(JSON.stringify(MANUAL)) : null,
+    };
+  }
   APPLIED_ORDER = SEEDOPT_RESULT.seedOrder.slice();
-  // 被り回避を適用したら手動編集は閉じる (表は最適化後の順序になるので、
-  // 編集バーだけ出したままだと状態が食い違う)。編集の再開で適用が解除される。
+  // 被り回避を反映したら手動編集は閉じる (表は最適化後の順序になるので、
+  // 編集バーだけ出したままだと状態が食い違う)。編集の再開で反映が解除される。
   if (MANUAL && MANUAL.editing) { MANUAL.editing = false; MANUAL.committed = true; MANUAL.sel = null; }
   // 表示順も最適化後に合わせる。
   const pos = new Map(APPLIED_ORDER.map((u, i) => [u, i]));
@@ -2903,11 +2940,33 @@ function applySeedOptimize() {
     const div = document.createElement('div');
     div.className = 'seedopt-applied-banner';
     div.style.cssText = 'margin-top:10px;padding:6px 10px;background:#dcfce7;border:1px solid #16a34a;border-radius:6px;color:#166534;font-size:12px;font-weight:600';
-    div.textContent = '✅ 被り回避を適用しました。CSV ダウンロード / start.gg 適用は最適化後の順序になります。';
+    div.textContent = '✅ 被り回避を反映しました。トーナメントプレビュー / CSV ダウンロード / start.gg 適用は、この最適化後の順序になります。';
     reportEl.appendChild(div);
   }
-  document.getElementById('so-apply').disabled = true;
+  showOptCancelBtn(true);
   renderManualUI();   // 手動調整リスト表示中なら通常表 (最適化後順序) に切り替える
+}
+
+/**
+ * 最適化を無かったことにする。実行する直前の並び・手動調整の状態に戻し、
+ * レポートも実行前 (= 何も出ていない状態) に戻す。
+ * トーナメントプレビューや CSV も、以後は元の順序で出る。
+ */
+function cancelSeedOptimize() {
+  const had = !!APPLIED_ORDER || !!SEEDOPT_RESULT;
+  APPLIED_ORDER = null;
+  if (PRE_OPT) {
+    const pos = new Map(PRE_OPT.order.map((u, i) => [u, i]));
+    DATA.sort((a, b) =>
+      (pos.has(a.user_id) ? pos.get(a.user_id) : 1e9) - (pos.has(b.user_id) ? pos.get(b.user_id) : 1e9));
+    MANUAL = PRE_OPT.manual ? JSON.parse(JSON.stringify(PRE_OPT.manual)) : null;
+    PRE_OPT = null;
+    saveManual();
+  }
+  showOptCancelBtn(false);
+  resetSeedOptResultPanel(had ? '最適化を取り消しました（実行前の並びに戻しました）。' : '');
+  render();
+  renderManualUI();
 }
 
 // ── csv モード: 基準順位ソース (CSV / Google Sheets) ─────────────────────────
@@ -3086,7 +3145,7 @@ function applyCsvOrderIfReady(fromFetch) {
   MANUAL = { base: order, ops: [], hpos: 0, committed: true, editing: false, sel: null, src: 'csv' };
   // 後から読み込んだ CSV が最新の作業なので、適用済みの被り回避結果は解除する
   // (これをしないと CSV 順が出力に反映されない)。
-  if (APPLIED_ORDER) { APPLIED_ORDER = null; clearSeedOptApplied(); }
+  dropAppliedOrder();
   if (SEEDOPT_RESULT) resetSeedOptResultPanel('CSV を読み込んだため被り回避の結果をクリアしました。再実行してください。');
   saveManual(); renderManualUI();
   let msg = `✅ ${CSV_SOURCE.label}: ${matched}人を照合し基準順位に反映しました。`;
@@ -3168,7 +3227,7 @@ async function buildParticipantsFromCsv() {
     if (nm) r.display = nm;
   }
   EVENT_CONTEXT = null;
-  APPLIED_ORDER = null;
+  dropAppliedOrder({ render: false });
   MANUAL = null;
   SEED_SPEC = null;
   DATA.length = 0;
@@ -3589,13 +3648,13 @@ function applySpecRows(rows, label) {
       (s, PP) => (window.SeedOptimizer ? SeedOptimizer.poolOfSeed(s, PP) : 0));
     problems.push(...notes);
     MANUAL = { base: order, ops: [], hpos: 0, committed: true, editing: false, sel: null, src: 'spec' };
-    if (APPLIED_ORDER) { APPLIED_ORDER = null; clearSeedOptApplied(); }
+    dropAppliedOrder();
     if (SEEDOPT_RESULT) resetSeedOptResultPanel('シード指定を適用したため被り回避の結果をクリアしました。再実行してください。');
   } else if (Object.keys(locks).length && !MANUAL) {
     // 固定のみの CSV: 現在の並びを手動調整として取り込む (手動列に射影後の位置と
     // 📌バッジが出て、固定の効果が見えるようにする)。
     MANUAL = { base: orderedRecs().map(r => r.user_id), ops: [], hpos: 0, committed: true, editing: false, sel: null, src: 'spec' };
-    if (APPLIED_ORDER) { APPLIED_ORDER = null; clearSeedOptApplied(); }
+    dropAppliedOrder();
   }
   // 固定を {kind, target} 形式で確定する。対象 = ウェーブ列があればその値、無ければ
   // 配置後の位置のプール/ウェーブ。以後は読み取り時射影が並びを常にこの対象へ寄せる。
