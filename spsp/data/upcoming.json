@@ -1,32 +1,9 @@
 {
-  "generated_at": 1786687243,
+  "generated_at": 1786698028,
   "country_code": "JP",
   "lookahead_days": 21,
-  "count": 48,
+  "count": 47,
   "tournaments": [
-    {
-      "tournament_id": 937212,
-      "tournament_slug": "tournament/14-524",
-      "tournament_name": "14(金)上野スマコミ#524(オープン)",
-      "start_at": 1786694400,
-      "end_at": 1786716000,
-      "is_online": false,
-      "city": "台東区",
-      "venue_name": "",
-      "country_code": "JP",
-      "num_attendees": 33,
-      "url": "/tournament/14-524",
-      "events": [
-        {
-          "event_id": 1676162,
-          "event_slug": "tournament/14-524/event/on",
-          "event_name": "シングルス（１on１トーナメント）",
-          "num_entrants": 32,
-          "type": 1,
-          "start_at": 1786694400
-        }
-      ]
-    },
     {
       "tournament_id": 941651,
       "tournament_slug": "tournament/17-17",
