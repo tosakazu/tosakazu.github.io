@@ -1,32 +1,9 @@
 {
-  "generated_at": 1786698028,
+  "generated_at": 1786708823,
   "country_code": "JP",
   "lookahead_days": 21,
-  "count": 47,
+  "count": 46,
   "tournaments": [
-    {
-      "tournament_id": 941651,
-      "tournament_slug": "tournament/17-17",
-      "tournament_name": "平日いろスマ#17",
-      "start_at": 1786705200,
-      "end_at": 1786716000,
-      "is_online": false,
-      "city": "大分市",
-      "venue_name": "",
-      "country_code": "JP",
-      "num_attendees": 3,
-      "url": "/tournament/17-17",
-      "events": [
-        {
-          "event_id": 1685587,
-          "event_slug": "tournament/17-17/event/1on1",
-          "event_name": "1on1トーナメント",
-          "num_entrants": 3,
-          "type": 1,
-          "start_at": 1786705200
-        }
-      ]
-    },
     {
       "tournament_id": 939153,
       "tournament_slug": "tournament/flyhigh-28-96-1",
@@ -635,14 +612,14 @@
       "city": "豊橋市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 13,
+      "num_attendees": 12,
       "url": "/tournament/22-21",
       "events": [
         {
           "event_id": 1683892,
           "event_slug": "tournament/22-21/event/22",
           "event_name": "第22回夢スマ",
-          "num_entrants": 13,
+          "num_entrants": 12,
           "type": 1,
           "start_at": 1787410800
         }
@@ -888,14 +865,14 @@
       "city": "荒川区",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 229,
+      "num_attendees": 230,
       "url": "/tournament/vic-seekers-1",
       "events": [
         {
           "event_id": 1660866,
           "event_slug": "tournament/vic-seekers-1/event/ultimate-singles",
           "event_name": "Ultimate Singles",
-          "num_entrants": 221,
+          "num_entrants": 222,
           "type": 1,
           "start_at": 1787970600
         }
