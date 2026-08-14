@@ -58,10 +58,13 @@
     });
   }
 
+  /** msg は文字列か setRich のパーツ配列 (強調したい語があるとき)。 */
   function setStatus(kind, msg) {
     els.status.className = 'status ' + kind;
-    els.status.textContent = msg;
-    els.status.hidden = !msg;
+    var empty = Array.isArray(msg) ? !msg.length : !msg;
+    if (Array.isArray(msg)) setRich(els.status, msg);
+    else els.status.textContent = msg;
+    els.status.hidden = empty;
   }
 
   function showSection(name) {
@@ -487,7 +490,10 @@
     }).then(function (json) {
       els.voteBtn.disabled = false;
       if (json && json.ok) {
-        setStatus('ok', json.charName + ' で投票を受け付けました。サイトへの反映は次回の更新時になります。');
+        // 反映まで待つことを明示しておく。書かないと「反映されない」と思って
+        // 同じ内容で投票し直す人が出る (2026-08-14 に実例あり)。
+        setStatus('ok', [json.charName + ' で投票を受け付けました。サイトへの反映は次回の更新 (',
+          { hl: '最大3時間後' }, ') になります。すぐには変わりませんが、投票し直す必要はありません。']);
         return;
       }
       var code = json && json.error && json.error.code;
