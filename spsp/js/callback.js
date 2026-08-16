@@ -127,10 +127,8 @@
 
     // ── 3. state 検証 (nonce)。ここで弾いたら GAS には一切送らない ──
     var st = S.decodeState(state);
-    var stored = null;
-    try {
-      stored = sessionStorage.getItem(S.NONCE_KEY);
-    } catch (_) { /* stored は null のまま */ }
+    // 単回使用。ここで取り出したら保存側は消える (成功時の removeItem は不要)。
+    var stored = S.takeNonce();
 
     if (!st || !stored || st.n !== stored) {
       reportError(!stored ? 'state_missing' : 'state_mismatch', '');
@@ -192,10 +190,7 @@
     }).then(function (json) {
       // ── 6. 成否 ──
       if (json && json.ok) {
-        try {
-          sessionStorage.removeItem(S.NONCE_KEY);
-          sessionStorage.removeItem(S.DRAFT_KEY);
-        } catch (_) { /* 消せなくても遷移する */ }
+        try { sessionStorage.removeItem(S.DRAFT_KEY); } catch (_) { /* 消せなくても遷移する */ }
         location.replace(S.withPosted(back));
         return;
       }
@@ -225,7 +220,6 @@
     }).then(function (json) {
       if (json && json.ok && json.token && json.user) {
         AUTH.save({ token: json.token, user: json.user, exp: json.exp });
-        try { sessionStorage.removeItem(S.NONCE_KEY); } catch (_) { /* noop */ }
         location.replace(S.withFlag(back, 'login'));
         return;
       }

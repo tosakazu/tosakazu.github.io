@@ -361,7 +361,7 @@
       return;
     }
     try {
-      sessionStorage.setItem(S.NONCE_KEY, nonce);
+      S.saveNonce(nonce);   // 別タブで戻ってきても拾えるように localStorage にも置く
       sessionStorage.setItem(S.INTENT_KEY, 'login');
       sessionStorage.removeItem(S.DRAFT_KEY);
     } catch (_) {

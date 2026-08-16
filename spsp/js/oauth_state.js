@@ -6,6 +6,20 @@
   'use strict';
 
   var NONCE_KEY = 'spsp_oauth_nonce';
+  // nonce を localStorage にも置くときのキーと有効期限。
+  //
+  // sessionStorage は **タブ (browsing context) ごと** に分かれる。start.gg から
+  // 戻るときに別タブ / 別 webview で開かれると、認証を始めたタブの
+  // sessionStorage は読めず「照合情報が無い」で必ず失敗する。
+  // X や Discord のアプリ内ブラウザでは実際にこれが起きていた
+  // (2026-08-16 の失敗ログ 17 件中 11 件が state_missing)。
+  //
+  // localStorage はタブをまたいで共有されるのでこれを回避できる。
+  // CSRF 防止の要点は「攻撃者が値を知らない・仕込めない」ことで、
+  // localStorage も同一オリジンからしか触れないため保護は保たれる。
+  // 取り違えを防ぐため **使ったら必ず消す** + 期限切れは無効にする。
+  var NONCE_LS_KEY = 'spsp_oauth_nonce_ls';
+  var NONCE_TTL_MS = 15 * 60 * 1000;
   var DRAFT_KEY = 'spsp_draft';
   // 認可から戻ったとき callback が何をするか ('post' | 'login')。
   // 無ければ 'post' (後方互換)。callback は読み取り後すぐ消す。
@@ -124,12 +138,57 @@
   }
 
   /** 正規の配信元 (GitHub Pages) にいるか。spsp.games 等では false。 */
+  // ── nonce の保存 / 取り出し ──
+  // 読み書きは storage が使えない環境 (プライベートブラウズ等) でも落とさない。
+
+  function saveNonce(nonce, now) {
+    var t = (now === undefined) ? Date.now() : now;
+    try { sessionStorage.setItem(NONCE_KEY, nonce); } catch (_) { /* 続行 */ }
+    try {
+      localStorage.setItem(NONCE_LS_KEY, JSON.stringify({ n: nonce, t: t }));
+    } catch (_) { /* 続行 */ }
+  }
+
+  /**
+   * 保存した nonce を取り出して消す (単回使用)。
+   * 同一タブなら sessionStorage、別タブに飛ばされていたら localStorage から拾う。
+   * 期限切れは無効として null を返す。
+   */
+  function takeNonce(now) {
+    var t = (now === undefined) ? Date.now() : now;
+    var v = null;
+    try { v = sessionStorage.getItem(NONCE_KEY); } catch (_) { /* 次を試す */ }
+    var ls = null;
+    try { ls = localStorage.getItem(NONCE_LS_KEY); } catch (_) { /* 無視 */ }
+    if (!v && ls) {
+      try {
+        var o = JSON.parse(ls);
+        if (o && typeof o.n === 'string' && typeof o.t === 'number'
+            && (t - o.t) >= 0 && (t - o.t) <= NONCE_TTL_MS) {
+          v = o.n;
+        }
+      } catch (_) { /* 壊れていれば無効 */ }
+    }
+    clearNonce();
+    return v || null;
+  }
+
+  function clearNonce() {
+    try { sessionStorage.removeItem(NONCE_KEY); } catch (_) { /* noop */ }
+    try { localStorage.removeItem(NONCE_LS_KEY); } catch (_) { /* noop */ }
+  }
+
   function isCanonicalOrigin(cfg, origin) {
     return String(origin) === String(cfg.CANONICAL_ORIGIN);
   }
 
   var API = {
     NONCE_KEY: NONCE_KEY,
+    NONCE_LS_KEY: NONCE_LS_KEY,
+    NONCE_TTL_MS: NONCE_TTL_MS,
+    saveNonce: saveNonce,
+    takeNonce: takeNonce,
+    clearNonce: clearNonce,
     DRAFT_KEY: DRAFT_KEY,
     INTENT_KEY: INTENT_KEY,
     encodeState: encodeState,
