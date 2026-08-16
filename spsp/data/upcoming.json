@@ -1,8 +1,8 @@
 {
-  "generated_at": 1786849626,
+  "generated_at": 1786860030,
   "country_code": "JP",
   "lookahead_days": 21,
-  "count": 42,
+  "count": 44,
   "tournaments": [
     {
       "tournament_id": 937604,
@@ -21,7 +21,7 @@
           "event_id": 1677063,
           "event_slug": "tournament/17-526/event/on",
           "event_name": "シングルス（１on１トーナメント）",
-          "num_entrants": 7,
+          "num_entrants": 8,
           "type": 1,
           "start_at": 1786953600
         }
@@ -83,14 +83,14 @@
       "city": "札幌市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 7,
+      "num_attendees": 9,
       "url": "/tournament/epochi",
       "events": [
         {
           "event_id": 1687029,
           "event_slug": "tournament/epochi/event/ultimate-singles",
           "event_name": "Ultimate Singles",
-          "num_entrants": 7,
+          "num_entrants": 9,
           "type": 1,
           "start_at": 1787043600
         }
@@ -106,14 +106,14 @@
       "city": "渋谷区",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 9,
+      "num_attendees": 10,
       "url": "/tournament/137-shibuya-tatsu",
       "events": [
         {
           "event_id": 1686577,
           "event_slug": "tournament/137-shibuya-tatsu/event/singles",
           "event_name": "Singles",
-          "num_entrants": 9,
+          "num_entrants": 10,
           "type": 1,
           "start_at": 1787047200
         }
@@ -152,7 +152,7 @@
       "city": "中野区",
       "venue_name": "Red Bull Gaming Sphere Tokyo",
       "country_code": "JP",
-      "num_attendees": 75,
+      "num_attendees": 76,
       "url": "/tournament/weekly-smash-party-242",
       "events": [
         {
@@ -359,14 +359,14 @@
       "city": "高崎市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 12,
+      "num_attendees": 13,
       "url": "/tournament/1-new-town",
       "events": [
         {
           "event_id": 1637261,
           "event_slug": "tournament/1-new-town/event/smashsp-1vs1tournament",
           "event_name": "smashsp 1vs1tournament",
-          "num_entrants": 12,
+          "num_entrants": 13,
           "type": 1,
           "start_at": 1787367600
         }
@@ -382,7 +382,7 @@
       "city": "渋谷区",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 287,
+      "num_attendees": 285,
       "url": "/tournament/shibuya-dairan-first-strike",
       "events": [
         {
@@ -428,14 +428,14 @@
       "city": "豊橋市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 14,
+      "num_attendees": 15,
       "url": "/tournament/22-21",
       "events": [
         {
           "event_id": 1683892,
           "event_slug": "tournament/22-21/event/22",
           "event_name": "第22回夢スマ",
-          "num_entrants": 14,
+          "num_entrants": 15,
           "type": 1,
           "start_at": 1787410800
         }
@@ -451,14 +451,14 @@
       "city": "福岡市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 98,
+      "num_attendees": 99,
       "url": "/tournament/kowloon-18-5",
       "events": [
         {
           "event_id": 1673913,
           "event_slug": "tournament/kowloon-18-5/event/kowloon_sp",
           "event_name": "KOWLOON_SP",
-          "num_entrants": 98,
+          "num_entrants": 99,
           "type": 1,
           "start_at": 1787446800
         }
@@ -484,6 +484,29 @@
           "num_entrants": 19,
           "type": 1,
           "start_at": 1787457600
+        }
+      ]
+    },
+    {
+      "tournament_id": 941318,
+      "tournament_slug": "tournament/4-114",
+      "tournament_name": "きとスマ！#4",
+      "start_at": 1787461200,
+      "end_at": 1787479200,
+      "is_online": false,
+      "city": "京都市",
+      "venue_name": "",
+      "country_code": "JP",
+      "num_attendees": 5,
+      "url": "/tournament/4-114",
+      "events": [
+        {
+          "event_id": 1684841,
+          "event_slug": "tournament/4-114/event/ultimate-singles",
+          "event_name": "Ultimate Singles",
+          "num_entrants": 5,
+          "type": 1,
+          "start_at": 1787461200
         }
       ]
     },
@@ -681,7 +704,7 @@
       "city": "大東市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 336,
+      "num_attendees": 337,
       "url": "/tournament/72-sp-1",
       "events": [
         {
@@ -704,14 +727,14 @@
       "city": "荒川区",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 234,
+      "num_attendees": 235,
       "url": "/tournament/vic-seekers-1",
       "events": [
         {
           "event_id": 1660866,
           "event_slug": "tournament/vic-seekers-1/event/ultimate-singles",
           "event_name": "Ultimate Singles",
-          "num_entrants": 225,
+          "num_entrants": 226,
           "type": 1,
           "start_at": 1787970600
         }
@@ -842,14 +865,14 @@
       "city": "東大阪市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 356,
+      "num_attendees": 358,
       "url": "/tournament/grand-wars-3-maesuma-grand-wars-3",
       "events": [
         {
           "event_id": 1673718,
           "event_slug": "tournament/grand-wars-3-maesuma-grand-wars-3/event/singles-tournament",
           "event_name": "Singles Tournament",
-          "num_entrants": 343,
+          "num_entrants": 345,
           "type": 1,
           "start_at": 1788053400
         }
@@ -898,6 +921,29 @@
           "num_entrants": 2,
           "type": 1,
           "start_at": 1788163200
+        }
+      ]
+    },
+    {
+      "tournament_id": 943481,
+      "tournament_slug": "tournament/5-105",
+      "tournament_name": "快進会#5",
+      "start_at": 1788510600,
+      "end_at": 1788526800,
+      "is_online": false,
+      "city": "厚木市",
+      "venue_name": "",
+      "country_code": "JP",
+      "num_attendees": 1,
+      "url": "/tournament/5-105",
+      "events": [
+        {
+          "event_id": 1689329,
+          "event_slug": "tournament/5-105/event/1on1",
+          "event_name": "1on1メイントーナメント",
+          "num_entrants": 1,
+          "type": 1,
+          "start_at": 1788510600
         }
       ]
     },
