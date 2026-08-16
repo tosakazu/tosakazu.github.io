@@ -11,6 +11,22 @@ body {
 .bp-event { font-size: 14px; font-weight: 600; color: #374151; }
 .bp-note { font-size: 11px; color: #6b7280; margin-top: 2px; }
 
+/* start.gg との食い違い注意。閉じていても「ズレることがある」ことは読めるようにする */
+.bp-caveat {
+  margin-top: 6px; border: 1px solid #fcd34d; background: #fffbeb;
+  border-radius: 8px; font-size: 11px;
+}
+.bp-caveat > summary {
+  cursor: pointer; padding: 6px 10px; color: #92400e; font-weight: 600;
+  line-height: 1.5;
+}
+.bp-caveat[open] > summary { border-bottom: 1px solid #fde68a; }
+.bp-caveat-body { padding: 6px 10px 8px; color: #78350f; line-height: 1.7; }
+.bp-caveat-body p { margin: 0 0 5px; }
+.bp-caveat-body ul { margin: 0 0 5px; padding-left: 18px; }
+.bp-caveat-body li { margin: 3px 0; }
+.bp-caveat-foot { color: #92400e; }
+
 .bp-error {
   background: #fef2f2; border: 1px solid #fca5a5; color: #b91c1c;
   padding: 8px 12px; border-radius: 8px; margin: 10px 0; white-space: pre-wrap;

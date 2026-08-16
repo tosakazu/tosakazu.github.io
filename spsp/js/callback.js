@@ -37,9 +37,36 @@
       var a = document.createElement('a');
       a.className = 'cb-back';
       a.href = backPath;
-      a.textContent = '投稿ページに戻る';
+      // 戻り先は投票 / 投稿の 2 種類。ラベルが実際の遷移先と食い違わないようにする。
+      a.textContent = (backPath.indexOf('vote') >= 0)
+        ? 'キャラ投票ページに戻る' : '投稿ページに戻る';
       root.appendChild(a);
     }
+  }
+
+  /** start.gg が返した OAuth エラーを、利用者が次にとれる行動に翻訳する。 */
+  function describeOAuthError(code, desc) {
+    var base;
+    switch (code) {
+      case 'invalid_scope':
+      case 'unauthorized_client':
+      case 'invalid_client':
+        base = 'SPSP 側のアプリ設定に問題がある可能性があります。運営にご連絡ください。';
+        break;
+      case 'server_error':
+      case 'temporarily_unavailable':
+        base = 'start.gg 側が一時的に応答できない状態です。時間をおいてやり直してください。';
+        break;
+      case 'invalid_request':
+        base = '認証のリクエストが正しく組み立てられませんでした。'
+          + 'URL を直接開いた場合に起きます。投票ページの認証ボタンからやり直してください。';
+        break;
+      default:
+        base = 'start.gg から「' + code + '」という応答が返りました。'
+          + '時間をおいてやり直しても直らない場合は、この表示を添えて運営にご連絡ください。';
+    }
+    // start.gg が説明文を付けてきたときは併記する (原因の特定に役立つため)
+    return desc ? base + '\n\n(start.gg からの説明: ' + desc + ')' : base;
   }
 
   function run() {
@@ -48,6 +75,7 @@
     var code = params.get('code');
     var state = params.get('state');
     var oauthError = params.get('error');
+    var oauthErrorDesc = params.get('error_description');
 
     // ── 2. INV-6: 何をするより先に URL から code を消す ──
     history.replaceState(null, '', location.pathname);
@@ -55,11 +83,24 @@
     var backDefault = CFG.CANONICAL_BASE + 'post.html';
 
     if (oauthError) {
-      show('error', '認証がキャンセルされました', null, backDefault);
+      // start.gg が返す error は OAuth 2.0 の標準コード。
+      // 「キャンセル」以外もここに来るので、素通しで一括りにしない。
+      if (oauthError === 'access_denied') {
+        show('error', '認証がキャンセルされました',
+          'start.gg の画面で「許可しない」を選んだか、認証を途中でやめた場合に表示されます。'
+          + 'もう一度試す場合は、start.gg の画面で「Authorize (許可)」を押してください。',
+          backDefault);
+      } else {
+        show('error', 'start.gg 側で認証を完了できませんでした',
+          describeOAuthError(oauthError, oauthErrorDesc), backDefault);
+      }
       return;
     }
     if (!code || !state) {
-      show('error', '認証エラー', '認証情報が不足しています。もう一度お試しください。', backDefault);
+      show('error', '認証エラー',
+        'start.gg から認証情報が返ってきませんでした。'
+        + 'URL を直接開いた場合や、ブラウザの「戻る」で認証画面に戻った場合に起きます。'
+        + '投票ページの認証ボタンからやり直してください。', backDefault);
       return;
     }
 
@@ -72,7 +113,13 @@
 
     if (!st || !stored || st.n !== stored) {
       show('error', '認証エラー',
-        '認証の照合に失敗しました。投稿ページからやり直してください。', backDefault);
+        !stored
+          ? '認証を始めたときの情報がブラウザに残っていませんでした。'
+            + '認証中に別のタブで開き直した、プライベートブラウズを使っている、'
+            + '認証画面を長時間放置した、といった場合に起きます。同じタブでやり直してください。'
+          : '認証の照合に失敗しました。安全のため中断しました。'
+            + '心当たりがなければ、もう一度最初からやり直してください。',
+        backDefault);
       return;
     }
 
@@ -88,7 +135,8 @@
 
     var missing = S.missingConfig(CFG);
     if (missing.length) {
-      show('error', '設定エラー', '投稿機能はまだ設定されていません。', back);
+      show('error', '設定エラー',
+        'この機能はまだ設定が完了していません。運営にご連絡ください。', back);
       return;
     }
 

@@ -80,7 +80,10 @@
 
   /* ── 対象外 ── */
   main .inel-title { font-weight: 700; font-size: 14.5px; color: #b91c1c; margin: 0 0 6px; line-height: 1.7; }
-  main .inel-detail { color: #6b7280; font-size: 13px; line-height: 1.8; margin: 0; }
+  /* 原因が複数あるときは箇条書きにするので、改行をそのまま出す。
+     連続空白は畳んでよいので pre-wrap ではなく pre-line。 */
+  main .inel-detail { color: #6b7280; font-size: 13px; line-height: 1.8; margin: 0;
+                      white-space: pre-line; }
 
   /* 文中のプレイヤー名・キャラ名のハイライト */
   main .hl { color: #1d4ed8; font-weight: 700; }

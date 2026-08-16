@@ -431,3 +431,35 @@
     .method-tab { padding: 5px 6px; font-size: 10px; }
     /* #ranktable 関連の超狭幅オーバーライドは ranking-table.css に集約済 */
   }
+
+/* ── ヘルプアイコン (?) ──
+   各オプション / ボタンの意味を、マウスオーバーでもタップでも読めるようにする。
+   title 属性はホバーのみ = スマホで読めないため、独自ポップで置き換えている。 */
+.help-ico {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 14px; height: 14px; margin-left: 4px; vertical-align: middle;
+  border: 1px solid #cbd5e1; border-radius: 50%;
+  background: #fff; color: #64748b;
+  font-size: 10px; font-weight: 700; line-height: 1; font-family: inherit;
+  cursor: help; padding: 0; flex: none; user-select: none;
+}
+.help-ico:hover, .help-ico[aria-expanded="true"] {
+  border-color: #2563eb; color: #2563eb; background: #eff6ff;
+}
+/* .help-ico の display 指定は UA の [hidden]{display:none} に勝ってしまうので、
+   hidden 属性を効かせるには作者スタイル側で打ち消す必要がある
+   (対象ボタンが非表示のとき ? だけ残ってしまう)。 */
+.help-ico[hidden] { display: none; }
+.help-pop {
+  position: fixed; z-index: 3000; max-width: 320px;
+  background: #1f2937; color: #f9fafb;
+  border-radius: 8px; padding: 9px 11px;
+  font-size: 11.5px; line-height: 1.65; font-weight: 400;
+  box-shadow: 0 8px 24px rgba(0,0,0,.28);
+  white-space: normal; text-align: left;
+}
+.help-pop[hidden] { display: none; }
+@media (max-width: 720px) {
+  .help-pop { max-width: calc(100vw - 24px); font-size: 12px; }
+  .help-ico { width: 16px; height: 16px; font-size: 11px; }
+}

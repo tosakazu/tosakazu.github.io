@@ -149,7 +149,7 @@ const SEED_APP_SKELETON_HTML = `
     </div>
     <div style="margin-top:10px;font-size:12px;color:#374151;max-width:360px">
       <div style="display:flex;align-items:center;gap:8px">
-        <span style="font-weight:600" title="元順位からのシードズレ罰則の強さ。左ほどズレの大きさを許容して大きく動かし、右ほど大きなズレを強く罰して小さく動かす。0 = ズレを罰しない">ズレ抑制</span>
+        <span id="so-orderpow-label" style="font-weight:600" title="元順位からのシードズレ罰則の強さ。左ほどズレの大きさを許容して大きく動かし、右ほど大きなズレを強く罰して小さく動かす。0 = ズレを罰しない">ズレ抑制</span>
         <span id="so-orderpow-val" style="font-variant-numeric:tabular-nums;font-weight:700;font-size:11px;background:#f3f4f6;border:1px solid #e5e7eb;border-radius:10px;padding:1px 10px;min-width:34px;text-align:center">2</span>
       </div>
       <input type="range" id="so-orderpow" min="0" max="5" step="0.5" value="2" style="display:block;width:100%;margin:8px 0 3px;accent-color:#dc2626">
@@ -242,7 +242,7 @@ const SEED_APP_SKELETON_HTML = `
       <b>seed</b> (そのシード番号に配置) ／ <b>wave</b> (A,B,… または 1,2,… — そのウェーブのプールに配置) ／
       <b>lock</b> (pool / wave — 指定した枠から動かさない)。
       順位・ウェーブ指定は現在の並びを基準に組み直し、手動調整として取り込みます (後から行移動で微修正可)。
-      <b>「💾 作業状況を保存」で書き出した CSV もここから読み込めます</b> — シード順・固定・プール数/ウェーブ数が
+      <b>「作業状況を保存」で書き出した CSV もここから読み込めます</b> — シード順・固定・プール数/ウェーブ数が
       そのまま復元されるので、作業の再開や他の人との共有に使えます。
     </div>
     <div id="spec-status" style="font-size:11px;color:#374151;margin-top:5px;line-height:1.6"></div>
@@ -251,8 +251,8 @@ const SEED_APP_SKELETON_HTML = `
 
 <!-- 作業状況の保存 (現在のシード順 + 固定を CSV に。読み込みは 📌 パネル側) -->
 <div id="work-bar" style="display:none;margin:10px 0 0">
-  <button id="spec-export" style="background:#16a34a;color:#fff;border:none;padding:6px 14px;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer">💾 作業状況を保存 (CSV)</button>
-  <button id="bracket-preview" title="現在のシード順 (被り回避を実行済みならその結果) で組んだトーナメントを別ページでプレビューします。URL を共有すれば同じ画面が開けます" style="background:#7c3aed;color:#fff;border:none;padding:6px 14px;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer;margin-left:6px">🏆 トーナメントプレビュー</button>
+  <button id="spec-export" style="background:#16a34a;color:#fff;border:none;padding:6px 14px;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer">作業状況を保存 (CSV)</button>
+  <button id="bracket-preview" title="現在のシード順 (被り回避を実行済みならその結果) で組んだトーナメントを別ページでプレビューします。URL を共有すれば同じ画面が開けます" style="background:#7c3aed;color:#fff;border:none;padding:6px 14px;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer;margin-left:6px">トーナメントプレビュー</button>
   <span id="work-note" style="font-size:11px;color:#6b7280;margin-left:8px"></span>
 </div>
 
@@ -315,6 +315,207 @@ const SEED_APP_CONFIG = Object.assign({ mode: 'spsp' }, window.SEED_APP_CONFIG |
     anchorEl.parentNode.insertBefore(div, anchorEl);
   }
 })();
+
+// ── ヘルプアイコン (?) ────────────────────────────────────────────────
+// オプションやボタンの意味を、マウスオーバーでもタップでも読めるようにする。
+// title 属性はホバーでしか出ず、スマホでは読めないので独自ポップに置き換える。
+//
+// 説明文は HELP_TEXT を優先し、無ければ既存の title 属性を流用する
+// (= 既に title を書いてある要素は id を並べるだけでアイコンが付く)。
+// アイコンを付けた要素の title は消す (ネイティブのツールチップと二重に出さない)。
+const HELP_TEXT = {
+  // ── 取得まわり ──
+  'token': 'start.gg の API トークン。参加者の取得と、start.gg へのシード適用に使います。'
+    + 'このブラウザから start.gg にのみ送信され、SPSP 側には保存も転送もされません。',
+  'event-url': '対象イベントの start.gg URL。大会ページではなく、シングルス等の'
+    + '「イベント」の URL を入れてください (例: .../tournament/xxx/event/singles)。',
+  'fetch-btn': '入力した URL の参加者を start.gg から取得し、SPSP のランキング順に並べます。ここが出発点です。',
+  'phase-select': 'シードを適用するフェーズ。プール分けのあるイベントでは、'
+    + 'どのフェーズのシードを触るかをここで選びます。',
+  'pc-group-count': '新しく作るフェーズのプール数。',
+  'pc-phase-name': 'start.gg 上に作られるフェーズの名前。',
+
+  // ── 出力 ──
+  'csv-btn': '今の並びを CSV でダウンロードします。start.gg の一括インポートや、'
+    + '他のツールへの受け渡しに使えます。',
+  'upload-btn': '⚠️ 今の並びを start.gg の本番シードとして書き込みます (取り消しは start.gg 側で行ってください)。'
+    + '被り回避を実行済みならその結果、手動調整をしていればそれも含めた最終的な並びが適用されます。',
+  'spec-export': '今のシード順・固定・プール数/ウェーブ数を CSV に保存します。'
+    + '📌 パネルから読み込めば、この状態から作業を再開できます。他の人との共有にも使えます。',
+  'bracket-preview': '今のシード順で組んだトーナメント表を別ページで開きます。'
+    + 'URL を共有すれば同じ画面を見せられます。'
+    + 'なお start.gg の設定によっては実際のブラケットと食い違うことがあります (プレビュー側に詳細)。',
+
+  // ── 被り回避 ──
+  'so-pools': 'このフェーズをいくつのプールに分けるか。start.gg から取得できたときは自動で入ります。'
+    + '1 なら 1 本のブラケットとして扱います。',
+  'so-run': '設定した条件で、地域被りと再対戦を避けるようシード順を探索します。'
+    + '完了すると自動で反映され、CSV・start.gg 適用・トーナメントプレビューにも同じ並びが使われます。',
+  'so-stop': '探索を途中で打ち切り、その時点で見つかっている最良の並びを反映します。',
+  'so-orderpow-label': '元のランキング順からどれだけズラしてよいか。'
+    + '左に寄せるほど被り回避を優先して大きく動かし、右に寄せるほど元の順位を尊重して小さく動かします。',
+  'so-mode': '探索アルゴリズム。通常は既定のままで構いません。',
+
+  // ── 表示・操作 ──
+  'search': 'プレイヤー名か start.gg の user_id で絞り込みます。',
+};
+
+// アイコンを付ける対象。ここに id を並べるだけで付く。
+const HELP_TARGETS = [
+  'token', 'event-url', 'fetch-btn', 'phase-select', 'pc-group-count', 'pc-phase-name',
+  'csv-btn', 'upload-btn', 'spec-export', 'bracket-preview',
+  'so-pools', 'so-waves', 'so-run', 'so-stop', 'so-cancel',
+  'so-enable-intra', 'so-avoid-region', 'so-avoid-recent', 'so-keep-deplace',
+  'so-scope-winners', 'so-include-weekday', 'so-group-minamikanto', 'so-group-keihanshin',
+  'so-orderpow-label', 'so-mode', 'so-itersscale', 'so-worder', 'so-decaypoints',
+  'so-kinter', 'so-kintra', 'so-maxshift',
+];
+
+function injectHelpIcons(root) {
+  for (const id of HELP_TARGETS) {
+    const el = root.querySelector('#' + id);
+    if (!el) continue;
+    // 説明の持ち主: 外付け <label for>, 囲っている <label>, なければ要素自身。
+    const outerLabel = root.querySelector('label[for="' + id + '"]');
+    const wrapLabel = el.closest('label');
+    const host = outerLabel || wrapLabel || el;
+    const text = HELP_TEXT[id] || host.getAttribute('title') || el.getAttribute('title');
+    if (!text) continue;
+    host.removeAttribute('title');
+    el.removeAttribute('title');
+    const ico = document.createElement('button');
+    ico.type = 'button';
+    ico.className = 'help-ico';
+    ico.textContent = '?';
+    ico.dataset.help = text;
+    ico.setAttribute('aria-label', '説明を表示');
+    ico.setAttribute('aria-expanded', 'false');
+    // 置き場所は「ラベル文字の直後」。
+    //   外付け label      → その末尾 (入力は別行なので末尾 = 文字の直後)
+    //   囲い label + チェック → 末尾 (<input> テキスト の順で並ぶため)
+    //   囲い label + それ以外 → 入力の**前** (テキスト <input display:block> の順なので、
+    //                            末尾に置くと入力の下に落ちてしまう)
+    //   label 無し        → 要素の直後
+    const isCheck = el.type === 'checkbox' || el.type === 'radio';
+    if (outerLabel) outerLabel.appendChild(ico);
+    else if (wrapLabel && isCheck) wrapLabel.appendChild(ico);
+    else if (wrapLabel) wrapLabel.insertBefore(ico, el);
+    else el.parentNode.insertBefore(ico, el.nextSibling);
+    // 対象が隠れているときはアイコンも隠す (ボタンは処理の進み具合で出し入れされる)
+    bindHelpVisibility(ico, el);
+  }
+}
+
+// 対象要素の表示/非表示にアイコンを追従させる。
+// アイコンは対象の兄弟なので、祖先が隠れれば一緒に隠れる。自分自身の
+// display:none / hidden だけを見ればよい。
+const HELP_VIS_OBS = (typeof MutationObserver !== 'undefined')
+  ? new MutationObserver((records) => {
+      for (const r of records) syncHelpVisibility(r.target);
+    })
+  : null;
+const HELP_ICO_BY_TARGET = new WeakMap();
+
+function isElementHidden(el) {
+  if (el.hidden) return true;
+  if (el.style && el.style.display === 'none') return true;
+  try {
+    const cs = (el.ownerDocument.defaultView || window).getComputedStyle(el);
+    if (cs && cs.display === 'none') return true;
+  } catch (e) { /* 計算できない環境では inline 指定のみで判断 */ }
+  return false;
+}
+
+function syncHelpVisibility(target) {
+  const ico = HELP_ICO_BY_TARGET.get(target);
+  if (!ico) return;
+  const hide = isElementHidden(target);
+  ico.hidden = hide;
+  if (hide && HELP_OPEN_ICO === ico) hideHelp();
+}
+
+function bindHelpVisibility(ico, target) {
+  HELP_ICO_BY_TARGET.set(target, ico);
+  syncHelpVisibility(target);
+  if (HELP_VIS_OBS) {
+    HELP_VIS_OBS.observe(target, { attributes: true, attributeFilter: ['style', 'hidden', 'class'] });
+  }
+}
+
+// ポップは 1 つを使い回す (開くたびに DOM を作らない)。
+let HELP_POP = null;
+let HELP_OPEN_ICO = null;
+
+function helpPopEl() {
+  if (!HELP_POP) {
+    HELP_POP = document.createElement('div');
+    HELP_POP.className = 'help-pop';
+    HELP_POP.hidden = true;
+    HELP_POP.setAttribute('role', 'tooltip');
+    document.body.appendChild(HELP_POP);
+  }
+  return HELP_POP;
+}
+
+function showHelp(ico) {
+  const pop = helpPopEl();
+  pop.textContent = ico.dataset.help || '';
+  pop.hidden = false;
+  // まず表示してから実寸で位置決めする (幅が確定しないと画面外判定ができない)
+  const r = ico.getBoundingClientRect();
+  const pr = pop.getBoundingClientRect();
+  let left = r.left + r.width / 2 - pr.width / 2;
+  left = Math.max(8, Math.min(left, window.innerWidth - pr.width - 8));
+  // 下に入らなければ上に出す
+  let top = r.bottom + 6;
+  if (top + pr.height > window.innerHeight - 8) top = Math.max(8, r.top - pr.height - 6);
+  pop.style.left = Math.round(left) + 'px';
+  pop.style.top = Math.round(top) + 'px';
+  if (HELP_OPEN_ICO && HELP_OPEN_ICO !== ico) HELP_OPEN_ICO.setAttribute('aria-expanded', 'false');
+  ico.setAttribute('aria-expanded', 'true');
+  HELP_OPEN_ICO = ico;
+}
+
+function hideHelp() {
+  if (HELP_POP) HELP_POP.hidden = true;
+  if (HELP_OPEN_ICO) {
+    HELP_OPEN_ICO.setAttribute('aria-expanded', 'false');
+    delete HELP_OPEN_ICO.dataset.pinned;
+  }
+  HELP_OPEN_ICO = null;
+}
+
+document.addEventListener('click', (e) => {
+  const ico = e.target.closest && e.target.closest('.help-ico');
+  if (ico) {
+    // label の中に置くので、そのままだとチェックボックスが反応してしまう
+    e.preventDefault();
+    e.stopPropagation();
+    if (HELP_OPEN_ICO === ico && ico.dataset.pinned === '1') {
+      hideHelp();
+    } else {
+      showHelp(ico);
+      ico.dataset.pinned = '1';
+    }
+    return;
+  }
+  if (!e.target.closest || !e.target.closest('.help-pop')) hideHelp();
+}, true);
+
+document.addEventListener('mouseover', (e) => {
+  const ico = e.target.closest && e.target.closest('.help-ico');
+  if (ico && ico !== HELP_OPEN_ICO) showHelp(ico);
+});
+document.addEventListener('mouseout', (e) => {
+  const ico = e.target.closest && e.target.closest('.help-ico');
+  // クリックで開いたものはホバーが外れても閉じない
+  if (ico && ico === HELP_OPEN_ICO && ico.dataset.pinned !== '1') hideHelp();
+});
+document.addEventListener('keydown', (e) => { if (e.key === 'Escape') hideHelp(); });
+window.addEventListener('resize', hideHelp);
+window.addEventListener('scroll', hideHelp, true);
+
+injectHelpIcons(document.getElementById('seed-app-root'));
 
 // ── Chart.js (lazy load on first graph use) ──
 let CHART_LOADED = false;
