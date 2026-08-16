@@ -67,6 +67,29 @@
     els.status.hidden = empty;
   }
 
+  /**
+   * ブラウザ側でしか観測できない失敗を GAS の errors シートに送る。
+   * 失敗しても画面には何も出さない (報告のために操作を止めない)。
+   * 個人情報は送らない: kind と、原因切り分けに要る短い note だけ。
+   */
+  function reportError(kind, note) {
+    try {
+      if (!CFG || !CFG.GAS_ENDPOINT) return;
+      fetch(CFG.GAS_ENDPOINT, {
+        method: 'POST',
+        redirect: 'follow',
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+        body: JSON.stringify({
+          action: 'client_error',
+          flow: 'vote',
+          kind: kind,
+          note: note || '',
+          token: session ? session.token : null,
+        }),
+      }).catch(function () { /* 記録できなくても続行 */ });
+    } catch (_) { /* 同上 */ }
+  }
+
   function showSection(name) {
     ['select', 'check', 'ineligible', 'auth', 'form'].forEach(function (k) {
       els[k].hidden = (k !== name);
@@ -506,6 +529,7 @@
       setStatus('error', msg);
     }).catch(function () {
       els.voteBtn.disabled = false;
+      reportError('network', 'vote fetch failed');
       setStatus('error', '通信に失敗しました。時間をおいてやり直してください。');
     });
   }
@@ -528,6 +552,8 @@
     // 投票は常に認証した本人に対して行われるので、不一致なら明示して止める。
     var sel = takeSel();
     if (sel && sel.uid !== session.user.id) {
+      // GAS を通らない失敗なので、報告しないと運営側から永久に見えない。
+      reportError('account_mismatch', 'selected=' + sel.uid + ' authed=' + session.user.id);
       // いちばん多い失敗。「一致しません」だけだと次に何をすればいいか分からないので、
       // 起きがちな原因と、それぞれの対処まで書く。
       // 特に start.gg 側はログインしたままなので、再認証しても同じアカウントで

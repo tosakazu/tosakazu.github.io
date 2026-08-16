@@ -44,6 +44,24 @@
     }
   }
 
+  /**
+   * 認証前の失敗はここでしか観測できない (GAS を通らない) ので、記録だけ送る。
+   * 送るのは種別と短い手掛かりのみ。code / token は絶対に載せない。
+   */
+  function reportError(kind, note) {
+    try {
+      if (!CFG || !CFG.GAS_ENDPOINT) return;
+      fetch(CFG.GAS_ENDPOINT, {
+        method: 'POST',
+        redirect: 'follow',
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+        body: JSON.stringify({
+          action: 'client_error', flow: 'callback', kind: kind, note: note || '',
+        }),
+      }).catch(function () { /* 記録できなくても画面は出す */ });
+    } catch (_) { /* 同上 */ }
+  }
+
   /** start.gg が返した OAuth エラーを、利用者が次にとれる行動に翻訳する。 */
   function describeOAuthError(code, desc) {
     var base;
@@ -86,17 +104,20 @@
       // start.gg が返す error は OAuth 2.0 の標準コード。
       // 「キャンセル」以外もここに来るので、素通しで一括りにしない。
       if (oauthError === 'access_denied') {
+        reportError('oauth_denied', '');
         show('error', '認証がキャンセルされました',
           'start.gg の画面で「許可しない」を選んだか、認証を途中でやめた場合に表示されます。'
           + 'もう一度試す場合は、start.gg の画面で「Authorize (許可)」を押してください。',
           backDefault);
       } else {
+        reportError('oauth_error', String(oauthError).slice(0, 60));
         show('error', 'start.gg 側で認証を完了できませんでした',
           describeOAuthError(oauthError, oauthErrorDesc), backDefault);
       }
       return;
     }
     if (!code || !state) {
+      reportError('no_code', 'code=' + (code ? 'y' : 'n') + ' state=' + (state ? 'y' : 'n'));
       show('error', '認証エラー',
         'start.gg から認証情報が返ってきませんでした。'
         + 'URL を直接開いた場合や、ブラウザの「戻る」で認証画面に戻った場合に起きます。'
@@ -112,6 +133,7 @@
     } catch (_) { /* stored は null のまま */ }
 
     if (!st || !stored || st.n !== stored) {
+      reportError(!stored ? 'state_missing' : 'state_mismatch', '');
       show('error', '認証エラー',
         !stored
           ? '認証を始めたときの情報がブラウザに残っていませんでした。'
@@ -210,8 +232,11 @@
       var msg = (json && json.error && json.error.message)
         ? json.error.message
         : '認証に失敗しました。';
+      // server 側にも残るが、どの経路で来たかを見るために種別だけ添える
+      reportError('login_failed', (json && json.error && json.error.code) || 'unknown');
       show('error', 'ログインできませんでした', msg, back);
     }).catch(function () {
+      reportError('network', 'login fetch failed');
       show('error', 'ログインできませんでした',
         '通信に失敗しました。時間をおいてやり直してください。', back);
     });
