@@ -357,7 +357,7 @@
       return '<tr>' +
         '<td class="col-no">' + (idx + 1) + '</td>' +
         '<td class="col-rank">' + (r.ens ? '#' + r.ens : '—') + '</td>' +
-        '<td><a href="' + DATA_BASE + 'p/?id=' + r.uid + '" target="_blank" rel="noopener" ' +
+        '<td><a href="' + DATA_BASE + 'p/?uid=' + r.uid + '" target="_blank" rel="noopener" ' +
           'style="color:inherit;text-decoration:none">' + esc(r.display) + '</a>' +
           (OVERSEAS.has(r.uid) ? '<span class="ovs-badge">海外</span>' : '') +
           (r.prov ? '<span class="prov-badge">計測中</span>' : '') +
