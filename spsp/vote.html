@@ -126,6 +126,16 @@
   main .note { color: #9ca3af; font-size: 11.5px; margin-top: 14px; line-height: 1.9; }
   main .actions { margin-top: 12px; display: flex; gap: 8px; flex-wrap: wrap; }
   main #vt-canonical { margin-top: 10px; font-size: 12.5px; }
+
+  /* アプリ内ブラウザの警告 */
+  main #vt-inapp {
+    margin: 0 0 12px; padding: 10px 12px; border-radius: 8px;
+    background: #fffbeb; border: 1px solid #fcd34d;
+  }
+  main #vt-inapp[hidden] { display: none; }
+  main #vt-inapp .warn-title { margin: 0 0 4px; font-weight: 700; color: #92400e; font-size: 13px; }
+  main #vt-inapp .warn-body { margin: 0 0 8px; color: #78350f; font-size: 12.5px; line-height: 1.8; }
+  main #vt-inapp .copy-done { margin-left: 8px; font-size: 12px; color: #15803d; }
   [hidden] { display: none !important; }
 </style>
 </head>
@@ -165,6 +175,18 @@
     <div id="vt-auth" hidden>
       <p class="lead" id="vt-auth-msg"></p>
       <div id="vt-auth-cands"></div>
+      <!-- アプリ内ブラウザだと、認証後に別のブラウザへ戻されて必ず失敗する。
+           始める前に気づいてもらうための警告 (JS が UA を見て出す)。 -->
+      <div id="vt-inapp" hidden>
+        <p class="warn-title">⚠️ <span id="vt-inapp-app"></span>のアプリ内ブラウザで開いています</p>
+        <p class="warn-body">
+          このまま進むと、認証のあと別のブラウザに戻されて<b>認証に失敗します</b>。
+          お手数ですが、下のボタンで URL をコピーして、
+          <b>Safari や Chrome を自分で開いて貼り付けてから</b>投票してください。
+        </p>
+        <button id="vt-copy-url" class="sub" type="button">このページの URL をコピー</button>
+        <span id="vt-copy-done" class="copy-done" hidden>コピーしました</span>
+      </div>
       <div class="actions">
         <button id="vt-login-btn" type="button">start.gg で本人確認して投票に進む</button>
         <button id="vt-back2-btn" class="sub" type="button">選び直す</button>
