@@ -128,22 +128,20 @@
 
     // ── 3. state 検証 (nonce)。ここで弾いたら GAS には一切送らない ──
     var st = S.decodeState(state);
-    // 単回使用。ここで取り出したら保存側は消える (成功時の removeItem は不要)。
+    // 単回使用。ここで取り出したら保存側は消える。
     var stored = S.takeNonce();
 
-    if (!st || !stored || st.n !== stored) {
+    // 照合の本体は GAS 側の署名検証に移した (アプリ内ブラウザ→別ブラウザで
+    // 戻される経路では、保存領域が引き継がれず必ず失敗するため)。
+    // ブラウザに nonce が残っているときだけ、ここでも突き合わせる (二段構え)。
+    // 残っていない場合は止めず、署名 state を GAS に検証させる。
+    if (!st || (stored && st.n !== stored)) {
       var tag = S.browserTag(navigator.userAgent);
-      reportError(!stored ? 'state_missing' : 'state_mismatch', tag);
+      reportError(!st ? 'state_broken' : 'state_mismatch', tag);
       show('error', '認証エラー',
-        !stored
-          ? '認証を始めたときの情報が、このブラウザに残っていませんでした。\n\n'
-            + '多いのは、X や Discord のアプリの中のブラウザから始めた場合です。'
-            + '認証の途中で start.gg のアプリに移り、そのあと通常の Safari / Chrome に'
-            + '戻ってくるため、始めたブラウザと戻ったブラウザが別物になり、'
-            + '照合できなくなります。\n\n'
-            + 'お手数ですが、Safari や Chrome を自分で開き、'
-            + 'そこで投票ページを開き直してから認証してください。'
-            + '(このほか、プライベートブラウズや、認証画面を長時間放置した場合にも起きます)'
+        !st
+          ? '認証情報を読み取れませんでした。URL が途中で切れている可能性があります。'
+            + '投票ページからやり直してください。'
           : '認証の照合に失敗しました。安全のため中断しました。'
             + '心当たりがなければ、もう一度最初からやり直してください。',
         backDefault);
@@ -168,7 +166,7 @@
     }
 
     if (intent === 'login') {
-      runLogin(code, back);
+      runLogin(code, state, back);
       return;
     }
 
@@ -191,7 +189,7 @@
       method: 'POST',
       redirect: 'follow',
       headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-      body: JSON.stringify({ action: 'post', code: code, body: body }),
+      body: JSON.stringify({ action: 'post', code: code, state: state, body: body }),
     }).then(function (res) {
       return res.json();
     }).then(function (json) {
@@ -216,12 +214,12 @@
    * login フロー: code をセッショントークンに替えて localStorage に保存し、
    * 元のページに ?login=1 で戻る。シートには何も書かれない。
    */
-  function runLogin(code, back) {
+  function runLogin(code, state, back) {
     fetch(CFG.GAS_ENDPOINT, {
       method: 'POST',
       redirect: 'follow',
       headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-      body: JSON.stringify({ action: 'login', code: code }),
+      body: JSON.stringify({ action: 'login', code: code, state: state }),
     }).then(function (res) {
       return res.json();
     }).then(function (json) {

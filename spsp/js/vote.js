@@ -402,20 +402,42 @@
       setStatus('error', 'お使いのブラウザでは認証できません。');
       return;
     }
+    // 保存領域は「使えたら使う」。アプリ内ブラウザ→別ブラウザの経路では
+    // どのみち引き継げないので、ここで止めない (照合は署名 state 側で行う)。
+    S.saveNonce(nonce);
     try {
-      S.saveNonce(nonce);   // 別タブで戻ってきても拾えるように localStorage にも置く
       sessionStorage.setItem(S.INTENT_KEY, 'login');
       sessionStorage.removeItem(S.DRAFT_KEY);
-    } catch (_) {
-      setStatus('error', 'ブラウザの保存領域が使えないため認証できません (プライベートモード等)。');
-      return;
-    }
+    } catch (_) { /* 続行 */ }
     if (selected) saveSel(selected);
 
-    var state = S.encodeState({ n: nonce, r: location.pathname + location.search });
+    // state は GAS に署名してもらう。ブラウザが変わっても検証できるようにするため。
     els.loginBtn.disabled = true;
     setStatus('', 'start.gg に移動しています…');
-    location.assign(S.buildAuthorizeUrl(CFG, state));
+    fetch(CFG.GAS_ENDPOINT, {
+      method: 'POST',
+      redirect: 'follow',
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+      body: JSON.stringify({
+        action: 'begin_login',
+        nonce: nonce,
+        returnPath: location.pathname + location.search,
+      }),
+    }).then(function (res) {
+      return res.json();
+    }).then(function (json) {
+      if (!json || !json.ok || !json.state) {
+        els.loginBtn.disabled = false;
+        setStatus('error', '認証の準備に失敗しました。時間をおいてやり直してください。');
+        reportError('begin_failed', (json && json.error && json.error.code) || 'unknown');
+        return;
+      }
+      location.assign(S.buildAuthorizeUrl(CFG, json.state));
+    }).catch(function () {
+      els.loginBtn.disabled = false;
+      setStatus('error', '認証の準備に失敗しました。通信環境をご確認ください。');
+      reportError('begin_failed', 'network');
+    });
   }
 
   function logout() {

@@ -49,12 +49,19 @@
     return encodeBase64Url(JSON.stringify({ n: String(obj.n), r: String(obj.r) }));
   }
 
-  /** state 文字列 → { n, r }。壊れていれば null (呼び出し側は認証エラー扱い)。 */
+  /**
+   * state 文字列 → { n, r }。壊れていれば null (呼び出し側は認証エラー扱い)。
+   *
+   * GAS が発行する state は "payload.署名" の形。署名の検証は GAS 側で行うので、
+   * ここでは戻り先 (r) を読むために payload だけ取り出す。
+   * 署名なし (旧形式) も読めるようにしておく。
+   */
   function decodeState(s) {
     if (typeof s !== 'string' || !s) return null;
+    var body = s.indexOf('.') >= 0 ? s.split('.')[0] : s;
     var o;
     try {
-      o = JSON.parse(decodeBase64Url(s));
+      o = JSON.parse(decodeBase64Url(body));
     } catch (_) {
       return null;
     }

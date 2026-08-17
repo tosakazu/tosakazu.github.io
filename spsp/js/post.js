@@ -58,8 +58,9 @@
       return;
     }
 
+    S.saveNonce(nonce);   // 使えたら使う (照合の本体は署名 state 側)
     try {
-      S.saveNonce(nonce);   // 別タブで戻ってきても拾えるように localStorage にも置く
+      // 本文は保存できないと復元できないので、ここは従来どおり止める。
       sessionStorage.setItem(S.DRAFT_KEY, v.body);
       sessionStorage.setItem(S.INTENT_KEY, 'post'); // 前の login フローの残骸を上書き
     } catch (_) {
@@ -67,10 +68,31 @@
       return;
     }
 
-    var state = S.encodeState({ n: nonce, r: location.pathname + location.search });
+    // state は GAS に署名してもらう (投票側と同じ理由。docs/post_feature_design.md)。
     els.submit.disabled = true;
     setStatus('', 'start.gg に移動しています…');
-    location.assign(S.buildAuthorizeUrl(CFG, state));
+    fetch(CFG.GAS_ENDPOINT, {
+      method: 'POST',
+      redirect: 'follow',
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+      body: JSON.stringify({
+        action: 'begin_login',
+        nonce: nonce,
+        returnPath: location.pathname + location.search,
+      }),
+    }).then(function (res) {
+      return res.json();
+    }).then(function (json) {
+      if (!json || !json.ok || !json.state) {
+        els.submit.disabled = false;
+        setStatus('error', '認証の準備に失敗しました。時間をおいてやり直してください。');
+        return;
+      }
+      location.assign(S.buildAuthorizeUrl(CFG, json.state));
+    }).catch(function () {
+      els.submit.disabled = false;
+      setStatus('error', '認証の準備に失敗しました。通信環境をご確認ください。');
+    });
   }
 
   /** 投稿完了で戻ってきたときの表示。下書きは消す。 */
