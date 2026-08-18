@@ -35,6 +35,26 @@
     }[c]));
   }
 
+  /**
+   * ランキング表に出す名前。
+   *
+   * - チームタグ (「ZETA | あcola」の「ZETA |」部分) は落とす。
+   *   一覧では場所を食うわりに情報が薄く、選手名の視認性を下げるため。
+   *   プレイヤーページ側はタグ付きのまま (所属が見たい場面なので)。
+   * - 末尾の空白 (半角・全角) を落とす。start.gg の登録名に紛れており、
+   *   そのまま出すと右側が不自然に空く。
+   *
+   * 並べ替え・絞り込みは元の表記で行う (タグで検索したい人がいるため)。
+   */
+  function displayName(name) {
+    const raw = String(name ?? '');
+    const trim = (x) => x.replace(/^[\s\u3000]+|[\s\u3000]+$/g, '');
+    const bar = raw.lastIndexOf('|');
+    const cut = bar >= 0 ? trim(raw.slice(bar + 1)) : trim(raw);
+    // 「|」だけ、あるいはタグしか無い名前で空にしない
+    return cut || trim(raw) || raw;
+  }
+
   // === Format helpers ===
   function getRank(rec, method) {
     return (rec.ranks && rec.ranks[method]) || Infinity;
@@ -160,7 +180,8 @@
     },
     display: {
       label: 'プレイヤー', sortable: true, sortKey: 'display', css: 'col-display',
-      value: (rec) => rec.display,
+      value: (rec) => rec.display,     // 並べ替え・絞り込みは元の表記のまま
+                                       // (チームタグで検索したい人がいるため)
       cell: (rec, ctx) => {
         // LV は共通 cascade 由来 (= shared_cascade_lv)。fallback で旧 tjpr_level
         const lv = (rec.scores && (rec.scores.shared_cascade_lv || rec.scores.tjpr_level)) || 0;
@@ -185,9 +206,10 @@
           ? '<span class="gate-pill rookie">計測中</span>'
           : '';
 
+        const shown = displayName(rec.display);
         const nameHtml = rec.unranked
-          ? `<span class="player-name">${escapeHtml(rec.display)}</span>`
-          : `<a class="player-name" href="${ctx.playerHrefPrefix}p/?uid=${rec.user_id}" onclick="event.stopPropagation()">${escapeHtml(rec.display)}</a>`;
+          ? `<span class="player-name">${escapeHtml(shown)}</span>`
+          : `<a class="player-name" href="${ctx.playerHrefPrefix}p/?uid=${rec.user_id}" onclick="event.stopPropagation()">${escapeHtml(shown)}</a>`;
         // メイン使用キャラの絵文字 (= 名前の左)。
         const charEmoji = rec.main_char_emoji
           ? `<span class="main-char-emoji" title="メイン使用キャラ">${rec.main_char_emoji}</span>`

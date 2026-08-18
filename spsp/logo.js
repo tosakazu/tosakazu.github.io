@@ -119,6 +119,7 @@
   // 一巡にかかる時間 (logo.css の遅延 + 再生時間の合計に合わせる)。
   // これを過ぎても消えないときは繰り返しに入る。
   var INTRO_MS = 1300;
+  var introEndsAt = 0;      // inline() が再生を始めたら「一巡が終わる時刻」が入る
 
   // ── 読み込み中の差し込み ──
   //
@@ -144,6 +145,9 @@
     requestAnimationFrame(function () {
       requestAnimationFrame(function () { mark.classList.add('is-on'); });
     });
+    // 一巡が終わる時刻。introGate はここを見て待つ
+    // (差し込みより前に gate を作っても、再生の実時間に合わせられるように)。
+    introEndsAt = Date.now() + INTRO_MS;
     // 一巡し終わっても読み込みが続いているときは、繰り返しに移る。
     // (枠ごと差し替えられたら DOM から消えるので、後始末は要らない)
     setTimeout(function () {
@@ -171,6 +175,71 @@
     }
   }
 
+  /**
+   * 一巡し終わる (かタップで飛ばされる) まで待つ Promise を返す。
+   *
+   * トップのランキングだけは、データが早く届いてもアニメーションを最後まで
+   * 見せてから表を出したい。ただし待たされたくない人のために、
+   * どこかをタップ/クリック/キー操作したら即座に打ち切る。
+   *
+   * 差し込み (inline) より前に呼んでも動くよう、呼ばれた時刻を基準にする。
+   */
+  /**
+   * 直後の click / pointerup を 1 回だけ握りつぶす。
+   * スキップのタップが、その下に現れた要素の操作として二重に効くのを防ぐ。
+   * 取り逃したときのために短い時限で自動解除する (通常操作を巻き込まない)。
+   */
+  function swallowNextClick() {
+    var off = function () {
+      document.removeEventListener('click', block, true);
+      document.removeEventListener('pointerup', stop, true);
+      clearTimeout(t);
+    };
+    var block = function (e) {
+      e.preventDefault();
+      e.stopPropagation();
+      off();
+    };
+    var stop = function (e) { e.stopPropagation(); };
+    var t = setTimeout(off, 700);
+    document.addEventListener('click', block, true);
+    document.addEventListener('pointerup', stop, true);
+  }
+
+  function introGate() {
+    if (prefersReducedMotion()) return Promise.resolve();
+    return new Promise(function (resolve) {
+      var done = false;
+      var timer = null;
+      // 待ちすぎないための上限。差し込みが起きないページでも必ず解ける。
+      var deadline = Date.now() + INTRO_MS * 2;
+      var finish = function (ev) {
+        if (done) return;
+        done = true;
+        clearTimeout(timer);
+        document.removeEventListener('pointerdown', finish, true);
+        document.removeEventListener('keydown', finish, true);
+        // 指を離した先には、解除直後に描かれた表がある。そのままだと
+        // 続けて飛んでくる click が行に当たってプレイヤーページへ遷移してしまう。
+        // 「飛ばすためのタップ」の 1 回だけ食い止める。
+        if (ev && ev.type === 'pointerdown') swallowNextClick();
+        resolve();
+      };
+      var tick = function () {
+        if (done) return;
+        if (Date.now() >= deadline) return finish();
+        // 再生開始前は少し待って様子を見る (gate の方が先に作られることがある)
+        if (!introEndsAt) { timer = setTimeout(tick, 40); return; }
+        var remain = introEndsAt - Date.now();
+        if (remain <= 0) return finish();
+        timer = setTimeout(tick, remain);
+      };
+      tick();
+      document.addEventListener('pointerdown', finish, true);
+      document.addEventListener('keydown', finish, true);
+    });
+  }
+
   /** ヘッダーのブランド枠に静止ロゴを入れる (アニメーションなし・正式名称なし)。 */
   function mountHeader(node) {
     if (!node) return;
@@ -191,6 +260,8 @@
     SUB_LINES: SUB_LINES,
     inline: inline,
     autoInline: autoInline,
+    introGate: introGate,
+    INTRO_MS: INTRO_MS,
     mountHeader: mountHeader,
     prefersReducedMotion: prefersReducedMotion,
   };

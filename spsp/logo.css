@@ -135,6 +135,15 @@ td > .spsp-inline, .empty-msg > .spsp-inline { color: initial; }
   45%      { opacity: .45; }
 }
 
+/* ── 読み込み終わりの切り替え ──
+   パッと入れ替わると唐突なので、短くフェードインさせる。
+   待たせない長さ (0.22s) に留める。 */
+.spsp-fadein { animation: spsp-fadein .22s ease-out both; }
+@keyframes spsp-fadein {
+  from { opacity: 0; transform: translateY(4px); }
+  to   { opacity: 1; transform: none; }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .spsp.is-anim.is-on .spsp__word,
   .spsp.is-anim.is-on .spsp__tiers b,
@@ -145,4 +154,5 @@ td > .spsp-inline, .empty-msg > .spsp-inline { color: initial; }
   .spsp.is-anim .spsp__tiers b { transform: none; }
   .spsp.is-anim .spsp__line u { opacity: 1; }
   .spsp__scan { display: none; }
+  .spsp-fadein { animation: none; }
 }

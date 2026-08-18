@@ -462,6 +462,8 @@
 <body>
 
 <div id="nav-root"></div>
+<link rel="stylesheet" href="logo.css" id="__spsp_logo_css">
+<script src="logo.js"></script>
 <script src="nav.js"></script>
 <script src="share.js"></script>
 
@@ -526,7 +528,7 @@
 </div>
 
 <div class="footer" id="footer-info"></div>
-<div class="footer" style="margin-top:-12px"><span class="site-version" style="font-size:11px;color:#9ca3af">v 8f4c48d · 2026-08-18 12:11 UTC</span></div>
+<div class="footer" style="margin-top:-12px"><span class="site-version" style="font-size:11px;color:#9ca3af">v dafca33 · 2026-08-18 14:12 UTC</span></div>
 
 <button id="scroll-top" aria-label="ページの一番上へ戻る" title="一番上へ" hidden>↑</button>
 
@@ -562,6 +564,12 @@ let filterText = '';
 // tourSortMode は SPSPDetail 内部で管理. PAGE_INCREMENT は infinite scroll の 1 段分.
 const PAGE_INCREMENT = 512;
 
+// トップだけはロゴのアニメーションを最後まで見せてから表を出す。
+// 読み込みが先に終わっても待つ (画面のどこかをタップ/クリックすれば即スキップ)。
+// 逆にアニメーションが先に終わったら、データが届き次第すぐ描く。
+const INTRO_GATE = (window.SPSPLogo && window.SPSPLogo.introGate)
+  ? window.SPSPLogo.introGate() : Promise.resolve();
+
 async function loadData() {
   const status = document.getElementById('status');
   status.textContent = 'JSONL ダウンロード中…';
@@ -587,7 +595,7 @@ async function loadData() {
     }
     // ヘッダ (nav bar) に「最終更新時刻 · バージョン」を表示
     const genTime = (META.generated_at || META.eval_date || '').split('.')[0].replace('T', ' ');
-    const SITE_VERSION_FULL = 'v 8f4c48d · 2026-08-18 12:11 UTC';
+    const SITE_VERSION_FULL = 'v dafca33 · 2026-08-18 14:12 UTC';
     const versionShort = SITE_VERSION_FULL.split(' · ')[0] || SITE_VERSION_FULL;
     const navMeta = document.getElementById('meta-info');
     if (navMeta) navMeta.textContent = `最終更新 ${genTime} · ${versionShort}`;
@@ -608,7 +616,9 @@ async function loadData() {
       window.SPSPRankingTable.attachZenichi(DATA, charIdx, overseasUids);
     }
     status.textContent = `${DATA.length}名 (${(performance.now()-t0).toFixed(0)}ms)`;
+    await INTRO_GATE;          // アニメーションを最後まで (タップで飛ばせる)
     render();
+    fadeInOnce(document.querySelector('.table-wrap'));
   } catch (e) {
     status.textContent = 'エラー: ' + e.message;
   }
@@ -705,6 +715,13 @@ function ensureTable() {
   });
   TABLE.meta = META;
   return TABLE;
+}
+
+// 初回の描画だけ短くフェードインさせる (並べ替えや絞り込みでは動かさない)。
+function fadeInOnce(el) {
+  if (!el) return;
+  el.classList.add('spsp-fadein');
+  setTimeout(function () { el.classList.remove('spsp-fadein'); }, 400);
 }
 
 function render() {
