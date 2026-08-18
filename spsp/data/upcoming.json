@@ -1,8 +1,8 @@
 {
-  "generated_at": 1786978825,
+  "generated_at": 1786990876,
   "country_code": "JP",
   "lookahead_days": 21,
-  "count": 46,
+  "count": 47,
   "tournaments": [
     {
       "tournament_id": 942316,
@@ -14,14 +14,14 @@
       "city": "札幌市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 22,
+      "num_attendees": 23,
       "url": "/tournament/epochi",
       "events": [
         {
           "event_id": 1687029,
           "event_slug": "tournament/epochi/event/ultimate-singles",
           "event_name": "Ultimate Singles",
-          "num_entrants": 22,
+          "num_entrants": 23,
           "type": 1,
           "start_at": 1787043600
         }
@@ -37,14 +37,14 @@
       "city": "渋谷区",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 23,
+      "num_attendees": 25,
       "url": "/tournament/137-shibuya-tatsu",
       "events": [
         {
           "event_id": 1686577,
           "event_slug": "tournament/137-shibuya-tatsu/event/singles",
           "event_name": "Singles",
-          "num_entrants": 22,
+          "num_entrants": 24,
           "type": 1,
           "start_at": 1787047200
         }
@@ -152,14 +152,14 @@
       "city": "渋谷区",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 12,
+      "num_attendees": 13,
       "url": "/tournament/shibuya-g-g-smash-weekly-76",
       "events": [
         {
           "event_id": 1687894,
           "event_slug": "tournament/shibuya-g-g-smash-weekly-76/event/singles",
           "event_name": "Singles",
-          "num_entrants": 12,
+          "num_entrants": 13,
           "type": 1,
           "start_at": 1787221800
         }
@@ -658,7 +658,7 @@
       "city": "大東市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 337,
+      "num_attendees": 338,
       "url": "/tournament/72-sp-1",
       "events": [
         {
@@ -957,16 +957,39 @@
       "city": "名古屋市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 15,
+      "num_attendees": 16,
       "url": "/tournament/-3145",
       "events": [
         {
           "event_id": 1668064,
           "event_slug": "tournament/-3145/event/sp-1on1",
           "event_name": "スマッシュブラザーズSP 1on1 トーナメント",
-          "num_entrants": 15,
+          "num_entrants": 16,
           "type": 1,
           "start_at": 1788534000
+        }
+      ]
+    },
+    {
+      "tournament_id": 944082,
+      "tournament_slug": "tournament/masterhand75",
+      "tournament_name": "MasterHand75",
+      "start_at": 1788570000,
+      "end_at": 1788598800,
+      "is_online": false,
+      "city": "大阪市",
+      "venue_name": "クレオ大阪南 (Creo Osaka South)",
+      "country_code": "JP",
+      "num_attendees": 4,
+      "url": "/tournament/masterhand75",
+      "events": [
+        {
+          "event_id": 1690571,
+          "event_slug": "tournament/masterhand75/event/sp-ultimate-singles",
+          "event_name": "SP シングルス / Ultimate Singles",
+          "num_entrants": 3,
+          "type": 1,
+          "start_at": 1788570000
         }
       ]
     },
@@ -980,14 +1003,14 @@
       "city": "横浜市",
       "venue_name": "おださがプラザ",
       "country_code": "JP",
-      "num_attendees": 150,
+      "num_attendees": 151,
       "url": "/tournament/53-kurobra53",
       "events": [
         {
           "event_id": 1671132,
           "event_slug": "tournament/53-kurobra53/event/kurobra-sp-1on1",
           "event_name": "Kurobra/SP 1on1トーナメント",
-          "num_entrants": 145,
+          "num_entrants": 146,
           "type": 1,
           "start_at": 1788570000
         }
@@ -1026,7 +1049,7 @@
       "city": "町田市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 161,
+      "num_attendees": 162,
       "url": "/tournament/impact-major-5",
       "events": [
         {
