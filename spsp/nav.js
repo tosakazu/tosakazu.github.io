@@ -87,7 +87,7 @@
 
   const html =
     `<nav class="nav">
-      <span class="brand"><a href="${prefix}index.html">SPSP</a></span>
+      <span class="brand"><a href="${prefix}index.html" aria-label="SPSP ホーム"><span class="spsp-brand-mark"></span></a></span>
       <div class="nav-dropdown${isRanking ? ' has-current' : ''}">
         <button type="button" class="nav-trigger" aria-haspopup="true" aria-expanded="false">ランキング<span class="caret">▾</span></button>
         <div class="nav-menu" role="menu">
@@ -147,6 +147,15 @@
 
   // Inject styles (idempotent)
   if (!document.getElementById('__spsp_nav_css')) {
+    // ロゴのスタイル (ヘッダー + 読み込み中オーバーレイ共通)
+    if (!document.getElementById('__spsp_logo_css')) {
+      const lcss = document.createElement('link');
+      lcss.id = '__spsp_logo_css';
+      lcss.rel = 'stylesheet';
+      lcss.href = prefix + 'logo.css';
+      document.head.appendChild(lcss);
+    }
+
     const style = document.createElement('style');
     style.id = '__spsp_nav_css';
     style.textContent = `
@@ -161,7 +170,7 @@
                padding:4px 8px; border-radius:4px; }
       .nav a:hover { color:#111827; background:#f3f4f6; }
       .nav a.current { color:#dc2626; background:#f3f4f6; }
-      .nav .brand { font-size:16px; color:#111827; font-weight:600; margin-right:16px; }
+      .nav .brand { font-size:16px; color:#111827; font-weight:600; margin-right:10px; }
       .nav .brand a { color:#111827; font-size:16px; padding:0; font-weight:600; }
       .nav .brand a:hover { background:transparent; }
       .nav .meta { margin-left:auto; color:#9ca3af; font-size:12px; }
@@ -260,7 +269,30 @@
     } else {
       document.body.insertBefore(navEl, document.body.firstChild);
     }
+    mountBrandLogo(navEl);
     measureNavHeight(navEl);
+  }
+
+  // ブランド枠にロゴを組み立てる。logo.js はまだ読めていないことがあるので、
+  // 読めたら組む / 読めなければ従来どおり文字で出す (ヘッダーが空欄になるより良い)。
+  function mountBrandLogo(navEl) {
+    const slot = (navEl || document).querySelector('.spsp-brand-mark');
+    if (!slot) return;
+    const put = () => {
+      if (window.SPSPLogo) {
+        window.SPSPLogo.mountHeader(slot);
+        // 「読み込み中…」と書いてある枠をロゴに差し替える (各ページ共通)
+        window.SPSPLogo.autoInline();
+      } else {
+        slot.textContent = 'SPSP';
+      }
+    };
+    if (window.SPSPLogo) { put(); return; }
+    const sc = document.createElement('script');
+    sc.src = prefix + 'logo.js';
+    sc.onload = put;
+    sc.onerror = () => { slot.textContent = 'SPSP'; };
+    document.head.appendChild(sc);
   }
   // nav 高さを CSS 変数 (--nav-height) として設定. sticky thead が nav の下に
   // ぴったり収まるよう、ranking-table.css 等で `top: var(--nav-height)` を参照可能.

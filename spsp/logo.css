@@ -1,0 +1,148 @@
+/* logo.css — SPSP ロゴ (ヘッダー + 読み込み中オーバーレイ共通)。
+   色はサイトの既存トーン (赤 #dc2626 / 墨 #111827) に合わせている。 */
+.spsp {
+  --spsp-ink: #111827;
+  --spsp-muted: #9ca3af;
+  --spsp-accent: #dc2626;
+  --spsp-tier: 17, 24, 39;      /* 下位ティアの色 (R,G,B) */
+  --spsp-tier1: 220, 38, 38;    /* 最上位ティアの色 (R,G,B) */
+
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Hiragino Sans", sans-serif;
+  color: var(--spsp-ink);
+  display: inline-block;
+  -webkit-font-smoothing: antialiased;
+}
+
+.spsp__lockup { position: relative; padding: 9px 0 7px; }
+
+/* ── 背面: 5 段の左揃えピラミッド (上ほど短く・濃い = 上位ほど少数) ── */
+.spsp__tiers {
+  position: absolute; inset: 0 -9%; z-index: 0;
+  display: flex; flex-direction: column; gap: 2px;
+  pointer-events: none;
+}
+.spsp__tiers b {
+  display: block; flex: 1;
+  width: var(--w);
+  background: rgba(var(--spsp-tier), var(--a));
+}
+.spsp__tiers b:first-child { background: rgba(var(--spsp-tier1), var(--a)); }
+.spsp.is-anim .spsp__tiers b { transform: scaleX(0); transform-origin: 0 50%; }
+.spsp.is-anim.is-on .spsp__tiers b {
+  animation: spsp-tier .36s cubic-bezier(.22,.8,.24,1) both;
+  animation-delay: calc(.03s + var(--i) * .055s);
+}
+@keyframes spsp-tier { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+
+/* ── 文字は前面・中央そろえ ── */
+.spsp__text { position: relative; z-index: 1; text-align: center; }
+
+/* ワードマーク: 左→右のワイプで現れる (ティアと同じ方向) */
+.spsp__wordwrap { position: relative; display: inline-block; overflow: hidden; }
+.spsp__word { font-weight: 900; letter-spacing: -.045em; line-height: .88; }
+.spsp__scan {
+  position: absolute; top: 4%; bottom: 4%; left: 0;
+  width: 2px; background: var(--spsp-accent);
+  opacity: 0; pointer-events: none;
+}
+.spsp.is-anim .spsp__word { clip-path: inset(0 100% 0 0); }
+.spsp.is-anim.is-on .spsp__word {
+  animation: spsp-reveal .46s cubic-bezier(.5,.02,.2,1) .24s both;
+}
+.spsp.is-anim.is-on .spsp__scan {
+  animation: spsp-scan .46s cubic-bezier(.5,.02,.2,1) .24s both;
+}
+@keyframes spsp-reveal {
+  from { clip-path: inset(0 100% 0 0); }
+  to   { clip-path: inset(0 0 0 0); }
+}
+@keyframes spsp-scan {
+  0%   { left: 0; opacity: 0; }
+  10%  { opacity: 1; }
+  88%  { opacity: 1; }
+  100% { left: 100%; opacity: 0; }
+}
+
+/* ── 正式名称: 2 行。字間は JS (fit) がワードマーク幅に合わせる ── */
+.spsp__sub { margin-top: 7px; }
+.spsp__line {
+  display: block; white-space: nowrap;
+  font-weight: 600; line-height: 1.6;
+  letter-spacing: .2em;
+  color: var(--spsp-muted); text-transform: uppercase;
+}
+.spsp__line--accent { color: var(--spsp-accent); }
+.spsp__linein { display: inline-block; }
+.spsp__line u { text-decoration: none; display: inline-block; white-space: pre; }
+.spsp.is-anim .spsp__line u { opacity: 0; }
+.spsp.is-anim.is-on .spsp__line u {
+  animation: spsp-fade .28s ease-out both;
+  animation-delay: calc(.7s + var(--j) * .013s);
+}
+@keyframes spsp-fade {
+  from { opacity: 0; transform: translateY(5px); }
+  to   { opacity: 1; transform: none; }
+}
+
+/* ── ヘッダー用 (小さい・静止・正式名称なし) ── */
+/* display:block にすると nav の残り幅いっぱいに伸びて、右側の項目が折り返す。
+   中身の幅に合わせること。ヘッダーは横幅が資源なので、
+   ティアも文字幅からはみ出させない (はみ出すとロゴが一回り太って見える)。 */
+.nav .brand .spsp { display: inline-block; vertical-align: middle; }
+.nav .brand .spsp__lockup { padding: 2px 0 1px; }
+.nav .brand .spsp__tiers { inset: 0; gap: 1px; }
+.nav .brand .spsp__word { font-size: 15px; letter-spacing: -.05em; }
+.nav .brand .spsp__scan { display: none; }
+.nav .brand a { display: inline-block; padding: 0; }
+.nav .brand a:hover .spsp { --spsp-ink: #000; }
+/* 狭い画面ではさらに詰める */
+@media (max-width: 720px) {
+  .nav .brand .spsp__word { font-size: 14px; }
+}
+
+/* ── 読み込み中の差し込み ──
+   「読み込み中…」と書いてあった枠にそのまま置く。表の中にも入るので、
+   高さを取りすぎないよう小さめ。 */
+.spsp-inline {
+  display: flex; justify-content: center; align-items: center;
+  padding: 26px 12px;
+}
+.spsp-inline .spsp__word { font-size: clamp(1.7rem, 5.2vw, 2.5rem); }
+.spsp-inline .spsp__line { font-size: clamp(.56rem, 1.5vw, .68rem); }
+.spsp-inline .spsp__sub { margin-top: 5px; }
+/* 表のセルの中では、行の折り返しや文字色を持ち込まない */
+td > .spsp-inline, .empty-msg > .spsp-inline { color: initial; }
+
+/* ── ロードが長いとき: 一巡したあとの繰り返し ──
+   最初から作り直すとうるさいので、スキャン線を往復させ、
+   ティアを順に明滅させる (「まだ動いている」だけ伝える)。 */
+.spsp.is-anim.is-on.is-loop .spsp__scan {
+  animation: spsp-scan-loop 1.5s cubic-bezier(.5,.05,.3,1) infinite;
+}
+.spsp.is-anim.is-on.is-loop .spsp__tiers b {
+  animation: spsp-tier-wave 1.5s ease-in-out infinite;
+  animation-delay: calc(var(--i) * .09s);
+}
+@keyframes spsp-scan-loop {
+  0%   { left: 0; opacity: 0; }
+  8%   { opacity: .9; }
+  50%  { left: 100%; opacity: .9; }
+  58%  { left: 100%; opacity: 0; }
+  100% { left: 0; opacity: 0; }
+}
+@keyframes spsp-tier-wave {
+  0%, 100% { opacity: 1; }
+  45%      { opacity: .45; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .spsp.is-anim.is-on .spsp__word,
+  .spsp.is-anim.is-on .spsp__tiers b,
+  .spsp.is-anim.is-on.is-loop .spsp__tiers b,
+  .spsp.is-anim.is-on.is-loop .spsp__scan,
+  .spsp.is-anim.is-on .spsp__line u { animation: none; }
+  .spsp.is-anim .spsp__word { clip-path: none; }
+  .spsp.is-anim .spsp__tiers b { transform: none; }
+  .spsp.is-anim .spsp__line u { opacity: 1; }
+  .spsp__scan { display: none; }
+}
