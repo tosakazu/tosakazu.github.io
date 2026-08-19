@@ -77,6 +77,7 @@
       headers: { 'Content-Type': 'text/plain;charset=utf-8' },
       body: JSON.stringify({
         action: 'begin_login',
+        flow: 'post',
         nonce: nonce,
         returnPath: location.pathname + location.search,
       }),

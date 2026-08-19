@@ -67,7 +67,13 @@
     }
     if (!o || typeof o !== 'object') return null;
     if (typeof o.n !== 'string' || !o.n) return null;
-    return { n: o.n, r: typeof o.r === 'string' ? o.r : '' };
+    return {
+      n: o.n,
+      r: typeof o.r === 'string' ? o.r : '',
+      // f = このフローが投票のログインか投稿か。GAS が署名時に載せる。
+      // 保存領域が引き継がれない経路でも判別するために state 側に持たせている。
+      f: (o.f === 'post' || o.f === 'login') ? o.f : null,
+    };
   }
 
   /**

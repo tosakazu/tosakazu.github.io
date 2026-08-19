@@ -152,11 +152,15 @@
 
     // フローの種別 (post = 投稿 / login = ログインだけしてページに戻る)。
     // 読んだらすぐ消す (放置すると次の別フローに紛れ込む)。
-    var intent = null;
+    // 署名 state に入っている flow を最優先で使う。
+    // sessionStorage はアプリ内ブラウザ→別ブラウザで引き継がれず、
+    // 投稿フロー扱いになって「下書きがありません」と出る原因になっていた。
+    var intent = st.f;
     try {
-      intent = sessionStorage.getItem(S.INTENT_KEY);
+      var stored = sessionStorage.getItem(S.INTENT_KEY);
       sessionStorage.removeItem(S.INTENT_KEY);
-    } catch (_) { /* intent は null のまま */ }
+      if (!intent) intent = stored;
+    } catch (_) { /* state 側だけで判断する */ }
 
     var missing = S.missingConfig(CFG);
     if (missing.length) {
@@ -177,6 +181,7 @@
     } catch (_) { /* body は null のまま */ }
 
     if (!body) {
+      reportError('draft_missing', S.browserTag(navigator.userAgent));
       show('error', '下書きが見つかりません',
         '投稿する本文が残っていません。投稿ページからやり直してください。', back);
       return;
