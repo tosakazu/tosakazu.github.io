@@ -1,32 +1,9 @@
 {
-  "generated_at": 1787065229,
+  "generated_at": 1787076028,
   "country_code": "JP",
   "lookahead_days": 21,
   "count": 47,
   "tournaments": [
-    {
-      "tournament_id": 942693,
-      "tournament_slug": "tournament/weekly-smash-party-242",
-      "tournament_name": "Weekly Smash Party ～スマパ～ #242",
-      "start_at": 1787130000,
-      "end_at": 1787146200,
-      "is_online": false,
-      "city": "中野区",
-      "venue_name": "Red Bull Gaming Sphere Tokyo",
-      "country_code": "JP",
-      "num_attendees": 79,
-      "url": "/tournament/weekly-smash-party-242",
-      "events": [
-        {
-          "event_id": 1687794,
-          "event_slug": "tournament/weekly-smash-party-242/event/special-1on1-ultimate-singles",
-          "event_name": "SPECIAL 1on1/ Ultimate Singles",
-          "num_entrants": 64,
-          "type": 1,
-          "start_at": 1787130000
-        }
-      ]
-    },
     {
       "tournament_id": 942411,
       "tournament_slug": "tournament/32-17",
@@ -45,6 +22,29 @@
           "event_slug": "tournament/32-17/event/super-smash-bros-ultimate-singles",
           "event_name": "雷影杯",
           "num_entrants": 6,
+          "type": 1,
+          "start_at": 1787130000
+        }
+      ]
+    },
+    {
+      "tournament_id": 942693,
+      "tournament_slug": "tournament/weekly-smash-party-242",
+      "tournament_name": "Weekly Smash Party ～スマパ～ #242",
+      "start_at": 1787130000,
+      "end_at": 1787146200,
+      "is_online": false,
+      "city": "中野区",
+      "venue_name": "Red Bull Gaming Sphere Tokyo",
+      "country_code": "JP",
+      "num_attendees": 80,
+      "url": "/tournament/weekly-smash-party-242",
+      "events": [
+        {
+          "event_id": 1687794,
+          "event_slug": "tournament/weekly-smash-party-242/event/special-1on1-ultimate-singles",
+          "event_name": "SPECIAL 1on1/ Ultimate Singles",
+          "num_entrants": 64,
           "type": 1,
           "start_at": 1787130000
         }
@@ -106,14 +106,14 @@
       "city": "渋谷区",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 16,
+      "num_attendees": 17,
       "url": "/tournament/shibuya-g-g-smash-weekly-76",
       "events": [
         {
           "event_id": 1687894,
           "event_slug": "tournament/shibuya-g-g-smash-weekly-76/event/singles",
           "event_name": "Singles",
-          "num_entrants": 16,
+          "num_entrants": 17,
           "type": 1,
           "start_at": 1787221800
         }
@@ -175,14 +175,14 @@
       "city": "立川市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 8,
+      "num_attendees": 9,
       "url": "/tournament/sumao2026-16",
       "events": [
         {
           "event_id": 1688650,
           "event_slug": "tournament/sumao2026-16/event/sp-1on1",
           "event_name": "スマブラSP 1on1",
-          "num_entrants": 8,
+          "num_entrants": 9,
           "type": 1,
           "start_at": 1787301000
         }
@@ -221,14 +221,14 @@
       "city": "福岡市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 6,
+      "num_attendees": 7,
       "url": "/tournament/smash-151-1",
       "events": [
         {
           "event_id": 1689900,
           "event_slug": "tournament/smash-151-1/event/1on1",
           "event_name": "1on1トーナメント",
-          "num_entrants": 6,
+          "num_entrants": 7,
           "type": 1,
           "start_at": 1787308200
         }
@@ -405,14 +405,14 @@
       "city": "京都市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 8,
+      "num_attendees": 9,
       "url": "/tournament/4-114",
       "events": [
         {
           "event_id": 1684841,
           "event_slug": "tournament/4-114/event/ultimate-singles",
           "event_name": "Ultimate Singles",
-          "num_entrants": 8,
+          "num_entrants": 9,
           "type": 1,
           "start_at": 1787461200
         }
@@ -796,7 +796,7 @@
       "city": "東大阪市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 372,
+      "num_attendees": 371,
       "url": "/tournament/grand-wars-3-maesuma-grand-wars-3",
       "events": [
         {
@@ -957,14 +957,14 @@
       "city": "大阪市",
       "venue_name": "クレオ大阪南 (Creo Osaka South)",
       "country_code": "JP",
-      "num_attendees": 5,
+      "num_attendees": 6,
       "url": "/tournament/masterhand75",
       "events": [
         {
           "event_id": 1690571,
           "event_slug": "tournament/masterhand75/event/sp-ultimate-singles",
           "event_name": "SP シングルス / Ultimate Singles",
-          "num_entrants": 3,
+          "num_entrants": 4,
           "type": 1,
           "start_at": 1788570000
         }
@@ -1026,14 +1026,14 @@
       "city": "町田市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 166,
+      "num_attendees": 167,
       "url": "/tournament/impact-major-5",
       "events": [
         {
           "event_id": 1672939,
           "event_slug": "tournament/impact-major-5/event/singles-tournament",
           "event_name": "Singles Tournament",
-          "num_entrants": 161,
+          "num_entrants": 162,
           "type": 1,
           "start_at": 1788652800
         }
@@ -1049,14 +1049,14 @@
       "city": "新潟市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 8,
+      "num_attendees": 9,
       "url": "/tournament/a-leg-arrival-new-xenith",
       "events": [
         {
           "event_id": 1687241,
           "event_slug": "tournament/a-leg-arrival-new-xenith/event/singles-tournament",
           "event_name": "Singles tournament",
-          "num_entrants": 8,
+          "num_entrants": 9,
           "type": 1,
           "start_at": 1788660000
         }
