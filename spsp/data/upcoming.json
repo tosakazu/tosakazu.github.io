@@ -1,32 +1,9 @@
 {
-  "generated_at": 1787216418,
+  "generated_at": 1787227277,
   "country_code": "JP",
   "lookahead_days": 21,
-  "count": 45,
+  "count": 44,
   "tournaments": [
-    {
-      "tournament_id": 938965,
-      "tournament_slug": "tournament/hit-191-maesuma-hit-191",
-      "tournament_name": "マエスマ'HIT#191 / Maesuma'HIT#191",
-      "start_at": 1787220000,
-      "end_at": 1787234400,
-      "is_online": false,
-      "city": "大阪市",
-      "venue_name": "",
-      "country_code": "JP",
-      "num_attendees": 48,
-      "url": "/tournament/hit-191-maesuma-hit-191",
-      "events": [
-        {
-          "event_id": 1679931,
-          "event_slug": "tournament/hit-191-maesuma-hit-191/event/singles-tournament",
-          "event_name": "Singles Tournament",
-          "num_entrants": 48,
-          "type": 1,
-          "start_at": 1787220000
-        }
-      ]
-    },
     {
       "tournament_id": 937951,
       "tournament_slug": "tournament/21-530",
@@ -170,7 +147,7 @@
       "tournament_slug": "tournament/shibuya-dairan-first-strike",
       "tournament_name": "渋谷大乱 第一陣/SHIBUYA DAIRAN -First Strike-",
       "start_at": 1787364000,
-      "end_at": 1787365800,
+      "end_at": 1787392800,
       "is_online": false,
       "city": "渋谷区",
       "venue_name": "",
