@@ -1312,7 +1312,8 @@ const EVENT_QUERY = `
     event(slug: $slug) {
       id name slug numEntrants
       tournament { id name slug startAt }
-      phases { id name phaseOrder bracketType state groupCount }
+      phases { id name phaseOrder bracketType state groupCount numSeeds
+               progressingInData { origin numProgressing } }
     }
   }
 `;
@@ -1838,6 +1839,46 @@ async function handleFetch() {
   }
 }
 
+// start.gg の phase 連鎖 (progressingInData) から、選択 phase を起点とした
+// トーナメントプレビュー用のフェーズ構成 [{name, pools, adv}] を作る。
+// adv = 次フェーズへの通過人数 ÷ このフェーズのプール数 (割り切れない場合はそこで打ち切り)。
+// 進出設定が無い (単一フェーズ / 未設定) 場合は null を返し、発行側が既定にフォールバックする。
+function buildPhasesConfig(ev, phaseId) {
+  const all = (ev && ev.phases) || [];
+  const byId = new Map(all.map((p) => [String(p.id), p]));
+  if (!byId.has(String(phaseId))) return null;
+  // next(p) = progressingInData に p.id を origin として持つ phase
+  const nextOf = (p) => all.find((q) =>
+    (q.progressingInData || []).some((d) => String(d.origin) === String(p.id))) || null;
+  const chain = [byId.get(String(phaseId))];
+  while (true) {
+    const next = nextOf(chain[chain.length - 1]);
+    if (!next || chain.includes(next)) break;
+    chain.push(next);
+  }
+  if (chain.length < 2) return null;
+  const out = [];
+  for (let i = 0; i < chain.length; i++) {
+    const p = chain[i];
+    const pools = Math.max(1, p.groupCount | 0);
+    const entry = { name: p.name || `フェーズ${i + 1}`, pools };
+    if (i < chain.length - 1) {
+      const numProg = (chain[i + 1].progressingInData || [])
+        .filter((d) => String(d.origin) === String(p.id))
+        .reduce((a, d) => a + (d.numProgressing || 0), 0);
+      if (!numProg || numProg % pools !== 0) {
+        // 通過人数が取れない / プール数で割り切れない → ここまでで打ち切り
+        // (以降はプレビュー側のフェーズ構成エディタで編集してもらう)
+        out.push(entry);
+        break;
+      }
+      entry.adv = numProg / pools;
+    }
+    out.push(entry);
+  }
+  return out.length >= 2 ? out : null;
+}
+
 async function performSeedFetch(token, ev, phaseId) {
   const status = document.getElementById('status');
   status.textContent = `seeds 取得中 (phase ${phaseId}) …`;
@@ -1862,6 +1903,8 @@ async function performSeedFetch(token, ev, phaseId) {
     bracketType: _phase ? _phase.bracketType : null,
     poolCount: (_phase && _phase.groupCount) ? _phase.groupCount : null,  // 取得できたプール数
     waves,   // {poolCount, waveCount, poolToWave, letters, identifiers} | {error} | null
+    // start.gg のフェーズ連鎖 (選択 phase 起点)。トーナメントプレビューの初期構成に使う。
+    phasesConfig: buildPhasesConfig(ev, phaseId),   // [{name, pools, adv?}] | null
   };
   dropAppliedOrder({ render: false });   // 新規取得で被り回避の反映をリセット
   // Repopulate DATA in place (preserve reference)
@@ -4011,12 +4054,28 @@ async function issueBracketPreview() {
       fullNames[String(i)] = nm;
       if (uids[i] == null || !MASTER_MAP || !MASTER_MAP.has(uids[i])) minimalNames[String(i)] = nm;
     });
+    // フェーズ構成: start.gg から取れた連鎖 (通過人数込み) があればそれを初期値にする。
+    // 取れない / プール数がシード画面の値と食い違う / 検証が通らない場合は従来の既定
+    // (adv=2 + 自動最終フェーズ) にフォールバックする。
+    let phases = null;
+    let phasesFromGg = false;
+    const fetched = EVENT_CONTEXT && EVENT_CONTEXT.phasesConfig;
+    if (fetched && fetched.length >= 2 && (fetched[0].pools | 0) === P) {
+      const cand = SeedShare.withFinalPhase(fetched.map((p) => Object.assign({}, p)), recs.length);
+      if (!SeedShare.validatePhases(cand, recs.length).length) {
+        phases = cand;
+        phasesFromGg = true;
+      }
+    }
+    if (!phases) {
+      // プールが 2 つ以上なら、その先の 1 プールのフェーズまで作る (そこで終われないため)
+      phases = SeedShare.withFinalPhase([{ name: P >= 2 ? '予選' : 'ブラケット', pools: P, adv: 2 }], recs.length);
+    }
     const payload = {
       v: 1,
       ev: (EVENT_CONTEXT && EVENT_CONTEXT.eventName) || (CSV_SOURCE && CSV_SOURCE.label) || 'シードプレビュー',
       src: SEED_APP_CONFIG.mode,
-      // プールが 2 つ以上なら、その先の 1 プールのフェーズまで作る (そこで終われないため)
-      phases: SeedShare.withFinalPhase([{ name: P >= 2 ? '予選' : 'ブラケット', pools: P, adv: 2 }], recs.length),
+      phases,
       wv: waveMap,
       uids, names: fullNames,
     };
@@ -4035,7 +4094,9 @@ async function issueBracketPreview() {
     try { await navigator.clipboard.writeText(url); copied = true; } catch (e) { /* clipboard 不可の環境 */ }
     say(`🏆 プレビューを開きました (${recs.length}人 / URL ${url.length.toLocaleString()}字${copied ? '・コピー済み' : ''})。` +
       (trimmed ? ' 人数が多いため URL には SPSP 未登録者の名前だけを入れ、登録者名はプレビュー側で復元します。' : '') +
-      'Top カットの区切りはプレビューページの「フェーズ構成」で設定できます。');
+      (phasesFromGg
+        ? `フェーズ構成 (${phases.map((p) => p.name).join(' → ')}) は start.gg の進出設定から自動設定しました。`
+        : 'Top カットの区切りはプレビューページの「フェーズ構成」で設定できます。'));
   } catch (e) {
     say('❌ プレビュー発行に失敗: ' + (e && e.message));
   }
