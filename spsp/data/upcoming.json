@@ -1,5 +1,5 @@
 {
-  "generated_at": 1787173345,
+  "generated_at": 1787184024,
   "country_code": "JP",
   "lookahead_days": 21,
   "count": 46,
@@ -14,7 +14,7 @@
       "city": "台東区",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 23,
+      "num_attendees": 24,
       "url": "/tournament/20-529",
       "events": [
         {
@@ -60,7 +60,7 @@
       "city": "大阪市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 49,
+      "num_attendees": 47,
       "url": "/tournament/hit-191-maesuma-hit-191",
       "events": [
         {
@@ -83,14 +83,14 @@
       "city": "台東区",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 21,
+      "num_attendees": 22,
       "url": "/tournament/21-530",
       "events": [
         {
           "event_id": 1677837,
           "event_slug": "tournament/21-530/event/on",
           "event_name": "シングルス（１on１トーナメント）",
-          "num_entrants": 21,
+          "num_entrants": 22,
           "type": 1,
           "start_at": 1787299200
         }
@@ -152,14 +152,14 @@
       "city": "福岡市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 8,
+      "num_attendees": 10,
       "url": "/tournament/smash-151-1",
       "events": [
         {
           "event_id": 1689900,
           "event_slug": "tournament/smash-151-1/event/1on1",
           "event_name": "1on1トーナメント",
-          "num_entrants": 8,
+          "num_entrants": 10,
           "type": 1,
           "start_at": 1787308200
         }
@@ -221,7 +221,7 @@
       "city": "渋谷区",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 286,
+      "num_attendees": 282,
       "url": "/tournament/shibuya-dairan-first-strike",
       "events": [
         {
@@ -267,7 +267,7 @@
       "city": "豊橋市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 31,
+      "num_attendees": 32,
       "url": "/tournament/22-21",
       "events": [
         {
@@ -635,14 +635,14 @@
       "city": "荒川区",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 236,
+      "num_attendees": 237,
       "url": "/tournament/vic-seekers-1",
       "events": [
         {
           "event_id": 1660866,
           "event_slug": "tournament/vic-seekers-1/event/ultimate-singles",
           "event_name": "Ultimate Singles",
-          "num_entrants": 226,
+          "num_entrants": 227,
           "type": 1,
           "start_at": 1787970600
         }
