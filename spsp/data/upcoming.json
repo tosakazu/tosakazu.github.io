@@ -1,8 +1,8 @@
 {
-  "generated_at": 1787259661,
+  "generated_at": 1787270417,
   "country_code": "JP",
   "lookahead_days": 21,
-  "count": 45,
+  "count": 46,
   "tournaments": [
     {
       "tournament_id": 937951,
@@ -14,14 +14,14 @@
       "city": "台東区",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 29,
+      "num_attendees": 30,
       "url": "/tournament/21-530",
       "events": [
         {
           "event_id": 1677837,
           "event_slug": "tournament/21-530/event/on",
           "event_name": "シングルス（１on１トーナメント）",
-          "num_entrants": 29,
+          "num_entrants": 27,
           "type": 1,
           "start_at": 1787299200
         }
@@ -37,14 +37,14 @@
       "city": "立川市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 17,
+      "num_attendees": 18,
       "url": "/tournament/sumao2026-16",
       "events": [
         {
           "event_id": 1688650,
           "event_slug": "tournament/sumao2026-16/event/sp-1on1",
           "event_name": "スマブラSP 1on1",
-          "num_entrants": 17,
+          "num_entrants": 18,
           "type": 1,
           "start_at": 1787301000
         }
@@ -83,14 +83,14 @@
       "city": "福岡市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 14,
+      "num_attendees": 22,
       "url": "/tournament/smash-151-1",
       "events": [
         {
           "event_id": 1689900,
           "event_slug": "tournament/smash-151-1/event/1on1",
           "event_name": "1on1トーナメント",
-          "num_entrants": 14,
+          "num_entrants": 22,
           "type": 1,
           "start_at": 1787308200
         }
@@ -129,7 +129,7 @@
       "city": "渋谷区",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 290,
+      "num_attendees": 291,
       "url": "/tournament/shibuya-dairan-first-strike",
       "events": [
         {
@@ -290,14 +290,14 @@
       "city": "台東区",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 3,
+      "num_attendees": 6,
       "url": "/tournament/24-532",
       "events": [
         {
           "event_id": 1677838,
           "event_slug": "tournament/24-532/event/on",
           "event_name": "シングルス（１on１トーナメント）",
-          "num_entrants": 3,
+          "num_entrants": 6,
           "type": 1,
           "start_at": 1787558400
         }
@@ -373,6 +373,29 @@
       ]
     },
     {
+      "tournament_id": 945154,
+      "tournament_slug": "tournament/26-533",
+      "tournament_name": "26(水)上野スマコミ#533(オープン)",
+      "start_at": 1787731200,
+      "end_at": 1787752800,
+      "is_online": false,
+      "city": "台東区",
+      "venue_name": "",
+      "country_code": "JP",
+      "num_attendees": 4,
+      "url": "/tournament/26-533",
+      "events": [
+        {
+          "event_id": 1692851,
+          "event_slug": "tournament/26-533/event/on",
+          "event_name": "シングルス（１on１トーナメント）",
+          "num_entrants": 4,
+          "type": 1,
+          "start_at": 1787731200
+        }
+      ]
+    },
+    {
       "tournament_id": 944573,
       "tournament_slug": "tournament/33-14",
       "tournament_name": "雷影杯#33",
@@ -405,14 +428,14 @@
       "city": "京都市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 9,
+      "num_attendees": 11,
       "url": "/tournament/dsw-66",
       "events": [
         {
           "event_id": 1692203,
           "event_slug": "tournament/dsw-66/event/singletournament",
           "event_name": "SingleTournament",
-          "num_entrants": 9,
+          "num_entrants": 11,
           "type": 1,
           "start_at": 1787742000
         }
@@ -428,14 +451,14 @@
       "city": "台東区",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 3,
+      "num_attendees": 6,
       "url": "/tournament/27-534",
       "events": [
         {
           "event_id": 1677839,
           "event_slug": "tournament/27-534/event/on",
           "event_name": "シングルス（１on１トーナメント）",
-          "num_entrants": 3,
+          "num_entrants": 6,
           "type": 1,
           "start_at": 1787817600
         }
@@ -520,14 +543,14 @@
       "city": "台東区",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 3,
+      "num_attendees": 7,
       "url": "/tournament/28-535",
       "events": [
         {
           "event_id": 1677840,
           "event_slug": "tournament/28-535/event/on",
           "event_name": "シングルス（１on１トーナメント）",
-          "num_entrants": 3,
+          "num_entrants": 7,
           "type": 1,
           "start_at": 1787904000
         }
@@ -750,14 +773,14 @@
       "city": "台東区",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 5,
+      "num_attendees": 10,
       "url": "/tournament/30-537",
       "events": [
         {
           "event_id": 1677842,
           "event_slug": "tournament/30-537/event/on",
           "event_name": "シングルス（１on１トーナメント）",
-          "num_entrants": 5,
+          "num_entrants": 10,
           "type": 1,
           "start_at": 1788058800
         }
@@ -819,14 +842,14 @@
       "city": "台東区",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 0,
+      "num_attendees": 1,
       "url": "/tournament/4-541",
       "events": [
         {
           "event_id": 1690043,
           "event_slug": "tournament/4-541/event/on",
           "event_name": "シングルス（１on１トーナメント）",
-          "num_entrants": 0,
+          "num_entrants": 1,
           "type": 1,
           "start_at": 1788508800
         }
