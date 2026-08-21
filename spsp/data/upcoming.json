@@ -1,55 +1,9 @@
 {
-  "generated_at": 1787292071,
+  "generated_at": 1787302818,
   "country_code": "JP",
   "lookahead_days": 21,
-  "count": 47,
+  "count": 46,
   "tournaments": [
-    {
-      "tournament_id": 937951,
-      "tournament_slug": "tournament/21-530",
-      "tournament_name": "21(金)上野スマコミ#530(オープン)",
-      "start_at": 1787299200,
-      "end_at": 1787320800,
-      "is_online": false,
-      "city": "台東区",
-      "venue_name": "",
-      "country_code": "JP",
-      "num_attendees": 29,
-      "url": "/tournament/21-530",
-      "events": [
-        {
-          "event_id": 1677837,
-          "event_slug": "tournament/21-530/event/on",
-          "event_name": "シングルス（１on１トーナメント）",
-          "num_entrants": 29,
-          "type": 1,
-          "start_at": 1787299200
-        }
-      ]
-    },
-    {
-      "tournament_id": 943137,
-      "tournament_slug": "tournament/sumao2026-16",
-      "tournament_name": "スマ王/SumaO2026 #16",
-      "start_at": 1787301000,
-      "end_at": 1787317200,
-      "is_online": false,
-      "city": "立川市",
-      "venue_name": "",
-      "country_code": "JP",
-      "num_attendees": 18,
-      "url": "/tournament/sumao2026-16",
-      "events": [
-        {
-          "event_id": 1688650,
-          "event_slug": "tournament/sumao2026-16/event/sp-1on1",
-          "event_name": "スマブラSP 1on1",
-          "num_entrants": 18,
-          "type": 1,
-          "start_at": 1787301000
-        }
-      ]
-    },
     {
       "tournament_id": 941618,
       "tournament_slug": "tournament/in-kurume",
@@ -129,7 +83,7 @@
       "city": "渋谷区",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 294,
+      "num_attendees": 296,
       "url": "/tournament/shibuya-dairan-first-strike",
       "events": [
         {
@@ -206,6 +160,29 @@
           "event_slug": "tournament/22-21/event/22",
           "event_name": "第22回夢スマ",
           "num_entrants": 32,
+          "type": 1,
+          "start_at": 1787410800
+        }
+      ]
+    },
+    {
+      "tournament_id": 945249,
+      "tournament_slug": "tournament/107-6",
+      "tournament_name": "第107回シカブラ",
+      "start_at": 1787410800,
+      "end_at": 1787913000,
+      "is_online": false,
+      "city": "名古屋市",
+      "venue_name": "",
+      "country_code": "JP",
+      "num_attendees": 0,
+      "url": "/tournament/107-6",
+      "events": [
+        {
+          "event_id": 1693044,
+          "event_slug": "tournament/107-6/event/1on1-tournament",
+          "event_name": "1on1 tournament",
+          "num_entrants": 0,
           "type": 1,
           "start_at": 1787410800
         }
@@ -382,14 +359,14 @@
       "city": "台東区",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 4,
+      "num_attendees": 6,
       "url": "/tournament/26-533",
       "events": [
         {
           "event_id": 1692851,
           "event_slug": "tournament/26-533/event/on",
           "event_name": "シングルス（１on１トーナメント）",
-          "num_entrants": 4,
+          "num_entrants": 6,
           "type": 1,
           "start_at": 1787731200
         }
@@ -428,14 +405,14 @@
       "city": "京都市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 11,
+      "num_attendees": 12,
       "url": "/tournament/dsw-66",
       "events": [
         {
           "event_id": 1692203,
           "event_slug": "tournament/dsw-66/event/singletournament",
           "event_name": "SingleTournament",
-          "num_entrants": 11,
+          "num_entrants": 12,
           "type": 1,
           "start_at": 1787742000
         }
@@ -589,14 +566,14 @@
       "city": "川崎市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 3,
+      "num_attendees": 5,
       "url": "/tournament/12-57",
       "events": [
         {
           "event_id": 1692916,
           "event_slug": "tournament/12-57/event/super-smash-bros-ultimate-singles",
           "event_name": "シングルス",
-          "num_entrants": 3,
+          "num_entrants": 5,
           "type": 1,
           "start_at": 1787907600
         }
