@@ -1,5 +1,5 @@
 {
-  "generated_at": 1787324422,
+  "generated_at": 1787335255,
   "country_code": "JP",
   "lookahead_days": 21,
   "count": 45,
@@ -37,7 +37,7 @@
       "city": "渋谷区",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 296,
+      "num_attendees": 297,
       "url": "/tournament/shibuya-dairan-first-strike",
       "events": [
         {
@@ -359,14 +359,14 @@
       "city": "京都市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 12,
+      "num_attendees": 11,
       "url": "/tournament/dsw-66",
       "events": [
         {
           "event_id": 1692203,
           "event_slug": "tournament/dsw-66/event/singletournament",
           "event_name": "SingleTournament",
-          "num_entrants": 12,
+          "num_entrants": 11,
           "type": 1,
           "start_at": 1787742000
         }
@@ -566,14 +566,14 @@
       "city": "荒川区",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 237,
+      "num_attendees": 238,
       "url": "/tournament/vic-seekers-1",
       "events": [
         {
           "event_id": 1660866,
           "event_slug": "tournament/vic-seekers-1/event/ultimate-singles",
           "event_name": "Ultimate Singles",
-          "num_entrants": 227,
+          "num_entrants": 228,
           "type": 1,
           "start_at": 1787970600
         }
@@ -888,7 +888,7 @@
       "city": "横浜市",
       "venue_name": "おださがプラザ",
       "country_code": "JP",
-      "num_attendees": 162,
+      "num_attendees": 163,
       "url": "/tournament/53-kurobra53",
       "events": [
         {
