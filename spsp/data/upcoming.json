@@ -1,8 +1,8 @@
 {
-  "generated_at": 1787475737,
+  "generated_at": 1787486502,
   "country_code": "JP",
   "lookahead_days": 21,
-  "count": 41,
+  "count": 43,
   "tournaments": [
     {
       "tournament_id": 937952,
@@ -925,6 +925,52 @@
       ]
     },
     {
+      "tournament_id": 943829,
+      "tournament_slug": "tournament/61-1",
+      "tournament_name": "【第61回】晴れスマ",
+      "start_at": 1789257600,
+      "end_at": 1789297200,
+      "is_online": false,
+      "city": "岡山市",
+      "venue_name": "",
+      "country_code": "JP",
+      "num_attendees": 24,
+      "url": "/tournament/61-1",
+      "events": [
+        {
+          "event_id": 1690026,
+          "event_slug": "tournament/61-1/event/61",
+          "event_name": "第61回 晴れスマ",
+          "num_entrants": 24,
+          "type": 1,
+          "start_at": 1789297200
+        }
+      ]
+    },
+    {
+      "tournament_id": 943864,
+      "tournament_slug": "tournament/13-546",
+      "tournament_name": "13(日)上野スマコミ#546(オープン)",
+      "start_at": 1789268400,
+      "end_at": 1789293600,
+      "is_online": false,
+      "city": "台東区",
+      "venue_name": "",
+      "country_code": "JP",
+      "num_attendees": 1,
+      "url": "/tournament/13-546",
+      "events": [
+        {
+          "event_id": 1690083,
+          "event_slug": "tournament/13-546/event/on",
+          "event_name": "シングルス（１on１トーナメント）",
+          "num_entrants": 1,
+          "type": 1,
+          "start_at": 1789268400
+        }
+      ]
+    },
+    {
       "tournament_id": 917269,
       "tournament_slug": "tournament/to-get-off-3",
       "tournament_name": "to get off 3",
@@ -934,14 +980,14 @@
       "city": "中野区",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 20,
+      "num_attendees": 21,
       "url": "/tournament/to-get-off-3",
       "events": [
         {
           "event_id": 1636160,
           "event_slug": "tournament/to-get-off-3/event/ultimate-singles",
           "event_name": "Ultimate Singles",
-          "num_entrants": 20,
+          "num_entrants": 21,
           "type": 1,
           "start_at": 1789270200
         }
