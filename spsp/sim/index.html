@@ -524,9 +524,12 @@
       isWeekend: !!ev.is_weekend,
       isCapped: !!(ev.is_restricted || ev.is_lower_class),
     };
-    // エンジン全体の除外 (Lv 問わず): 特殊ルール大会 / 5 名未満
+    // エンジン全体の除外 (Lv 問わず): 特殊ルール / 身内 / 5 名未満
     if (ev.is_non_serious) {
-      return { pass: false, reason: '特殊ルール大会は集計されません', meta: meta };
+      // 身内と特殊ルールは理由が違うので出し分ける (is_uchi は annotate_upcoming.py が付与)
+      var why = ev.is_uchi ? '身内・招待制の大会は集計されません'
+                           : '特殊ルール大会は集計されません';
+      return { pass: false, reason: why, meta: meta };
     }
     if (nent < 5) {
       return { pass: false, reason: '5 名未満の大会は集計されません', meta: meta };
