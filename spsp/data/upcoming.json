@@ -1,55 +1,9 @@
 {
-  "generated_at": 1787400071,
+  "generated_at": 1787410833,
   "country_code": "JP",
   "lookahead_days": 21,
-  "count": 43,
+  "count": 41,
   "tournaments": [
-    {
-      "tournament_id": 940813,
-      "tournament_slug": "tournament/22-21",
-      "tournament_name": "第22回夢スマ",
-      "start_at": 1787410800,
-      "end_at": 1787479200,
-      "is_online": false,
-      "city": "豊橋市",
-      "venue_name": "",
-      "country_code": "JP",
-      "num_attendees": 34,
-      "url": "/tournament/22-21",
-      "events": [
-        {
-          "event_id": 1683892,
-          "event_slug": "tournament/22-21/event/22",
-          "event_name": "第22回夢スマ",
-          "num_entrants": 32,
-          "type": 1,
-          "start_at": 1787410800
-        }
-      ]
-    },
-    {
-      "tournament_id": 945249,
-      "tournament_slug": "tournament/107-6",
-      "tournament_name": "第107回シカブラ",
-      "start_at": 1787410800,
-      "end_at": 1787913000,
-      "is_online": false,
-      "city": "名古屋市",
-      "venue_name": "",
-      "country_code": "JP",
-      "num_attendees": 0,
-      "url": "/tournament/107-6",
-      "events": [
-        {
-          "event_id": 1693044,
-          "event_slug": "tournament/107-6/event/1on1-tournament",
-          "event_name": "1on1 tournament",
-          "num_entrants": 0,
-          "type": 1,
-          "start_at": 1787410800
-        }
-      ]
-    },
     {
       "tournament_id": 936065,
       "tournament_slug": "tournament/kowloon-18-5",
@@ -83,14 +37,14 @@
       "city": "和泉市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 33,
+      "num_attendees": 35,
       "url": "/tournament/innosuma-raise-3",
       "events": [
         {
           "event_id": 1672443,
           "event_slug": "tournament/innosuma-raise-3/event/sp-1on1",
           "event_name": "スマブラSP 1on1 トーナメント",
-          "num_entrants": 33,
+          "num_entrants": 35,
           "type": 1,
           "start_at": 1787457600
         }
@@ -474,14 +428,14 @@
       "city": "荒川区",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 236,
+      "num_attendees": 235,
       "url": "/tournament/vic-seekers-1",
       "events": [
         {
           "event_id": 1660866,
           "event_slug": "tournament/vic-seekers-1/event/ultimate-singles",
           "event_name": "Ultimate Singles",
-          "num_entrants": 226,
+          "num_entrants": 225,
           "type": 1,
           "start_at": 1787970600
         }
@@ -566,14 +520,14 @@
       "city": "横浜市",
       "venue_name": "おださがプラザ",
       "country_code": "JP",
-      "num_attendees": 1,
+      "num_attendees": 2,
       "url": "/tournament/gg-ex1-kannai-gg-ex",
       "events": [
         {
           "event_id": 1685849,
           "event_slug": "tournament/gg-ex1-kannai-gg-ex/event/kannai-gg-sp-1on1",
           "event_name": "kannai-gg/スマブラSP 1on1",
-          "num_entrants": 1,
+          "num_entrants": 2,
           "type": 1,
           "start_at": 1788048000
         }
@@ -612,14 +566,14 @@
       "city": "東大阪市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 391,
+      "num_attendees": 389,
       "url": "/tournament/grand-wars-3-maesuma-grand-wars-3",
       "events": [
         {
           "event_id": 1673718,
           "event_slug": "tournament/grand-wars-3-maesuma-grand-wars-3/event/singles-tournament",
           "event_name": "Singles Tournament",
-          "num_entrants": 370,
+          "num_entrants": 368,
           "type": 1,
           "start_at": 1788053400
         }
