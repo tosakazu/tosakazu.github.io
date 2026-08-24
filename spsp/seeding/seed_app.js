@@ -117,7 +117,7 @@ const SEED_APP_SKELETON_HTML = `
         <input type="number" id="so-pools" value="1" min="1" max="128" step="1"
           style="display:block;width:80px;padding:5px 6px;border:1px solid #d1d5db;border-radius:5px;font-size:13px">
       </label>
-      <label style="font-size:11px;color:#6b7280" title="ウェーブ = 連続するプールの塊 (A,B,C,… の連番アルファベット)。ウェーブ指定・ウェーブ固定の判定に使う。start.gg のプール名 (A1,B2,…) から自動取得できたときは自動で入る。手動で上書き可">ウェーブ数
+      <label style="font-size:11px;color:#6b7280" title="ウェーブ = 連続するプールの塊 (A,B,C…)。start.gg から取得できたときは自動で入ります">ウェーブ数
         <input type="number" id="so-waves" value="1" min="1" max="26" step="1"
           style="display:block;width:80px;padding:5px 6px;border:1px solid #d1d5db;border-radius:5px;font-size:13px">
       </label>
@@ -125,15 +125,15 @@ const SEED_APP_SKELETON_HTML = `
       <span id="so-format-label" style="font-size:11px;color:#9ca3af"></span>
       <button id="so-run" style="background:#2563eb;color:#fff;border:none;padding:8px 16px;border-radius:6px;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit">最適化を実行</button>
       <button id="so-stop" disabled style="background:#6b7280;color:#fff;border:none;padding:8px 14px;border-radius:6px;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;display:none">中断して結果を反映</button>
-      <button id="so-cancel" title="最適化を無かったことにして、実行する直前の並びとレポート表示に戻します" style="background:#fff;color:#374151;border:1px solid #d1d5db;padding:8px 14px;border-radius:6px;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;display:none">最適化を取り消す</button>
+      <button id="so-cancel" title="最適化を無かったことにして、実行する直前の並びに戻します" style="background:#fff;color:#374151;border:1px solid #d1d5db;padding:8px 14px;border-radius:6px;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;display:none">最適化を取り消す</button>
     </div>
     <div style="display:flex;gap:16px;flex-wrap:wrap;align-items:center;margin-top:10px;font-size:12px;color:#374151">
-      <label title="2プール以上のとき、プール内の当たり回戦も最適化する（プレイヤーのプール内順位を少し動かす）。1プールでは常に実行＝指定不可"><input type="checkbox" id="so-enable-intra" checked> プール内変動</label>
-      <label title="地域被り（同じ都道府県/地域の選手が同じプール・早期回戦に固まる）を考慮して分散する"><input type="checkbox" id="so-avoid-region" checked> 地域被りを考慮</label>
-      <label title="直近に対戦した相手と再び早期に当たるのを考慮して避ける"><input type="checkbox" id="so-avoid-recent" checked> 直接対戦を考慮</label>
-      <label title="全員のトーナメント想定順位（1,2,3,4,5,5,7,7,9,9,9,9,…のタイ帯）が元シードから変わらない範囲でのみ入れ替える"><input type="checkbox" id="so-keep-deplace" checked> トーナメント順位固定</label>
-      <label title="通常のプール最適化（プール間/内）に加えて、全体を1つの勝者側ダブルイリミブラケットとみなし「シード通り勝ち上がったときに実際に発生する試合」の被りも追加で最適化する。追加フェーズはタイ帯（DE想定順位）内で動き、プール分離を壊す移動は損として評価される。このモード中は全フェーズでDE想定順位不変がハード制約。1プールでは勝者側のみ。DE専用"><input type="checkbox" id="so-scope-winners" checked> 勝者側ブラケットも考慮</label>
-      <label title="平日扱いの大会（平日開催・実質平日・プレ大会）での対戦も「直接対戦」の考慮対象に含める（既定は含めない）"><input type="checkbox" id="so-include-weekday"> 平日大会を含む</label>
+      <label title="プール内で何回戦目に当たるかも最適化する（プール内順位を少し動かす）"><input type="checkbox" id="so-enable-intra" checked> プール内変動</label>
+      <label title="同じ地域の選手が同じプール・早期回戦に固まらないよう分散する"><input type="checkbox" id="so-avoid-region" checked> 地域被りを考慮</label>
+      <label title="直近に対戦した相手と再び早期に当たるのを避ける"><input type="checkbox" id="so-avoid-recent" checked> 直接対戦を考慮</label>
+      <label title="全員のトーナメント想定順位が元シードから変わらない範囲でのみ入れ替える"><input type="checkbox" id="so-keep-deplace" checked> トーナメント順位固定</label>
+      <label title="プール分けに加えて、予選抜け後の本戦で当たる組み合わせも避ける（ダブルイリミ専用）"><input type="checkbox" id="so-scope-winners" checked> 勝者側ブラケットも考慮</label>
+      <label title="平日扱いの大会での対戦も「直接対戦」に含める"><input type="checkbox" id="so-include-weekday"> 平日大会を含む</label>
       <label><input type="checkbox" id="so-avoid-series"> 同シリーズの再戦を強めに避ける</label>
       <span id="so-series-box" style="display:none;font-size:11px;color:#6b7280">
         <select id="so-series-select" style="padding:3px 5px;border:1px solid #d1d5db;border-radius:5px;font-size:12px;max-width:220px">
@@ -141,8 +141,8 @@ const SEED_APP_SKELETON_HTML = `
         </select>
         <span id="so-series-note" style="margin-left:5px"></span>
       </span>
-      <label title="東京・神奈川・埼玉・千葉を同一地域(南関東)として扱う"><input type="checkbox" id="so-group-minamikanto" checked> 東京・神奈川・埼玉・千葉をまとめる</label>
-      <label title="兵庫・大阪・京都を同一地域(京阪神)として扱う"><input type="checkbox" id="so-group-keihanshin"> 兵庫・大阪・京都をまとめる</label>
+      <label title="東京・神奈川・埼玉・千葉を同じ地域として扱う"><input type="checkbox" id="so-group-minamikanto" checked> 東京・神奈川・埼玉・千葉をまとめる</label>
+      <label title="兵庫・大阪・京都を同じ地域として扱う"><input type="checkbox" id="so-group-keihanshin"> 兵庫・大阪・京都をまとめる</label>
     </div>
     <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:8px;font-size:12px;color:#374151">
       <span id="so-shiftlimit-label" style="font-weight:600">シードズレ上限:</span>
@@ -180,22 +180,22 @@ const SEED_APP_SKELETON_HTML = `
             </label>
             <label>多点数<input type="number" id="so-restarts" value="15" min="1" max="100" style="display:block;width:64px;padding:4px;border:1px solid #d1d5db;border-radius:5px;font-size:12px"></label>
             <label>SA冷却率<input type="number" id="so-cooling" value="0.999" step="0.001" min="0.5" max="0.9999" style="display:block;width:72px;padding:4px;border:1px solid #d1d5db;border-radius:5px;font-size:12px"></label>
-            <label title="反復回数 = max(500, 状態数×この値)。大きいほど高精度・低速">反復係数<input type="number" id="so-itersscale" value="1000" min="10" max="2000" step="10" style="display:block;width:72px;padding:4px;border:1px solid #d1d5db;border-radius:5px;font-size:12px"></label>
+            <label title="探索の反復回数。大きいほど高精度・低速">反復係数<input type="number" id="so-itersscale" value="1000" min="10" max="2000" step="10" style="display:block;width:72px;padding:4px;border:1px solid #d1d5db;border-radius:5px;font-size:12px"></label>
             <label>乱数シード<input type="number" id="so-rngseed" value="12345" style="display:block;width:84px;padding:4px;border:1px solid #d1d5db;border-radius:5px;font-size:12px"></label>
           </div>
           <div style="font-weight:600;color:#374151;margin:8px 0 2px">罰則の重み</div>
           <div style="display:flex;gap:12px;flex-wrap:wrap;align-items:flex-end">
             <label>地域重み W_region<input type="number" id="so-wregion" value="1.0" step="0.1" style="display:block;width:72px;padding:4px;border:1px solid #d1d5db;border-radius:5px;font-size:12px"></label>
             <label>直近重み W_recent<input type="number" id="so-wrecent" value="0.3" step="0.05" style="display:block;width:72px;padding:4px;border:1px solid #d1d5db;border-radius:5px;font-size:12px"></label>
-            <label title="元ランキングからのシードズレ罰則の重み(0で無効)">元順位ズレ重み<input type="number" id="so-worder" value="0.001" step="0.005" min="0" style="display:block;width:80px;padding:4px;border:1px solid #d1d5db;border-radius:5px;font-size:12px"></label>
-            <label title="「同シリーズの再戦を強めに避ける」をONにしたときの強さ。同シリーズで当たったことのあるペアの再戦罰則を何倍にするか。1 = 上乗せなし">同シリーズ倍率<input type="number" id="so-seriesmult" value="3" step="0.5" min="1" style="display:block;width:72px;padding:4px;border:1px solid #d1d5db;border-radius:5px;font-size:12px"></label>
-            <label title="同シリーズ罰則の方式。倍率=同シリーズで当たっていれば再戦罰則を一律で倍にする（既定・実データ検証で効率が良かった方）。加算=同シリーズ分の罰則だけを重み付きで上乗せする">同シリーズ方式
+            <label title="元の順位からズレることへの罰則の重み（0で無効）">元順位ズレ重み<input type="number" id="so-worder" value="0.001" step="0.005" min="0" style="display:block;width:80px;padding:4px;border:1px solid #d1d5db;border-radius:5px;font-size:12px"></label>
+            <label title="同シリーズで当たったことのあるペアの罰則を何倍にするか。大きいほど強く引き離します">同シリーズ倍率<input type="number" id="so-seriesmult" value="3" step="0.5" min="1" style="display:block;width:72px;padding:4px;border:1px solid #d1d5db;border-radius:5px;font-size:12px"></label>
+            <label title="同シリーズ罰則の方式。通常は既定（倍率）のままで構いません">同シリーズ方式
               <select id="so-seriesmode" style="display:block;padding:4px;border:1px solid #d1d5db;border-radius:5px;font-size:12px">
                 <option value="mult">倍率（既定）</option>
                 <option value="add">加算</option>
               </select>
             </label>
-            <label title="同シリーズ方式=加算 のときの上乗せ重み（W_series）。倍率方式では使いません">同シリーズ加算重み<input type="number" id="so-wseries" value="0.3" step="0.05" min="0" style="display:block;width:84px;padding:4px;border:1px solid #d1d5db;border-radius:5px;font-size:12px"></label>
+            <label title="同シリーズ方式が「加算」のときの重み">同シリーズ加算重み<input type="number" id="so-wseries" value="0.3" step="0.05" min="0" style="display:block;width:84px;padding:4px;border:1px solid #d1d5db;border-radius:5px;font-size:12px"></label>
             <label>県の重み式
               <select id="so-prefweight" style="display:block;padding:4px;border:1px solid #d1d5db;border-radius:5px;font-size:12px">
                 <option value="inv_sqrt">1/√人数（既定）</option>
@@ -207,7 +207,7 @@ const SEED_APP_SKELETON_HTML = `
           </div>
           <div style="font-weight:600;color:#374151;margin:8px 0 2px">直近対戦の時間減衰（日:重み の制御点・折れ線, 最後の点より後は0）</div>
           <div style="display:flex;gap:12px;flex-wrap:wrap;align-items:flex-end">
-            <label title="日:重み をカンマ区切り。例 0:1,30:1,91:0.5,182.5:0.25,365:0">減衰点<input type="text" id="so-decaypoints" placeholder="0:1,30:1,91:0.5,182.5:0.25,365:0" style="display:block;width:300px;padding:4px;border:1px solid #d1d5db;border-radius:5px;font-size:12px"></label>
+            <label title="古い対戦をどれだけ軽く見るか。書式は下の欄の例のとおり">減衰点<input type="text" id="so-decaypoints" placeholder="0:1,30:1,91:0.5,182.5:0.25,365:0" style="display:block;width:300px;padding:4px;border:1px solid #d1d5db;border-radius:5px;font-size:12px"></label>
             <label>大会規模重み式
               <select id="so-sizeweight" style="display:block;padding:4px;border:1px solid #d1d5db;border-radius:5px;font-size:12px">
                 <option value="log2">log2(参加人数)（既定）</option>
@@ -225,8 +225,8 @@ const SEED_APP_SKELETON_HTML = `
           <div style="font-weight:600;color:#374151;margin:8px 0 2px">プール内・可動制約（CSV / 空欄＝既定）</div>
           <div style="display:flex;gap:12px;flex-wrap:wrap;align-items:flex-end">
             <label>回戦重み<input type="text" id="so-roundweights" placeholder="1,0.6,0.4,0.06,0.02" style="display:block;width:160px;padding:4px;border:1px solid #d1d5db;border-radius:5px;font-size:12px"></label>
-            <label title="プール内順位ごとに動かせるプール数。空欄＝既定(1・2位固定、以降1,2,4,8,…と倍々)">プール間可動 k_inter<input type="text" id="so-kinter" placeholder="既定: 0,0,1,2,4,…" style="display:block;width:160px;padding:4px;border:1px solid #d1d5db;border-radius:5px;font-size:12px"></label>
-            <label title="プール内順位ごとに動かせる順位数。空欄＝既定(上位1/4固定・残り±1。プール間移動した選手も同じ窓)">プール内可動 k_intra<input type="text" id="so-kintra" placeholder="既定: 上位1/4固定・残り±1" style="display:block;width:160px;padding:4px;border:1px solid #d1d5db;border-radius:5px;font-size:12px"></label>
+            <label title="プール内順位ごとに動かせるプール数。空欄＝既定">プール間可動 k_inter<input type="text" id="so-kinter" placeholder="既定: 0,0,1,2,4,…" style="display:block;width:160px;padding:4px;border:1px solid #d1d5db;border-radius:5px;font-size:12px"></label>
+            <label title="プール内順位ごとに動かせる順位数。空欄＝既定">プール内可動 k_intra<input type="text" id="so-kintra" placeholder="既定: 上位1/4固定・残り±1" style="display:block;width:160px;padding:4px;border:1px solid #d1d5db;border-radius:5px;font-size:12px"></label>
           </div>
         </div>
       </details>
@@ -338,55 +338,31 @@ const SEED_APP_CONFIG = Object.assign({ mode: 'spsp' }, window.SEED_APP_CONFIG |
 // (= 既に title を書いてある要素は id を並べるだけでアイコンが付く)。
 // アイコンを付けた要素の title は消す (ネイティブのツールチップと二重に出さない)。
 const HELP_TEXT = {
+  // 何の機能で、どういうときに使うのかだけを書く。細かい挙動は書かない。
   // ── 取得まわり ──
-  'token': 'start.gg の API トークン。参加者の取得と、start.gg へのシード適用に使います。'
-    + 'このブラウザから start.gg にのみ送信され、SPSP 側には保存も転送もされません。',
-  'event-url': '対象イベントの start.gg URL。大会ページではなく、シングルス等の'
-    + '「イベント」の URL を入れてください (例: .../tournament/xxx/event/singles)。',
-  'fetch-btn': '入力した URL の参加者を start.gg から取得し、SPSP のランキング順に並べます。ここが出発点です。',
-  'phase-select': 'シードを適用するフェーズ。プール分けのあるイベントでは、'
-    + 'どのフェーズのシードを触るかをここで選びます。',
+  'token': 'start.gg の API トークン。参加者の取得とシード適用に使います。SPSP 側には保存されません。',
+  'event-url': '対象イベントの start.gg URL。大会ページではなく、シングルス等の「イベント」の URL を入れてください。',
+  'fetch-btn': '入力した URL の参加者を取得し、SPSP のランキング順に並べます。ここが出発点です。',
+  'phase-select': 'シードを適用するフェーズ。プール分けのあるイベントで選びます。',
   'pc-group-count': '新しく作るフェーズのプール数。',
   'pc-phase-name': 'start.gg 上に作られるフェーズの名前。',
 
   // ── 出力 ──
-  'csv-btn': '今の並びを CSV でダウンロードします。start.gg の一括インポートや、'
-    + '他のツールへの受け渡しに使えます。',
-  'upload-btn': '⚠️ 今の並びを start.gg の本番シードとして書き込みます (取り消しは start.gg 側で行ってください)。'
-    + '被り回避を実行済みならその結果、手動調整をしていればそれも含めた最終的な並びが適用されます。',
-  'spec-export': '今のシード順・固定・プール数/ウェーブ数を CSV に保存します。'
-    + '📌 パネルから読み込めば、この状態から作業を再開できます。他の人との共有にも使えます。',
-  'bracket-preview': '今のシード順で組んだトーナメント表を別ページで開きます。'
-    + 'URL を共有すれば同じ画面を見せられます。'
-    + 'なお start.gg の設定によっては実際のブラケットと食い違うことがあります (プレビュー側に詳細)。',
+  'csv-btn': '今の並びを CSV でダウンロードします。他のツールへの受け渡しに。',
+  'upload-btn': '⚠️ 今の並びを start.gg の本番シードとして書き込みます (取り消しは start.gg 側で)。',
+  'spec-export': '今の作業状況を CSV に保存します。📌 パネルから読み込めば作業を再開できます。',
+  'bracket-preview': '今のシード順で組んだトーナメント表を別ページで開きます。URL を共有すれば同じ画面を見せられます。',
 
   // ── 被り回避 ──
-  'so-pools': 'このフェーズをいくつのプールに分けるか。start.gg から取得できたときは自動で入ります。'
-    + '1 なら 1 本のブラケットとして扱います。',
-  'so-run': '設定した条件で、地域被りと再対戦を避けるようシード順を探索します。'
-    + '完了すると自動で反映され、CSV・start.gg 適用・トーナメントプレビューにも同じ並びが使われます。',
-  'so-stop': '探索を途中で打ち切り、その時点で見つかっている最良の並びを反映します。',
-  'so-orderpow-label': '元のランキング順からどれだけズラしてよいか。'
-    + '左に寄せるほど被り回避を優先して大きく動かし、右に寄せるほど元の順位を尊重して小さく動かします。',
+  'so-pools': 'このフェーズをいくつのプールに分けるか。start.gg から取得できたときは自動で入ります。',
+  'so-run': '設定した条件で、地域被りと再対戦を避けるようシード順を探索します。',
+  'so-stop': '探索を途中で打ち切り、その時点の最良の並びを反映します。',
+  'so-orderpow-label': '元のランキング順からどれだけズラしてよいか。左ほど被り回避を優先、右ほど元の順位を尊重します。',
   'so-mode': '探索アルゴリズム。通常は既定のままで構いません。',
-  'so-avoid-series': '今回と同じ大会シリーズで既に当たったことのあるペアを、'
-    + '普通の再戦よりも強めに引き離します。'
-    + '「また同じ大会で同じカードになる」のを避けたいときに使ってください。'
-    + 'ONにすると大会一覧 (約3MB) を読み込み、大会名からシリーズを判定します。'
-    + '判定結果は右の欄に出るので、違っていれば選び直してください。',
-  'so-series-select': 'どのシリーズでの再戦を避けるか。大会名から自動で選ばれますが、'
-    + '判定が外れることがあるので確認してください。'
-    + 'ここが空のままだと同シリーズ罰則は掛かりません。',
-  'so-shiftlimit-label': '元のランキング順から各選手が動いてよいシード数の上限を、順位帯ごとに決めます。'
-    + '各欄は「そのズレ幅までしか許さないのは何位まで」。'
-    + '例) ±1に8・±2に16・±3に32 と入れると、1〜8位は±1、9〜16位は±2、17〜32位は±3、33位以降は無制限。'
-    + '左の欄ほど小さい順位にしてください。全て空欄なら順位帯の制限なしです。'
-    + '空のまま大会を読み込むと、参加人数に応じた既定値が入ります。',
-  'so-maxshift': '順位帯に関係なく、全員に効くシードズレの上限。'
-    + '左の順位帯ごとの指定と併用したときは、厳しい方が効きます。空欄なら全体上限なし。'
-    + '0 を入れると誰も動かなくなります。'
-    + '（プール数が多いと、プール間±1 とプール内±1 の合成でシード番号は最大 2×プール数−1 動き得ます。'
-    + 'それを番号で直接抑えたいとき用です）',
+  'so-avoid-series': '今回と同じ大会シリーズで当たったことのあるペアを、普通の再戦より強めに引き離します。',
+  'so-series-select': 'どのシリーズでの再戦を避けるか。大会名から自動で選ばれます。',
+  'so-shiftlimit-label': '各選手が元のランキング順からどれだけシードを動かしてよいかの上限。上位ほど厳しくしたいときに使います。',
+  'so-maxshift': '順位帯に関係なく、全員に効くシードズレの上限。',
 
   // ── 表示・操作 ──
   'search': 'プレイヤー名か start.gg の user_id で絞り込みます。',
