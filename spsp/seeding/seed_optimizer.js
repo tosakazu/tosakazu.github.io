@@ -352,6 +352,24 @@
     return (rank1, M) => (rank1 <= M / 4 ? 0 : 1);
   }
 
+  // params._verifyMoves 用（テスト専用・O(n^2)）: 候補集合から導いた「交換可能」関係が
+  // swapAllowed と完全に一致するかを総当たりで確認する。候補集合が狭すぎて有効手を
+  // 取りこぼしていないかを検出する（広すぎる側は randomNeighbor の swapAllowed 再確認で防いでいる）。
+  function verifyMoveSets(order, groups, candSet, swapAllowed, phase) {
+    for (const g of groups) {
+      for (const a of g) {
+        for (const b of g) {
+          if (a === b) continue;
+          const viaCand = candSet(order[a]).has(b) && candSet(order[b]).has(a);
+          if (viaCand !== swapAllowed(order, a, b)) {
+            throw new Error('候補集合が swapAllowed と不一致 (' + phase + '): ' +
+              a + ',' + b + ' → 候補=' + viaCand + ' / swapAllowed=' + !viaCand);
+          }
+        }
+      }
+    }
+  }
+
   // ───────────────────────── inter 最適化 ─────────────────────────
   // 状態: seedOrder(uid 配列)。プール membership を pools[p]=seedIndex 配列で保持。
   function interOptimize(seedOrder, P, pp, params, rng, ctx, orderOf, pre) {
@@ -431,16 +449,49 @@
       return t;
     }
 
+    // ── 有効手の候補集合 ──
+    // swapAllowed の各ルールは判定基準が origRank / initPool（フェーズ中不変）なので、
+    // 「その uid が行き先に座れるか」= (uid, 行き先) だけの述語 posOk に分解できる:
+    //     swapAllowed(i, j) ≡ posOk(order[i], j) && posOk(order[j], i)
+    // よって行き先を候補集合から引けば片側は常に成立し、残る棄却は相手側の1チェックだけ。
+    // 候補集合は盤面に依存しないので前計算1回で済む（swap ごとの更新は不要）。
+    function posOkInter(uid, j) {
+      const pj = poolOfSeed(j, P), rowJ = rowOfSeed(j, P) + 1;
+      if (Math.abs(pj - initPool[uid]) > kInter(rowJ)) return false;
+      if (lockCheck && !lockCheck(uid, pj)) return false;
+      if (maxShift != null && Math.abs((j + 1) - (origRank[uid] || (j + 1))) > maxShift) return false;
+      if (shiftCap) {
+        const o = origRank[uid] || (j + 1);
+        if (Math.abs((j + 1) - o) > shiftCap(o)) return false;
+      }
+      if (keepDe && dePlaceOfSeed(j + 1) !== dePlaceOfSeed(origRank[uid] || (j + 1))) return false;
+      return true;
+    }
+    // uid → 座れるスロット（同一 row 内。inter swap は row を変えないので候補も row 内で閉じる）。
+    const candInter = {}, candInterSet = {};
+    // 可動な選手が座るスロット。動けない選手（候補 1 個以下）は誰とも交換できないので、
+    // そのスロットの占有者は永久に変わらない ⇒ この配列も静的でよい。
+    const movableInter = [];
+    for (let s = 0; s < N; s++) {
+      const uid = seedOrder[s], lst = [];
+      for (const j of rowSeeds[rowOfSeed(s, P)]) if (posOkInter(uid, j)) lst.push(j);
+      candInter[uid] = lst; candInterSet[uid] = new Set(lst);
+      if (lst.length >= 2) movableInter.push(s);
+    }
+
     // 有効な近傍 swap をランダムに1つ返す（{i,j} または null）。
+    // 候補集合で絞った上で、最後に必ず swapAllowed を通す（候補集合が誤っていても
+    // 制約違反の手は出さない。正しければこの再確認は常に true で通過する）。
     function randomNeighbor(order) {
+      if (params._verifyMoves) verifyMoveSets(order, rowSeeds, (u) => candInterSet[u], swapAllowed, 'inter');
+      if (movableInter.length < 2) return null;
       for (let tries = 0; tries < 40; tries++) {
-        const r = randInt(rng, rowSeeds.length);
-        const seedsInRow = rowSeeds[r];
-        if (!seedsInRow || seedsInRow.length < 2) continue;
-        const a = seedsInRow[randInt(rng, seedsInRow.length)];
-        const b = seedsInRow[randInt(rng, seedsInRow.length)];
+        const a = movableInter[randInt(rng, movableInter.length)];
+        const cand = candInter[order[a]];
+        const b = cand[randInt(rng, cand.length)];
         if (a === b) continue;
         if (poolOfSeed(a, P) === poolOfSeed(b, P)) continue;
+        if (!candInterSet[order[b]].has(a)) continue;
         if (!swapAllowed(order, a, b)) continue;
         return { i: a, j: b };
       }
@@ -555,11 +606,43 @@
       return t;
     }
 
+    // ── 有効手の候補集合 ──
+    // swapAllowed の各ルールは判定基準が origRank / initRank（フェーズ中不変）なので、
+    // 「その uid が行き先に座れるか」= (uid, 行き先) だけの述語 posOk に分解できる:
+    //     swapAllowed(i, j) ≡ posOk(order[i], j) && posOk(order[j], i)
+    // よって行き先を候補集合から引けば片側は常に成立し、残る棄却は相手側の1チェックだけ。
+    // 候補集合は盤面に依存しないので前計算1回で済む（swap ごとの更新は不要）。
+    function posOkIntra(uid, k) {
+      if (Math.abs((k + 1) - initRank[uid]) > kIntra(initRank[uid], M)) return false;
+      if (maxShift != null && gs1 && Math.abs(gs1[k] - (origRank[uid] || gs1[k])) > maxShift) return false;
+      if (shiftCap && gs1) {
+        const o = origRank[uid] || gs1[k];
+        if (Math.abs(gs1[k] - o) > shiftCap(o)) return false;
+      }
+      if (keepDe && gs1 && dePlaceOfSeed(gs1[k]) !== dePlaceOfSeed(origRank[uid] || gs1[k])) return false;
+      return true;
+    }
+    const candIntra = {}, candIntraSet = {}, movableIntra = [];
+    for (let k = 0; k < M; k++) {
+      const uid = poolUids[k], lst = [];
+      for (let q = 0; q < M; q++) if (posOkIntra(uid, q)) lst.push(q);
+      candIntra[uid] = lst; candIntraSet[uid] = new Set(lst);
+      if (lst.length >= 2) movableIntra.push(k);
+    }
+
     function randomNeighbor(order) {
+      if (params._verifyMoves) {
+        const all = []; for (let q = 0; q < M; q++) all.push(q);
+        verifyMoveSets(order, [all], (u) => candIntraSet[u], swapAllowed, 'intra:' + poolLabel);
+      }
+      if (movableIntra.length < 2) return null;
       for (let tries = 0; tries < 40; tries++) {
-        const i = randInt(rng, M), j = randInt(rng, M);
+        const i = movableIntra[randInt(rng, movableIntra.length)];
+        const cand = candIntra[order[i]];
+        const j = cand[randInt(rng, cand.length)];
         if (i === j) continue;
-        if (!swapAllowed(order, i, j)) continue;
+        if (!candIntraSet[order[j]].has(i)) continue;
+        if (!swapAllowed(order, i, j)) continue;   // 最終確認（制約違反は絶対に出さない）
         return { i, j };
       }
       return null;
@@ -651,14 +734,45 @@
       return true;
     }
 
-    // 位置をランダムに引き、その帯内から相手を引く（帯サイズ比例のサンプリング）。
+    // ── 有効手の候補集合 ──
+    // swapAllowed の各ルールは判定基準が origRank / タイ帯（フェーズ中不変）なので、
+    // 「その uid が行き先に座れるか」= (uid, 行き先) だけの述語 posOk に分解できる:
+    //     swapAllowed(i, j) ≡ posOk(order[i], j) && posOk(order[j], i)
+    // よって行き先を候補集合から引けば片側は常に成立し、残る棄却は相手側の1チェックだけ。
+    // 候補集合は盤面に依存しないので前計算1回で済む（swap ごとの更新は不要）。
+    function posOkWinners(uid, k) {
+      if (dePlaceOfSeed(k + 1) !== dePlaceOfSeed(origRank[uid] || (k + 1))) return false;
+      if (maxShift != null && Math.abs((k + 1) - (origRank[uid] || (k + 1))) > maxShift) return false;
+      if (shiftCapW) {
+        const o = origRank[uid] || (k + 1);
+        if (Math.abs((k + 1) - o) > shiftCapW(o)) return false;
+      }
+      if (poolRankLimit && !rowOk(uid, k)) return false;
+      if (lockCheckW && !lockCheckW(uid, poolOfSeed(k, P))) return false;
+      return true;
+    }
+    // 候補はタイ帯不変が必須なので、各自の帯の中だけを見れば足りる。
+    const candWin = {}, candWinSet = {}, movableWin = [];
+    for (let s = 0; s < N; s++) {
+      const uid = seedOrder[s], lst = [];
+      for (const k of (posByBand[bandOfPos[s]] || [])) if (posOkWinners(uid, k)) lst.push(k);
+      candWin[uid] = lst; candWinSet[uid] = new Set(lst);
+      if (lst.length >= 2) movableWin.push(s);
+    }
+
+    // 有効な近傍 swap をランダムに1つ返す（候補集合から引き、最後に swapAllowed で再確認）。
     function randomNeighbor(order) {
+      if (params._verifyMoves) {
+        verifyMoveSets(order, Object.keys(posByBand).map((b) => posByBand[b]),
+          (u) => candWinSet[u], swapAllowed, 'winners');
+      }
+      if (movableWin.length < 2) return null;
       for (let tries = 0; tries < 40; tries++) {
-        const i = randInt(rng, N);
-        const band = posByBand[bandOfPos[i]];
-        if (band.length < 2) continue;
-        const j = band[randInt(rng, band.length)];
+        const i = movableWin[randInt(rng, movableWin.length)];
+        const cand = candWin[order[i]];
+        const j = cand[randInt(rng, cand.length)];
         if (i === j) continue;
+        if (!candWinSet[order[j]].has(i)) continue;
         if (!swapAllowed(order, i, j)) continue;
         return { i, j };
       }
