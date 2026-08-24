@@ -48,6 +48,54 @@
 
   function pairKey(a, b) { return a < b ? a + ':' + b : b + ':' + a; }
 
+  // ── シリーズ判定 ────────────────────────────────────────────────
+  // シリーズ名は大会名から番号・サブタイトルを剥がして作られる (サーバ側 v3/v4/meta.py)。
+  // ブラウザ側でその剥がし規則を再実装すると二重管理で必ずズレるので、やらない。
+  // 代わりに tournaments.json (event_id → series) を正解表として使い、
+  //   1) 取り込み済みの大会は event_id で正確に引く
+  //   2) 未取り込み (= これから開催する大会) は「大会名に含まれる最長の既知シリーズ名」で推定する
+  // 2 は既存 5,399 大会での照合で 93.3% 一致。外れる余地があるので UI で判定結果を出し、
+  // 手で選び直せるようにしてある (黙って間違ったシリーズで罰則をかけない)。
+  const SERIES_QUOTES = '"\'‘’“”＂＇′″';
+  function normalizeSeriesName(name) {
+    let s = String(name == null ? '' : name);
+    if (s.normalize) s = s.normalize('NFKC');
+    let out = '';
+    for (const ch of s) { if (SERIES_QUOTES.indexOf(ch) < 0) out += ch; }
+    return out.replace(/[\s　]/g, '').toLowerCase();
+  }
+
+  // tournaments.json → { seriesOf: {event_id: series}, seriesNames: [...] }
+  function buildSeriesIndex(tournamentsJson) {
+    const list = (tournamentsJson && tournamentsJson.tournaments) || [];
+    const seriesOf = {};
+    const names = new Set();
+    for (const t of list) {
+      if (!t || t.event_id == null || !t.series) continue;
+      seriesOf[t.event_id] = t.series;
+      names.add(t.series);
+    }
+    // 長い名前を先に見る (「極冠ダブルス」を「極冠」より先に当てる)。
+    const seriesNames = Array.from(names).sort((a, b) => b.length - a.length || (a < b ? -1 : 1));
+    return { seriesOf, seriesNames };
+  }
+
+  // 対象大会のシリーズを決める。eventId が正解表にあればそれ、無ければ名前から推定。
+  // 戻り値 { series, source: 'event_id'|'name'|null }。判定できなければ series=null。
+  function detectSeries(index, eventId, tournamentName) {
+    if (!index) return { series: null, source: null };
+    if (eventId != null && index.seriesOf[eventId]) {
+      return { series: index.seriesOf[eventId], source: 'event_id' };
+    }
+    const nm = normalizeSeriesName(tournamentName);
+    if (!nm) return { series: null, source: null };
+    for (const s of index.seriesNames) {
+      const n = normalizeSeriesName(s);
+      if (n.length >= 2 && nm.indexOf(n) >= 0) return { series: s, source: 'name' };
+    }
+    return { series: null, source: null };
+  }
+
   // 地域グルーピング: 被り回避では近隣の県を同一地域として扱う。
   // 各グループは UI トグルで個別に ON/OFF できる（buildRegionGroups）。
   const REGION_GROUP_DEFS = {
@@ -84,6 +132,9 @@
     // tournaments[] から作る event_id→is_weekend 表による。表に無い大会（is_weekend
     // 不明）は除外しない（= 保守的に再対戦回避の対象に残す。件数は meta で明示）。
     excludeWeekday: false,
+    // 同シリーズ再マッチ罰則の対象シリーズ名。null なら集計しない (seriesPair は空)。
+    // 「今回シードする大会と同じシリーズで既に当たっているペア」を別枠で集計する。
+    targetSeries: null,
   };
 
   // ── デフォルト fetch（ブラウザ用）。prefix は seed ページからの相対パス基準。
@@ -99,6 +150,13 @@
       fetchPrefs: async () => {
         const res = await fetch(`${prefix}data/player_prefectures.json`);
         if (!res.ok) throw new Error(`player_prefectures.json HTTP ${res.status}`);
+        return res.json();
+      },
+      // 大会一覧 (event_id → シリーズ名)。同シリーズ再マッチ罰則を使うときだけ取りに行く
+      // (3MB 前後あるので、既定 OFF の機能のために常時ロードはしない)。
+      fetchTournaments: async () => {
+        const res = await fetch(`${prefix}data/tournaments.json`);
+        if (!res.ok) throw new Error(`tournaments.json HTTP ${res.status}`);
         return res.json();
       },
     };
@@ -173,12 +231,31 @@
     const { players, missing, errors } = await fetchAllPlayers(
       ranking, fetchers.fetchPlayer, concurrency, onProgress);
 
+    // 同シリーズ再マッチ用: event_id → シリーズ名。targetSeries 指定時のみ取りに行く。
+    // 呼び出し側が seriesIndex を渡していればそれを使う (二重取得を避ける)。
+    const targetSeries = params.targetSeries || null;
+    let seriesOf = null, seriesIndexError = null;
+    if (targetSeries) {
+      try {
+        const idx = opts.seriesIndex || buildSeriesIndex(await fetchers.fetchTournaments());
+        seriesOf = idx.seriesOf;
+      } catch (e) {
+        // fail-loud: 黙って「同シリーズ対戦なし」にはしない。呼び出し側が UI で明示する。
+        seriesIndexError = String((e && e.message) || e);
+      }
+    }
+
     // 直近対戦罰則（疎）。両方向から走査する: 以前は a<opp の片側だけ集計していたが、
     // 低 uid 側の JSON が DB 未登録(404)/欠損だと高 uid 側に記録があっても罰則が消え、
     // どちらが消えるかが uid の大小という偶然で決まっていた。
     // 同一試合が両者のファイルに載る通常ケースは試合キーで二重計上を防ぐ。
     const recentPair = {};
     const recentMeta = {};
+    // 同シリーズ分だけを同じ規則 (decay×規模, max/sum) で集計したもの。
+    // recentPair の部分集合ではなく「同シリーズ試合のみで組んだ recentPair」。
+    const seriesPair = {};
+    let seriesMatches = 0;          // 対象シリーズでの対戦数 (dedup 後)
+    let seriesUnknownEvents = 0;    // シリーズ不明の event_id を持つ試合数
     const seenMatch = new Set();   // pair|event|phase|round|date（同一試合の両側記録デデュープ）
     // excludeWeekday 用: event_id → is_weekend（計算上の休日扱い）。出場者全員の
     // tournaments[] を先に走査して作る（片側の JSON にしか大会情報が無くても
@@ -227,17 +304,37 @@
         recentPair[key] = useMax
           ? Math.max(recentPair[key] || 0, val)
           : (recentPair[key] || 0) + val;
+        // この試合のシリーズ (seriesOf 未取得なら null = 判定しない)。
+        let mSeries = null;
+        if (seriesOf && m.event_id != null) {
+          mSeries = seriesOf[m.event_id] || null;
+          if (mSeries == null) seriesUnknownEvents++;
+        }
+        const isTargetSeries = !!(targetSeries && mSeries === targetSeries);
+        if (isTargetSeries) {
+          seriesMatches++;
+          seriesPair[key] = useMax
+            ? Math.max(seriesPair[key] || 0, val)
+            : (seriesPair[key] || 0) + val;
+        }
         const meta = recentMeta[key] || (recentMeta[key] = {
           penalty: 0, count: 0, lastDate: null, lastDeltaDays: null,
           lastTournament: null, lastNent: null,
+          seriesCount: 0, seriesLastDate: null,   // 対象シリーズでの対戦回数 / 最終日
           matches: [],   // 個別対戦履歴（レポートのペア展開表示用）。decay>0 の期間内のみ
         });
         meta.penalty = useMax ? Math.max(meta.penalty, val) : meta.penalty + val;
         meta.count += 1;
+        if (isTargetSeries) {
+          meta.seriesCount += 1;
+          if (!meta.seriesLastDate || m.date > meta.seriesLastDate) meta.seriesLastDate = m.date;
+        }
         meta.matches.push({
           date: m.date,
           tournament: m.tournament_name || null,
           nent: (nent != null) ? nent : null,
+          series: mSeries,             // シリーズ名 (未判定なら null)
+          sameSeries: isTargetSeries,  // 対象シリーズでの対戦か
         });
         if (!meta.lastDate || m.date > meta.lastDate) {
           meta.lastDate = m.date;
@@ -254,8 +351,13 @@
     }
 
     return {
-      prefByUid, prefCounts, recentPair, recentMeta,
+      prefByUid, prefCounts, recentPair, recentMeta, seriesPair,
       meta: {
+        targetSeries,                  // 対象シリーズ名 (null = 機能OFF)
+        seriesPairs: Object.keys(seriesPair).length,   // 同シリーズで当たっているペア数
+        seriesMatches,                 // 同シリーズでの対戦数 (dedup 後)
+        seriesUnknownEvents,           // シリーズ不明の event_id を持つ試合数
+        seriesIndexError,              // tournaments.json 取得失敗 (UI で明示)
         attendees: ranking.length,
         withPlayerJson: Object.keys(players).length,
         missing,                 // DB 未登録 uid（履歴なし扱い）
@@ -270,7 +372,7 @@
   const API = {
     buildSeedData, fetchAllPlayers, defaultFetchers,
     dateToDays, sizeWeightFn, recentDecayFn, pairKey,
-    buildRegionGroups,
+    buildRegionGroups, buildSeriesIndex, detectSeries, normalizeSeriesName,
     DEFAULT_DATA_PARAMS, DEFAULT_REGION_GROUPS, REGION_GROUP_DEFS,
   };
   global.SeedData = API;

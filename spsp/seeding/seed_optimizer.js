@@ -107,6 +107,17 @@
     avoidRegion: true,                   // 地域被り（同一都道府県/地域）を避けるか
     avoidRecent: true,                   // 直近の再対戦を避けるか
     enableIntra: true,                   // プール内変動（intra 最適化）を行うか（P>=2 のときのみ有効）
+    // 同シリーズ再マッチ罰則（既定 OFF）。「今回シードする大会と同じシリーズで既に
+    // 当たっているペア」を、通常の再対戦より重く罰する。対象シリーズの判定と
+    // 同シリーズ分の罰則集計 (seriesPair) はデータ層 (seed_data.js) の担当。
+    //   'add'  : 通常罰則に W_series × 同シリーズ分の罰則を上乗せ（試合ごとの
+    //            重み = 時間減衰×大会規模 を保ったまま加算する）
+    //   'mult' : 同シリーズで当たっているペアの再対戦罰則を seriesMult 倍する
+    //            （何回・どの規模で当たったかに依らず一律の倍率）
+    avoidSeriesRematch: false,
+    seriesMode: 'add',                   // 'add' | 'mult'
+    W_series: 0.3,                       // seriesMode='add' のときの上乗せ重み
+    seriesMult: 2.0,                     // seriesMode='mult' のときの倍率
     W_region: 1.0,
     W_recent: 0.3,                       // 直近対戦の重み（W_region との大小は自由）
     W_order: 0.001,                      // 元ランキングからのシードズレ罰則(タイブレーカー級, 分離は不悪化)。0で無効
@@ -206,22 +217,50 @@
   // pairPenalty(a,b) を返すクロージャを構築（O(1) 参照）。
   // 地域罰則は県ごとの連続重み(既定 1/√人数)。少数派を特別にハード罰則しない＝
   // 重みに応じてどの県もいい感じに分散する。
-  function buildPairPenalty(params, prefByUid, prefCounts, recentPair) {
+  function buildPairPenalty(params, prefByUid, prefCounts, recentPair, seriesPair) {
     const pw = prefWeightFn(params.prefWeight);
     const wByPref = {};
     for (const k in prefCounts) wByPref[k] = pw(prefCounts[k]);
     const Wr = params.W_region, Wn = params.W_recent;
     const useRegion = params.avoidRegion !== false;   // 既定 ON
     const useRecent = params.avoidRecent !== false;   // 既定 ON
+    // 同シリーズ再マッチは「再対戦罰則の上乗せ」なので、再対戦を考慮しない設定では効かせない。
+    const sp = seriesPair || {};
+    const useSeries = params.avoidSeriesRematch === true && useRecent;
+    const seriesMult = params.seriesMult != null ? params.seriesMult : 2.0;
+    const Ws = params.W_series != null ? params.W_series : 0.3;
+    const multMode = params.seriesMode === 'mult';
     return function (a, b) {
       let region = 0;
       if (useRegion) {
         const pa = prefByUid[a], pb = prefByUid[b];
         if (pa && pb && pa === pb) region = (wByPref[pa] != null ? wByPref[pa] : pw(prefCounts[pa] || 2));
       }
-      const recent = useRecent ? (recentPair[pairKey(a, b)] || 0) : 0;
-      return Wr * region + Wn * recent;
+      const key = pairKey(a, b);
+      const recent = useRecent ? (recentPair[key] || 0) : 0;
+      const series = useSeries ? (sp[key] || 0) : 0;
+      if (multMode) return Wr * region + Wn * recent * (series > 0 ? seriesMult : 1);
+      return Wr * region + Wn * recent + Ws * series;
     };
+  }
+
+  // レポート/スコア表示用: ペアの同シリーズ成分だけを返す関数を作る。
+  // buildPairPenalty と同じ判定を使う（レポートと目的関数がズレないように一本化）。
+  function seriesPenaltyFn(params, recentPair, seriesPair) {
+    const sp = seriesPair || {};
+    const useRecent = params.avoidRecent !== false;
+    const useSeries = params.avoidSeriesRematch === true && useRecent;
+    if (!useSeries) return () => 0;
+    const seriesMult = params.seriesMult != null ? params.seriesMult : 2.0;
+    const Ws = params.W_series != null ? params.W_series : 0.3;
+    const Wn = params.W_recent;
+    if (params.seriesMode === 'mult') {
+      return (a, b) => {
+        const key = pairKey(a, b);
+        return (sp[key] || 0) > 0 ? Wn * (recentPair[key] || 0) * (seriesMult - 1) : 0;
+      };
+    }
+    return (a, b) => Ws * (sp[pairKey(a, b)] || 0);
   }
 
   function roundWeightFn(roundWeights) {
@@ -1097,7 +1136,7 @@
   // runIntra: intra 最適化を実行したか（スコアの回戦重み付けに使用）。
   // reportIntra: プール内（早期回戦）レポートを出すか。DE なら intra 最適化を
   //   オフにしていても既定ブラケット順の当たりは確定しているので出せる。
-  function fullReport(seedOrderBefore, seedOrderAfter, P, pp, params, runIntra, reportIntra, recentPair, recentMeta) {
+  function fullReport(seedOrderBefore, seedOrderAfter, P, pp, params, runIntra, reportIntra, recentPair, recentMeta, seriesPair) {
     const rw = roundWeightFn(params.roundWeights);
     const prefByUid = params._prefByUid || {}, origRank = params._origRank || {};
     const pwFn = prefWeightFn(params.prefWeight);
@@ -1113,24 +1152,33 @@
     const recentW = useRecent
       ? (a, b) => (recentPair && recentPair[pairKey(a, b)]) || 0
       : () => 0;
+    // 同シリーズ上乗せ分（目的関数 pp と同じ判定。'add' は Ws×同シリーズ罰則、
+    // 'mult' は Wn×再対戦罰則×(倍率−1)）。OFF なら常に 0。
+    const seriesW = seriesPenaltyFn(params, recentPair || {}, seriesPair || {});
     // セル別（プール間/内 × 地域/直近）と order 罰則のスコアを計算。
     function poolScores(order) {
       const pools = poolsFromSeedOrder(order, P);
       let interRegion = 0, interRecent = 0, intraRegion = 0, intraRecent = 0;
+      let interSeries = 0, intraSeries = 0;   // 内訳表示用（interRecent / intraRecent に含まれている分）
       for (const pool of pools) {
         const Bn = nextPow2(pool.length), sOf = slotOfSeedMap(Bn);
         for (let i = 0; i < pool.length; i++)
           for (let j = i + 1; j < pool.length; j++) {
             const a = pool[i], b = pool[j];
-            const rg = Wr * regionW(a, b), rc = Wn * recentW(a, b);
-            interRegion += rg; interRecent += rc;
-            if (runIntra) { const w = rw(earliestMeetRound(sOf[i + 1], sOf[j + 1])); intraRegion += w * rg; intraRecent += w * rc; }
+            const sw = seriesW(a, b);
+            const rg = Wr * regionW(a, b), rc = Wn * recentW(a, b) + sw;
+            interRegion += rg; interRecent += rc; interSeries += sw;
+            if (runIntra) {
+              const w = rw(earliestMeetRound(sOf[i + 1], sOf[j + 1]));
+              intraRegion += w * rg; intraRecent += w * rc; intraSeries += w * sw;
+            }
           }
       }
       let order_ = 0;
       if (Wo > 0) order.forEach((u, s) => { order_ += Wo * Math.pow(Math.abs((s + 1) - (origRank[u] || (s + 1))), oPow); });
       const inter = interRegion + interRecent, intra = intraRegion + intraRecent;
-      const ret = { inter, intra, total: inter + intra, interRegion, interRecent, intraRegion, intraRecent, order: order_ };
+      const ret = { inter, intra, total: inter + intra, interRegion, interRecent, intraRegion, intraRecent,
+                    interSeries, intraSeries, order: order_ };
       // 勝者側スコープ時は射影対戦 (シード通り実対戦) 成分も合算する。
       if (params._winnersWeights) {
         const rwW = roundWeightFn(params._winnersWeights);
@@ -1204,6 +1252,9 @@
                              lastDate: meta ? meta.lastDate : null, count: meta ? meta.count : null,
                              lastTournament: (meta && meta.lastTournament) || null,
                              lastNent: (meta && meta.lastNent != null) ? meta.lastNent : null,
+                             // 対象シリーズでの対戦回数と最終日 (0 / null = 同シリーズでは未対戦)
+                             seriesCount: (meta && meta.seriesCount) || 0,
+                             seriesLastDate: (meta && meta.seriesLastDate) || null,
                              // 個別対戦履歴（UI のペア展開表示用。recentMeta に無い古い形式では null）
                              matches: (meta && Array.isArray(meta.matches)) ? meta.matches : null };
               recentInter.push(item);
@@ -1248,6 +1299,8 @@
                               lastDate: meta ? meta.lastDate : null, count: meta ? meta.count : null,
                               lastTournament: (meta && meta.lastTournament) || null,
                               lastNent: (meta && meta.lastNent != null) ? meta.lastNent : null,
+                              seriesCount: (meta && meta.seriesCount) || 0,
+                              seriesLastDate: (meta && meta.seriesLastDate) || null,
                               matches: (meta && Array.isArray(meta.matches)) ? meta.matches : null });
           }
         }
@@ -1284,7 +1337,10 @@
             separable: sepByPref, separablePairs: sum(sepByPref),   // 参考: 分散できるはずの被り
             majority: majByPref, majorityPairs: sum(majByPref),     // 参考: 人数多く回避不能
           },
-          recent: { pairs: recentInter.length, top: recentInter.slice(0, 10) },
+          recent: { pairs: recentInter.length, top: recentInter.slice(0, 10),
+                    // 同シリーズで既に当たっているペアの数 (罰則 ON/OFF に関係なく数える)
+                    sameSeriesPairs: recentInter.filter((x) => x.seriesCount > 0).length,
+                    sameSeriesTop: recentInter.filter((x) => x.seriesCount > 0).slice(0, 10) },
         },
         // プール内（同プール内で早期回戦に当たるか）。DE 時のみ
         // （intra 最適化オフでも既定ブラケット順の当たりとして報告する）。
@@ -1296,20 +1352,27 @@
             earlyPairs: intraEarlyMatchups.length,
             excludedRegion: mostPopRegion,                  // 報告から除外した最多地域
           },
-          recent: { pairs: recentIntra.length, top: recentIntra.slice(0, 10) },
+          recent: { pairs: recentIntra.length, top: recentIntra.slice(0, 10),
+                    sameSeriesPairs: recentIntra.filter((x) => x.seriesCount > 0).length,
+                    sameSeriesTop: recentIntra.filter((x) => x.seriesCount > 0).slice(0, 10) },
         } : null,
         // 予選抜け後 (本戦想定): 全体勝者側ブラケットで earlyRound より後に当たるペア。
         // シード通り進出した場合の見積もり (プール構造非依存)。
         postPool: {
           threshold: earlyRound,
           region: { pairs: postRegion.length, top: postRegion.slice(0, 20), excludedRegion: mostPopRegion },
-          recent: { pairs: postRecent.length, top: postRecent.slice(0, 10) },
+          recent: { pairs: postRecent.length, top: postRecent.slice(0, 10),
+                    sameSeriesPairs: postRecent.filter((x) => x.seriesCount > 0).length,
+                    sameSeriesTop: postRecent.filter((x) => x.seriesCount > 0).slice(0, 10) },
         },
     };
     }  // concernsFor
 
     return {
       before, after, improvementPct,
+      // 同シリーズ再マッチの対象シリーズ (null = 判定なし / 機能OFF)。UI の見出しに使う。
+      targetSeries: params._targetSeries || null,
+      seriesRematchOn: params.avoidSeriesRematch === true && params.avoidRecent !== false,
       residualConcerns: concernsFor(seedOrderAfter),
       // 最適化前の同構造 (UI の前後比較用)。
       residualConcernsBefore: concernsFor(seedOrderBefore),
@@ -1366,7 +1429,9 @@
     const recentPair = input.recentPair || {};
     params._prefByUid = prefByUid; // レポート用
     params._prefCounts = prefCounts; // レポート用（少数派/多数派の判定）
-    const pp = buildPairPenalty(params, prefByUid, prefCounts, recentPair);
+    const seriesPair = input.seriesPair || {};
+    params._targetSeries = input.targetSeries || null;   // レポート表示用
+    const pp = buildPairPenalty(params, prefByUid, prefCounts, recentPair, seriesPair);
     // 事前計算 (全フェーズ共有): ペア罰則行列 + 回戦重み行列キャッシュ (rwPool 用)。
     const pre = buildPairMatrix(ranking, pp);
     const rwmCache = {};
@@ -1444,7 +1509,7 @@
 
     const reportRunIntra = runIntra || (winnersScope && P === 1);
     const report = fullReport(seedOrderBefore, seedOrder, P, pp, params, reportRunIntra,
-      gate.runIntra || winnersScope, recentPair, input.recentMeta);
+      gate.runIntra || winnersScope, recentPair, input.recentMeta, seriesPair);
     const poolsOut = poolsFromSeedOrder(seedOrder, P);
 
     return {
@@ -1465,7 +1530,7 @@
     makeRng, randInt,
     poolOfSeed, rowOfSeed, seedSlotOrder, slotOfSeedMap, earliestMeetRound, nextPow2,
     dePlaceOfSeed, projectedMatches,
-    buildPairPenalty, derivePrefCounts, prefWeightFn, roundWeightFn, pairKey,
+    buildPairPenalty, seriesPenaltyFn, derivePrefCounts, prefWeightFn, roundWeightFn, pairKey,
     scoreInterFull, scoreIntraPoolFull,
     poolsFromSeedOrder, seedOrderFromPools, gateFormat,
     kInterFn, kIntraFn, shiftCapFn, resolveParams, winnersOptimize, buildLockCheck,

@@ -137,15 +137,15 @@ const SEED_APP_SKELETON_HTML = `
       <label title="東京・神奈川・埼玉・千葉を同一地域(南関東)として扱う"><input type="checkbox" id="so-group-minamikanto" checked> 東京・神奈川・埼玉・千葉をまとめる</label>
       <label title="兵庫・大阪・京都を同一地域(京阪神)として扱う"><input type="checkbox" id="so-group-keihanshin"> 兵庫・大阪・京都をまとめる</label>
     </div>
-    <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:8px;font-size:12px;color:#374151"
-         title="順位帯ごとのシードズレ上限。各欄は「そのズレ幅までしか許さないのは何位まで」。例: ±1に8・±2に16・±3に32 → 1-8位は±1、9-16位は±2、17-32位は±3、33位以降は無制限。左の欄ほど小さい順位にすること。全て空欄=制約なし。全スコープ共通 (タイ帯不変等の他の制約とは AND)">
-      <span style="font-weight:600">シードズレ上限:</span>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:8px;font-size:12px;color:#374151">
+      <span id="so-shiftlimit-label" style="font-weight:600">シードズレ上限:</span>
       <label>固定(±0)は <input type="number" id="so-shift0" min="1" style="width:52px"> 位まで</label>
       <label>／ ±1は <input type="number" id="so-shift1" min="1" style="width:52px"> 位まで</label>
       <label>／ ±2は <input type="number" id="so-shift2" min="1" style="width:52px"> 位まで</label>
       <label>／ ±3は <input type="number" id="so-shift3" min="1" style="width:52px"> 位まで</label>
       <label>／ ±4は <input type="number" id="so-shift4" min="1" style="width:52px"> 位まで</label>
-      <span style="color:#9ca3af;font-size:10px">（超えた順位は無制限・全て空欄=制約なし。空のまま大会を読み込むと規模別の既定値が入る）</span>
+      <label>／ 全順位で最大 ±<input type="number" id="so-maxshift" min="0" step="1" placeholder="なし" style="width:56px"></label>
+      <span style="color:#9ca3af;font-size:10px">（段階指定を超えた順位は無制限。全て空欄=制約なし。空のまま大会を読み込むと規模別の既定値が入る）</span>
     </div>
     <div style="margin-top:10px;font-size:12px;color:#374151;max-width:360px">
       <div style="display:flex;align-items:center;gap:8px">
@@ -212,7 +212,6 @@ const SEED_APP_SKELETON_HTML = `
             <label>回戦重み<input type="text" id="so-roundweights" placeholder="1,0.6,0.4,0.06,0.02" style="display:block;width:160px;padding:4px;border:1px solid #d1d5db;border-radius:5px;font-size:12px"></label>
             <label title="プール内順位ごとに動かせるプール数。空欄＝既定(1・2位固定、以降1,2,4,8,…と倍々)">プール間可動 k_inter<input type="text" id="so-kinter" placeholder="既定: 0,0,1,2,4,…" style="display:block;width:160px;padding:4px;border:1px solid #d1d5db;border-radius:5px;font-size:12px"></label>
             <label title="プール内順位ごとに動かせる順位数。空欄＝既定(上位1/4固定・残り±1。プール間移動した選手も同じ窓)">プール内可動 k_intra<input type="text" id="so-kintra" placeholder="既定: 上位1/4固定・残り±1" style="display:block;width:160px;padding:4px;border:1px solid #d1d5db;border-radius:5px;font-size:12px"></label>
-            <label title="最終シード番号が元順位から動ける最大数（プール間+プール内の合成後）。蛇行番号の都合で k 制約だけだと最大 2×プール数−1 動き得るのを直接キャップする。空欄＝制限なし">シード変位上限 ±<input type="number" id="so-maxshift" min="0" step="1" placeholder="なし" style="display:block;width:80px;padding:4px;border:1px solid #d1d5db;border-radius:5px;font-size:12px"></label>
           </div>
         </div>
       </details>
@@ -355,6 +354,16 @@ const HELP_TEXT = {
   'so-orderpow-label': '元のランキング順からどれだけズラしてよいか。'
     + '左に寄せるほど被り回避を優先して大きく動かし、右に寄せるほど元の順位を尊重して小さく動かします。',
   'so-mode': '探索アルゴリズム。通常は既定のままで構いません。',
+  'so-shiftlimit-label': '元のランキング順から各選手が動いてよいシード数の上限を、順位帯ごとに決めます。'
+    + '各欄は「そのズレ幅までしか許さないのは何位まで」。'
+    + '例) ±1に8・±2に16・±3に32 と入れると、1〜8位は±1、9〜16位は±2、17〜32位は±3、33位以降は無制限。'
+    + '左の欄ほど小さい順位にしてください。全て空欄なら順位帯の制限なしです。'
+    + '空のまま大会を読み込むと、参加人数に応じた既定値が入ります。',
+  'so-maxshift': '順位帯に関係なく、全員に効くシードズレの上限。'
+    + '左の順位帯ごとの指定と併用したときは、厳しい方が効きます。空欄なら全体上限なし。'
+    + '0 を入れると誰も動かなくなります。'
+    + '（プール数が多いと、プール間±1 とプール内±1 の合成でシード番号は最大 2×プール数−1 動き得ます。'
+    + 'それを番号で直接抑えたいとき用です）',
 
   // ── 表示・操作 ──
   'search': 'プレイヤー名か start.gg の user_id で絞り込みます。',
@@ -367,8 +376,9 @@ const HELP_TARGETS = [
   'so-pools', 'so-waves', 'so-run', 'so-stop', 'so-cancel',
   'so-enable-intra', 'so-avoid-region', 'so-avoid-recent', 'so-keep-deplace',
   'so-scope-winners', 'so-include-weekday', 'so-group-minamikanto', 'so-group-keihanshin',
-  'so-orderpow-label', 'so-mode', 'so-itersscale', 'so-worder', 'so-decaypoints',
-  'so-kinter', 'so-kintra', 'so-maxshift',
+  'so-orderpow-label', 'so-shiftlimit-label', 'so-maxshift',
+  'so-mode', 'so-itersscale', 'so-worder', 'so-decaypoints',
+  'so-kinter', 'so-kintra',
 ];
 
 function injectHelpIcons(root) {
