@@ -2551,6 +2551,39 @@ function prefillShiftLimits(n) {
   els.forEach((e, k) => { e.value = vals[k]; });
   _lastShiftPrefill = vals;
 }
+// ── 選手データのキャッシュ ────────────────────────────────────────────
+// 同じ大会で「最適化を実行」を押し直すたびに players/*.json を取り直していた
+// (256名なら毎回 250 リクエスト・十数 MB)。ファイルの中身はセッション中に変わらない
+// ので uid 単位でキャッシュする。集計自体はやり直す — 減衰点・平日除外・ペア内集計・
+// 対象シリーズを変えたら結果も変わるべきで、そこは軽いため。
+//
+// 通信エラーはキャッシュしない (次回リトライさせる)。404 (DB 未登録) は確定した
+// 答えなのでキャッシュする。上限を超えたら古い順に捨てる (大規模大会を複数
+// 読み込んだときに際限なく抱えないための保険)。
+const PLAYER_CACHE = new Map();   // uid -> player json | { __missing: true }
+const PLAYER_CACHE_MAX = 6000;    // 実運用の最大規模 (3000人弱) の 2 大会分
+let PREFS_CACHE = null;
+
+function cachedFetchers(prefix) {
+  const base = SeedData.defaultFetchers(prefix);
+  return {
+    fetchPlayer: async (uid) => {
+      if (PLAYER_CACHE.has(uid)) return PLAYER_CACHE.get(uid);
+      const j = await base.fetchPlayer(uid);   // 失敗は throw されるのでキャッシュされない
+      if (PLAYER_CACHE.size >= PLAYER_CACHE_MAX) {
+        PLAYER_CACHE.delete(PLAYER_CACHE.keys().next().value);   // 挿入順に破棄
+      }
+      PLAYER_CACHE.set(uid, j);
+      return j;
+    },
+    fetchPrefs: async () => {
+      if (PREFS_CACHE) return PREFS_CACHE;
+      PREFS_CACHE = await base.fetchPrefs();
+      return PREFS_CACHE;
+    },
+  };
+}
+
 // ── 同シリーズ再マッチ: 対象シリーズの判定 ────────────────────────────
 // 大会一覧 (tournaments.json, 約3MB) は「同シリーズの再戦を強めに避ける」を
 // ONにしたときだけ取りに行く (既定OFF の機能のために常時ロードはしない)。
@@ -2854,7 +2887,11 @@ async function runSeedOptimize() {
   const recentAgg = document.getElementById('so-recentagg').value;
 
   document.getElementById('so-run').disabled = true;
-  progress.textContent = `データ取得中… (${ranking.length} 名の居住地・対戦履歴)`;
+  // 取得済みの分はキャッシュから返るので、実際に取りに行く人数だけ出す。
+  const toFetch = ranking.filter((u) => !PLAYER_CACHE.has(u)).length;
+  progress.textContent = toFetch
+    ? `データ取得中… (${toFetch} 名の居住地・対戦履歴)`
+    : `データ集計中… (${ranking.length} 名・取得済み)`;
 
   // 1) 取得・集計（メインスレッド。fetch はここだけ）。
   let bundle;
@@ -2864,7 +2901,7 @@ async function runSeedOptimize() {
     if (recentDecayPoints) dataParams.recentDecayPoints = recentDecayPoints;  // 空欄なら既定を使う
     // 地域グルーピング表をトグルから構築（避けない地域があっても prefByUid 計算は行い、罰則側で無効化）。
     const regionGroups = SeedData.buildRegionGroups({ minamiKanto: groupMinamiKanto, keihanshin: groupKeihanshin });
-    bundle = await SeedData.buildSeedData(ranking, {
+    bundle = await SeedData.buildSeedData(ranking, Object.assign({
       prefix: '../',
       regionGroups,
       // 地域被り回避 OFF のときは居住地データはレポート表示にしか使わないので、
@@ -2873,9 +2910,9 @@ async function runSeedOptimize() {
       seriesIndex: SERIES_INDEX,   // ロード済みなら再取得しない
       params: dataParams,
       onProgress: (p) => {
-        if (p.phase === 'fetch') progress.textContent = `選手データ取得中 ${p.done}/${p.total}…`;
+        if (p.phase === 'fetch' && toFetch) progress.textContent = `選手データ取得中 ${p.done}/${p.total}…`;
       },
-    });
+    }, cachedFetchers('../')));   // 2回目以降は取得済みの選手データを使い回す
   } catch (e) {
     progress.textContent = '⚠ データ取得に失敗: ' + e.message;
     document.getElementById('so-run').disabled = false;
