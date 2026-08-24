@@ -110,14 +110,19 @@
     // 同シリーズ再マッチ罰則（既定 OFF）。「今回シードする大会と同じシリーズで既に
     // 当たっているペア」を、通常の再対戦より重く罰する。対象シリーズの判定と
     // 同シリーズ分の罰則集計 (seriesPair) はデータ層 (seed_data.js) の担当。
-    //   'add'  : 通常罰則に W_series × 同シリーズ分の罰則を上乗せ（試合ごとの
-    //            重み = 時間減衰×大会規模 を保ったまま加算する）
     //   'mult' : 同シリーズで当たっているペアの再対戦罰則を seriesMult 倍する
     //            （何回・どの規模で当たったかに依らず一律の倍率）
+    //   'add'  : 通常罰則に W_series × 同シリーズ分の罰則を上乗せ（試合ごとの
+    //            重み = 時間減衰×大会規模 を保ったまま加算する）
+    // 既定が 'mult' なのは実データ9大会×乱数3種の比較で倍率の方が効率が良かったため
+    // (同シリーズ再戦を同じだけ減らしたとき、通常再戦の悪化が加算の約半分)。
+    // recentPair は既定で「そのペアの最重1試合」なので、常連ペアの最重試合は
+    // たいてい同シリーズ。加算はそこを強めるのに W を上げるしかなく、同シリーズで
+    // 軽く当たっただけのペアまで過剰に罰する。検証: docs/seed_collision_avoidance.md §6.2.1
     avoidSeriesRematch: false,
-    seriesMode: 'add',                   // 'add' | 'mult'
+    seriesMode: 'mult',                  // 'mult' | 'add'
+    seriesMult: 3.0,                     // seriesMode='mult' のときの倍率
     W_series: 0.3,                       // seriesMode='add' のときの上乗せ重み
-    seriesMult: 2.0,                     // seriesMode='mult' のときの倍率
     W_region: 1.0,
     W_recent: 0.3,                       // 直近対戦の重み（W_region との大小は自由）
     W_order: 0.001,                      // 元ランキングからのシードズレ罰則(タイブレーカー級, 分離は不悪化)。0で無効
@@ -227,7 +232,7 @@
     // 同シリーズ再マッチは「再対戦罰則の上乗せ」なので、再対戦を考慮しない設定では効かせない。
     const sp = seriesPair || {};
     const useSeries = params.avoidSeriesRematch === true && useRecent;
-    const seriesMult = params.seriesMult != null ? params.seriesMult : 2.0;
+    const seriesMult = params.seriesMult != null ? params.seriesMult : 3.0;
     const Ws = params.W_series != null ? params.W_series : 0.3;
     const multMode = params.seriesMode === 'mult';
     return function (a, b) {
@@ -251,7 +256,7 @@
     const useRecent = params.avoidRecent !== false;
     const useSeries = params.avoidSeriesRematch === true && useRecent;
     if (!useSeries) return () => 0;
-    const seriesMult = params.seriesMult != null ? params.seriesMult : 2.0;
+    const seriesMult = params.seriesMult != null ? params.seriesMult : 3.0;
     const Ws = params.W_series != null ? params.W_series : 0.3;
     const Wn = params.W_recent;
     if (params.seriesMode === 'mult') {
@@ -1058,6 +1063,17 @@
         }
         prev = v;
       });
+    }
+    // 同シリーズ再マッチ: モード名と倍率/重みの不正値を弾く
+    // (誤記が「黙って既定で動く」と、効いていないことに気づけない)。
+    if (out.seriesMode !== 'mult' && out.seriesMode !== 'add') {
+      throw new Error(`seriesMode は 'mult' か 'add' にしてください (現値: ${out.seriesMode})`);
+    }
+    if (!(typeof out.seriesMult === 'number' && isFinite(out.seriesMult) && out.seriesMult >= 1)) {
+      throw new Error('seriesMult は 1 以上の数値にしてください (1 = 上乗せなし)。');
+    }
+    if (!(typeof out.W_series === 'number' && isFinite(out.W_series) && out.W_series >= 0)) {
+      throw new Error('W_series は 0 以上の数値にしてください。');
     }
     // seedLocks: 値は 'pool' | 'wave' のみ。不正値が「無言で固定なし」にならないよう弾く。
     if (out.seedLocks != null) {

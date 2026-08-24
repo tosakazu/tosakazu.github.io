@@ -134,6 +134,13 @@ const SEED_APP_SKELETON_HTML = `
       <label title="全員のトーナメント想定順位（1,2,3,4,5,5,7,7,9,9,9,9,…のタイ帯）が元シードから変わらない範囲でのみ入れ替える"><input type="checkbox" id="so-keep-deplace" checked> トーナメント順位固定</label>
       <label title="通常のプール最適化（プール間/内）に加えて、全体を1つの勝者側ダブルイリミブラケットとみなし「シード通り勝ち上がったときに実際に発生する試合」の被りも追加で最適化する。追加フェーズはタイ帯（DE想定順位）内で動き、プール分離を壊す移動は損として評価される。このモード中は全フェーズでDE想定順位不変がハード制約。1プールでは勝者側のみ。DE専用"><input type="checkbox" id="so-scope-winners" checked> 勝者側ブラケットも考慮</label>
       <label title="平日扱いの大会（平日開催・実質平日・プレ大会）での対戦も「直接対戦」の考慮対象に含める（既定は含めない）"><input type="checkbox" id="so-include-weekday"> 平日大会を含む</label>
+      <label><input type="checkbox" id="so-avoid-series"> 同シリーズの再戦を強めに避ける</label>
+      <span id="so-series-box" style="display:none;font-size:11px;color:#6b7280">
+        <select id="so-series-select" style="padding:3px 5px;border:1px solid #d1d5db;border-radius:5px;font-size:12px;max-width:220px">
+          <option value="">（シリーズを選択）</option>
+        </select>
+        <span id="so-series-note" style="margin-left:5px"></span>
+      </span>
       <label title="東京・神奈川・埼玉・千葉を同一地域(南関東)として扱う"><input type="checkbox" id="so-group-minamikanto" checked> 東京・神奈川・埼玉・千葉をまとめる</label>
       <label title="兵庫・大阪・京都を同一地域(京阪神)として扱う"><input type="checkbox" id="so-group-keihanshin"> 兵庫・大阪・京都をまとめる</label>
     </div>
@@ -181,6 +188,14 @@ const SEED_APP_SKELETON_HTML = `
             <label>地域重み W_region<input type="number" id="so-wregion" value="1.0" step="0.1" style="display:block;width:72px;padding:4px;border:1px solid #d1d5db;border-radius:5px;font-size:12px"></label>
             <label>直近重み W_recent<input type="number" id="so-wrecent" value="0.3" step="0.05" style="display:block;width:72px;padding:4px;border:1px solid #d1d5db;border-radius:5px;font-size:12px"></label>
             <label title="元ランキングからのシードズレ罰則の重み(0で無効)">元順位ズレ重み<input type="number" id="so-worder" value="0.001" step="0.005" min="0" style="display:block;width:80px;padding:4px;border:1px solid #d1d5db;border-radius:5px;font-size:12px"></label>
+            <label title="「同シリーズの再戦を強めに避ける」をONにしたときの強さ。同シリーズで当たったことのあるペアの再戦罰則を何倍にするか。1 = 上乗せなし">同シリーズ倍率<input type="number" id="so-seriesmult" value="3" step="0.5" min="1" style="display:block;width:72px;padding:4px;border:1px solid #d1d5db;border-radius:5px;font-size:12px"></label>
+            <label title="同シリーズ罰則の方式。倍率=同シリーズで当たっていれば再戦罰則を一律で倍にする（既定・実データ検証で効率が良かった方）。加算=同シリーズ分の罰則だけを重み付きで上乗せする">同シリーズ方式
+              <select id="so-seriesmode" style="display:block;padding:4px;border:1px solid #d1d5db;border-radius:5px;font-size:12px">
+                <option value="mult">倍率（既定）</option>
+                <option value="add">加算</option>
+              </select>
+            </label>
+            <label title="同シリーズ方式=加算 のときの上乗せ重み（W_series）。倍率方式では使いません">同シリーズ加算重み<input type="number" id="so-wseries" value="0.3" step="0.05" min="0" style="display:block;width:84px;padding:4px;border:1px solid #d1d5db;border-radius:5px;font-size:12px"></label>
             <label>県の重み式
               <select id="so-prefweight" style="display:block;padding:4px;border:1px solid #d1d5db;border-radius:5px;font-size:12px">
                 <option value="inv_sqrt">1/√人数（既定）</option>
@@ -354,6 +369,14 @@ const HELP_TEXT = {
   'so-orderpow-label': '元のランキング順からどれだけズラしてよいか。'
     + '左に寄せるほど被り回避を優先して大きく動かし、右に寄せるほど元の順位を尊重して小さく動かします。',
   'so-mode': '探索アルゴリズム。通常は既定のままで構いません。',
+  'so-avoid-series': '今回と同じ大会シリーズで既に当たったことのあるペアを、'
+    + '普通の再戦よりも強めに引き離します。'
+    + '「また同じ大会で同じカードになる」のを避けたいときに使ってください。'
+    + 'ONにすると大会一覧 (約3MB) を読み込み、大会名からシリーズを判定します。'
+    + '判定結果は右の欄に出るので、違っていれば選び直してください。',
+  'so-series-select': 'どのシリーズでの再戦を避けるか。大会名から自動で選ばれますが、'
+    + '判定が外れることがあるので確認してください。'
+    + 'ここが空のままだと同シリーズ罰則は掛かりません。',
   'so-shiftlimit-label': '元のランキング順から各選手が動いてよいシード数の上限を、順位帯ごとに決めます。'
     + '各欄は「そのズレ幅までしか許さないのは何位まで」。'
     + '例) ±1に8・±2に16・±3に32 と入れると、1〜8位は±1、9〜16位は±2、17〜32位は±3、33位以降は無制限。'
@@ -377,6 +400,7 @@ const HELP_TARGETS = [
   'so-enable-intra', 'so-avoid-region', 'so-avoid-recent', 'so-keep-deplace',
   'so-scope-winners', 'so-include-weekday', 'so-group-minamikanto', 'so-group-keihanshin',
   'so-orderpow-label', 'so-shiftlimit-label', 'so-maxshift',
+  'so-avoid-series', 'so-series-select', 'so-seriesmult',
   'so-mode', 'so-itersscale', 'so-worder', 'so-decaypoints',
   'so-kinter', 'so-kintra',
 ];
@@ -2469,6 +2493,20 @@ function showEventPickerInline(tournamentSlug, events) {
   });
   // プール数に応じて「プール内変動」トグルの有効/無効を切り替える（2プール以上のみ指定可能）。
   document.getElementById('so-pools').addEventListener('input', updateIntraToggleState);
+  // 同シリーズ再マッチ: ON にした時点で大会一覧をロードしてシリーズを判定する。
+  const seriesCb = document.getElementById('so-avoid-series');
+  if (seriesCb) seriesCb.addEventListener('change', () => {
+    Promise.resolve(updateSeriesToggleState()).catch(() => {});
+  });
+  const seriesSel = document.getElementById('so-series-select');
+  if (seriesSel) seriesSel.addEventListener('change', () => {
+    SERIES_USER_PICKED = true;
+    const note = seriesNoteEl();
+    if (note) {
+      note.innerHTML = seriesSel.value ? ''
+        : '<span style="color:#b91c1c">⚠ シリーズ未選択のままだと同シリーズ罰則は掛かりません</span>';
+    }
+  });
 
   // ── 直近の大会ピッカー: イベント binding ──
   const upToggle = document.getElementById('upcoming-toggle');
@@ -2537,6 +2575,73 @@ function prefillShiftLimits(n) {
   els.forEach((e, k) => { e.value = vals[k]; });
   _lastShiftPrefill = vals;
 }
+// ── 同シリーズ再マッチ: 対象シリーズの判定 ────────────────────────────
+// 大会一覧 (tournaments.json, 約3MB) は「同シリーズの再戦を強めに避ける」を
+// ONにしたときだけ取りに行く (既定OFF の機能のために常時ロードはしない)。
+// 判定結果は必ず画面に出し、選び直せるようにする — 黙って別シリーズの罰則を
+// 掛けたり、黙って無効化したりしない。
+let SERIES_INDEX = null;          // { seriesOf, seriesNames } | null
+let SERIES_INDEX_LOADING = null;  // 多重ロード防止の Promise
+let SERIES_USER_PICKED = false;   // ユーザーが手で選んだら自動判定で上書きしない
+
+async function ensureSeriesIndex() {
+  if (SERIES_INDEX) return SERIES_INDEX;
+  if (!SERIES_INDEX_LOADING) {
+    SERIES_INDEX_LOADING = (async () => {
+      const json = await SeedData.defaultFetchers('../').fetchTournaments();
+      SERIES_INDEX = SeedData.buildSeriesIndex(json);
+      return SERIES_INDEX;
+    })().catch((e) => { SERIES_INDEX_LOADING = null; throw e; });
+  }
+  return SERIES_INDEX_LOADING;
+}
+
+function seriesNoteEl() { return document.getElementById('so-series-note'); }
+
+// select を全シリーズ名で埋め、判定結果を選ぶ。
+function populateSeriesSelect(detected) {
+  const sel = document.getElementById('so-series-select');
+  if (!sel || !SERIES_INDEX) return;
+  const keep = sel.value;
+  const names = SERIES_INDEX.seriesNames.slice().sort((a, b) => (a < b ? -1 : a > b ? 1 : 0));
+  sel.innerHTML = '<option value="">（シリーズを選択）</option>' +
+    names.map((n) => `<option value="${escHtml(n)}">${escHtml(n)}</option>`).join('');
+  const pick = (SERIES_USER_PICKED && keep) ? keep : (detected && detected.series) || '';
+  sel.value = pick;
+  const note = seriesNoteEl();
+  if (!note) return;
+  if (!sel.value) {
+    note.innerHTML = '<span style="color:#b91c1c">⚠ 大会名からシリーズを判定できませんでした。選んでください</span>';
+  } else if (SERIES_USER_PICKED && keep) {
+    note.textContent = '';
+  } else if (detected && detected.source === 'event_id') {
+    note.textContent = '（この大会の登録データから判定）';
+  } else {
+    note.innerHTML = '<span style="color:#92400e">（大会名から推定。違っていたら選び直してください）</span>';
+  }
+}
+
+// チェックボックスの状態に応じて選択欄を出し入れし、必要なら大会一覧をロードする。
+async function updateSeriesToggleState() {
+  const cb = document.getElementById('so-avoid-series');
+  const box = document.getElementById('so-series-box');
+  if (!cb || !box) return;
+  box.style.display = cb.checked ? '' : 'none';
+  if (!cb.checked) return;
+  const note = seriesNoteEl();
+  if (!SERIES_INDEX) {
+    if (note) note.textContent = '（大会一覧を読み込み中…）';
+    try {
+      await ensureSeriesIndex();
+    } catch (e) {
+      if (note) note.innerHTML = `<span style="color:#b91c1c">⚠ 大会一覧の取得に失敗: ${escHtml(String((e && e.message) || e))}</span>`;
+      return;
+    }
+  }
+  const ctx = EVENT_CONTEXT || {};
+  populateSeriesSelect(SeedData.detectSeries(SERIES_INDEX, ctx.eventId, ctx.tournamentName || ''));
+}
+
 // 「プール内変動」トグルは 2プール以上のときだけ指定可能。
 // 1プール×DE では intra が唯一の被り回避なので常に実行＝チェックは固定・無効表示。
 function updateIntraToggleState() {
@@ -2591,6 +2696,10 @@ function initSeedOptPanel() {
   showOptCancelBtn(false);
   SEEDOPT_ROUND_STATS = [];
   updateIntraToggleState();
+  SERIES_USER_PICKED = false;   // 別大会を読み込んだら自動判定をやり直す
+  // 非同期 (大会一覧のロードを伴うことがある)。失敗は欄の注記に出るので、
+  // ここでは unhandled rejection にしないためだけに握る。
+  Promise.resolve(updateSeriesToggleState()).catch(() => {});
   SEEDOPT_RESULT = null;
 }
 
@@ -2680,6 +2789,17 @@ async function runSeedOptimize() {
   const keepDePlace = document.getElementById('so-keep-deplace').checked;
   // 「平日大会を含む」(既定OFF) の反転が excludeWeekday (= 既定で平日を除外)。
   const excludeWeekday = !document.getElementById('so-include-weekday').checked;
+  // 同シリーズ再マッチ (既定OFF)。ON なのに対象シリーズが決まっていないときは
+  // 黙って無効化せず、ここで止めて選ばせる。
+  const avoidSeriesRematch = document.getElementById('so-avoid-series').checked;
+  const targetSeries = avoidSeriesRematch
+    ? ((document.getElementById('so-series-select') || {}).value || '') : '';
+  if (avoidSeriesRematch && !targetSeries) {
+    progress.textContent = SERIES_INDEX
+      ? '⚠ 同シリーズの再戦を避けるには、対象シリーズを選んでください。'
+      : '⚠ 大会一覧を読み込み中です。シリーズ欄が出てから実行してください。';
+    return;
+  }
   // 地域グルーピングのトグル（南関東 / 兵庫・大阪・京都）。
   const groupMinamiKanto = document.getElementById('so-group-minamikanto').checked;
   const groupKeihanshin = document.getElementById('so-group-keihanshin').checked;
@@ -2693,7 +2813,10 @@ async function runSeedOptimize() {
     saCooling: Math.min(0.9999, Math.max(0.5, numDef('so-cooling', 0.999))),
     maxItersScale: Math.max(10, intDef('so-itersscale', 1000)),
     rngSeed: intDef('so-rngseed', 12345),
-    avoidRegion, avoidRecent, enableIntra, keepDePlace,
+    avoidRegion, avoidRecent, enableIntra, keepDePlace, avoidSeriesRematch,
+    seriesMode: document.getElementById('so-seriesmode').value,
+    seriesMult: Math.max(1, numDef('so-seriesmult', 3)),
+    W_series: Math.max(0, numDef('so-wseries', 0.3)),
     bracketScope: scopeWinners ? 'winners' : undefined,   // undefined→既定 'pools'
     // シードズレ上限の段階指定 ([±0,±1,±2,±3,±4] それぞれ「何位まで」)。全空欄なら未指定。
     shiftLimitRanks: (() => {
@@ -2761,6 +2884,7 @@ async function runSeedOptimize() {
   let bundle;
   try {
     const dataParams = { sizeWeight, recentAgg, excludeWeekday };
+    if (targetSeries) dataParams.targetSeries = targetSeries;   // 同シリーズ分の集計対象
     if (recentDecayPoints) dataParams.recentDecayPoints = recentDecayPoints;  // 空欄なら既定を使う
     // 地域グルーピング表をトグルから構築（避けない地域があっても prefByUid 計算は行い、罰則側で無効化）。
     const regionGroups = SeedData.buildRegionGroups({ minamiKanto: groupMinamiKanto, keihanshin: groupKeihanshin });
@@ -2770,6 +2894,7 @@ async function runSeedOptimize() {
       // 地域被り回避 OFF のときは居住地データはレポート表示にしか使わないので、
       // 取得失敗で全体を止めない（meta.prefsError で明示される）。
       prefsOptional: !avoidRegion,
+      seriesIndex: SERIES_INDEX,   // ロード済みなら再取得しない
       params: dataParams,
       onProgress: (p) => {
         if (p.phase === 'fetch') progress.textContent = `選手データ取得中 ${p.done}/${p.total}…`;
@@ -2787,6 +2912,10 @@ async function runSeedOptimize() {
   if (m.missing.length) note += ` · DB未登録 ${m.missing.length} 名（対戦履歴なし扱い）`;
   if (m.errors.length) note += ` · ⚠ 取得失敗 ${m.errors.length} 名`;
   if (m.prefsError) note += ` · ⚠ 居住地データ取得失敗（地域表示なし）`;
+  if (m.targetSeries) {
+    note += ` · 同シリーズ「${m.targetSeries}」で対戦済 ${m.seriesPairs} 組`;
+    if (m.seriesIndexError) note += ` · ⚠ 大会一覧の取得に失敗（同シリーズ判定なし）`;
+  }
   if (lockUids.length) {
     const nPool = lockUids.filter(u => seedLocks[u] === 'pool').length;
     const nWave = lockUids.length - nPool;
@@ -2842,6 +2971,7 @@ async function runSeedOptimize() {
       poolCount, format, ranking,
       prefByUid: bundle.prefByUid, prefCounts: bundle.prefCounts,
       recentPair: bundle.recentPair, recentMeta: bundle.recentMeta,
+      seriesPair: bundle.seriesPair, targetSeries: targetSeries || null,
       params,
     } });
   } catch (e) {
@@ -2953,9 +3083,35 @@ function finishSeedOptimize(result, displayOf, note, ranking, interInfo) {
     }
     return h;
   }
+  // ── 同シリーズ再マッチの表示 ──
+  // 対象シリーズが決まっているときだけ出す (未判定なら seriesCount は常に 0)。
+  const seriesName = rep.targetSeries || null;
+  // 罰則を掛けたかどうかで文言を変える: OFF でも「気づける」ように件数は出す。
+  const seriesTag = (c) => (seriesName && c.seriesCount > 0)
+    ? `<span style="color:#b45309;font-weight:600" title="${escHtml(seriesName)} で ${c.seriesCount} 回対戦">◆同シリーズ${c.seriesCount}回</span> ` : '';
+  const seriesLine = (recent) => {
+    if (!seriesName) return '';
+    const n = recent.sameSeriesPairs || 0;
+    const head = `うち「${escHtml(seriesName)}」で対戦済: <strong>${n}</strong> 組`;
+    if (!n) return `<div style="margin-top:2px;font-size:11px;color:#16a34a">✅ ${head}</div>`;
+    const top = (recent.sameSeriesTop || []).map(c => {
+      const w = c.pool != null ? `P${c.pool + 1}` : `seed${c.seedA}×${c.seedB}`;
+      return `${dn(c.a)} × ${dn(c.b)}（${w} / ${c.seriesCount}回, 最終${c.seriesLastDate || '?'}）`;
+    });
+    return `<div style="margin-top:2px;font-size:11px;color:#b45309">◆ ${head}</div>` +
+      (top.length ? `<div style="margin:2px 0 0;padding-left:12px;font-size:11px;color:#92400e">${top.map(t => `<div>${t}</div>`).join('')}</div>` : '') +
+      (n > top.length ? `<div style="font-size:11px;color:#9ca3af;padding-left:12px">…ほか ${n - top.length} 組</div>` : '');
+  };
+  // 対戦履歴 1 行 (同シリーズの試合には印を付ける)。
+  const histLine = (m) => `<div${m.sameSeries ? ' style="color:#b45309;font-weight:600"' : ''}>` +
+    `${m.sameSeries ? '◆ ' : ''}${escHtml(m.date || '?')} ` +
+    `${m.tournament ? escHtml(m.tournament) : '（大会名不明）'}` +
+    `${m.nent != null ? `〈${m.nent}人〉` : ''}</div>`;
+
   // 直近対戦セルの描画。
   function recentCell(recent, withRound) {
     let h = `<div style="margin-top:5px;font-size:11px;color:#374151">同プールに残る直近対戦: <strong>${recent.pairs}</strong> 組${recent.top.length ? '（上位）' : ''}</div>`;
+    h += seriesLine(recent);
     if (!recent.top.length) return h;
     // 各ペアはタップで過去の対戦履歴（日付・大会名・規模）を展開できる <details>。
     h += `<div style="margin:3px 0 0;padding-left:6px;font-size:11px;color:#374151">`;
@@ -2963,12 +3119,10 @@ function finishSeedOptimize(result, displayOf, note, ranking, interInfo) {
       const t = c.lastTournament
         ? ` ${escHtml(c.lastTournament)}${c.lastNent != null ? `〈${c.lastNent}人〉` : ''}`
         : '';
-      const line = `${dn(c.a)} × ${dn(c.b)}（P${c.pool + 1}${withRound ? ' / ' + c.round + '回戦' : ''} / ${c.count}回, 最終${c.lastDate}${t}）`;
+      const line = `${seriesTag(c)}${dn(c.a)} × ${dn(c.b)}（P${c.pool + 1}${withRound ? ' / ' + c.round + '回戦' : ''} / ${c.count}回, 最終${c.lastDate}${t}）`;
       const ms = Array.isArray(c.matches) ? c.matches : [];
       if (!ms.length) return `<div style="padding:1px 0 1px 12px">${line}</div>`;
-      const hist = ms.map(m =>
-        `<div>${escHtml(m.date || '?')} ${m.tournament ? escHtml(m.tournament) : '（大会名不明）'}${m.nent != null ? `〈${m.nent}人〉` : ''}</div>`
-      ).join('');
+      const hist = ms.map(histLine).join('');
       return `<details style="padding:1px 0"><summary style="cursor:pointer">${line}</summary>` +
         `<div style="margin:2px 0 4px 18px;color:#6b7280">${hist}</div></details>`;
     }).join('');
@@ -3028,16 +3182,15 @@ function finishSeedOptimize(result, displayOf, note, ranking, interInfo) {
   // ⑤ 予選抜け後セル (再対戦 = ②④ と同じタップ展開付き)。
   function postRecentCell(pRec) {
     let h = `<div style="font-size:11px;color:#374151">予選抜け後の再対戦想定: <strong>${pRec.pairs}</strong> 組${pRec.top.length ? '（早い回戦順）' : ''}</div>`;
+    h += seriesLine(pRec);
     if (!pRec.top.length) return h;
     h += `<div style="margin:3px 0 0;padding-left:6px;font-size:11px;color:#374151">`;
     h += pRec.top.map(c => {
       const t = c.lastTournament ? ` ${escHtml(c.lastTournament)}${c.lastNent != null ? `〈${c.lastNent}人〉` : ''}` : '';
-      const line = `${dn(c.a)} × ${dn(c.b)}（seed${c.seedA}×${c.seedB} / ${c.round}回戦${c.count != null ? ' / ' + c.count + '回' : ''}, 最終${c.lastDate || '?'}${t}）`;
+      const line = `${seriesTag(c)}${dn(c.a)} × ${dn(c.b)}（seed${c.seedA}×${c.seedB} / ${c.round}回戦${c.count != null ? ' / ' + c.count + '回' : ''}, 最終${c.lastDate || '?'}${t}）`;
       const ms = Array.isArray(c.matches) ? c.matches : [];
       if (!ms.length) return `<div style="padding:1px 0 1px 12px">${line}</div>`;
-      const hist = ms.map(m =>
-        `<div>${escHtml(m.date || '?')} ${m.tournament ? escHtml(m.tournament) : '（大会名不明）'}${m.nent != null ? `〈${m.nent}人〉` : ''}</div>`
-      ).join('');
+      const hist = ms.map(histLine).join('');
       return `<details style="padding:1px 0"><summary style="cursor:pointer">${line}</summary>` +
         `<div style="margin:2px 0 4px 18px;color:#6b7280">${hist}</div></details>`;
     }).join('');
