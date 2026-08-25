@@ -1,32 +1,9 @@
 {
-  "generated_at": 1787648417,
+  "generated_at": 1787659268,
   "country_code": "JP",
   "lookahead_days": 21,
-  "count": 46,
+  "count": 45,
   "tournaments": [
-    {
-      "tournament_id": 944213,
-      "tournament_slug": "tournament/138-shibuya-tatsu",
-      "tournament_name": "渋谷\"達\" #138 shibuya -tatsu-",
-      "start_at": 1787652000,
-      "end_at": 1787664600,
-      "is_online": false,
-      "city": "渋谷区",
-      "venue_name": "",
-      "country_code": "JP",
-      "num_attendees": 17,
-      "url": "/tournament/138-shibuya-tatsu",
-      "events": [
-        {
-          "event_id": 1690858,
-          "event_slug": "tournament/138-shibuya-tatsu/event/singles",
-          "event_name": "Singles",
-          "num_entrants": 17,
-          "type": 1,
-          "start_at": 1787652000
-        }
-      ]
-    },
     {
       "tournament_id": 945154,
       "tournament_slug": "tournament/26-533",
@@ -152,7 +129,7 @@
       "city": "大阪市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 48,
+      "num_attendees": 49,
       "url": "/tournament/hit-193-maesuma-hit-193",
       "events": [
         {
@@ -1026,14 +1003,14 @@
       "city": "中野区",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 36,
+      "num_attendees": 37,
       "url": "/tournament/to-get-off-3",
       "events": [
         {
           "event_id": 1636160,
           "event_slug": "tournament/to-get-off-3/event/ultimate-singles",
           "event_name": "Ultimate Singles",
-          "num_entrants": 36,
+          "num_entrants": 37,
           "type": 1,
           "start_at": 1789270200
         }
