@@ -41,6 +41,7 @@
     poolAgg: new Map(),   // "ph:pool:wd:N" -> buildSeedData の結果
     charByUid: new Map(), // uid -> {name, emoji} (メイン使用キャラ)
     renderToken: 0,       // 非同期描画の競合ガード
+    phasesEdited: false,  // このページでフェーズ構成を編集したか (データ版が共有元とズレる理由の説明用)
   };
 
   // ── エラー/ステータス表示 ───────────────────────────────
@@ -890,6 +891,7 @@
       const { payload, warnings, view } = S.workCsvToPayload(text, { ev: file.name.replace(/\.csv$/i, '') });
       STATE.payload = payload;
       STATE.blob = await S.encodePayload(payload);
+      STATE.phasesEdited = false;   // 別のデータを読み込んだので編集フラグは持ち越さない
       STATE.players.clear(); STATE.poolAgg.clear();
       await ensureFinalPhase();
       STATE.view = view || { ph: 0, pool: null, wd: STATE.view.wd, lb: STATE.view.lb };
@@ -912,9 +914,27 @@
     STATE.blob = await S.encodePayload(STATE.payload);
   }
 
+  // ── データ版 ────────────────────────────────────────────
+  // 「相手と同じデータを見ているか」を突き合わせるための短いハッシュ。
+  // 見る側の状態 (どのフェーズ/プールを開いているか) では変わらない。
+  // 逆にこのページでフェーズ構成を編集したら変わる = 別のデータになったということ。
+  function renderVersion() {
+    const el = $('bp-version');
+    if (!el) return;
+    const v = S.payloadVersion(STATE.payload);
+    const edited = STATE.phasesEdited === true;
+    el.innerHTML = 'データ版 <code>' + v + '</code>' +
+      (edited ? ' <span>（このページでフェーズ構成を変更済み）</span>' : '');
+    el.classList.toggle('bp-version-edited', edited);
+    el.title = '共有元と同じ値なら、同じシード順・同じフェーズ構成を見ています。' +
+      'どのプールを開いているかでは変わりません。';
+    el.hidden = false;
+  }
+
   // ── 全体描画 ────────────────────────────────────────────
   function renderAll() {
     $('bp-event').textContent = STATE.payload.ev || '';
+    renderVersion();
     renderTabs();
     renderPoolSelect();
     renderPhaseEditor();
@@ -986,7 +1006,10 @@
       STATE.payload.phases = phases;
       renderPhaseEditor();
     });
-    $('bp-phase-apply').addEventListener('click', () => applyPhases(readPhaseEditor()));
+    $('bp-phase-apply').addEventListener('click', () => {
+      STATE.phasesEdited = true;   // 以降、データ版が共有元と違って当然になる
+      applyPhases(readPhaseEditor());
+    });
     $('bp-csv-file').addEventListener('change', (e) => {
       const f = e.target.files && e.target.files[0];
       if (f) importCsv(f);

@@ -224,3 +224,23 @@ body {
 .bp-pop .bp-pop-sub { color: #6b7280; font-size: 11px; }
 .bp-pop a { color: #2563eb; }
 .bp-pop .bp-pop-close { position: absolute; top: 4px; right: 8px; cursor: pointer; color: #9ca3af; font-size: 14px; }
+
+/* データ版: 同じデータを見ているかの突き合わせ用。目視・読み上げしやすいよう等幅で。 */
+.bp-version {
+  margin-top: 4px;
+  font-size: 12px;
+  color: #6b7280;
+}
+.bp-version code {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: .06em;
+  color: #374151;
+  background: #f3f4f6;
+  border: 1px solid #e5e7eb;
+  border-radius: 5px;
+  padding: 1px 7px;
+  user-select: all;   /* タップ/クリックで丸ごと選択できる (読み上げ・貼り付け用) */
+}
+.bp-version.bp-version-edited code { color: #92400e; background: #fffbeb; border-color: #fde68a; }

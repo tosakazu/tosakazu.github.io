@@ -199,6 +199,70 @@
     return payload;
   }
 
+  // ───────────────────────── データバージョン ─────────────────────────
+  // 「同じデータを見ているか」を突き合わせるための短いハッシュ。
+  //
+  // 含めるのは **ブラケットの中身を決める要素だけ**:
+  //   ev (大会名) / uids (シード順) / phases (名前・プール数・通過人数・敗者側スタート) /
+  //   wv (ウェーブ割り) / prog (進出割当)
+  //
+  // 含めないもの:
+  //   - 見る側の状態 (フラグメントの ph / pool / wd / lb / hi)。どのプールを開いて
+  //     いるかで版が変わったら突き合わせに使えない。
+  //   - names (表示名)。URL が長くなる規模では DB 登録者ぶんを落とすので、
+  //     同じブラケットでも URL の作り方で中身が変わる。表示専用なので無視する。
+  //   - src (発行元が seed ページか CSV か)。同じブラケットなら同じ版であるべき。
+  //   - blob (d=) 自体。deflate の出力は実装依存で、同じ入力でも一致する保証がない。
+  function versionSource(p) {
+    const phases = (Array.isArray(p && p.phases) ? p.phases : []).map((f) => [
+      String((f && f.name) || ''), (f && f.pools) | 0, (f && f.adv) | 0, (f && f.lb) | 0,
+    ]);
+    return JSON.stringify({
+      v: (p && p.v) | 0,
+      ev: String((p && p.ev) || ''),
+      uids: (Array.isArray(p && p.uids) ? p.uids : []).map((u) => (u == null ? 0 : u)),
+      phases,
+      wv: (p && Array.isArray(p.wv)) ? p.wv.map((w) => w | 0) : null,
+      prog: (p && p.prog) || null,
+    });
+  }
+
+  // 突き合わせ用なので暗号ハッシュは要らない (crypto.subtle は http や古い環境で
+  // 使えず、そのために版が出ないほうが困る)。FNV-1a を2レーン回して
+  // MurmurHash3 の finalizer で撹拌した 40bit を使う。
+  function _mix32(h) {
+    h ^= h >>> 16; h = Math.imul(h, 2246822507);
+    h ^= h >>> 13; h = Math.imul(h, 3266489909);
+    h ^= h >>> 16;
+    return h >>> 0;
+  }
+
+  // 目視で突き合わせる前提なので、紛らわしい文字 (I/L/O/U) を除いた
+  // Crockford base32 で 8 文字 (40bit)。'ABCD-EFGH' の形で出す。
+  const B32 = '0123456789ABCDEFGHJKMNPQRSTVWXYZ';
+
+  function payloadVersion(p) {
+    const str = versionSource(p);
+    let h1 = 0x811c9dc5 | 0, h2 = 0x01000193 | 0;
+    for (let i = 0; i < str.length; i++) {
+      const c = str.charCodeAt(i);
+      h1 = Math.imul(h1 ^ c, 16777619);
+      h2 = Math.imul(h2 ^ (c + i), 2246822519);
+    }
+    const a = _mix32(h1 ^ (h2 >>> 15));           // 上位 32bit
+    const b = _mix32(h2 ^ (h1 >>> 13)) & 0xff;    // 下位 8bit → 計 40bit
+    let out = '';
+    for (let i = 7; i >= 0; i--) {
+      // 40bit を 5bit ずつ。下位から取って逆順に並べる。
+      const shift = (7 - i) * 5;
+      const bits = shift < 8
+        ? (b >>> shift) | ((a << (8 - shift)) & 0x1f)
+        : (a >>> (shift - 8));
+      out = B32[bits & 31] + out;
+    }
+    return out.slice(0, 4) + '-' + out.slice(4);
+  }
+
   // ───────────────────────── URL フラグメント ─────────────────────────
   // '#v=1&ph=0&pool=A3&wd=1&lb=0&hi=12&d=<blob>'。view は blob の外 (表示状態の共有用)。
   function parseFragment(hash) {
@@ -434,6 +498,7 @@
 
   const API = {
     encodePayload, decodePayload, validatePayload, validatePhases, phaseEntrantCounts, withFinalPhase,
+    versionSource, payloadVersion,
     parseFragment, buildFragment,
     chunkWaveMap, waveLetter, poolLabel,
     parseCsv, workCsvToPayload, buildWorkCsv,

@@ -4268,7 +4268,10 @@ async function issueBracketPreview() {
     window.open(url, '_blank', 'noopener');
     let copied = false;
     try { await navigator.clipboard.writeText(url); copied = true; } catch (e) { /* clipboard 不可の環境 */ }
-    say(`🏆 プレビューを開きました (${recs.length}人 / URL ${url.length.toLocaleString()}字${copied ? '・コピー済み' : ''})。` +
+    // データ版: 共有相手と「同じデータを見ているか」を突き合わせるための値。
+    // プレビューページのヘッダにも同じものが出る。
+    const ver = SeedShare.payloadVersion(payload);
+    say(`🏆 プレビューを開きました (${ver ? 'データ版 ' + ver + ' / ' : ''}${recs.length}人 / URL ${url.length.toLocaleString()}字${copied ? '・コピー済み' : ''})。` +
       (trimmed ? ' 人数が多いため URL には SPSP 未登録者の名前だけを入れ、登録者名はプレビュー側で復元します。' : '') +
       (phasesFromGg
         ? `フェーズ構成 (${phases.map((p) => p.name).join(' → ')}) は start.gg の進出設定から自動設定しました。`
