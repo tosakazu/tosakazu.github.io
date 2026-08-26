@@ -1,5 +1,5 @@
 {
-  "generated_at": 1787670021,
+  "generated_at": 1787691627,
   "country_code": "JP",
   "lookahead_days": 21,
   "count": 46,
@@ -21,7 +21,7 @@
           "event_id": 1692851,
           "event_slug": "tournament/26-533/event/on",
           "event_name": "シングルス（１on１トーナメント）",
-          "num_entrants": 32,
+          "num_entrants": 31,
           "type": 1,
           "start_at": 1787731200
         }
@@ -37,14 +37,14 @@
       "city": "川崎市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 18,
+      "num_attendees": 19,
       "url": "/tournament/33-14",
       "events": [
         {
           "event_id": 1691629,
           "event_slug": "tournament/33-14/event/super-smash-bros-ultimate-singles",
           "event_name": "雷影杯",
-          "num_entrants": 17,
+          "num_entrants": 19,
           "type": 1,
           "start_at": 1787734800
         }
@@ -60,14 +60,14 @@
       "city": "京都市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 24,
+      "num_attendees": 23,
       "url": "/tournament/dsw-66",
       "events": [
         {
           "event_id": 1692203,
           "event_slug": "tournament/dsw-66/event/singletournament",
           "event_name": "SingleTournament",
-          "num_entrants": 24,
+          "num_entrants": 23,
           "type": 1,
           "start_at": 1787742000
         }
@@ -83,14 +83,14 @@
       "city": "台東区",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 17,
+      "num_attendees": 18,
       "url": "/tournament/27-534",
       "events": [
         {
           "event_id": 1677839,
           "event_slug": "tournament/27-534/event/on",
           "event_name": "シングルス（１on１トーナメント）",
-          "num_entrants": 17,
+          "num_entrants": 18,
           "type": 1,
           "start_at": 1787817600
         }
@@ -244,14 +244,14 @@
       "city": "福岡市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 2,
+      "num_attendees": 5,
       "url": "/tournament/smash-152-1",
       "events": [
         {
           "event_id": 1694715,
           "event_slug": "tournament/smash-152-1/event/1on1",
           "event_name": "1on1トーナメント",
-          "num_entrants": 2,
+          "num_entrants": 5,
           "type": 1,
           "start_at": 1787913000
         }
@@ -290,7 +290,7 @@
       "city": "大東市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 352,
+      "num_attendees": 353,
       "url": "/tournament/72-sp-1",
       "events": [
         {
@@ -405,14 +405,14 @@
       "city": "横浜市",
       "venue_name": "おださがプラザ",
       "country_code": "JP",
-      "num_attendees": 5,
+      "num_attendees": 6,
       "url": "/tournament/gg-ex1-kannai-gg-ex",
       "events": [
         {
           "event_id": 1685849,
           "event_slug": "tournament/gg-ex1-kannai-gg-ex/event/kannai-gg-sp-1on1",
           "event_name": "kannai-gg/スマブラSP 1on1",
-          "num_entrants": 5,
+          "num_entrants": 6,
           "type": 1,
           "start_at": 1788048000
         }
@@ -474,14 +474,14 @@
       "city": "台東区",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 14,
+      "num_attendees": 15,
       "url": "/tournament/30-537",
       "events": [
         {
           "event_id": 1677842,
           "event_slug": "tournament/30-537/event/on",
           "event_name": "シングルス（１on１トーナメント）",
-          "num_entrants": 14,
+          "num_entrants": 15,
           "type": 1,
           "start_at": 1788058800
         }
@@ -704,14 +704,14 @@
       "city": "町田市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 182,
+      "num_attendees": 184,
       "url": "/tournament/impact-major-5",
       "events": [
         {
           "event_id": 1672939,
           "event_slug": "tournament/impact-major-5/event/singles-tournament",
           "event_name": "Singles Tournament",
-          "num_entrants": 180,
+          "num_entrants": 181,
           "type": 1,
           "start_at": 1788652800
         }
@@ -727,14 +727,14 @@
       "city": "新潟市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 20,
+      "num_attendees": 21,
       "url": "/tournament/a-leg-arrival-new-xenith",
       "events": [
         {
           "event_id": 1687241,
           "event_slug": "tournament/a-leg-arrival-new-xenith/event/singles-tournament",
           "event_name": "Singles tournament",
-          "num_entrants": 20,
+          "num_entrants": 21,
           "type": 1,
           "start_at": 1788660000
         }
