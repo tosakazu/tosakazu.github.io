@@ -372,6 +372,15 @@
     }
     const split = splitStartWarning(currentPhase(), members.length);
     if (split) parts.push(split);
+    // 敗者側直入りのペアが実測テーブルに無い形なら、推定であることを明示する
+    {
+      const ph = currentPhase();
+      const de = C.poolDoubleElim(members.length, advOfPhase(ph), lbOfPhase(ph, members.length));
+      if (de.lbEntryEstimated) {
+        parts.push('ℹ この人数構成の敗者側直入りの組み合わせは実ブラケットの観測例が無く、' +
+          '既知のパターンからの推定です (実際の組み合わせと入れ替わる可能性があります)');
+      }
+    }
     if (agg && agg.meta && agg.meta.weekdayExcludedMatches) parts.push(`平日大会の対戦 ${agg.meta.weekdayExcludedMatches} 件を除外中`);
     if (aggWarn) parts.push(aggWarn);
     return parts.join(' / ');

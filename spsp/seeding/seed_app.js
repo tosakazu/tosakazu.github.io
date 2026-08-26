@@ -4231,16 +4231,24 @@ async function issueBracketPreview() {
       if (uids[i] == null || !MASTER_MAP || !MASTER_MAP.has(uids[i])) minimalNames[String(i)] = nm;
     });
     // フェーズ構成: start.gg から取れた連鎖 (通過人数込み) があればそれを初期値にする。
-    // 取れない / プール数がシード画面の値と食い違う / 検証が通らない場合は従来の既定
-    // (adv=2 + 自動最終フェーズ) にフォールバックする。
+    // 使えない場合は従来の既定 (adv=2 + 自動最終フェーズ) にするが、**理由は必ず表示する**
+    // (黙って劣化させない)。
     let phases = null;
     let phasesFromGg = false;
+    let phasesGgNote = '';
     const fetched = EVENT_CONTEXT && EVENT_CONTEXT.phasesConfig;
-    if (fetched && fetched.length >= 2 && (fetched[0].pools | 0) === P) {
-      const cand = SeedShare.withFinalPhase(fetched.map((p) => Object.assign({}, p)), recs.length);
-      if (!SeedShare.validatePhases(cand, recs.length).length) {
-        phases = cand;
-        phasesFromGg = true;
+    if (fetched && fetched.length >= 2) {
+      if ((fetched[0].pools | 0) !== P) {
+        phasesGgNote = `⚠ start.gg のフェーズ構成 (プール数 ${fetched[0].pools}) と画面のプール数 ${P} が食い違うため、既定の構成で発行しました。`;
+      } else {
+        const cand = SeedShare.withFinalPhase(fetched.map((p) => Object.assign({}, p)), recs.length);
+        const errs = SeedShare.validatePhases(cand, recs.length);
+        if (errs.length) {
+          phasesGgNote = `⚠ start.gg のフェーズ構成が検証を通らないため既定の構成で発行しました (${errs[0]})。`;
+        } else {
+          phases = cand;
+          phasesFromGg = true;
+        }
       }
     }
     if (!phases) {
@@ -4275,7 +4283,8 @@ async function issueBracketPreview() {
       (trimmed ? ' 人数が多いため URL には SPSP 未登録者の名前だけを入れ、登録者名はプレビュー側で復元します。' : '') +
       (phasesFromGg
         ? `フェーズ構成 (${phases.map((p) => p.name).join(' → ')}) は start.gg の進出設定から自動設定しました。`
-        : 'Top カットの区切りはプレビューページの「フェーズ構成」で設定できます。'));
+        : (phasesGgNote ? phasesGgNote + ' ' : '') +
+          'Top カットの区切りはプレビューページの「フェーズ構成」で設定できます。'));
   } catch (e) {
     say('❌ プレビュー発行に失敗: ' + (e && e.message));
   }

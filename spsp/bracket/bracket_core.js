@@ -159,6 +159,8 @@
     '4:2': [1, 0, 3, 2],                                                // 勝4+敗8 (風雲#2 実測)
     '4:4': [3, 2, 1, 0],                                                // 勝8+敗8 (ウメブラSP10 TOP16。
                                                                         //   ユニブラ#8 は [1,0,3,2] で食い違う)
+    '8:4': [2, 3, 0, 1, 6, 7, 4, 5],                                    // 勝8+敗16 (ウメブラSP4/SP5 Round2 計6。
+                                                                        //   SP10 R3/Top24 は別配列で食い違う)
     '8:8': [6, 7, 4, 5, 2, 3, 0, 1],                                    // 勝16+敗16 (篝火3/他1)
     '16:8': [5, 4, 7, 6, 1, 0, 3, 2, 13, 12, 15, 14, 9, 8, 11, 10],     // 勝16+敗32 (篝火2/ウメブラ7)
     '16:16': [14, 15, 12, 13, 10, 11, 8, 9, 6, 7, 4, 5, 2, 3, 0, 1],    // 勝32+敗32 (ウメブラ/西武撃/アブスマ。
@@ -211,6 +213,23 @@
     return slots;
   }
 
+  // 直入りペアの並びが「実測テーブル由来」か「XOR 系列による推定」かを返す。
+  // 推定の場合は UI 側で明示する (黙って劣化させない方針)。
+  function lbEntryObserved(w, d) {
+    const Bw = nextPow2Safe(w);
+    const target = Math.max(1, Bw / 2);
+    if (d <= target) return true;   // ペア無し (そのまま埋めるだけ) = 推定要素なし
+    let D = target;
+    while (D < d) D *= 2;
+    const n = D / 2;
+    const tbl = LB_ENTRY_PERM[n + ':' + target];
+    return !!(tbl && tbl.length === n);
+  }
+
+  function nextPow2Safe(w) {
+    return Math.pow(2, Math.ceil(Math.log2(Math.max(2, w))));
+  }
+
   function splitStartDoubleElim(M, d) {
     const w = M - d;
     const base = poolRounds(w);
@@ -234,7 +253,11 @@
       // 合流1回目 (WR1 の敗者) を標準構成の j=2 相当として扱う
       cur = pushMajorMinor(losers, cur, winners[j - 1].map((m) => m.l), j, j + 1);
     }
-    return { B: Bw, winners, losers, lbStart: d, gf: mkMatch(winners[k - 1][0].w, cur[0]) };
+    return {
+      B: Bw, winners, losers, lbStart: d, gf: mkMatch(winners[k - 1][0].w, cur[0]),
+      // 直入りペアが実測テーブルに無い形なら true (UI が「推定」と明示する)
+      lbEntryEstimated: !lbEntryObserved(w, d),
+    };
   }
 
   // 実施順に並べたラウンド列。W1 → L1 → W2 → L(major) → L(minor) → W3 → … → GF。
@@ -357,7 +380,7 @@
     return '敗者側' + (idx + 1) + '回戦';
   }
 
-  const API = { phasePools, poolRounds, poolDoubleElim, poolMatchups, playOrder, roundName, lbRoundName, fmtRelDays };
+  const API = { phasePools, poolRounds, poolDoubleElim, poolMatchups, playOrder, roundName, lbRoundName, fmtRelDays, lbEntryObserved };
   global.BracketCore = API;
   if (typeof module !== 'undefined' && module.exports) module.exports = API;
 })(typeof window !== 'undefined' ? window : (typeof self !== 'undefined' ? self : globalThis));
