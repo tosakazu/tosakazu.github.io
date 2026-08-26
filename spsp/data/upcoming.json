@@ -1,32 +1,9 @@
 {
-  "generated_at": 1787734819,
+  "generated_at": 1787745626,
   "country_code": "JP",
   "lookahead_days": 21,
-  "count": 45,
+  "count": 44,
   "tournaments": [
-    {
-      "tournament_id": 944848,
-      "tournament_slug": "tournament/dsw-66",
-      "tournament_name": "新京都DSW#66",
-      "start_at": 1787742000,
-      "end_at": 1787752800,
-      "is_online": false,
-      "city": "京都市",
-      "venue_name": "",
-      "country_code": "JP",
-      "num_attendees": 22,
-      "url": "/tournament/dsw-66",
-      "events": [
-        {
-          "event_id": 1692203,
-          "event_slug": "tournament/dsw-66/event/singletournament",
-          "event_name": "SingleTournament",
-          "num_entrants": 22,
-          "type": 1,
-          "start_at": 1787742000
-        }
-      ]
-    },
     {
       "tournament_id": 937953,
       "tournament_slug": "tournament/27-534",
@@ -60,14 +37,14 @@
       "city": "渋谷区",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 16,
+      "num_attendees": 17,
       "url": "/tournament/shibuya-g-g-smash-weekly-77",
       "events": [
         {
           "event_id": 1692329,
           "event_slug": "tournament/shibuya-g-g-smash-weekly-77/event/singles",
           "event_name": "Singles",
-          "num_entrants": 16,
+          "num_entrants": 17,
           "type": 1,
           "start_at": 1787826600
         }
@@ -83,14 +60,14 @@
       "city": "大阪市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 50,
+      "num_attendees": 49,
       "url": "/tournament/hit-193-maesuma-hit-193",
       "events": [
         {
           "event_id": 1680046,
           "event_slug": "tournament/hit-193-maesuma-hit-193/event/singles-tournament",
           "event_name": "Singles Tournament",
-          "num_entrants": 48,
+          "num_entrants": 47,
           "type": 1,
           "start_at": 1787824800
         }
@@ -129,14 +106,14 @@
       "city": "台東区",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 20,
+      "num_attendees": 21,
       "url": "/tournament/28-535",
       "events": [
         {
           "event_id": 1677840,
           "event_slug": "tournament/28-535/event/on",
           "event_name": "シングルス（１on１トーナメント）",
-          "num_entrants": 19,
+          "num_entrants": 20,
           "type": 1,
           "start_at": 1787904000
         }
@@ -980,14 +957,14 @@
       "city": "中野区",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 37,
+      "num_attendees": 36,
       "url": "/tournament/to-get-off-3",
       "events": [
         {
           "event_id": 1636160,
           "event_slug": "tournament/to-get-off-3/event/ultimate-singles",
           "event_name": "Ultimate Singles",
-          "num_entrants": 37,
+          "num_entrants": 36,
           "type": 1,
           "start_at": 1789270200
         }
