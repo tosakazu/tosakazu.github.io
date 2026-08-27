@@ -1,8 +1,8 @@
 {
-  "generated_at": 1787799629,
+  "generated_at": 1787810460,
   "country_code": "JP",
   "lookahead_days": 21,
-  "count": 45,
+  "count": 46,
   "tournaments": [
     {
       "tournament_id": 937953,
@@ -106,14 +106,14 @@
       "city": "台東区",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 25,
+      "num_attendees": 28,
       "url": "/tournament/28-535",
       "events": [
         {
           "event_id": 1677840,
           "event_slug": "tournament/28-535/event/on",
           "event_name": "シングルス（１on１トーナメント）",
-          "num_entrants": 22,
+          "num_entrants": 26,
           "type": 1,
           "start_at": 1787904000
         }
@@ -382,7 +382,7 @@
       "city": "東大阪市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 398,
+      "num_attendees": 400,
       "url": "/tournament/grand-wars-3-maesuma-grand-wars-3",
       "events": [
         {
@@ -451,14 +451,14 @@
       "city": "渋谷区",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 2,
+      "num_attendees": 3,
       "url": "/tournament/139-shibuya-tatsu",
       "events": [
         {
           "event_id": 1695694,
           "event_slug": "tournament/139-shibuya-tatsu/event/singles",
           "event_name": "Singles",
-          "num_entrants": 2,
+          "num_entrants": 3,
           "type": 1,
           "start_at": 1788256800
         }
@@ -497,14 +497,14 @@
       "city": "京都市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 5,
+      "num_attendees": 7,
       "url": "/tournament/dsw-67",
       "events": [
         {
           "event_id": 1697098,
           "event_slug": "tournament/dsw-67/event/singletournament",
           "event_name": "SingleTournament",
-          "num_entrants": 5,
+          "num_entrants": 7,
           "type": 1,
           "start_at": 1788346800
         }
@@ -534,6 +534,29 @@
       ]
     },
     {
+      "tournament_id": 947236,
+      "tournament_slug": "tournament/shibuya-g-g-smash-weekly-78",
+      "tournament_name": "Shibuya G.G.Smash Weekly 78",
+      "start_at": 1788426000,
+      "end_at": 1788442200,
+      "is_online": false,
+      "city": "渋谷区",
+      "venue_name": "",
+      "country_code": "JP",
+      "num_attendees": 0,
+      "url": "/tournament/shibuya-g-g-smash-weekly-78",
+      "events": [
+        {
+          "event_id": 1697176,
+          "event_slug": "tournament/shibuya-g-g-smash-weekly-78/event/singles",
+          "event_name": "Singles",
+          "num_entrants": 0,
+          "type": 1,
+          "start_at": 1788431400
+        }
+      ]
+    },
+    {
       "tournament_id": 943842,
       "tournament_slug": "tournament/4-541",
       "tournament_name": "4(金)上野スマコミ#541(オープン)",
@@ -543,14 +566,14 @@
       "city": "台東区",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 5,
+      "num_attendees": 6,
       "url": "/tournament/4-541",
       "events": [
         {
           "event_id": 1690043,
           "event_slug": "tournament/4-541/event/on",
           "event_name": "シングルス（１on１トーナメント）",
-          "num_entrants": 5,
+          "num_entrants": 6,
           "type": 1,
           "start_at": 1788508800
         }
@@ -635,14 +658,14 @@
       "city": "横浜市",
       "venue_name": "おださがプラザ",
       "country_code": "JP",
-      "num_attendees": 185,
+      "num_attendees": 187,
       "url": "/tournament/53-kurobra53",
       "events": [
         {
           "event_id": 1671132,
           "event_slug": "tournament/53-kurobra53/event/kurobra-sp-1on1",
           "event_name": "Kurobra/SP 1on1トーナメント",
-          "num_entrants": 175,
+          "num_entrants": 177,
           "type": 1,
           "start_at": 1788570000
         }
@@ -704,14 +727,14 @@
       "city": "新潟市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 22,
+      "num_attendees": 23,
       "url": "/tournament/a-leg-arrival-new-xenith",
       "events": [
         {
           "event_id": 1687241,
           "event_slug": "tournament/a-leg-arrival-new-xenith/event/singles-tournament",
           "event_name": "Singles tournament",
-          "num_entrants": 22,
+          "num_entrants": 23,
           "type": 1,
           "start_at": 1788660000
         }
@@ -842,14 +865,14 @@
       "city": "知立市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 80,
+      "num_attendees": 81,
       "url": "/tournament/sp5-2",
       "events": [
         {
           "event_id": 1632234,
           "event_slug": "tournament/sp5-2/event/gokusuma-sp5",
           "event_name": "GOKUSUMA SP5",
-          "num_entrants": 80,
+          "num_entrants": 81,
           "type": 1,
           "start_at": 1789178400
         }
