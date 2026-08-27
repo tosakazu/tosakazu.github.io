@@ -1,5 +1,5 @@
 {
-  "generated_at": 1787745626,
+  "generated_at": 1787756419,
   "country_code": "JP",
   "lookahead_days": 21,
   "count": 44,
@@ -14,7 +14,7 @@
       "city": "台東区",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 21,
+      "num_attendees": 22,
       "url": "/tournament/27-534",
       "events": [
         {
@@ -106,14 +106,14 @@
       "city": "台東区",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 21,
+      "num_attendees": 22,
       "url": "/tournament/28-535",
       "events": [
         {
           "event_id": 1677840,
           "event_slug": "tournament/28-535/event/on",
           "event_name": "シングルス（１on１トーナメント）",
-          "num_entrants": 20,
+          "num_entrants": 21,
           "type": 1,
           "start_at": 1787904000
         }
@@ -129,14 +129,14 @@
       "city": "厚木市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 2,
+      "num_attendees": 3,
       "url": "/tournament/4-115",
       "events": [
         {
           "event_id": 1689328,
           "event_slug": "tournament/4-115/event/1on1",
           "event_name": "1on1メイントーナメント",
-          "num_entrants": 2,
+          "num_entrants": 3,
           "type": 1,
           "start_at": 1787905800
         }
@@ -520,14 +520,14 @@
       "city": "台東区",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 3,
+      "num_attendees": 5,
       "url": "/tournament/4-541",
       "events": [
         {
           "event_id": 1690043,
           "event_slug": "tournament/4-541/event/on",
           "event_name": "シングルス（１on１トーナメント）",
-          "num_entrants": 3,
+          "num_entrants": 5,
           "type": 1,
           "start_at": 1788508800
         }
