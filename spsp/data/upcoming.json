@@ -1,5 +1,5 @@
 {
-  "generated_at": 1787940010,
+  "generated_at": 1787950897,
   "country_code": "JP",
   "lookahead_days": 21,
   "count": 39,
@@ -175,7 +175,7 @@
       "city": "東大阪市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 405,
+      "num_attendees": 407,
       "url": "/tournament/grand-wars-3-maesuma-grand-wars-3",
       "events": [
         {
@@ -198,14 +198,14 @@
       "city": "台東区",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 23,
+      "num_attendees": 24,
       "url": "/tournament/30-537",
       "events": [
         {
           "event_id": 1677842,
           "event_slug": "tournament/30-537/event/on",
           "event_name": "シングルス（１on１トーナメント）",
-          "num_entrants": 23,
+          "num_entrants": 24,
           "type": 1,
           "start_at": 1788058800
         }
@@ -497,14 +497,14 @@
       "city": "横浜市",
       "venue_name": "おださがプラザ",
       "country_code": "JP",
-      "num_attendees": 196,
+      "num_attendees": 197,
       "url": "/tournament/53-kurobra53",
       "events": [
         {
           "event_id": 1671132,
           "event_slug": "tournament/53-kurobra53/event/kurobra-sp-1on1",
           "event_name": "Kurobra/SP 1on1トーナメント",
-          "num_entrants": 182,
+          "num_entrants": 183,
           "type": 1,
           "start_at": 1788570000
         }
@@ -566,14 +566,14 @@
       "city": "新潟市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 23,
+      "num_attendees": 24,
       "url": "/tournament/a-leg-arrival-new-xenith",
       "events": [
         {
           "event_id": 1687241,
           "event_slug": "tournament/a-leg-arrival-new-xenith/event/singles-tournament",
           "event_name": "Singles tournament",
-          "num_entrants": 23,
+          "num_entrants": 24,
           "type": 1,
           "start_at": 1788660000
         }
@@ -589,7 +589,7 @@
       "city": "東広島市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 41,
+      "num_attendees": 42,
       "url": "/tournament/16-35",
       "events": [
         {
