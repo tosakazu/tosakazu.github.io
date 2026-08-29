@@ -1,5 +1,5 @@
 {
-  "generated_at": 1787983248,
+  "generated_at": 1787994010,
   "country_code": "JP",
   "lookahead_days": 21,
   "count": 37,
@@ -83,7 +83,7 @@
       "city": "横浜市",
       "venue_name": "おださがプラザ",
       "country_code": "JP",
-      "num_attendees": 11,
+      "num_attendees": 12,
       "url": "/tournament/gg-ex1-kannai-gg-ex",
       "events": [
         {
@@ -152,14 +152,14 @@
       "city": "台東区",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 27,
+      "num_attendees": 30,
       "url": "/tournament/30-537",
       "events": [
         {
           "event_id": 1677842,
           "event_slug": "tournament/30-537/event/on",
           "event_name": "シングルス（１on１トーナメント）",
-          "num_entrants": 27,
+          "num_entrants": 30,
           "type": 1,
           "start_at": 1788058800
         }
@@ -221,14 +221,14 @@
       "city": "中野区",
       "venue_name": "Red Bull Gaming Sphere Tokyo",
       "country_code": "JP",
-      "num_attendees": 56,
+      "num_attendees": 66,
       "url": "/tournament/weekly-smash-party-243",
       "events": [
         {
           "event_id": 1697735,
           "event_slug": "tournament/weekly-smash-party-243/event/special-1on1-ultimate-singles",
           "event_name": "SPECIAL 1on1/ Ultimate Singles",
-          "num_entrants": 55,
+          "num_entrants": 64,
           "type": 1,
           "start_at": 1788339600
         }
