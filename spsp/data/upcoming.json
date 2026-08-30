@@ -1,8 +1,8 @@
 {
-  "generated_at": 1788048285,
+  "generated_at": 1788060030,
   "country_code": "JP",
   "lookahead_days": 21,
-  "count": 32,
+  "count": 33,
   "tournaments": [
     {
       "tournament_id": 937955,
@@ -14,7 +14,7 @@
       "city": "台東区",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 5,
+      "num_attendees": 6,
       "url": "/tournament/31-538",
       "events": [
         {
@@ -60,7 +60,7 @@
       "city": "中野区",
       "venue_name": "Red Bull Gaming Sphere Tokyo",
       "country_code": "JP",
-      "num_attendees": 68,
+      "num_attendees": 70,
       "url": "/tournament/weekly-smash-party-243",
       "events": [
         {
@@ -244,14 +244,14 @@
       "city": "川崎市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 1,
+      "num_attendees": 3,
       "url": "/tournament/13-33",
       "events": [
         {
           "event_id": 1698825,
           "event_slug": "tournament/13-33/event/super-smash-bros-ultimate-singles",
           "event_name": "シングルス",
-          "num_entrants": 1,
+          "num_entrants": 3,
           "type": 1,
           "start_at": 1788512400
         }
@@ -313,14 +313,14 @@
       "city": "横浜市",
       "venue_name": "おださがプラザ",
       "country_code": "JP",
-      "num_attendees": 202,
+      "num_attendees": 203,
       "url": "/tournament/53-kurobra53",
       "events": [
         {
           "event_id": 1671132,
           "event_slug": "tournament/53-kurobra53/event/kurobra-sp-1on1",
           "event_name": "Kurobra/SP 1on1トーナメント",
-          "num_entrants": 185,
+          "num_entrants": 186,
           "type": 1,
           "start_at": 1788570000
         }
@@ -359,7 +359,7 @@
       "city": "町田市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 197,
+      "num_attendees": 198,
       "url": "/tournament/impact-major-5",
       "events": [
         {
@@ -497,16 +497,39 @@
       "city": "熊本市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 17,
+      "num_attendees": 18,
       "url": "/tournament/sp-34-3",
       "events": [
         {
           "event_id": 1683907,
           "event_slug": "tournament/sp-34-3/event/sp-34",
           "event_name": "肥後ブラSP#34",
-          "num_entrants": 17,
+          "num_entrants": 18,
           "type": 1,
           "start_at": 1789171200
+        }
+      ]
+    },
+    {
+      "tournament_id": 944196,
+      "tournament_slug": "tournament/11-moon",
+      "tournament_name": "【第11回】Moon!",
+      "start_at": 1789178400,
+      "end_at": 1789207200,
+      "is_online": false,
+      "city": "広島市",
+      "venue_name": "",
+      "country_code": "JP",
+      "num_attendees": 6,
+      "url": "/tournament/11-moon",
+      "events": [
+        {
+          "event_id": 1690818,
+          "event_slug": "tournament/11-moon/event/1on1-tournament",
+          "event_name": "シングルス/1on1 tournament",
+          "num_entrants": 6,
+          "type": 1,
+          "start_at": 1789178400
         }
       ]
     },
@@ -520,14 +543,14 @@
       "city": "知立市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 85,
+      "num_attendees": 87,
       "url": "/tournament/sp5-2",
       "events": [
         {
           "event_id": 1632234,
           "event_slug": "tournament/sp5-2/event/gokusuma-sp5",
           "event_name": "GOKUSUMA SP5",
-          "num_entrants": 85,
+          "num_entrants": 87,
           "type": 1,
           "start_at": 1789178400
         }
@@ -612,14 +635,14 @@
       "city": "渋谷区",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 38,
+      "num_attendees": 39,
       "url": "/tournament/to-win-13",
       "events": [
         {
           "event_id": 1694656,
           "event_slug": "tournament/to-win-13/event/singles",
           "event_name": "Singles",
-          "num_entrants": 38,
+          "num_entrants": 39,
           "type": 1,
           "start_at": 1789261200
         }
@@ -727,14 +750,14 @@
       "city": "熊谷市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 35,
+      "num_attendees": 36,
       "url": "/tournament/flyhigh-29-96",
       "events": [
         {
           "event_id": 1689225,
           "event_slug": "tournament/flyhigh-29-96/event/fly-high-96",
           "event_name": "Fly High!! 96人トーナメント 埼玉県熊谷市スマブラ大会",
-          "num_entrants": 35,
+          "num_entrants": 36,
           "type": 1,
           "start_at": 1789225200
         }
