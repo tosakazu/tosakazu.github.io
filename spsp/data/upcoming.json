@@ -1,5 +1,5 @@
 {
-  "generated_at": 1788060030,
+  "generated_at": 1788069628,
   "country_code": "JP",
   "lookahead_days": 21,
   "count": 33,
@@ -14,14 +14,14 @@
       "city": "台東区",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 6,
+      "num_attendees": 9,
       "url": "/tournament/31-538",
       "events": [
         {
           "event_id": 1677841,
           "event_slug": "tournament/31-538/event/on",
           "event_name": "シングルス（１on１トーナメント）",
-          "num_entrants": 5,
+          "num_entrants": 8,
           "type": 1,
           "start_at": 1788163200
         }
@@ -60,7 +60,7 @@
       "city": "中野区",
       "venue_name": "Red Bull Gaming Sphere Tokyo",
       "country_code": "JP",
-      "num_attendees": 70,
+      "num_attendees": 71,
       "url": "/tournament/weekly-smash-party-243",
       "events": [
         {
@@ -129,14 +129,14 @@
       "city": "台東区",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 1,
+      "num_attendees": 4,
       "url": "/tournament/3-540-1",
       "events": [
         {
           "event_id": 1690037,
           "event_slug": "tournament/3-540-1/event/on",
           "event_name": "シングルス（１on１トーナメント）",
-          "num_entrants": 1,
+          "num_entrants": 4,
           "type": 1,
           "start_at": 1788422400
         }
@@ -175,14 +175,14 @@
       "city": "台東区",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 7,
+      "num_attendees": 9,
       "url": "/tournament/4-541",
       "events": [
         {
           "event_id": 1690043,
           "event_slug": "tournament/4-541/event/on",
           "event_name": "シングルス（１on１トーナメント）",
-          "num_entrants": 7,
+          "num_entrants": 9,
           "type": 1,
           "start_at": 1788508800
         }
@@ -313,14 +313,14 @@
       "city": "横浜市",
       "venue_name": "おださがプラザ",
       "country_code": "JP",
-      "num_attendees": 203,
+      "num_attendees": 205,
       "url": "/tournament/53-kurobra53",
       "events": [
         {
           "event_id": 1671132,
           "event_slug": "tournament/53-kurobra53/event/kurobra-sp-1on1",
           "event_name": "Kurobra/SP 1on1トーナメント",
-          "num_entrants": 186,
+          "num_entrants": 187,
           "type": 1,
           "start_at": 1788570000
         }
@@ -359,7 +359,7 @@
       "city": "町田市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 198,
+      "num_attendees": 199,
       "url": "/tournament/impact-major-5",
       "events": [
         {
@@ -382,14 +382,14 @@
       "city": "新潟市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 25,
+      "num_attendees": 26,
       "url": "/tournament/a-leg-arrival-new-xenith",
       "events": [
         {
           "event_id": 1687241,
           "event_slug": "tournament/a-leg-arrival-new-xenith/event/singles-tournament",
           "event_name": "Singles tournament",
-          "num_entrants": 25,
+          "num_entrants": 26,
           "type": 1,
           "start_at": 1788660000
         }
@@ -543,14 +543,14 @@
       "city": "知立市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 87,
+      "num_attendees": 88,
       "url": "/tournament/sp5-2",
       "events": [
         {
           "event_id": 1632234,
           "event_slug": "tournament/sp5-2/event/gokusuma-sp5",
           "event_name": "GOKUSUMA SP5",
-          "num_entrants": 87,
+          "num_entrants": 88,
           "type": 1,
           "start_at": 1789178400
         }
@@ -566,14 +566,14 @@
       "city": "Nagaoka",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 29,
+      "num_attendees": 30,
       "url": "/tournament/9-gikasuma9",
       "events": [
         {
           "event_id": 1688845,
           "event_slug": "tournament/9-gikasuma9/event/sp-1-on-1",
           "event_name": "スマブラSP 1 on 1",
-          "num_entrants": 25,
+          "num_entrants": 26,
           "type": 1,
           "start_at": 1789225260
         }
@@ -635,14 +635,14 @@
       "city": "渋谷区",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 39,
+      "num_attendees": 41,
       "url": "/tournament/to-win-13",
       "events": [
         {
           "event_id": 1694656,
           "event_slug": "tournament/to-win-13/event/singles",
           "event_name": "Singles",
-          "num_entrants": 39,
+          "num_entrants": 41,
           "type": 1,
           "start_at": 1789261200
         }
