@@ -1,78 +1,9 @@
 {
-  "generated_at": 1788004908,
+  "generated_at": 1788015634,
   "country_code": "JP",
   "lookahead_days": 21,
-  "count": 38,
+  "count": 35,
   "tournaments": [
-    {
-      "tournament_id": 930764,
-      "tournament_slug": "tournament/1-303",
-      "tournament_name": "渋谷\"達\" 優勝者杯#1",
-      "start_at": 1788015600,
-      "end_at": 1788080400,
-      "is_online": false,
-      "city": "渋谷区",
-      "venue_name": "",
-      "country_code": "JP",
-      "num_attendees": 16,
-      "url": "/tournament/1-303",
-      "events": [
-        {
-          "event_id": 1663323,
-          "event_slug": "tournament/1-303/event/singles",
-          "event_name": "Singles",
-          "num_entrants": 16,
-          "type": 1,
-          "start_at": 1788015600
-        }
-      ]
-    },
-    {
-      "tournament_id": 947813,
-      "tournament_slug": "tournament/108-5",
-      "tournament_name": "第108回シカブラ",
-      "start_at": 1788015600,
-      "end_at": 1788517800,
-      "is_online": false,
-      "city": "名古屋市",
-      "venue_name": "",
-      "country_code": "JP",
-      "num_attendees": 0,
-      "url": "/tournament/108-5",
-      "events": [
-        {
-          "event_id": 1698294,
-          "event_slug": "tournament/108-5/event/1on1-tournament",
-          "event_name": "1on1 tournament",
-          "num_entrants": 0,
-          "type": 1,
-          "start_at": 1788015600
-        }
-      ]
-    },
-    {
-      "tournament_id": 947812,
-      "tournament_slug": "tournament/10-70",
-      "tournament_name": "第10回シカブラ",
-      "start_at": 1788015600,
-      "end_at": 1788517800,
-      "is_online": false,
-      "city": "名古屋市",
-      "venue_name": "",
-      "country_code": "JP",
-      "num_attendees": 0,
-      "url": "/tournament/10-70",
-      "events": [
-        {
-          "event_id": 1698293,
-          "event_slug": "tournament/10-70/event/1on1-tournament",
-          "event_name": "1on1 tournament",
-          "num_entrants": 0,
-          "type": 1,
-          "start_at": 1788015600
-        }
-      ]
-    },
     {
       "tournament_id": 941778,
       "tournament_slug": "tournament/gg-ex1-kannai-gg-ex",
@@ -106,14 +37,14 @@
       "city": "北区",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 5,
+      "num_attendees": 6,
       "url": "/tournament/acd-5",
       "events": [
         {
           "event_id": 1679820,
           "event_slug": "tournament/acd-5/event/acd-5",
           "event_name": "【お昼食えます】ACDオフスマ#5",
-          "num_entrants": 5,
+          "num_entrants": 6,
           "type": 1,
           "start_at": 1788051600
         }
@@ -152,14 +83,14 @@
       "city": "台東区",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 31,
+      "num_attendees": 32,
       "url": "/tournament/30-537",
       "events": [
         {
           "event_id": 1677842,
           "event_slug": "tournament/30-537/event/on",
           "event_name": "シングルス（１on１トーナメント）",
-          "num_entrants": 31,
+          "num_entrants": 32,
           "type": 1,
           "start_at": 1788058800
         }
@@ -221,7 +152,7 @@
       "city": "中野区",
       "venue_name": "Red Bull Gaming Sphere Tokyo",
       "country_code": "JP",
-      "num_attendees": 66,
+      "num_attendees": 67,
       "url": "/tournament/weekly-smash-party-243",
       "events": [
         {
@@ -359,14 +290,14 @@
       "city": "厚木市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 5,
+      "num_attendees": 6,
       "url": "/tournament/5-105",
       "events": [
         {
           "event_id": 1689329,
           "event_slug": "tournament/5-105/event/1on1",
           "event_name": "1on1メイントーナメント",
-          "num_entrants": 5,
+          "num_entrants": 6,
           "type": 1,
           "start_at": 1788510600
         }
