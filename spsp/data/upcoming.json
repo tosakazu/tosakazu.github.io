@@ -1,55 +1,9 @@
 {
-  "generated_at": 1788156036,
+  "generated_at": 1788167303,
   "country_code": "JP",
   "lookahead_days": 21,
-  "count": 36,
+  "count": 34,
   "tournaments": [
-    {
-      "tournament_id": 937955,
-      "tournament_slug": "tournament/31-538",
-      "tournament_name": "31(月)上野スマコミ#538(オープン)",
-      "start_at": 1788163200,
-      "end_at": 1788184800,
-      "is_online": false,
-      "city": "台東区",
-      "venue_name": "",
-      "country_code": "JP",
-      "num_attendees": 15,
-      "url": "/tournament/31-538",
-      "events": [
-        {
-          "event_id": 1677841,
-          "event_slug": "tournament/31-538/event/on",
-          "event_name": "シングルス（１on１トーナメント）",
-          "num_entrants": 15,
-          "type": 1,
-          "start_at": 1788163200
-        }
-      ]
-    },
-    {
-      "tournament_id": 948321,
-      "tournament_slug": "tournament/gg-12-kannai-gg",
-      "tournament_name": "関内GG #12/kannai-gg",
-      "start_at": 1788166800,
-      "end_at": 1788179400,
-      "is_online": false,
-      "city": "横浜市",
-      "venue_name": "おださがプラザ",
-      "country_code": "JP",
-      "num_attendees": 0,
-      "url": "/tournament/gg-12-kannai-gg",
-      "events": [
-        {
-          "event_id": 1699353,
-          "event_slug": "tournament/gg-12-kannai-gg/event/kannai-gg-sp-1on1",
-          "event_name": "kannai-gg/スマブラSP 1on1",
-          "num_entrants": 0,
-          "type": 1,
-          "start_at": 1788166800
-        }
-      ]
-    },
     {
       "tournament_id": 946568,
       "tournament_slug": "tournament/139-shibuya-tatsu",
@@ -60,14 +14,14 @@
       "city": "渋谷区",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 7,
+      "num_attendees": 9,
       "url": "/tournament/139-shibuya-tatsu",
       "events": [
         {
           "event_id": 1695694,
           "event_slug": "tournament/139-shibuya-tatsu/event/singles",
           "event_name": "Singles",
-          "num_entrants": 7,
+          "num_entrants": 9,
           "type": 1,
           "start_at": 1788256800
         }
@@ -336,7 +290,7 @@
       "city": "大阪市",
       "venue_name": "クレオ大阪南 (Creo Osaka South)",
       "country_code": "JP",
-      "num_attendees": 9,
+      "num_attendees": 10,
       "url": "/tournament/masterhand75",
       "events": [
         {
@@ -405,14 +359,14 @@
       "city": "町田市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 201,
+      "num_attendees": 191,
       "url": "/tournament/impact-major-5",
       "events": [
         {
           "event_id": 1672939,
           "event_slug": "tournament/impact-major-5/event/singles-tournament",
           "event_name": "Singles Tournament",
-          "num_entrants": 190,
+          "num_entrants": 189,
           "type": 1,
           "start_at": 1788652800
         }
@@ -566,14 +520,14 @@
       "city": "広島市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 40,
+      "num_attendees": 41,
       "url": "/tournament/11-moon",
       "events": [
         {
           "event_id": 1690818,
           "event_slug": "tournament/11-moon/event/1on1-tournament",
           "event_name": "シングルス/1on1 tournament",
-          "num_entrants": 40,
+          "num_entrants": 41,
           "type": 1,
           "start_at": 1789178400
         }
@@ -796,14 +750,14 @@
       "city": "熊谷市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 41,
+      "num_attendees": 42,
       "url": "/tournament/flyhigh-29-96",
       "events": [
         {
           "event_id": 1689225,
           "event_slug": "tournament/flyhigh-29-96/event/fly-high-96",
           "event_name": "Fly High!! 96人トーナメント 埼玉県熊谷市スマブラ大会",
-          "num_entrants": 41,
+          "num_entrants": 42,
           "type": 1,
           "start_at": 1789225200
         }
