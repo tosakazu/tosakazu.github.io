@@ -1,8 +1,8 @@
 {
-  "generated_at": 1788102085,
+  "generated_at": 1788113114,
   "country_code": "JP",
   "lookahead_days": 21,
-  "count": 34,
+  "count": 35,
   "tournaments": [
     {
       "tournament_id": 937955,
@@ -21,9 +21,32 @@
           "event_id": 1677841,
           "event_slug": "tournament/31-538/event/on",
           "event_name": "シングルス（１on１トーナメント）",
-          "num_entrants": 8,
+          "num_entrants": 10,
           "type": 1,
           "start_at": 1788163200
+        }
+      ]
+    },
+    {
+      "tournament_id": 948321,
+      "tournament_slug": "tournament/gg-12-kannai-gg",
+      "tournament_name": "関内GG #12/kannai-gg",
+      "start_at": 1788166800,
+      "end_at": 1788179400,
+      "is_online": false,
+      "city": "横浜市",
+      "venue_name": "おださがプラザ",
+      "country_code": "JP",
+      "num_attendees": 0,
+      "url": "/tournament/gg-12-kannai-gg",
+      "events": [
+        {
+          "event_id": 1699353,
+          "event_slug": "tournament/gg-12-kannai-gg/event/kannai-gg-sp-1on1",
+          "event_name": "kannai-gg/スマブラSP 1on1",
+          "num_entrants": 0,
+          "type": 1,
+          "start_at": 1788166800
         }
       ]
     },
@@ -60,7 +83,7 @@
       "city": "中野区",
       "venue_name": "Red Bull Gaming Sphere Tokyo",
       "country_code": "JP",
-      "num_attendees": 75,
+      "num_attendees": 76,
       "url": "/tournament/weekly-smash-party-243",
       "events": [
         {
@@ -228,7 +251,7 @@
           "event_id": 1697749,
           "event_slug": "tournament/sumao2026-17/event/sp-1on1",
           "event_name": "スマブラSP 1on1",
-          "num_entrants": 1,
+          "num_entrants": 2,
           "type": 1,
           "start_at": 1788510600
         }
@@ -313,14 +336,14 @@
       "city": "横浜市",
       "venue_name": "おださがプラザ",
       "country_code": "JP",
-      "num_attendees": 206,
+      "num_attendees": 205,
       "url": "/tournament/53-kurobra53",
       "events": [
         {
           "event_id": 1671132,
           "event_slug": "tournament/53-kurobra53/event/kurobra-sp-1on1",
           "event_name": "Kurobra/SP 1on1トーナメント",
-          "num_entrants": 188,
+          "num_entrants": 192,
           "type": 1,
           "start_at": 1788570000
         }
@@ -497,7 +520,7 @@
       "city": "熊本市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 19,
+      "num_attendees": 20,
       "url": "/tournament/sp-34-3",
       "events": [
         {
@@ -658,14 +681,14 @@
       "city": "中野区",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 37,
+      "num_attendees": 38,
       "url": "/tournament/to-get-off-3",
       "events": [
         {
           "event_id": 1636160,
           "event_slug": "tournament/to-get-off-3/event/ultimate-singles",
           "event_name": "Ultimate Singles",
-          "num_entrants": 37,
+          "num_entrants": 38,
           "type": 1,
           "start_at": 1789270200
         }
