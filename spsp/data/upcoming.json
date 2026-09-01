@@ -1,8 +1,8 @@
 {
-  "generated_at": 1788199225,
+  "generated_at": 1788210037,
   "country_code": "JP",
   "lookahead_days": 21,
-  "count": 35,
+  "count": 36,
   "tournaments": [
     {
       "tournament_id": 946568,
@@ -60,14 +60,14 @@
       "city": "川崎市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 10,
+      "num_attendees": 12,
       "url": "/tournament/34-11",
       "events": [
         {
           "event_id": 1696448,
           "event_slug": "tournament/34-11/event/super-smash-bros-ultimate-singles",
           "event_name": "雷影杯",
-          "num_entrants": 9,
+          "num_entrants": 10,
           "type": 1,
           "start_at": 1788339600
         }
@@ -106,14 +106,14 @@
       "city": "台東区",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 8,
+      "num_attendees": 10,
       "url": "/tournament/3-540-1",
       "events": [
         {
           "event_id": 1690037,
           "event_slug": "tournament/3-540-1/event/on",
           "event_name": "シングルス（１on１トーナメント）",
-          "num_entrants": 8,
+          "num_entrants": 10,
           "type": 1,
           "start_at": 1788422400
         }
@@ -152,14 +152,14 @@
       "city": "台東区",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 11,
+      "num_attendees": 13,
       "url": "/tournament/4-541",
       "events": [
         {
           "event_id": 1690043,
           "event_slug": "tournament/4-541/event/on",
           "event_name": "シングルス（１on１トーナメント）",
-          "num_entrants": 11,
+          "num_entrants": 13,
           "type": 1,
           "start_at": 1788508800
         }
@@ -419,6 +419,29 @@
       ]
     },
     {
+      "tournament_id": 948820,
+      "tournament_slug": "tournament/9-58",
+      "tournament_name": "ミコッチ杯#9",
+      "start_at": 1788685200,
+      "end_at": 1788699600,
+      "is_online": false,
+      "city": "横浜市",
+      "venue_name": "",
+      "country_code": "JP",
+      "num_attendees": 0,
+      "url": "/tournament/9-58",
+      "events": [
+        {
+          "event_id": 1700393,
+          "event_slug": "tournament/9-58/event/super-smash-bros-ultimate-singles",
+          "event_name": "シングルス",
+          "num_entrants": 0,
+          "type": 1,
+          "start_at": 1788685200
+        }
+      ]
+    },
+    {
       "tournament_id": 943845,
       "tournament_slug": "tournament/7-542",
       "tournament_name": "7(月)上野スマコミ#542(オープン)",
@@ -635,14 +658,14 @@
       "city": "渋谷区",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 43,
+      "num_attendees": 44,
       "url": "/tournament/to-win-13",
       "events": [
         {
           "event_id": 1694656,
           "event_slug": "tournament/to-win-13/event/singles",
           "event_name": "Singles",
-          "num_entrants": 43,
+          "num_entrants": 44,
           "type": 1,
           "start_at": 1789261200
         }
