@@ -1,5 +1,5 @@
 {
-  "generated_at": 1788221108,
+  "generated_at": 1788231619,
   "country_code": "JP",
   "lookahead_days": 21,
   "count": 37,
@@ -37,7 +37,7 @@
       "city": "中野区",
       "venue_name": "Red Bull Gaming Sphere Tokyo",
       "country_code": "JP",
-      "num_attendees": 81,
+      "num_attendees": 82,
       "url": "/tournament/weekly-smash-party-243",
       "events": [
         {
@@ -175,14 +175,14 @@
       "city": "台東区",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 14,
+      "num_attendees": 15,
       "url": "/tournament/4-541",
       "events": [
         {
           "event_id": 1690043,
           "event_slug": "tournament/4-541/event/on",
           "event_name": "シングルス（１on１トーナメント）",
-          "num_entrants": 14,
+          "num_entrants": 15,
           "type": 1,
           "start_at": 1788508800
         }
@@ -290,14 +290,14 @@
       "city": "名古屋市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 29,
+      "num_attendees": 33,
       "url": "/tournament/-3145",
       "events": [
         {
           "event_id": 1668064,
           "event_slug": "tournament/-3145/event/sp-1on1",
           "event_name": "スマッシュブラザーズSP 1on1 トーナメント",
-          "num_entrants": 29,
+          "num_entrants": 33,
           "type": 1,
           "start_at": 1788534000
         }
@@ -336,7 +336,7 @@
       "city": "横浜市",
       "venue_name": "おださがプラザ",
       "country_code": "JP",
-      "num_attendees": 214,
+      "num_attendees": 215,
       "url": "/tournament/53-kurobra53",
       "events": [
         {
@@ -359,14 +359,14 @@
       "city": "福岡市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 3,
+      "num_attendees": 4,
       "url": "/tournament/7-74",
       "events": [
         {
           "event_id": 1685577,
           "event_slug": "tournament/7-74/event/1on1",
           "event_name": "1on1トーナメント",
-          "num_entrants": 3,
+          "num_entrants": 4,
           "type": 1,
           "start_at": 1788580800
         }
