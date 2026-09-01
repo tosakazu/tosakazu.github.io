@@ -1,8 +1,8 @@
 {
-  "generated_at": 1788210037,
+  "generated_at": 1788221108,
   "country_code": "JP",
   "lookahead_days": 21,
-  "count": 36,
+  "count": 37,
   "tournaments": [
     {
       "tournament_id": 946568,
@@ -14,14 +14,14 @@
       "city": "渋谷区",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 12,
+      "num_attendees": 18,
       "url": "/tournament/139-shibuya-tatsu",
       "events": [
         {
           "event_id": 1695694,
           "event_slug": "tournament/139-shibuya-tatsu/event/singles",
           "event_name": "Singles",
-          "num_entrants": 12,
+          "num_entrants": 18,
           "type": 1,
           "start_at": 1788256800
         }
@@ -37,7 +37,7 @@
       "city": "中野区",
       "venue_name": "Red Bull Gaming Sphere Tokyo",
       "country_code": "JP",
-      "num_attendees": 80,
+      "num_attendees": 81,
       "url": "/tournament/weekly-smash-party-243",
       "events": [
         {
@@ -129,16 +129,39 @@
       "city": "渋谷区",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 6,
+      "num_attendees": 7,
       "url": "/tournament/shibuya-g-g-smash-weekly-78",
       "events": [
         {
           "event_id": 1697176,
           "event_slug": "tournament/shibuya-g-g-smash-weekly-78/event/singles",
           "event_name": "Singles",
-          "num_entrants": 6,
+          "num_entrants": 7,
           "type": 1,
           "start_at": 1788431400
+        }
+      ]
+    },
+    {
+      "tournament_id": 948870,
+      "tournament_slug": "tournament/hit-194-maesuma-hit-194",
+      "tournament_name": "マエスマ'HIT#194 / Maesuma'HIT#194",
+      "start_at": 1788429600,
+      "end_at": 1788444000,
+      "is_online": false,
+      "city": "大阪市",
+      "venue_name": "",
+      "country_code": "JP",
+      "num_attendees": 0,
+      "url": "/tournament/hit-194-maesuma-hit-194",
+      "events": [
+        {
+          "event_id": 1700482,
+          "event_slug": "tournament/hit-194-maesuma-hit-194/event/singles-tournament",
+          "event_name": "Singles Tournament",
+          "num_entrants": 0,
+          "type": 1,
+          "start_at": 1788429600
         }
       ]
     },
@@ -152,14 +175,14 @@
       "city": "台東区",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 13,
+      "num_attendees": 14,
       "url": "/tournament/4-541",
       "events": [
         {
           "event_id": 1690043,
           "event_slug": "tournament/4-541/event/on",
           "event_name": "シングルス（１on１トーナメント）",
-          "num_entrants": 13,
+          "num_entrants": 14,
           "type": 1,
           "start_at": 1788508800
         }
@@ -290,7 +313,7 @@
       "city": "大阪市",
       "venue_name": "クレオ大阪南 (Creo Osaka South)",
       "country_code": "JP",
-      "num_attendees": 10,
+      "num_attendees": 11,
       "url": "/tournament/masterhand75",
       "events": [
         {
@@ -313,7 +336,7 @@
       "city": "横浜市",
       "venue_name": "おださがプラザ",
       "country_code": "JP",
-      "num_attendees": 213,
+      "num_attendees": 214,
       "url": "/tournament/53-kurobra53",
       "events": [
         {
@@ -336,14 +359,14 @@
       "city": "福岡市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 2,
+      "num_attendees": 3,
       "url": "/tournament/7-74",
       "events": [
         {
           "event_id": 1685577,
           "event_slug": "tournament/7-74/event/1on1",
           "event_name": "1on1トーナメント",
-          "num_entrants": 2,
+          "num_entrants": 3,
           "type": 1,
           "start_at": 1788580800
         }
@@ -658,14 +681,14 @@
       "city": "渋谷区",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 44,
+      "num_attendees": 45,
       "url": "/tournament/to-win-13",
       "events": [
         {
           "event_id": 1694656,
           "event_slug": "tournament/to-win-13/event/singles",
           "event_name": "Singles",
-          "num_entrants": 44,
+          "num_entrants": 45,
           "type": 1,
           "start_at": 1789261200
         }
