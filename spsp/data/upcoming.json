@@ -1,55 +1,9 @@
 {
-  "generated_at": 1788339615,
+  "generated_at": 1788350423,
   "country_code": "JP",
   "lookahead_days": 21,
-  "count": 43,
+  "count": 42,
   "tournaments": [
-    {
-      "tournament_id": 949278,
-      "tournament_slug": "tournament/347-act-1",
-      "tournament_name": "【第347回】スマACT",
-      "start_at": 1788345600,
-      "end_at": 1788530400,
-      "is_online": false,
-      "city": "大阪市",
-      "venue_name": "",
-      "country_code": "JP",
-      "num_attendees": 8,
-      "url": "/tournament/347-act-1",
-      "events": [
-        {
-          "event_id": 1701360,
-          "event_slug": "tournament/347-act-1/event/ultimate-singles",
-          "event_name": "Ultimate singles",
-          "num_entrants": 8,
-          "type": 1,
-          "start_at": 1788345600
-        }
-      ]
-    },
-    {
-      "tournament_id": 947200,
-      "tournament_slug": "tournament/dsw-67",
-      "tournament_name": "新京都DSW#67",
-      "start_at": 1788346800,
-      "end_at": 1788357600,
-      "is_online": false,
-      "city": "京都市",
-      "venue_name": "",
-      "country_code": "JP",
-      "num_attendees": 14,
-      "url": "/tournament/dsw-67",
-      "events": [
-        {
-          "event_id": 1697098,
-          "event_slug": "tournament/dsw-67/event/singletournament",
-          "event_name": "SingleTournament",
-          "num_entrants": 14,
-          "type": 1,
-          "start_at": 1788346800
-        }
-      ]
-    },
     {
       "tournament_id": 943840,
       "tournament_slug": "tournament/3-540-1",
@@ -382,14 +336,14 @@
       "city": "新潟市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 30,
+      "num_attendees": 31,
       "url": "/tournament/a-leg-arrival-new-xenith",
       "events": [
         {
           "event_id": 1687241,
           "event_slug": "tournament/a-leg-arrival-new-xenith/event/singles-tournament",
           "event_name": "Singles tournament",
-          "num_entrants": 30,
+          "num_entrants": 31,
           "type": 1,
           "start_at": 1788660000
         }
@@ -919,14 +873,14 @@
       "city": "台東区",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 3,
+      "num_attendees": 4,
       "url": "/tournament/19-552",
       "events": [
         {
           "event_id": 1701381,
           "event_slug": "tournament/19-552/event/on",
           "event_name": "シングルス（１on１トーナメント）",
-          "num_entrants": 3,
+          "num_entrants": 4,
           "type": 1,
           "start_at": 1789786800
         }
@@ -998,6 +952,29 @@
           "num_entrants": 1015,
           "type": 1,
           "start_at": 1789866000
+        }
+      ]
+    },
+    {
+      "tournament_id": 945476,
+      "tournament_slug": "tournament/revival-15",
+      "tournament_name": "みどブラRevival#15",
+      "start_at": 1790128800,
+      "end_at": 1790157600,
+      "is_online": false,
+      "city": "福岡市",
+      "venue_name": "",
+      "country_code": "JP",
+      "num_attendees": 21,
+      "url": "/tournament/revival-15",
+      "events": [
+        {
+          "event_id": 1693500,
+          "event_slug": "tournament/revival-15/event/1on1",
+          "event_name": "1on1トーナメント",
+          "num_entrants": 21,
+          "type": 1,
+          "start_at": 1790128800
         }
       ]
     }
