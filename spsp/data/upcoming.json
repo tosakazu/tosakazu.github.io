@@ -1,5 +1,5 @@
 {
-  "generated_at": 1788275128,
+  "generated_at": 1788285620,
   "country_code": "JP",
   "lookahead_days": 21,
   "count": 38,
@@ -14,7 +14,7 @@
       "city": "中野区",
       "venue_name": "Red Bull Gaming Sphere Tokyo",
       "country_code": "JP",
-      "num_attendees": 82,
+      "num_attendees": 84,
       "url": "/tournament/weekly-smash-party-243",
       "events": [
         {
@@ -37,14 +37,14 @@
       "city": "川崎市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 14,
+      "num_attendees": 15,
       "url": "/tournament/34-11",
       "events": [
         {
           "event_id": 1696448,
           "event_slug": "tournament/34-11/event/super-smash-bros-ultimate-singles",
           "event_name": "雷影杯",
-          "num_entrants": 14,
+          "num_entrants": 15,
           "type": 1,
           "start_at": 1788339600
         }
@@ -129,14 +129,14 @@
       "city": "大阪市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 2,
+      "num_attendees": 3,
       "url": "/tournament/hit-194-maesuma-hit-194",
       "events": [
         {
           "event_id": 1700482,
           "event_slug": "tournament/hit-194-maesuma-hit-194/event/singles-tournament",
           "event_name": "Singles Tournament",
-          "num_entrants": 2,
+          "num_entrants": 3,
           "type": 1,
           "start_at": 1788429600
         }
@@ -727,14 +727,14 @@
       "city": "台東区",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 2,
+      "num_attendees": 3,
       "url": "/tournament/14-547",
       "events": [
         {
           "event_id": 1690088,
           "event_slug": "tournament/14-547/event/on",
           "event_name": "シングルス（１on１トーナメント）",
-          "num_entrants": 2,
+          "num_entrants": 3,
           "type": 1,
           "start_at": 1789372800
         }
