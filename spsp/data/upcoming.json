@@ -1,32 +1,9 @@
 {
-  "generated_at": 1788253220,
+  "generated_at": 1788275128,
   "country_code": "JP",
   "lookahead_days": 21,
-  "count": 39,
+  "count": 38,
   "tournaments": [
-    {
-      "tournament_id": 946568,
-      "tournament_slug": "tournament/139-shibuya-tatsu",
-      "tournament_name": "渋谷\"達\" #139 shibuya -tatsu-",
-      "start_at": 1788256800,
-      "end_at": 1788269400,
-      "is_online": false,
-      "city": "渋谷区",
-      "venue_name": "",
-      "country_code": "JP",
-      "num_attendees": 18,
-      "url": "/tournament/139-shibuya-tatsu",
-      "events": [
-        {
-          "event_id": 1695694,
-          "event_slug": "tournament/139-shibuya-tatsu/event/singles",
-          "event_name": "Singles",
-          "num_entrants": 18,
-          "type": 1,
-          "start_at": 1788256800
-        }
-      ]
-    },
     {
       "tournament_id": 947515,
       "tournament_slug": "tournament/weekly-smash-party-243",
@@ -60,14 +37,14 @@
       "city": "川崎市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 13,
+      "num_attendees": 14,
       "url": "/tournament/34-11",
       "events": [
         {
           "event_id": 1696448,
           "event_slug": "tournament/34-11/event/super-smash-bros-ultimate-singles",
           "event_name": "雷影杯",
-          "num_entrants": 13,
+          "num_entrants": 14,
           "type": 1,
           "start_at": 1788339600
         }
@@ -175,14 +152,14 @@
       "city": "台東区",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 16,
+      "num_attendees": 17,
       "url": "/tournament/4-541",
       "events": [
         {
           "event_id": 1690043,
           "event_slug": "tournament/4-541/event/on",
           "event_name": "シングルス（１on１トーナメント）",
-          "num_entrants": 16,
+          "num_entrants": 17,
           "type": 1,
           "start_at": 1788508800
         }
@@ -336,7 +313,7 @@
       "city": "横浜市",
       "venue_name": "おださがプラザ",
       "country_code": "JP",
-      "num_attendees": 215,
+      "num_attendees": 216,
       "url": "/tournament/53-kurobra53",
       "events": [
         {
@@ -382,7 +359,7 @@
       "city": "町田市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 193,
+      "num_attendees": 194,
       "url": "/tournament/impact-major-5",
       "events": [
         {
@@ -727,14 +704,14 @@
       "city": "中野区",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 42,
+      "num_attendees": 40,
       "url": "/tournament/to-get-off-3",
       "events": [
         {
           "event_id": 1636160,
           "event_slug": "tournament/to-get-off-3/event/ultimate-singles",
           "event_name": "Ultimate Singles",
-          "num_entrants": 42,
+          "num_entrants": 40,
           "type": 1,
           "start_at": 1789270200
         }
