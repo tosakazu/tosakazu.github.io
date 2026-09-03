@@ -1,32 +1,9 @@
 {
-  "generated_at": 1788426016,
+  "generated_at": 1788436858,
   "country_code": "JP",
   "lookahead_days": 21,
-  "count": 46,
+  "count": 45,
   "tournaments": [
-    {
-      "tournament_id": 948870,
-      "tournament_slug": "tournament/hit-194-maesuma-hit-194",
-      "tournament_name": "マエスマ'HIT#194 / Maesuma'HIT#194",
-      "start_at": 1788429600,
-      "end_at": 1788444000,
-      "is_online": false,
-      "city": "大阪市",
-      "venue_name": "",
-      "country_code": "JP",
-      "num_attendees": 27,
-      "url": "/tournament/hit-194-maesuma-hit-194",
-      "events": [
-        {
-          "event_id": 1700482,
-          "event_slug": "tournament/hit-194-maesuma-hit-194/event/singles-tournament",
-          "event_name": "Singles Tournament",
-          "num_entrants": 24,
-          "type": 1,
-          "start_at": 1788429600
-        }
-      ]
-    },
     {
       "tournament_id": 943842,
       "tournament_slug": "tournament/4-541",
@@ -83,14 +60,14 @@
       "city": "立川市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 13,
+      "num_attendees": 12,
       "url": "/tournament/sumao2026-17",
       "events": [
         {
           "event_id": 1697749,
           "event_slug": "tournament/sumao2026-17/event/sp-1on1",
           "event_name": "スマブラSP 1on1",
-          "num_entrants": 13,
+          "num_entrants": 12,
           "type": 1,
           "start_at": 1788510600
         }
@@ -942,14 +919,14 @@
       "city": "台東区",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 4,
+      "num_attendees": 5,
       "url": "/tournament/19-552-5",
       "events": [
         {
           "event_id": 1701383,
           "event_slug": "tournament/19-552-5/event/on",
           "event_name": "シングルス（１on１トーナメント）",
-          "num_entrants": 3,
+          "num_entrants": 4,
           "type": 1,
           "start_at": 1789804800
         }
