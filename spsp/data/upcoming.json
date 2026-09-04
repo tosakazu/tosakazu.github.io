@@ -1,5 +1,5 @@
 {
-  "generated_at": 1788469254,
+  "generated_at": 1788480011,
   "country_code": "JP",
   "lookahead_days": 21,
   "count": 46,
@@ -14,7 +14,7 @@
       "city": "台東区",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 40,
+      "num_attendees": 43,
       "url": "/tournament/4-541",
       "events": [
         {
@@ -60,14 +60,14 @@
       "city": "立川市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 13,
+      "num_attendees": 16,
       "url": "/tournament/sumao2026-17",
       "events": [
         {
           "event_id": 1697749,
           "event_slug": "tournament/sumao2026-17/event/sp-1on1",
           "event_name": "スマブラSP 1on1",
-          "num_entrants": 13,
+          "num_entrants": 16,
           "type": 1,
           "start_at": 1788510600
         }
@@ -83,14 +83,14 @@
       "city": "川崎市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 9,
+      "num_attendees": 12,
       "url": "/tournament/13-33",
       "events": [
         {
           "event_id": 1698825,
           "event_slug": "tournament/13-33/event/super-smash-bros-ultimate-singles",
           "event_name": "シングルス",
-          "num_entrants": 9,
+          "num_entrants": 12,
           "type": 1,
           "start_at": 1788512400
         }
@@ -106,14 +106,14 @@
       "city": "福岡市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 12,
+      "num_attendees": 25,
       "url": "/tournament/smash-153-1",
       "events": [
         {
           "event_id": 1699596,
           "event_slug": "tournament/smash-153-1/event/1on1",
           "event_name": "1on1トーナメント",
-          "num_entrants": 12,
+          "num_entrants": 25,
           "type": 1,
           "start_at": 1788517800
         }
@@ -198,14 +198,14 @@
       "city": "横浜市",
       "venue_name": "おださがプラザ",
       "country_code": "JP",
-      "num_attendees": 210,
+      "num_attendees": 207,
       "url": "/tournament/53-kurobra53",
       "events": [
         {
           "event_id": 1671132,
           "event_slug": "tournament/53-kurobra53/event/kurobra-sp-1on1",
           "event_name": "Kurobra/SP 1on1トーナメント",
-          "num_entrants": 188,
+          "num_entrants": 185,
           "type": 1,
           "start_at": 1788570000
         }
@@ -244,14 +244,14 @@
       "city": "町田市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 185,
+      "num_attendees": 188,
       "url": "/tournament/impact-major-5",
       "events": [
         {
           "event_id": 1672939,
           "event_slug": "tournament/impact-major-5/event/singles-tournament",
           "event_name": "Singles Tournament",
-          "num_entrants": 181,
+          "num_entrants": 184,
           "type": 1,
           "start_at": 1788652800
         }
@@ -382,14 +382,14 @@
       "city": "札幌市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 5,
+      "num_attendees": 6,
       "url": "/tournament/epochi-2-1",
       "events": [
         {
           "event_id": 1702313,
           "event_slug": "tournament/epochi-2-1/event/ultimate-singles",
           "event_name": "Ultimate Singles",
-          "num_entrants": 5,
+          "num_entrants": 6,
           "type": 1,
           "start_at": 1788863400
         }
