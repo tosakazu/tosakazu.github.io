@@ -1,8 +1,8 @@
 {
-  "generated_at": 1788436858,
+  "generated_at": 1788447617,
   "country_code": "JP",
   "lookahead_days": 21,
-  "count": 45,
+  "count": 46,
   "tournaments": [
     {
       "tournament_id": 943842,
@@ -14,14 +14,14 @@
       "city": "台東区",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 38,
+      "num_attendees": 37,
       "url": "/tournament/4-541",
       "events": [
         {
           "event_id": 1690043,
           "event_slug": "tournament/4-541/event/on",
           "event_name": "シングルス（１on１トーナメント）",
-          "num_entrants": 36,
+          "num_entrants": 37,
           "type": 1,
           "start_at": 1788508800
         }
@@ -60,14 +60,14 @@
       "city": "立川市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 12,
+      "num_attendees": 13,
       "url": "/tournament/sumao2026-17",
       "events": [
         {
           "event_id": 1697749,
           "event_slug": "tournament/sumao2026-17/event/sp-1on1",
           "event_name": "スマブラSP 1on1",
-          "num_entrants": 12,
+          "num_entrants": 13,
           "type": 1,
           "start_at": 1788510600
         }
@@ -1044,6 +1044,29 @@
           "num_entrants": 1,
           "type": 1,
           "start_at": 1790161200
+        }
+      ]
+    },
+    {
+      "tournament_id": 949296,
+      "tournament_slug": "tournament/24-554",
+      "tournament_name": "24(木)上野スマコミ#554(オープン)",
+      "start_at": 1790236800,
+      "end_at": 1790258400,
+      "is_online": false,
+      "city": "台東区",
+      "venue_name": "",
+      "country_code": "JP",
+      "num_attendees": 1,
+      "url": "/tournament/24-554",
+      "events": [
+        {
+          "event_id": 1701384,
+          "event_slug": "tournament/24-554/event/on",
+          "event_name": "シングルス（１on１トーナメント）",
+          "num_entrants": 1,
+          "type": 1,
+          "start_at": 1790236800
         }
       ]
     }
