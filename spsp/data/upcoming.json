@@ -1,32 +1,9 @@
 {
-  "generated_at": 1788523260,
+  "generated_at": 1788544872,
   "country_code": "JP",
   "lookahead_days": 21,
   "count": 43,
   "tournaments": [
-    {
-      "tournament_id": 933133,
-      "tournament_slug": "tournament/-3145",
-      "tournament_name": "新ニョッスマ＃２",
-      "start_at": 1788534000,
-      "end_at": 1788609600,
-      "is_online": false,
-      "city": "名古屋市",
-      "venue_name": "",
-      "country_code": "JP",
-      "num_attendees": 42,
-      "url": "/tournament/-3145",
-      "events": [
-        {
-          "event_id": 1668064,
-          "event_slug": "tournament/-3145/event/sp-1on1",
-          "event_name": "スマッシュブラザーズSP 1on1 トーナメント",
-          "num_entrants": 42,
-          "type": 1,
-          "start_at": 1788534000
-        }
-      ]
-    },
     {
       "tournament_id": 944082,
       "tournament_slug": "tournament/masterhand75",
@@ -44,7 +21,7 @@
           "event_id": 1690571,
           "event_slug": "tournament/masterhand75/event/sp-ultimate-singles",
           "event_name": "SP シングルス / Ultimate Singles",
-          "num_entrants": 10,
+          "num_entrants": 11,
           "type": 1,
           "start_at": 1788570000
         }
@@ -83,14 +60,14 @@
       "city": "福岡市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 4,
+      "num_attendees": 7,
       "url": "/tournament/7-74",
       "events": [
         {
           "event_id": 1685577,
           "event_slug": "tournament/7-74/event/1on1",
           "event_name": "1on1トーナメント",
-          "num_entrants": 4,
+          "num_entrants": 7,
           "type": 1,
           "start_at": 1788580800
         }
@@ -198,14 +175,14 @@
       "city": "台東区",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 5,
+      "num_attendees": 7,
       "url": "/tournament/7-542",
       "events": [
         {
           "event_id": 1690052,
           "event_slug": "tournament/7-542/event/on",
           "event_name": "シングルス（１on１トーナメント）",
-          "num_entrants": 5,
+          "num_entrants": 7,
           "type": 1,
           "start_at": 1788768000
         }
@@ -244,14 +221,14 @@
       "city": "札幌市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 6,
+      "num_attendees": 7,
       "url": "/tournament/epochi-2-1",
       "events": [
         {
           "event_id": 1702313,
           "event_slug": "tournament/epochi-2-1/event/ultimate-singles",
           "event_name": "Ultimate Singles",
-          "num_entrants": 6,
+          "num_entrants": 7,
           "type": 1,
           "start_at": 1788863400
         }
@@ -551,14 +528,14 @@
       "city": "岡山市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 42,
+      "num_attendees": 44,
       "url": "/tournament/61-1",
       "events": [
         {
           "event_id": 1690026,
           "event_slug": "tournament/61-1/event/61",
           "event_name": "第61回 晴れスマ",
-          "num_entrants": 42,
+          "num_entrants": 44,
           "type": 1,
           "start_at": 1789297200
         }
@@ -574,14 +551,14 @@
       "city": "渋谷区",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 48,
+      "num_attendees": 49,
       "url": "/tournament/to-win-13",
       "events": [
         {
           "event_id": 1694656,
           "event_slug": "tournament/to-win-13/event/singles",
           "event_name": "Singles",
-          "num_entrants": 48,
+          "num_entrants": 49,
           "type": 1,
           "start_at": 1789261200
         }
@@ -804,14 +781,14 @@
       "city": "熊谷市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 48,
+      "num_attendees": 49,
       "url": "/tournament/flyhigh-29-96",
       "events": [
         {
           "event_id": 1689225,
           "event_slug": "tournament/flyhigh-29-96/event/fly-high-96",
           "event_name": "Fly High!! 96人トーナメント 埼玉県熊谷市スマブラ大会",
-          "num_entrants": 48,
+          "num_entrants": 49,
           "type": 1,
           "start_at": 1789225200
         }
@@ -896,14 +873,14 @@
       "city": "港区",
       "venue_name": "Pio, Tokyo",
       "country_code": "JP",
-      "num_attendees": 974,
+      "num_attendees": 973,
       "url": "/tournament/sp13-umeburasp13",
       "events": [
         {
           "event_id": 1648718,
           "event_slug": "tournament/sp13-umeburasp13/event/singles",
           "event_name": "シングルストーナメント / Singles",
-          "num_entrants": 974,
+          "num_entrants": 973,
           "type": 1,
           "start_at": 1789866000
         }
@@ -998,6 +975,29 @@
           "num_entrants": 1,
           "type": 1,
           "start_at": 1790236800
+        }
+      ]
+    },
+    {
+      "tournament_id": 949297,
+      "tournament_slug": "tournament/25-555",
+      "tournament_name": "25(金)上野スマコミ#555(オープン)",
+      "start_at": 1790323200,
+      "end_at": 1790344800,
+      "is_online": false,
+      "city": "台東区",
+      "venue_name": "",
+      "country_code": "JP",
+      "num_attendees": 1,
+      "url": "/tournament/25-555",
+      "events": [
+        {
+          "event_id": 1701385,
+          "event_slug": "tournament/25-555/event/on",
+          "event_name": "シングルス（１on１トーナメント）",
+          "num_entrants": 1,
+          "type": 1,
+          "start_at": 1790323200
         }
       ]
     }
