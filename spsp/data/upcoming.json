@@ -1,78 +1,9 @@
 {
-  "generated_at": 1788555693,
+  "generated_at": 1788566480,
   "country_code": "JP",
   "lookahead_days": 21,
-  "count": 43,
+  "count": 41,
   "tournaments": [
-    {
-      "tournament_id": 944082,
-      "tournament_slug": "tournament/masterhand75",
-      "tournament_name": "MasterHand75",
-      "start_at": 1788570000,
-      "end_at": 1788598800,
-      "is_online": false,
-      "city": "大阪市",
-      "venue_name": "クレオ大阪南 (Creo Osaka South)",
-      "country_code": "JP",
-      "num_attendees": 20,
-      "url": "/tournament/masterhand75",
-      "events": [
-        {
-          "event_id": 1690571,
-          "event_slug": "tournament/masterhand75/event/sp-ultimate-singles",
-          "event_name": "SP シングルス / Ultimate Singles",
-          "num_entrants": 11,
-          "type": 1,
-          "start_at": 1788570000
-        }
-      ]
-    },
-    {
-      "tournament_id": 934675,
-      "tournament_slug": "tournament/53-kurobra53",
-      "tournament_name": "第53回クロブラ/神奈川スマブラ対戦会クロブラ/Kurobra53",
-      "start_at": 1788570000,
-      "end_at": 1788602400,
-      "is_online": false,
-      "city": "横浜市",
-      "venue_name": "おださがプラザ",
-      "country_code": "JP",
-      "num_attendees": 211,
-      "url": "/tournament/53-kurobra53",
-      "events": [
-        {
-          "event_id": 1671132,
-          "event_slug": "tournament/53-kurobra53/event/kurobra-sp-1on1",
-          "event_name": "Kurobra/SP 1on1トーナメント",
-          "num_entrants": 185,
-          "type": 1,
-          "start_at": 1788570000
-        }
-      ]
-    },
-    {
-      "tournament_id": 941645,
-      "tournament_slug": "tournament/7-74",
-      "tournament_name": "いろスマ#7",
-      "start_at": 1788580800,
-      "end_at": 1788598800,
-      "is_online": false,
-      "city": "福岡市",
-      "venue_name": "",
-      "country_code": "JP",
-      "num_attendees": 8,
-      "url": "/tournament/7-74",
-      "events": [
-        {
-          "event_id": 1685577,
-          "event_slug": "tournament/7-74/event/1on1",
-          "event_name": "1on1トーナメント",
-          "num_entrants": 8,
-          "type": 1,
-          "start_at": 1788580800
-        }
-      ]
-    },
     {
       "tournament_id": 935582,
       "tournament_slug": "tournament/impact-major-5",
@@ -413,14 +344,14 @@
       "city": "熊本市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 22,
+      "num_attendees": 23,
       "url": "/tournament/sp-34-3",
       "events": [
         {
           "event_id": 1683907,
           "event_slug": "tournament/sp-34-3/event/sp-34",
           "event_name": "肥後ブラSP#34",
-          "num_entrants": 22,
+          "num_entrants": 23,
           "type": 1,
           "start_at": 1789171200
         }
@@ -489,7 +420,7 @@
           "event_id": 1688845,
           "event_slug": "tournament/9-gikasuma9/event/sp-1-on-1",
           "event_name": "スマブラSP 1 on 1",
-          "num_entrants": 27,
+          "num_entrants": 28,
           "type": 1,
           "start_at": 1789225260
         }
@@ -781,14 +712,14 @@
       "city": "熊谷市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 49,
+      "num_attendees": 50,
       "url": "/tournament/flyhigh-29-96",
       "events": [
         {
           "event_id": 1689225,
           "event_slug": "tournament/flyhigh-29-96/event/fly-high-96",
           "event_name": "Fly High!! 96人トーナメント 埼玉県熊谷市スマブラ大会",
-          "num_entrants": 49,
+          "num_entrants": 50,
           "type": 1,
           "start_at": 1789225200
         }
@@ -804,16 +735,39 @@
       "city": "台東区",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 10,
+      "num_attendees": 12,
       "url": "/tournament/19-552",
       "events": [
         {
           "event_id": 1701381,
           "event_slug": "tournament/19-552/event/on",
           "event_name": "シングルス（１on１トーナメント）",
-          "num_entrants": 10,
+          "num_entrants": 12,
           "type": 1,
           "start_at": 1789786800
+        }
+      ]
+    },
+    {
+      "tournament_id": 950141,
+      "tournament_slug": "tournament/17-20",
+      "tournament_name": "深スマ対戦会#17",
+      "start_at": 1789790400,
+      "end_at": 1789810200,
+      "is_online": false,
+      "city": "京都市",
+      "venue_name": "",
+      "country_code": "JP",
+      "num_attendees": 0,
+      "url": "/tournament/17-20",
+      "events": [
+        {
+          "event_id": 1703253,
+          "event_slug": "tournament/17-20/event/ultmate-singles",
+          "event_name": "Ultmate Singles",
+          "num_entrants": 0,
+          "type": 1,
+          "start_at": 1789790400
         }
       ]
     },
