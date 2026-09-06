@@ -1,5 +1,5 @@
 {
-  "generated_at": 1788609724,
+  "generated_at": 1788631348,
   "country_code": "JP",
   "lookahead_days": 21,
   "count": 49,
@@ -198,14 +198,14 @@
       "city": "中野区",
       "venue_name": "Red Bull Gaming Sphere Tokyo",
       "country_code": "JP",
-      "num_attendees": 47,
+      "num_attendees": 49,
       "url": "/tournament/weekly-smash-party-244",
       "events": [
         {
           "event_id": 1701649,
           "event_slug": "tournament/weekly-smash-party-244/event/special-1on1-ultimate-singles",
           "event_name": "SPECIAL 1on1/ Ultimate Singles",
-          "num_entrants": 45,
+          "num_entrants": 47,
           "type": 1,
           "start_at": 1788944400
         },
@@ -298,14 +298,14 @@
       "city": "渋谷区",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 1,
+      "num_attendees": 3,
       "url": "/tournament/shibuya-g-g-smash-weekly-79",
       "events": [
         {
           "event_id": 1702416,
           "event_slug": "tournament/shibuya-g-g-smash-weekly-79/event/singles",
           "event_name": "Singles",
-          "num_entrants": 1,
+          "num_entrants": 3,
           "type": 1,
           "start_at": 1789036200
         }
@@ -344,14 +344,14 @@
       "city": "台東区",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 13,
+      "num_attendees": 14,
       "url": "/tournament/11-545",
       "events": [
         {
           "event_id": 1690064,
           "event_slug": "tournament/11-545/event/on",
           "event_name": "シングルス（１on１トーナメント）",
-          "num_entrants": 13,
+          "num_entrants": 14,
           "type": 1,
           "start_at": 1789113600
         }
@@ -482,14 +482,14 @@
       "city": "Nagaoka",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 32,
+      "num_attendees": 33,
       "url": "/tournament/9-gikasuma9",
       "events": [
         {
           "event_id": 1688845,
           "event_slug": "tournament/9-gikasuma9/event/sp-1-on-1",
           "event_name": "スマブラSP 1 on 1",
-          "num_entrants": 29,
+          "num_entrants": 30,
           "type": 1,
           "start_at": 1789225260
         }
@@ -574,14 +574,14 @@
       "city": "中野区",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 43,
+      "num_attendees": 44,
       "url": "/tournament/to-get-off-3",
       "events": [
         {
           "event_id": 1636160,
           "event_slug": "tournament/to-get-off-3/event/ultimate-singles",
           "event_name": "Ultimate Singles",
-          "num_entrants": 43,
+          "num_entrants": 44,
           "type": 1,
           "start_at": 1789270200
         }
