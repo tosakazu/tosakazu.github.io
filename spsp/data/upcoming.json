@@ -1,5 +1,5 @@
 {
-  "generated_at": 1788696333,
+  "generated_at": 1788705383,
   "country_code": "JP",
   "lookahead_days": 21,
   "count": 46,
@@ -106,14 +106,14 @@
       "city": "中野区",
       "venue_name": "Red Bull Gaming Sphere Tokyo",
       "country_code": "JP",
-      "num_attendees": 52,
+      "num_attendees": 53,
       "url": "/tournament/weekly-smash-party-244",
       "events": [
         {
           "event_id": 1701649,
           "event_slug": "tournament/weekly-smash-party-244/event/special-1on1-ultimate-singles",
           "event_name": "SPECIAL 1on1/ Ultimate Singles",
-          "num_entrants": 47,
+          "num_entrants": 48,
           "type": 1,
           "start_at": 1788944400
         },
@@ -344,14 +344,14 @@
       "city": "知立市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 102,
+      "num_attendees": 103,
       "url": "/tournament/sp5-2",
       "events": [
         {
           "event_id": 1632234,
           "event_slug": "tournament/sp5-2/event/gokusuma-sp5",
           "event_name": "GOKUSUMA SP5",
-          "num_entrants": 102,
+          "num_entrants": 103,
           "type": 1,
           "start_at": 1789178400
         }

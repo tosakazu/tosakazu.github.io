@@ -710,7 +710,7 @@
   </div>
 
   <div class="footer" id="footer-info">
-    <span class="site-version" style="font-size:11px;color:#9ca3af">v 910e0ff · 2026-09-06 21:14 UTC</span>
+    <span class="site-version" style="font-size:11px;color:#9ca3af">v d4e84dd · 2026-09-06 23:56 UTC</span>
   </div>
 </main>
 
@@ -756,6 +756,7 @@ function buildLatestResultSection() {
   const link = t.event_id ? `<a href="../t/?id=${t.event_id}">${escapeHtml(t.name || '')}</a>` : escapeHtml(t.name || '');
   const resTag = t.is_restricted ? '<span style="color:#be123c;font-size:9px;padding:1px 5px;background:rgba(225,29,72,0.10);border-radius:8px;margin-left:4px">制限大会</span>' : '';
   const lcTag = t.is_lower_class ? '<span style="color:#0369a1;font-size:9px;padding:1px 5px;background:rgba(2,132,199,0.10);border-radius:8px;margin-left:4px">下位クラス</span>' : '';
+  const stTag = t.is_awaiting_resume ? '<span style="color:#1d4ed8;font-size:9px;padding:1px 5px;background:#dbeafe;border-radius:8px;margin-left:4px" title="延期・中断のため再開待ち。途中までの結果で暫定集計中">再開待ち</span>' : (t.is_gf_missing ? '<span style="color:#9a3412;font-size:9px;padding:1px 5px;background:#ffedd5;border-radius:8px;margin-left:4px" title="決勝未報告のため未完了。ポイント未反映">未完了</span>' : '');
   // 当時全国 → 大会後。改善時のみ (+N) を付ける (悪化時は注記なし)
   let zenHtml = '';
   if (t.pretour_ranks && t.pretour_ranks.ensemble != null) {
@@ -821,7 +822,7 @@ function buildLatestResultSection() {
   document.getElementById('latestres-body').innerHTML =
     `<div class="tour-group" data-pid="${dataPid}" data-cls="${isClass}" data-seed="${t.seed != null ? t.seed : ''}">
       <div class="tour-item tour-item-nohover tour-clickable latestres-card" style="border-bottom:none">
-        <div class="lr-top">${link}${cntTag}${resTag}${lcTag}</div>
+        <div class="lr-top">${link}${cntTag}${resTag}${lcTag}${stTag}</div>
         <div class="perf-hero">${hero}<span class="chevron lr-chev">▶</span></div>
         ${capHtml}
         ${zenHtml}
@@ -1140,12 +1141,13 @@ function tournamentItem(t, valueHtml) {
   }
   const resTag = t.is_restricted ? '<span style="color:#be123c;font-size:9px;padding:1px 5px;background:rgba(225,29,72,0.10);border-radius:8px;margin-left:4px">制限大会</span>' : '';
   const lcTag = t.is_lower_class ? '<span style="color:#0369a1;font-size:9px;padding:1px 5px;background:rgba(2,132,199,0.10);border-radius:8px;margin-left:4px">下位クラス</span>' : '';
+  const stTag = t.is_awaiting_resume ? '<span style="color:#1d4ed8;font-size:9px;padding:1px 5px;background:#dbeafe;border-radius:8px;margin-left:4px" title="延期・中断のため再開待ち。途中までの結果で暫定集計中">再開待ち</span>' : (t.is_gf_missing ? '<span style="color:#9a3412;font-size:9px;padding:1px 5px;background:#ffedd5;border-radius:8px;margin-left:4px" title="決勝未報告のため未完了。ポイント未反映">未完了</span>' : '');
   return `
     <div class="tour-item">
       <span class="date-top">${t.date}</span>
       <span class="place">${placeHtml}</span>
       <div class="meta">
-        ${link}${resTag}${lcTag}
+        ${link}${resTag}${lcTag}${stTag}
         ${t.event ? `<span style="color:#9ca3af">/ ${escapeHtml(t.event)}</span>` : ''}
         <br><span class="date date-inline">${t.date}</span>${
           (t.pretour_ranks && t.pretour_ranks.ensemble != null)
@@ -1247,7 +1249,7 @@ function render() {
     for (const r of [1, 2, 3]) {
       if (zenichi[r] && zenichi[r].length) {
         const label = `全${_rankKanji[r]}`;
-        html += `<span class="zenichi-badge zenichi-${r}" title="${zenichi[r].join('・')}${label}">${label}</span> `;
+        html += `<span class="zenichi-badge zenichi-${r}" title="${escapeHtml(zenichi[r].join('・'))}${label}">${label}</span> `;
       }
     }
     zenichiEl.innerHTML = html;
@@ -1280,7 +1282,7 @@ function render() {
       // 大会での使用データが無く本人申告で入ったキャラは pct を持たない
       // (docs/post_feature_design.md §12)。
       const title = typeof c.pct === 'number' ? '' : ' title="本人の申告で登録されたキャラです"';
-      let html = `<a href="../c/ranking.html?char=${canonicalId}"${title} style="color:${color};font-weight:${weight};text-decoration:none">${emoji}${c.name}</a>`;
+      let html = `<a href="../c/ranking.html?char=${canonicalId}"${title} style="color:${color};font-weight:${weight};text-decoration:none">${emoji}${escapeHtml(c.name)}</a>`;
       if (isMain && SUB && SUB.char) {
         html += `<a href="../c/ranking.html?char=${canonicalId}" ` +
           `style="margin-left:5px;color:#9ca3af;font-size:11px;text-decoration:none">#${SUB.char.rank}</a>`;
@@ -1298,7 +1300,7 @@ function render() {
       ? `<span style="margin-left:8px;color:#9ca3af;font-size:11px">#${SUBP.pref.rank}</span>`
       : '';
     document.getElementById('pref-body').innerHTML =
-      `📍 <a href="../pref/ranking.html?pref=${encodeURIComponent(pref)}" style="color:inherit;text-decoration:none">${pref}</a>` + prefRankHtml;
+      `📍 <a href="../pref/ranking.html?pref=${encodeURIComponent(pref)}" style="color:inherit;text-decoration:none">${escapeHtml(pref)}</a>` + prefRankHtml;
     document.getElementById('pref-line').style.display = '';
   } else if (PLAYER.country && PLAYER.country !== 'Japan'
              && OVERSEAS_UIDS && OVERSEAS_UIDS.has(UID)) {
@@ -1658,10 +1660,11 @@ function render() {
     const link = eid ? `<a href="../t/?id=${eid}">${escapeHtml(t.name || '')}</a>` : escapeHtml(t.name || '');
     const resTag = t.is_restricted ? '<span style="color:#be123c;font-size:9px;padding:1px 5px;background:rgba(225,29,72,0.10);border-radius:8px;margin-left:4px">制限大会</span>' : '';
     const lcTag = t.is_lower_class ? '<span style="color:#0369a1;font-size:9px;padding:1px 5px;background:rgba(2,132,199,0.10);border-radius:8px;margin-left:4px">下位クラス</span>' : '';
+  const stTag = t.is_awaiting_resume ? '<span style="color:#1d4ed8;font-size:9px;padding:1px 5px;background:#dbeafe;border-radius:8px;margin-left:4px" title="延期・中断のため再開待ち。途中までの結果で暫定集計中">再開待ち</span>' : (t.is_gf_missing ? '<span style="color:#9a3412;font-size:9px;padding:1px 5px;background:#ffedd5;border-radius:8px;margin-left:4px" title="決勝未報告のため未完了。ポイント未反映">未完了</span>' : '');
     return `<div class="tour-item" style="grid-template-columns:46px 1fr auto">
       <span class="place"><span class="num" style="color:#16a34a">+${t.spr}</span><span class="frac">SPR</span></span>
       <div class="meta">
-        ${link}${resTag}${lcTag}
+        ${link}${resTag}${lcTag}${stTag}
         ${t.event ? `<span style="color:#9ca3af">/ ${escapeHtml(t.event)}</span>` : ''}
         <br><span style="font-size:10px;color:#9ca3af">seed ${t.seed} → ${t.place}位</span>
         <br><span class="date">${t.date}</span> · ${t.nent}名
