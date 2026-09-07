@@ -1,5 +1,5 @@
 {
-  "generated_at": 1788801250,
+  "generated_at": 1788804940,
   "country_code": "JP",
   "lookahead_days": 21,
   "count": 50,
@@ -321,14 +321,14 @@
       "city": "渋谷区",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 3,
+      "num_attendees": 4,
       "url": "/tournament/4-118",
       "events": [
         {
           "event_id": 1705024,
           "event_slug": "tournament/4-118/event/singles-tournament",
           "event_name": "Singles Tournament",
-          "num_entrants": 3,
+          "num_entrants": 4,
           "type": 1,
           "start_at": 1789178400
         }
@@ -873,14 +873,14 @@
       "city": "港区",
       "venue_name": "Pio, Tokyo",
       "country_code": "JP",
-      "num_attendees": 1015,
+      "num_attendees": 1016,
       "url": "/tournament/sp13-umeburasp13",
       "events": [
         {
           "event_id": 1648718,
           "event_slug": "tournament/sp13-umeburasp13/event/singles",
           "event_name": "シングルストーナメント / Singles",
-          "num_entrants": 1015,
+          "num_entrants": 1016,
           "type": 1,
           "start_at": 1789866000
         }
