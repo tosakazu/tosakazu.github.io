@@ -1,32 +1,9 @@
 {
-  "generated_at": 1788799071,
+  "generated_at": 1788801250,
   "country_code": "JP",
   "lookahead_days": 21,
-  "count": 51,
+  "count": 50,
   "tournaments": [
-    {
-      "tournament_id": 943845,
-      "tournament_slug": "tournament/7-542",
-      "tournament_name": "7(月)上野スマコミ#542(オープン)",
-      "start_at": 1788768000,
-      "end_at": 1788789600,
-      "is_online": false,
-      "city": "台東区",
-      "venue_name": "",
-      "country_code": "JP",
-      "num_attendees": 17,
-      "url": "/tournament/7-542",
-      "events": [
-        {
-          "event_id": 1690052,
-          "event_slug": "tournament/7-542/event/on",
-          "event_name": "シングルス（１on１トーナメント）",
-          "num_entrants": 17,
-          "type": 1,
-          "start_at": 1788768000
-        }
-      ]
-    },
     {
       "tournament_id": 948911,
       "tournament_slug": "tournament/140-shibuya-tatsu",
@@ -390,14 +367,14 @@
       "city": "知立市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 105,
+      "num_attendees": 106,
       "url": "/tournament/sp5-2",
       "events": [
         {
           "event_id": 1632234,
           "event_slug": "tournament/sp5-2/event/gokusuma-sp5",
           "event_name": "GOKUSUMA SP5",
-          "num_entrants": 105,
+          "num_entrants": 106,
           "type": 1,
           "start_at": 1789178400
         }
@@ -896,14 +873,14 @@
       "city": "港区",
       "venue_name": "Pio, Tokyo",
       "country_code": "JP",
-      "num_attendees": 1014,
+      "num_attendees": 1015,
       "url": "/tournament/sp13-umeburasp13",
       "events": [
         {
           "event_id": 1648718,
           "event_slug": "tournament/sp13-umeburasp13/event/singles",
           "event_name": "シングルストーナメント / Singles",
-          "num_entrants": 1014,
+          "num_entrants": 1015,
           "type": 1,
           "start_at": 1789866000
         }
@@ -919,14 +896,14 @@
       "city": "四日市市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 11,
+      "num_attendees": 12,
       "url": "/tournament/quattro-7",
       "events": [
         {
           "event_id": 1704783,
           "event_slug": "tournament/quattro-7/event/quattro",
           "event_name": "四闘-Quattro-",
-          "num_entrants": 11,
+          "num_entrants": 12,
           "type": 1,
           "start_at": 1790049600
         }
