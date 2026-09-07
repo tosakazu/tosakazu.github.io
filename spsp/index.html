@@ -9,6 +9,8 @@
 <meta name="author" content="tosakazu">
 <link rel="canonical" href="https://tosakazu.github.io/spsp/">
 <link rel="stylesheet" href="ranking-table.css">
+<script src="js/html.js"></script>
+<script src="js/data.js"></script>
 <script src="ranking-table.js"></script>
 <script src="player-detail.js"></script>
 <!-- Open Graph -->
@@ -528,7 +530,7 @@
 </div>
 
 <div class="footer" id="footer-info"></div>
-<div class="footer" style="margin-top:-12px"><span class="site-version" style="font-size:11px;color:#9ca3af">v d4e84dd · 2026-09-06 23:56 UTC</span></div>
+<div class="footer" style="margin-top:-12px"><span class="site-version" style="font-size:11px;color:#9ca3af">v 517eeff · 2026-09-07 00:41 UTC</span></div>
 
 <button id="scroll-top" aria-label="ページの一番上へ戻る" title="一番上へ" hidden>↑</button>
 
@@ -595,7 +597,7 @@ async function loadData() {
     }
     // ヘッダ (nav bar) に「最終更新時刻 · バージョン」を表示
     const genTime = (META.generated_at || META.eval_date || '').split('.')[0].replace('T', ' ');
-    const SITE_VERSION_FULL = 'v d4e84dd · 2026-09-06 23:56 UTC';
+    const SITE_VERSION_FULL = 'v 517eeff · 2026-09-07 00:41 UTC';
     const versionShort = SITE_VERSION_FULL.split(' · ')[0] || SITE_VERSION_FULL;
     const navMeta = document.getElementById('meta-info');
     if (navMeta) navMeta.textContent = `最終更新 ${genTime} · ${versionShort}`;
@@ -603,12 +605,9 @@ async function loadData() {
       `Generated ${META.eval_date} · ${META.n_players}名 · LOOKBACK ${META.lookback_days}日 · ` +
       `<a href="overview.html" style="color:#dc2626">概要</a> · ` +
       `<a href="details.html" style="color:#dc2626">詳細</a>`;
-    const txt = await jsonlRes.text();
-    const lines = txt.split('\n').filter(l => l.length);
-    status.textContent = `${lines.length}行パース中…`;
-    for (const line of lines) {
-      try { DATA.push(JSON.parse(line)); } catch (e) {}
-    }
+    const recs = SPSPData.parseJsonl(await jsonlRes.text());   // ../js/data.js
+    status.textContent = `${recs.length}行パース中…`;
+    for (const rec of recs) DATA.push(rec);
     if (overseasUids && window.SPSPRankingTable && window.SPSPRankingTable.computeDisplayRanks) {
       window.SPSPRankingTable.computeDisplayRanks(DATA, overseasUids);
     }
@@ -624,36 +623,6 @@ async function loadData() {
   }
 }
 
-function getRank(rec, method) {
-  return rec.ranks[method] || Infinity;
-}
-function getScore(rec, method) {
-  switch (method) {
-    case 'tjpr':     return rec.scores.tjpr_score;
-    case 'bt_gated': return rec.scores.bt_gated_elo;
-    case 'ensemble':
-    default: return -getRank(rec, 'ensemble');
-  }
-}
-function formatScore(rec, method) {
-  if (rec.unranked) return '–';
-  switch (method) {
-    case 'tjpr':     return rec.scores.tjpr_elo.toFixed(2);
-    case 'bt_gated': return rec.scores.bt_gated_elo.toFixed(2);
-    case 'ensemble':
-    default: {
-      const e = rec.scores.ensemble_avg_score != null
-        ? rec.scores.ensemble_avg_score
-        : (rec.scores.tjpr_elo + rec.scores.bt_gated_elo) / 2;
-      return e.toFixed(1);
-    }
-  }
-}
-function formatAvgRank(rec, method) {
-  if (rec.unranked) return '–';
-  const ar = rec.scores.ensemble_avg_rank;
-  return ar != null ? `#${ar.toFixed(1)}` : '–';
-}
 
 // ── Shared ranking-table component (SPSPRankingTable) ──
 // columns / sort / filter / infinite scroll / row click は共有コンポーネントに集約.
@@ -732,104 +701,7 @@ function render() {
   tbl.setFilterText(filterText);
 }
 
-function buildExplain(rec) {
-  const total = META.n_players;
-  const tc = rec.metadata.tour_count_3y;
-  const wkInc = rec.metadata.bt_weekday_included !== false;
-  const lv = rec.scores.shared_cascade_lv || rec.scores.tjpr_level;
-  const lvDescs = {
-    1: 'Lv1 (全員、フィルタなし)',
-    2: 'Lv2 (top 2048、フィルタなし)',
-    3: 'Lv3 (top 1024、nent>24)',
-    4: 'Lv4 (top 512、nent>24 + 土日祝)',
-    5: 'Lv5 (top 256、nent>48 + 土日祝)',
-  };
-  const lvFilter = {
-    1: 'すべての大会 (3 年以内、min_entrants ≥ 8)',
-    2: 'すべての大会 (Lv1 と同じだが base/floor が上)',
-    3: '<strong>nent &gt; 24</strong> の一定規模以上の大会',
-    4: '<strong>nent &gt; 24</strong> かつ <strong>土日祝</strong> の土日大会 (プレ大会・制限大会・下位クラスは除外)',
-    5: '<strong>nent &gt; 48</strong> かつ <strong>土日祝</strong> の大きめ土日大会 (プレ大会・制限大会・下位クラスは除外)',
-  };
-  const ar = rec.scores.ensemble_avg_rank;
-  const as_ = rec.scores.ensemble_avg_score;
-  const ensAvg = (ar != null && as_ != null)
-    ? ` <span style="color:#6b7280">(平均順位 #${ar.toFixed(1)} / 平均スコア ${as_.toFixed(1)})</span>`
-    : '';
-  return `
-    <div class="detail-explain">
-      <strong>ランク:</strong>
-      総合評価 <strong>${rec.ranks.ensemble} / ${total}</strong>${ensAvg} ·
-      順位評価 <strong>${rec.ranks.tjpr} / ${total}</strong> ·
-      直対評価 <strong>${rec.ranks.bt_gated} / ${total}</strong><br>
-      <strong>スコア:</strong>
-      順位評価 <strong>${rec.scores.tjpr_elo.toFixed(2)}</strong> ·
-      直対評価 <strong>${rec.scores.bt_gated_elo.toFixed(2)}</strong><br>
-      <strong>直対評価 設定:</strong>
-      このプレイヤーは 3 年間で <strong>${tc} 大会</strong>出場 ·
-      ${wkInc
-        ? `<span class="yn-yes">≤ 20 大会なので平日大会も学習</span> (レア帯保護)`
-        : `<span class="yn-no">&gt; 20 大会なので土日祝のみ</span> (ベテラン)`}<br>
-      <strong>順位評価 (Banzuke):</strong> ${lv > 0
-        ? `到達 ${lvDescs[lv]} → 計上対象: ${lvFilter[lv]}`
-        : `Banzuke 計算対象外`}
-    </div>
-  `;
-}
 
-function buildTjprBreakdown(rec) {
-  const bd = rec.scores.tjpr_lv_breakdown || {};
-  const lv = rec.scores.shared_cascade_lv || rec.scores.tjpr_level;
-  const finalElo = rec.scores.tjpr_elo;
-  const scale = (META.params && META.params.TJPR_ELO_SCALE) || 100.0;
-  const offset = (META.params && META.params.TJPR_ELO_OFFSET != null) ? META.params.TJPR_ELO_OFFSET : 1500.0;
-  const rows = [1,2,3,4,5].map(i => {
-    const s = bd[i] || bd[String(i)] || 0;
-    const isFinal = i === lv;
-    const cls = isFinal ? 'lv-' + i : '';
-    const filter = {
-      1: '全員、フィルタなし',
-      2: 'top 2048、フィルタなし',
-      3: 'top 1024、nent>24',
-      4: 'top 512、nent>24 + 土日祝',
-      5: 'top 256、nent>48 + 土日祝',
-    }[i];
-    const reached = s > 0
-      ? (isFinal ? '<span class="yn-yes">★ 採用</span>' : '<span style="color:#6b7280">到達</span>')
-      : '<span style="color:#9ca3af">未到達</span>';
-    const scaled = s > 0 ? (s * scale + offset).toFixed(1) : '–';
-    return `
-      <tr class="${cls}">
-        <td><span class="lv-badge lv-${i}">Lv${i}</span></td>
-        <td style="color:#6b7280">${filter}</td>
-        <td class="num">${scaled}</td>
-        <td>${reached}</td>
-      </tr>
-    `;
-  }).join('');
-  return `
-    <div class="detail-section">
-      <h4>順位評価 スコア内訳</h4>
-      <table class="breakdown-table" style="max-width:640px">
-        <thead>
-          <tr><th>レベル</th><th>対象大会</th><th class="num">スコア</th><th>到達状況</th></tr>
-        </thead>
-        <tbody>${rows}</tbody>
-        <tfoot>
-          <tr style="background:#f9fafb;border-top:2px solid #e5e7eb">
-            <td colspan="2" style="color:#111827;font-weight:600">最終採用スコア (到達最高 Lv)</td>
-            <td class="num"><strong>${finalElo.toFixed(1)}</strong></td>
-            <td><span style="color:#6b7280">★</span></td>
-          </tr>
-        </tfoot>
-      </table>
-      <div style="font-size:11px;color:#9ca3af;margin-top:4px">
-        ※ 各 Lv は対象大会を絞り直して別個に計算。プレイヤーは到達した最高 Lv のスコアでランクづけされる。<br>
-        ※ 表示スコア = raw score × ${scale}${offset !== 0 ? ' + ' + offset : ''} (順位に影響しない線形変換)
-      </div>
-    </div>
-  `;
-}
 
 function buildChartsSection(rec) {
   // hasLocal = seed/demo ページ (event-local rank が存在する)

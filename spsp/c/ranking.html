@@ -7,6 +7,8 @@
 <meta name="description" content="SPSP メインキャラ別の使い手ランキング — 特定キャラを主に使うプレイヤーの順位。">
 <link rel="canonical" href="https://tosakazu.github.io/spsp/c/ranking.html">
 <link rel="stylesheet" href="../ranking-table.css">
+<script src="../js/html.js"></script>
+<script src="../js/data.js"></script>
 <script src="../ranking-table.js"></script>
 <script src="../player-detail.js"></script>
 <style>
@@ -311,11 +313,7 @@ const STATE = {
   searchText: '',
 };
 
-function escapeHtml(s) {
-  return String(s ?? '').replace(/[&<>"']/g, c => (
-    { '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;' }[c]
-  ));
-}
+// escapeHtml は ../js/html.js (サイト共通)
 
 function getQueryParam(name) {
   const url = new URL(location.href);
@@ -484,14 +482,7 @@ async function init() {
       try { const ce = await emojiRes.json(); charEmoji = (ce[String(STATE.charId)] || {}).emoji || ''; } catch (e) {}
     }
 
-    const txt = await jsonlRes.text();
-    const lines = txt.split('\n').filter(l => l.length);
-    for (const line of lines) {
-      try {
-        const rec = JSON.parse(line);
-        STATE.masterMap.set(rec.user_id, rec);
-      } catch {}
-    }
+    for (const rec of SPSPData.parseJsonl(await jsonlRes.text())) STATE.masterMap.set(rec.user_id, rec);   // ../js/data.js
 
     STATE.data = buildData();
     // 海外勢は buildData で既に除外済み. computeDisplayRanks は呼ばない

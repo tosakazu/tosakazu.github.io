@@ -539,6 +539,8 @@
 <body>
 
 <div id="nav-root"></div>
+<script src="../js/html.js"></script>
+<script src="../js/data.js"></script>
 <script src="../nav.js"></script>
 <script src="../share.js"></script>
 
@@ -710,7 +712,7 @@
   </div>
 
   <div class="footer" id="footer-info">
-    <span class="site-version" style="font-size:11px;color:#9ca3af">v d4e84dd · 2026-09-06 23:56 UTC</span>
+    <span class="site-version" style="font-size:11px;color:#9ca3af">v 517eeff · 2026-09-07 00:41 UTC</span>
   </div>
 </main>
 
@@ -1096,13 +1098,8 @@ async function loadData() {
     } else {
       // 後方互換: JSONL から探す
       const jsonlRes = await fetch('../latest_tjpr_full.jsonl');
-      const txt = await jsonlRes.text();
-      for (const line of txt.split('\n')) {
-        if (!line) continue;
-        try {
-          const r = JSON.parse(line);
-          if (r.user_id === UID) { MAIN_REC = r; break; }
-        } catch (e) {}
+      for (const r of SPSPData.parseJsonl(await jsonlRes.text())) {   // ../js/data.js
+        if (r.user_id === UID) { MAIN_REC = r; break; }
       }
       if (!MAIN_REC) {
         showNotFound(`このプレイヤー (uid=${UID}) は SPSP の DB に履歴がないため、詳細を表示できません。`);
@@ -1160,9 +1157,7 @@ function tournamentItem(t, valueHtml) {
   `;
 }
 
-function escapeHtml(s) {
-  return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-}
+// escapeHtml は ../js/html.js (サイト共通)
 
 function render() {
   document.getElementById('loading').style.display = 'none';

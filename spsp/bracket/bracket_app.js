@@ -19,8 +19,7 @@
   const O = window.SeedOptimizer;
 
   const $ = (id) => document.getElementById(id);
-  const esc = (s) => String(s == null ? '' : s)
-    .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+  const esc = (s) => SPSPHtml.escapeHtml(s);   // ../js/html.js (先に読むこと)
 
   // レイアウト定数 (px)
   const COLW = 232;      // 列 (試合カード) 幅

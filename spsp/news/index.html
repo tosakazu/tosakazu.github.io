@@ -77,6 +77,8 @@
 <body>
 
 <div id="nav-root"></div>
+<script src="../js/html.js"></script>
+<script src="../js/data.js"></script>
 <script src="../nav.js"></script>
 
 <div class="container">
@@ -100,9 +102,7 @@ let ALL_ENTRIES = [];
 const _urlFilter = new URLSearchParams(location.search).get('filter');
 let CURRENT_FILTER = (_urlFilter === 'auto' || _urlFilter === 'announcement') ? _urlFilter : 'all';
 
-function escapeHtml(s) {
-  return String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-}
+// escapeHtml は ../js/html.js (サイト共通)
 // markdown-like bold/italic: **text** → <strong>, *text* → <em>. escapeHtml の後に適用.
 // 太字を先に消費するので入れ子は不可 (太字の中で強調したいときは斜体を使う).
 function renderMD(s) {

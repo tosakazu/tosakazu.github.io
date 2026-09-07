@@ -338,6 +338,8 @@
 <body>
 
 <div id="nav-root"></div>
+<script src="../js/html.js"></script>
+<script src="../js/data.js"></script>
 <script src="../nav.js"></script>
 <script src="../share.js"></script>
 
@@ -436,7 +438,7 @@
   </div>
 
   <div class="footer" id="footer-info">
-    <span class="site-version" style="font-size:11px;color:#9ca3af">v d4e84dd · 2026-09-06 23:56 UTC</span>
+    <span class="site-version" style="font-size:11px;color:#9ca3af">v 517eeff · 2026-09-07 00:41 UTC</span>
   </div>
 </main>
 
@@ -503,9 +505,7 @@ function showNotFound() {
   document.getElementById('not-found').style.display = '';
 }
 
-function escapeHtml(s) {
-  return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-}
+// escapeHtml は ../js/html.js (サイト共通)
 
 function playerLink(p) {
   const em = charEmojiOf(p.user_id);

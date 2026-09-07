@@ -7,6 +7,8 @@
 <meta name="description" content="SPSP 大会シリーズ別ローカルランキング — 参加者集合の中での順位を表示。">
 <link rel="canonical" href="https://tosakazu.github.io/spsp/local/ranking.html">
 <link rel="stylesheet" href="../ranking-table.css">
+<script src="../js/html.js"></script>
+<script src="../js/data.js"></script>
 <script src="../ranking-table.js"></script>
 <script src="../player-detail.js"></script>
 <style>
@@ -390,11 +392,7 @@ const STATE = {
   periodDays: 365,
 };
 
-function escapeHtml(s) {
-  return String(s).replace(/[&<>"']/g, c => (
-    { '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;' }[c]
-  ));
-}
+// escapeHtml は ../js/html.js (サイト共通)
 
 function getQueryParam(name) {
   const url = new URL(location.href);
@@ -689,14 +687,7 @@ async function init() {
         '<tr><td colspan="11" class="empty-msg"><a href="./" style="color:#dc2626">シリーズ一覧に戻る</a></td></tr>';
       return;
     }
-    const txt = await jsonlRes.text();
-    const lines = txt.split('\n').filter(l => l.length);
-    for (const line of lines) {
-      try {
-        const rec = JSON.parse(line);
-        STATE.masterMap.set(rec.user_id, rec);
-      } catch (e) {}
-    }
+    for (const rec of SPSPData.parseJsonl(await jsonlRes.text())) STATE.masterMap.set(rec.user_id, rec);   // ../js/data.js
 
     // Update header
     document.title = `${seriesName} ローカルランキング — SPSP`;

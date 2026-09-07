@@ -128,11 +128,9 @@
       })
       .then(function (text) {
         var out = [];
-        var lines = text.split('\n');
-        for (var i = 0; i < lines.length; i++) {
-          if (!lines[i]) continue;
-          var rec;
-          try { rec = JSON.parse(lines[i]); } catch (_) { continue; }
+        var recs = SPSPData.parseJsonl(text);   // js/data.js
+        for (var i = 0; i < recs.length; i++) {
+          var rec = recs[i];
           if (!rec || rec.user_id === undefined || !rec.display) continue;
           out.push({
             uid: String(rec.user_id),

@@ -6,6 +6,8 @@
 <title>都道府県別ランキング — SPSP</title>
 <meta name="description" content="SPSP 都道府県別のプレイヤーランキング — 居住地ごとの順位。">
 <link rel="stylesheet" href="../ranking-table.css">
+<script src="../js/html.js"></script>
+<script src="../js/data.js"></script>
 <script src="../ranking-table.js"></script>
 <script src="../player-detail.js"></script>
 <style>
@@ -146,11 +148,7 @@ const STATE = {
   searchText: '',
 };
 
-function escapeHtml(s) {
-  return String(s ?? '').replace(/[&<>"']/g, c => (
-    { '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;' }[c]
-  ));
-}
+// escapeHtml は ../js/html.js (サイト共通)
 function getQueryParam(name) { return new URL(location.href).searchParams.get(name); }
 
 function buildData() {
@@ -257,11 +255,7 @@ async function init() {
     STATE.prefMap = await prefRes.json();
     STATE.masterMeta = await metaRes.json();
 
-    const txt = await jsonlRes.text();
-    for (const line of txt.split('\n')) {
-      if (!line.length) continue;
-      try { const rec = JSON.parse(line); STATE.masterMap.set(rec.user_id, rec); } catch {}
-    }
+    for (const rec of SPSPData.parseJsonl(await jsonlRes.text())) STATE.masterMap.set(rec.user_id, rec);   // ../js/data.js
     STATE.data = buildData();
 
     document.title = `${STATE.pref}民ランキング — SPSP`;

@@ -30,11 +30,8 @@
   if (global.SPSPDetail) return;
 
   // ─── Helpers ───
-  function escapeHtml(s) {
-    return String(s == null ? '' : s).replace(/[&<>"']/g, c => ({
-      '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
-    }[c]));
-  }
+  // js/html.js (サイト共通) を先に読むこと
+  const escapeHtml = SPSPHtml.escapeHtml;
 
   // tourSortMode: 'contribution' | 'date' (page-level, shared across players)
   let tourSortMode = 'contribution';

@@ -80,6 +80,8 @@
 <body>
 
 <div id="nav-root"></div>
+<script src="../js/html.js"></script>
+<script src="../js/data.js"></script>
 <script src="../nav.js"></script>
 
 <div class="header">
@@ -132,11 +134,7 @@ const STATE = {
   searchText: '',
 };
 
-function escapeHtml(s) {
-  return String(s ?? '').replace(/[&<>"']/g, c => (
-    { '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;' }[c]
-  ));
-}
+// escapeHtml は ../js/html.js (サイト共通)
 
 // 各 sort key の canonical direction で 1..N 番号を割り当てる。
 function assignFixedRanks() {
@@ -233,10 +231,7 @@ async function init() {
     }
     // jsonl を走査し、ランク付き選手を都道府県別に集計。
     const agg = {};   // pref -> {n, top_uid, top_rank}
-    const text = await jsonlRes.text();
-    for (const ln of text.split('\n')) {
-      if (!ln.trim()) continue;
-      let rec; try { rec = JSON.parse(ln); } catch { continue; }
+    for (const rec of SPSPData.parseJsonl(await jsonlRes.text())) {   // ../js/data.js
       const pref = prefMap[String(rec.user_id)];
       if (!pref) continue;
       const ens = (rec.ranks && rec.ranks.ensemble) || null;

@@ -1200,16 +1200,10 @@ async function loadMasterData() {
     `master generated ${META.eval_date} · ${META.n_players}名 · LOOKBACK ${META.lookback_days}日 · ` +
     `<a href="../overview.html" style="color:#dc2626">概要</a> · ` +
     `<a href="../details.html" style="color:#dc2626">詳細</a>`;
-  const txt = await jsonlRes.text();
-  const lines = txt.split('\n').filter(l => l.length);
-  status.textContent = `${lines.length}行パース中…`;
+  const recs = SPSPData.parseJsonl(await jsonlRes.text());   // ../js/data.js
+  status.textContent = `${recs.length}行パース中…`;
   MASTER_MAP = new Map();
-  for (const line of lines) {
-    try {
-      const rec = JSON.parse(line);
-      MASTER_MAP.set(rec.user_id, rec);
-    } catch (e) {}
-  }
+  for (const rec of recs) MASTER_MAP.set(rec.user_id, rec);
   // discriminator 索引 (照合の任意ソース)。失敗しても続行 (照合時に fail-loud)。
   await loadDiscriminators();
   status.textContent = `マスター取得完了 (${MASTER_MAP.size} 名、${(performance.now()-t0).toFixed(0)}ms)`;
@@ -1296,9 +1290,7 @@ function clearError() {
   const help = document.getElementById('error-help');
   if (help) { help.style.display = 'none'; help.innerHTML = ''; }
 }
-function escapeHtml(s) {
-  return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-}
+// escapeHtml は ../js/html.js (サイト共通、グローバル)
 
 function parseEventUrl(input) {
   if (!input) return null;
@@ -1711,9 +1703,8 @@ async function createPhaseThenUpload(token) {
 }
 
 function getToken() {
-  const t = document.getElementById('token').value.trim();
-  if (t) { try { sessionStorage.setItem('smash_banzuke_token', t); } catch (e) {} }
-  return t;
+  // 保存は 💾 ボタンを押したときだけ (以前は読むたび sessionStorage に書いていて、UI の「💾 を押した場合のみ保存」と矛盾していた)
+  return document.getElementById('token').value.trim();
 }
 
 // method-tabs / 検索 / CSV / upload ボタンを参加者取得後だけ表示する.
@@ -2419,15 +2410,12 @@ function showEventPickerInline(tournamentSlug, events) {
     const tail = v.slice(-4);
     hintEl.textContent = `末尾: ${tail} (${v.length} 文字)`;
   }
-  // Restore token: localStorage 優先 (永続化)、なければ sessionStorage (タブ単位)
+  // Restore token: 💾 で保存した localStorage から (入力の都度の sessionStorage 保存はやめた)
   try {
-    const t = localStorage.getItem(TOKEN_KEY) || sessionStorage.getItem('smash_banzuke_token');
+    const t = localStorage.getItem(TOKEN_KEY);
     if (t) { tokenEl.value = t; updateHint(); }
   } catch (e) {}
-  tokenEl.addEventListener('input', () => {
-    updateHint();
-    try { sessionStorage.setItem('smash_banzuke_token', tokenEl.value); } catch (e) {}
-  });
+  tokenEl.addEventListener('input', () => { updateHint(); });
   revealBtn.addEventListener('click', () => {
     const isPwd = tokenEl.type === 'password';
     tokenEl.type = isPwd ? 'text' : 'password';
@@ -2742,10 +2730,7 @@ function dropAppliedOrder(opts) {
   if (had && (!opts || opts.render !== false)) clearSeedOptApplied();
 }
 
-function escHtml(s) {
-  return String(s == null ? '' : s).replace(/[&<>"']/g, c =>
-    ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
-}
+function escHtml(s) { return escapeHtml(s); }   // ../js/html.js
 
 async function runSeedOptimize() {
   if (!DATA.length || !EVENT_CONTEXT) { return; }

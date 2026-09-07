@@ -180,6 +180,8 @@
 <body>
 
 <div id="nav-root"></div>
+<script src="../js/html.js"></script>
+<script src="../js/data.js"></script>
 <script src="../nav.js"></script>
 
 <div class="header">
@@ -268,11 +270,7 @@ const STATE = {
 const INITIAL_CAP = 200;
 const PAGE_INCREMENT = 200;
 
-function escapeHtml(s) {
-  return String(s).replace(/[&<>"']/g, c => (
-    { '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;' }[c]
-  ));
-}
+// escapeHtml は ../js/html.js (サイト共通)
 
 function applyFilters() {
   const ft = STATE.searchText.toLowerCase();

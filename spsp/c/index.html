@@ -92,6 +92,8 @@
 <body>
 
 <div id="nav-root"></div>
+<script src="../js/html.js"></script>
+<script src="../js/data.js"></script>
 <script src="../nav.js"></script>
 <script src="../share.js"></script>
 <script src="../js/fighter_number.js"></script>
@@ -153,11 +155,7 @@ const STATE = {
   index: null,                   // raw character_index data
 };
 
-function escapeHtml(s) {
-  return String(s ?? '').replace(/[&<>"']/g, c => (
-    { '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;' }[c]
-  ));
-}
+// escapeHtml は ../js/html.js (サイト共通)
 
 // 各 sort key の canonical direction での 1..N 順位を各キャラに割り当てる.
 // 表示用の番号: sort key を切替えるとそのキー基準で再計算. asc/desc 切替時は
@@ -356,18 +354,12 @@ async function init() {
     // Map uid -> display for top player display.
     // 全 jsonl line 読まず、必要な uid set を組み立てて一気に scan する.
     const neededUids = new Set(charTopUid.values());
-    const text = await jsonlRes.text();
-    const lines = text.split('\n');
-    for (const ln of lines) {
-      if (!ln.trim()) continue;
-      try {
-        const rec = JSON.parse(ln);
-        if (neededUids.has(rec.user_id)) {
-          STATE.uid_to_display.set(rec.user_id, rec.display);
-          STATE.uid_to_ens_rank.set(rec.user_id, (rec.ranks && rec.ranks.ensemble) || null);
-          if (STATE.uid_to_display.size === neededUids.size) break;
-        }
-      } catch { /* skip */ }
+    for (const rec of SPSPData.parseJsonl(await jsonlRes.text())) {   // ../js/data.js
+      if (neededUids.has(rec.user_id)) {
+        STATE.uid_to_display.set(rec.user_id, rec.display);
+        STATE.uid_to_ens_rank.set(rec.user_id, (rec.ranks && rec.ranks.ensemble) || null);
+        if (STATE.uid_to_display.size === neededUids.size) break;
+      }
     }
 
     // top_rank: sort 用に各キャラに top プレイヤーの ens rank を貼る.

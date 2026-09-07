@@ -157,6 +157,8 @@
 </head>
 <body>
 <div id="nav-root"></div>
+<script src="../js/html.js"></script>
+<script src="../js/data.js"></script>
 <script src="../nav.js"></script>
 <main>
   <div class="page-title">🔮 スコアシミュレーション</div>
@@ -220,11 +222,7 @@
   var ENS = null;             // 総合評価予測器
   var ENS_CUR_RAW = 0;        // 現在値での raw 予測 (アンカー用)
 
-  function esc(s) {
-    return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) {
-      return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
-    });
-  }
+  function esc(s) { return SPSPHtml.escapeHtml(s); }   // ../js/html.js
   function fmt1(x) { return (Math.round(x * 10) / 10).toLocaleString('ja-JP', { minimumFractionDigits: 1, maximumFractionDigits: 1 }); }
   function fmt0(x) { return Math.round(x).toLocaleString('ja-JP'); }
   function signed(x, digits) {
@@ -272,11 +270,9 @@
       if (!r.ok) throw new Error('jsonl ' + r.status);
       return r.text();
     }).then(function (text) {
-      var lines = text.split('\n');
-      for (var i = 0; i < lines.length; i++) {
-        if (!lines[i]) continue;
-        var rec;
-        try { rec = JSON.parse(lines[i]); } catch (e) { continue; }
+      var recs = SPSPData.parseJsonl(text);   // ../js/data.js
+      for (var i = 0; i < recs.length; i++) {
+        var rec = recs[i];
         var sc = rec.scores || {};
         MASTER.set(rec.user_id, {
           display: rec.display,

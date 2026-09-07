@@ -29,11 +29,8 @@
 (function (global) {
   'use strict';
 
-  function escapeHtml(s) {
-    return String(s ?? '').replace(/[&<>"']/g, c => ({
-      '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'
-    }[c]));
-  }
+  // js/html.js (サイト共通) を先に読むこと
+  const escapeHtml = SPSPHtml.escapeHtml;
 
   /**
    * ランキング表に出す名前。

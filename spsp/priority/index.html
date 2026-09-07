@@ -109,6 +109,8 @@
   .csv-note .clear { color: #dc2626; cursor: pointer; margin-left: 6px; }
   #loading { padding: 24px; text-align: center; color: #9ca3af; }
 </style>
+<script src="../js/html.js"></script>
+<script src="../js/data.js"></script>
 <script src="../nav.js"></script>
 </head>
 <body>
@@ -221,10 +223,7 @@
   var currentRows = [];     // プレビュー中の行 (= CSV 出力対象)
   var DISC2UID = {};        // discriminator (小文字) -> uid
 
-  function esc(s) {
-    return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
-      .replace(/"/g, '&quot;');
-  }
+  function esc(s) { return SPSPHtml.escapeHtml(s); }   // ../js/html.js
 
   // ---- サジェストのキーボード操作 (sim ページと同じ挙動) ----
   document.addEventListener('click', function (e) {
@@ -257,11 +256,9 @@
       if (!r.ok) throw new Error('jsonl ' + r.status);
       return r.text();
     }).then(function (text) {
-      var lines = text.split('\n');
-      for (var i = 0; i < lines.length; i++) {
-        if (!lines[i]) continue;
-        var rec;
-        try { rec = JSON.parse(lines[i]); } catch (e) { continue; }
+      var recs = SPSPData.parseJsonl(text);   // ../js/data.js
+      for (var i = 0; i < recs.length; i++) {
+        var rec = recs[i];
         var ens = (rec.ranks && rec.ranks.ensemble) || null;
         var prov = !!(rec.metadata && rec.metadata.provisional);
         MASTER.set(rec.user_id, { display: rec.display, ens: ens, prov: prov });
