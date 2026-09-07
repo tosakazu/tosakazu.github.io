@@ -115,7 +115,7 @@
           <a href="${prefix}details.html"${cur === 'details' ? ' class="current"' : ''} role="menuitem">理論編・概念</a>
           <a href="${prefix}eval.html"${cur === 'eval' ? ' class="current"' : ''} role="menuitem">理論編・評価</a>
           <a href="${prefix}math.html"${cur === 'math' ? ' class="current"' : ''} role="menuitem">理論編・数式</a>
-          <a href="${prefix}blog/"${cur === 'blog' ? ' class="current"' : ''} role="menuitem">ブログ</a>
+          ${/spsp\.games$/.test(location.hostname) ? `<a href="${prefix}blog/"${cur === 'blog' ? ' class="current"' : ''} role="menuitem">ブログ</a>` : ''}
         </div>
       </div>
       <div class="nav-dropdown nav-news${cur === 'news' ? ' has-current' : ''}">
