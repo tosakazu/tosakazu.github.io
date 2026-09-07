@@ -1,8 +1,8 @@
 {
-  "generated_at": 1788772058,
+  "generated_at": 1788776579,
   "country_code": "JP",
   "lookahead_days": 21,
-  "count": 45,
+  "count": 46,
   "tournaments": [
     {
       "tournament_id": 943845,
@@ -21,7 +21,7 @@
           "event_id": 1690052,
           "event_slug": "tournament/7-542/event/on",
           "event_name": "シングルス（１on１トーナメント）",
-          "num_entrants": 13,
+          "num_entrants": 17,
           "type": 1,
           "start_at": 1788768000
         }
@@ -482,14 +482,14 @@
       "city": "京都市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 7,
+      "num_attendees": 8,
       "url": "/tournament/5-107",
       "events": [
         {
           "event_id": 1703744,
           "event_slug": "tournament/5-107/event/ultimate-singles",
           "event_name": "Ultimate Singles",
-          "num_entrants": 7,
+          "num_entrants": 8,
           "type": 1,
           "start_at": 1789275600
         }
@@ -814,6 +814,29 @@
           "num_entrants": 1024,
           "type": 1,
           "start_at": 1789866000
+        }
+      ]
+    },
+    {
+      "tournament_id": 950915,
+      "tournament_slug": "tournament/quattro-7",
+      "tournament_name": "四闘-Quattro-#7",
+      "start_at": 1790049600,
+      "end_at": 1790082000,
+      "is_online": false,
+      "city": "四日市市",
+      "venue_name": "",
+      "country_code": "JP",
+      "num_attendees": 3,
+      "url": "/tournament/quattro-7",
+      "events": [
+        {
+          "event_id": 1704783,
+          "event_slug": "tournament/quattro-7/event/quattro",
+          "event_name": "四闘-Quattro-",
+          "num_entrants": 3,
+          "type": 1,
+          "start_at": 1790049600
         }
       ]
     },
