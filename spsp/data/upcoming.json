@@ -1,5 +1,5 @@
 {
-  "generated_at": 1788782820,
+  "generated_at": 1788785233,
   "country_code": "JP",
   "lookahead_days": 21,
   "count": 48,
@@ -83,7 +83,7 @@
       "city": "中野区",
       "venue_name": "Red Bull Gaming Sphere Tokyo",
       "country_code": "JP",
-      "num_attendees": 58,
+      "num_attendees": 61,
       "url": "/tournament/weekly-smash-party-244",
       "events": [
         {
@@ -229,14 +229,14 @@
       "city": "台東区",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 20,
+      "num_attendees": 21,
       "url": "/tournament/11-545",
       "events": [
         {
           "event_id": 1690064,
           "event_slug": "tournament/11-545/event/on",
           "event_name": "シングルス（１on１トーナメント）",
-          "num_entrants": 20,
+          "num_entrants": 21,
           "type": 1,
           "start_at": 1789113600
         }
@@ -1095,8 +1095,8 @@
     },
     {
       "tournament_id": 948820,
-      "tournament_slug": "tournament/9-58",
-      "tournament_name": "ミコッチ杯#9",
+      "tournament_slug": "tournament/10-71",
+      "tournament_name": "ミコッチ杯#10",
       "start_at": 1790413200,
       "end_at": 1790427600,
       "is_online": false,
@@ -1104,11 +1104,11 @@
       "venue_name": "",
       "country_code": "JP",
       "num_attendees": 0,
-      "url": "/tournament/9-58",
+      "url": "/tournament/10-71",
       "events": [
         {
           "event_id": 1700393,
-          "event_slug": "tournament/9-58/event/super-smash-bros-ultimate-singles",
+          "event_slug": "tournament/10-71/event/super-smash-bros-ultimate-singles",
           "event_name": "シングルス",
           "num_entrants": 0,
           "type": 1,
