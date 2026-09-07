@@ -1,8 +1,8 @@
 {
-  "generated_at": 1788793664,
+  "generated_at": 1788799071,
   "country_code": "JP",
   "lookahead_days": 21,
-  "count": 50,
+  "count": 51,
   "tournaments": [
     {
       "tournament_id": 943845,
@@ -83,7 +83,7 @@
       "city": "中野区",
       "venue_name": "Red Bull Gaming Sphere Tokyo",
       "country_code": "JP",
-      "num_attendees": 61,
+      "num_attendees": 63,
       "url": "/tournament/weekly-smash-party-244",
       "events": [
         {
@@ -98,7 +98,7 @@
           "event_id": 1701650,
           "event_slug": "tournament/weekly-smash-party-244/event/casual-tournament",
           "event_name": "カジュアルトーナメント / Casual Tournament",
-          "num_entrants": 4,
+          "num_entrants": 5,
           "type": 1,
           "start_at": 1788944400
         }
@@ -335,6 +335,29 @@
       ]
     },
     {
+      "tournament_id": 951022,
+      "tournament_slug": "tournament/4-118",
+      "tournament_name": "第4回もつカップ",
+      "start_at": 1789178400,
+      "end_at": 1789207200,
+      "is_online": false,
+      "city": "渋谷区",
+      "venue_name": "",
+      "country_code": "JP",
+      "num_attendees": 3,
+      "url": "/tournament/4-118",
+      "events": [
+        {
+          "event_id": 1705024,
+          "event_slug": "tournament/4-118/event/singles-tournament",
+          "event_name": "Singles Tournament",
+          "num_entrants": 3,
+          "type": 1,
+          "start_at": 1789178400
+        }
+      ]
+    },
+    {
       "tournament_id": 944196,
       "tournament_slug": "tournament/11-moon",
       "tournament_name": "【第11回】Moon!",
@@ -436,14 +459,14 @@
       "city": "札幌市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 32,
+      "num_attendees": 33,
       "url": "/tournament/epochi-making-1",
       "events": [
         {
           "event_id": 1692196,
           "event_slug": "tournament/epochi-making-1/event/ultimate-singles",
           "event_name": "Ultimate Singles",
-          "num_entrants": 31,
+          "num_entrants": 32,
           "type": 1,
           "start_at": 1789254060
         }
@@ -942,14 +965,14 @@
       "city": "福岡市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 28,
+      "num_attendees": 29,
       "url": "/tournament/revival-15",
       "events": [
         {
           "event_id": 1693500,
           "event_slug": "tournament/revival-15/event/1on1",
           "event_name": "1on1トーナメント",
-          "num_entrants": 28,
+          "num_entrants": 29,
           "type": 1,
           "start_at": 1790128800
         }
