@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>評価指標の評価と整理 | SPSP ブログ</title>
+<meta name="description" content="ランキングの評価指標そのものを、シミュレーションで検証して 6 つの軸で整理した記録。定義、測り方、結果、篝火 4 シーズン 180 大会への適用、再現手順。技術版。">
+<link rel="stylesheet" href="blog.css">
+<script>MathJax = { tex: { inlineMath: [['\\(', '\\)']], displayMath: [['\\[', '\\]']] } };</script>
+<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" async></script>
+</head>
+<body>
+<main>
+<h1>評価指標の評価と整理</h1>
+<p class="meta">2026-09-07 · 技術版 · 簡易版は <a href="ranking-quality.html">「ランキングの良さはどうすれば測れる？」</a></p>
+<p class="lead">ランキング方式の優劣を決めるために使う「評価指標」を、その指標自体が信用できるかという観点で検証し、6 つの軸で整理した記録です。定義、測り方、結果の数表、実データへの適用、再現手順を書きます。前提として、勝率をロジスティック関数で表す Bradley-Terry モデルと、t 検定・順位相関の基本を知っていれば読めるように書きました。数式には毎回、日本語の読み下しを添えます。</p>
+
+<div class="abstract"><div class="t">概要</div><ul>
+<li>評価指標を、妥当性・検出力 (全体と帯内)・シーディングバイアス・解釈性・集計の癖の 6 つの軸で、真の強さが既知の合成世界を使って採点しました。</li>
+<li>順位系 (PA、MASPR、対数順位差など) は、シードを組んだ方式とそれに似た方式を \(t\) で +5〜9 良く見せます。勝敗系 (FWR) と ULG は歪みません。生の目盛りのギャップ系は逆に悪く見せます。</li>
+<li>検出力は ULG と PA が最も高く (22 世界平均の \(|t|\) で 6.7 と 6.6)、FWR は帯に絞るとほぼ無力です。解釈性を除く全軸で ○ 以上なのは ULG だけでした。</li>
+<li>運用規則は、優劣の判定は ULG と FWR、帯別は ULG、順位系は併記するが、それだけでは判断しない、です。部分的なランキングは、順位のある選手同士の組と試合だけで比べます (MASPR と ULG は目盛りが変わるので、絞る前の値とは比べません)。</li>
+<li>篝火 4 季 180 大会では、SPSP の組み合わせが歪まない指標でも他の方式に有意に勝ちました。来季の設定案は基準に対して ULG +3.9、FWR +1.3 です。</li>
+</ul></div>
+
+<div class="toc">目次
+<ol>
+<li><a href="#s1">何を決めたいのか</a>
+</li>
+<li><a href="#s2">指標の定義</a>
+</li>
+<li><a href="#s3">指標を評価する 6 つの軸と、それぞれの測り方</a>
+<ol>
+<li><a href="#s3-1">妥当性: 指標で選ぶと、本当に良い方式を選べるか</a></li>
+<li><a href="#s3-2">検出力: 小さな差に気づけるか</a></li>
+<li><a href="#s3-3">検出力 (条件付き): 実力帯に絞ったときも信号が残るか</a></li>
+<li><a href="#s3-4">シーディングバイアス: シードを組んだ側に甘くないか</a></li>
+<li><a href="#s3-5">解釈性: 説明なしで通じるか</a></li>
+<li><a href="#s3-6">集計の癖: 平均の取り方で答えが変わらないか</a></li>
+</ol>
+</li>
+<li><a href="#s4">結果: 指標ごとの性質</a>
+<ol>
+<li><a href="#s4-1">妥当性</a></li>
+<li><a href="#s4-2">検出力 (全体)</a></li>
+<li><a href="#s4-3">検出力 (帯内)</a></li>
+<li><a href="#s4-4">シーディングバイアス</a></li>
+<li><a href="#s4-5">部分的なランキングの扱い</a></li>
+<li><a href="#s4-6">まとめの表</a></li>
+<li><a href="#s4-7">採用しなかった指標と、その理由</a></li>
+</ol>
+</li>
+<li><a href="#s5">実データ (篝火 4 シーズン 180 大会) に当てはめる</a>
+<ol>
+<li><a href="#s5-1">方式の比較</a></li>
+<li><a href="#s5-2">UltRank との比較は、集計期間で分ける</a></li>
+<li><a href="#s5-3">来季の設定変更を採点し直す</a></li>
+<li><a href="#s5-4">実力帯別</a></li>
+</ol>
+</li>
+<li><a href="#s6">再現手順</a>
+</li>
+</ol></div>
+
+<h2 id="s1">1. 何を決めたいのか</h2>
+<p>決めたいのは「ランキング方式 A と B のどちらが良いか」です。ここで「良い」とは「まだ起きていない大会の結果をよく当てる」ことです。</p>
+<p>手順はこうです。ある大会が始まる直前の時点までの結果で方式 A を計算し、参加者を並べてシード (1 位、2 位、…の予想) を作ります。その予想を、大会の最終順位と各試合の勝敗に突き合わせて 1 つの数にします。この数が評価指標です。方式 B でも同じ大会で同じことをして、大会ごとに差を取ります。</p>
+<p>ここで困るのは、指標は「予想と結果の一致度」であって、本当に測りたい「予想と真の強さの一致度」ではないことです。真の強さは現実では見えません。そこで、真の強さを最初から決めた合成世界 (<a href="simulation-theory.html">別記事</a>) を使って「指標は真の強さの一致度の代わりになるか」を確かめ、その結果を踏まえて実データを読みます。</p>
+
+<h2 id="s2">2. 指標の定義</h2>
+<p>記号は、シード \(s_i\) (選手 \(i\) の予想順位、1 始まり)、最終順位 \(p_i\)、参加者数 \(n\)、試合の勝者 \(w\) と敗者 \(l\) です。指標は 1 大会ごとに「合計と件数」を出し、複数大会では合計を合計で割ってまとめます (大会ごとの平均は取りません。理由は 3.6 節)。</p>
+
+<h3>最終順位を見る指標 (順位系)</h3>
+<ul>
+<li><strong>ペア一致率 (Pairwise Accuracy、PA)</strong>: 2 人組を全部作り、予想の上下と最終順位の上下が一致した割合。読み下し: 「太郎は次郎より上」という予想が何割当たったか。Kendall の順位相関 \(\tau\) とは \(\tau = 2\,\mathrm{PA} - 1\) の関係です。</li>
+<li><strong>平均絶対 SPR (Mean Absolute SPR、MASPR)</strong>: 順位を「その順位に届くのに必要な勝ち数」に直す関数 \(\mathrm{w2w}\) を使います。\(\mathrm{w2w}(s_i) - \mathrm{w2w}(p_i)\) が SPR (Seed Performance Rating) で、その絶対値の選手平均 \(\frac{1}{n}\sum_i |\mathrm{w2w}(s_i) - \mathrm{w2w}(p_i)|\) が MASPR です。読み下し: 予想より何回戦ぶん上か下で終わったか。ダブルイリミネーションの順位は 1、2、3、4、5、5、7、7、9、9、9、9、… と同じ回戦で負けた人が同順位になり、その値は同じです (\(\mathrm{w2w}\) は 1 位 = 0、2 位 = 1、3 位 = 2、4 位 = 3、5 位 = 4、7 位 = 5、9 位 = 6、13 位 = 7、以下同様)。サイトの大会ページに出る SPR は実際のシードで計算しますが、ここでは大会直前のランキングから作った仮想シード \(s_i\) で計算します。</li>
+<li><strong>対数順位差</strong>: \(|\log_2 s_i - \log_2 p_i|\) の平均。MASPR の階段をなくした版。</li>
+<li><strong>相対順位差</strong>: \(|s_i - p_i| / n\) の平均。順位の数字のズレをそのまま見る版。Spearman の順位相関もこの仲間です。</li>
+</ul>
+
+<h3>試合の勝敗だけを見る指標 (勝敗系)</h3>
+<ul>
+<li><strong>上位シード勝率 (Favorite Win Rate、FWR)</strong>: 実際に行われた試合のうち、予想で上位だった側 (\(s_w &lt; s_l\)) が勝った割合。</li>
+</ul>
+
+<h3>アップセット (シードが下の側が勝つこと)の大きさを見る指標</h3>
+<ul>
+<li><strong>アップセット幅 (Upset Log Gap、ULG)</strong>: \[\mathrm{ULG} = \frac{1}{|M|}\sum_{\text{アップセットの試合}} \left(\log_2 s_w - \log_2 s_l\right)\] 読み下し: アップセット (予想で下位の側が勝った試合) について「何倍離れた相手に負けたか」を対数で数え、全試合数 \(|M|\) で割る。シード 2 位が 4 位に負ければ 1、64 位に負ければ 5 と数えます。低いほど良い指標です。</li>
+<li><strong>Upset Factor (UF)</strong>: 同じ形で、倍率の代わりに回戦数の差 \(\mathrm{w2w}(s_w) - \mathrm{w2w}(s_l)\) を足す版 (コミュニティで使われている upset factor と同じ考え方)。アップセット 1 件あたりで割る版も見ます。</li>
+<li><strong>順位差 (生の目盛り)</strong>: 順位の数字の差 \((s_w - s_l)/n\) をそのまま足す版。</li>
+<li><strong>確信度 AUC</strong>: 「予想が自信を持っている試合ほど順当に終わるか」を AUC で測ったもの。</li>
+</ul>
+<p>実装は <code>eval/seed_metrics.py</code> です。</p>
+
+<h2 id="s3">3. 指標を評価する 6 つの軸と、それぞれの測り方</h2>
+<p>合成世界には約 10 種類の方式が入っています。各方式について「予想の並びと真の強さの並びが一致した 2 人組の割合」を計算し、これを真の品質 \(g\) と呼びます。これが正解の順位表です。</p>
+
+<h3 id="s3-1">3.1 妥当性: 指標で選ぶと、本当に良い方式を選べるか</h3>
+<p>測り方: 方式を指標の値で並べた順と、真の品質 \(g\) で並べた順が、どれだけ同じかを Spearman の順位相関で見ます (低いほど良い指標は符号を反転してから)。1.0 なら完全に同じ順です。方式が 10 個しかないので、1 段入れ替わるだけで約 0.98 になる粗い量です。条件を変えた 23 の世界で計算し、平均と最小値を見ます。平均が良くても特定の世界で崩れる指標は使えないので、最小値のほうが大事です。</p>
+
+<h3 id="s3-2">3.2 検出力: 小さな差に気づけるか</h3>
+<p>考え方: 指標は大会ごとに運で揺れます。知りたい差がその揺れより小さいと、いくら大会を集めても「誤差の範囲」にしかなりません。揺れに対して差がどれだけ大きく出るかが検出力です。</p>
+<p>測り方: 真の強さの並びにノイズを混ぜた「少し悪い予想」を作ります。 \[s_\varepsilon = \operatorname{rank}(\theta + \varepsilon z), \quad z \sim N(0,1)\] 読み下し: 真の強さ \(\theta\) に大きさ \(\varepsilon\) の乱数を足して並べ直す。\(\varepsilon\) が 0 なら完璧な予想で、\(\varepsilon\) が大きいほど悪い予想です。この予想の真の品質は式で分かります。 \[g(\varepsilon) = \frac12 + \frac{1}{\pi}\arcsin\frac{1}{\sqrt{1+\varepsilon^2}}\] \(\varepsilon = 0.2\) で 0.937、\(0.4\) で 0.879 です。実際の方式は 0.78〜0.85 なので、\(\varepsilon = 0.2\) は「ほぼ完璧な予想がほんの少し悪くなった」状況です。</p>
+<p>完璧な予想と少し悪い予想を、同じ大会の同じ結果で採点し、大会ごとに差 \(D_T\) を取ります (同じ大会で比べるので、大会自体の当たり外れは消えます)。乱数 \(z\) は \(\varepsilon\) を変えても使い回します (乱数の引きの差を混ぜないため)。そして \[t = \frac{\bar D}{\mathrm{sd}(D)/\sqrt{N}}\] 読み下し: 差の平均が、運による揺れの何倍か。\(N\) は大会数で、大会を 4 倍集めると \(t\) は 2 倍になります。だから \(t\) から「同じ差に気づくのに何大会要るか」を \(N^* = N (t^*/t)^2\) で逆算できます (\(t^* = 2\) で五分五分、2.8 で 8 割の確率で気づく目安)。</p>
+
+<h3 id="s3-3">3.3 検出力 (条件付き): 実力帯に絞ったときも信号が残るか</h3>
+<p>「上位 8 人の並びだけ」「9 位から 16 位だけ」のように帯で切ると、帯の中の実力差は小さいので、1 大会の順位や勝敗はコイン投げに近づき、どの指標も信号が減ります。減り方が指標で大きく違うので、これも軸にします。測り方は 3.2 と同じ対応付き \(t\) で、帯の中だけで計算します。</p>
+
+<h3 id="s3-4">3.4 シーディングバイアス: シードを組んだ側に甘くないか</h3>
+<p>簡易版の記事で「シードバイアス」と呼んでいるものと同じです。</p>
+<p>大会の結果は予想と無関係には生まれません。トーナメント表を組んだシードが、誰と誰が当たるか、誰が不戦勝を得るかを決めます。そのため、表を組んだ方式 (とそれに似た方式) は、実力とは別の理由で良く見えたり悪く見えたりします。これを測るのがこの軸です。</p>
+<p>測り方 (較正した比較): 方式 \(R\) と「真の品質は \(R\) と全く同じで、表を組んだシードとは無関係に作った並び」を比べます。後者は \(\operatorname{rank}(\theta + \varepsilon z)\) の \(\varepsilon\) を、真の品質が \(R\) と一致するまで二分法で調整して作ります。例えば \(R\) の真の品質が 0.80 なら、無関係な並びの真の品質がちょうど 0.80 になる \(\varepsilon\) を探します。真の品質が同じなので、指標の値の差はまるごと「\(R\) がシードと見誤りを共有していること」の効果です。大会単位の対応付き \(t\) で出し、乱数を変えて平均します。答え合わせとして、無関係な並び同士 (乱数違い) で同じ計算をすると \(t \approx 0\) になることを確認しています。</p>
+
+<h3 id="s3-5">3.5 解釈性: 説明なしで通じるか</h3>
+<p>数値化はしませんが、運用上の軸として持ちます。「何回戦ぶんズレたか」「上位側が勝った割合」は通じます。「アップセットの大きさの対数」は説明が要ります。</p>
+
+<h3 id="s3-6">3.6 集計の癖: 平均の取り方で答えが変わらないか</h3>
+<p>大会ごとに指標を計算して大会平均を取ると、16 人大会の 1 人が 512 人大会の 1 人の 32 倍の重みを持ちます。SPSP では MASPR について、大会平均と選手単位の集計で方式の優劣の符号が反転したことがありました。以後は選手単位・試合単位の合計でまとめ、対応付き検定だけ大会を単位にしています。</p>
+
+<h2 id="s4">4. 結果: 指標ごとの性質</h2>
+<h3 id="s4-1">4.1 妥当性</h3>
+<p>23 の世界での順位相関の平均です。</p>
+<div class="tablewrap"><table>
+<tr><th>指標</th><th class="num">平均</th><th>備考</th></tr>
+<tr><td>FWR</td><td class="num">0.985</td><td>どの世界でも安定</td></tr>
+<tr><td>PA</td><td class="num">0.981</td><td></td></tr>
+<tr><td>ULG</td><td class="num">0.972</td><td></td></tr>
+<tr><td>MASPR</td><td class="num">0.970</td><td></td></tr>
+<tr><td>相対順位差 / 対数順位差</td><td class="num">0.959 / 0.956</td><td>全大会 100 人以上の世界で 0.63 / 0.49 まで低下</td></tr>
+<tr><td>UF</td><td class="num">0.947</td><td></td></tr>
+<tr><td>アップセット 1 件あたりの UF</td><td class="num">0.905</td><td>ある世界で 0.41 まで低下</td></tr>
+<tr><td>確信度 AUC</td><td class="num">0.889</td><td>ある世界で 0.08 まで崩壊</td></tr>
+<tr><td>全試合の回戦差</td><td class="num">0.862</td><td>参加者の偏りやシードの出所を入れた世界で 0.4〜0.6</td></tr>
+</table></div>
+<p>崩れる指標ほど、現実に近い条件 (実際のランキングでシードした世界) で崩れました。</p>
+
+<h3 id="s4-2">4.2 検出力 (全体)</h3>
+<p>\(\varepsilon = 0.2\) の劣化 (真の品質で約 6% 落ち) を 1 世界あたり 171 大会で検出したときの \(|t|\) の 22 世界平均と、必要な大会数の換算 (\(171 \times (t^*/t)^2\)、\(t^* = 2\) と \(2.8\)) です。</p>
+<div class="tablewrap"><table>
+<tr><th>指標</th><th class="num">平均 \(|t|\)</th><th class="num">五分五分で気づく大会数</th><th class="num">8 割の確率で気づく大会数</th></tr>
+<tr><td>ULG</td><td class="num">6.7</td><td class="num">15</td><td class="num">30</td></tr>
+<tr><td>PA</td><td class="num">6.6</td><td class="num">16</td><td class="num">31</td></tr>
+<tr><td>MASPR</td><td class="num">5.6</td><td class="num">22</td><td class="num">43</td></tr>
+<tr><td>FWR</td><td class="num">3.9</td><td class="num">45</td><td class="num">88</td></tr>
+<tr><td>アップセット 1 件あたりの UF</td><td class="num">2.8</td><td class="num">87</td><td class="num">171</td></tr>
+<tr><td>確信度 AUC</td><td class="num">1.8</td><td class="num">211</td><td class="num">414</td></tr>
+</table></div>
+<p>同じ現実を見ているのに、指標の選び方だけで「1〜2 か月で分かる」と「2 年集めても分からない」に分かれます。逐次検定 (SPRT) で運用した場合、ULG は中央値 16 大会で判定できました。</p>
+
+<h3 id="s4-3">4.3 検出力 (帯内)</h3>
+<p>バイアスのない世界 (真の強さでシードした世界) で、真の品質差 4.8 ポイントの 2 方式を、到達順位の帯の中だけで区別したときの \(t\) です。</p>
+<div class="tablewrap"><table>
+<tr><th>指標</th><th class="num">全体</th><th class="num">1〜8 位</th><th class="num">17〜32 位</th><th class="num">33〜64 位</th><th class="num">65〜128 位</th><th class="num">129 位以下</th></tr>
+<tr><td>MASPR</td><td class="num">12.3</td><td class="num">9.5</td><td class="num">6.8</td><td class="num">7.4</td><td class="num">3.9</td><td class="num">2.8</td></tr>
+<tr><td>ULG</td><td class="num">11.8</td><td class="num">6.5</td><td class="num">5.4</td><td class="num">3.0</td><td class="num">3.8</td><td class="num">2.7</td></tr>
+<tr><td>PA</td><td class="num">12.7</td><td class="num">4.3</td><td class="num">2.9</td><td class="num">2.7</td><td class="num">1.4</td><td class="num">2.6</td></tr>
+<tr><td>FWR</td><td class="num">8.2</td><td class="num">3.6</td><td class="num">1.1</td><td class="num">−0.5</td><td class="num">1.9</td><td class="num">0.4</td></tr>
+</table></div>
+<p>帯の中で信号が残る順は MASPR、ULG、PA、FWR です。勝ち負けだけの FWR は帯で切るとほとんど何も見えなくなります。帯別の分析では ULG を主に使います (次のバイアスに強く、信号も残るため)。</p>
+
+<h3 id="s4-4">4.4 シーディングバイアス</h3>
+<p>3 種類の歪みが見つかりました。</p>
+<p><strong>(a) 全体の水準が動く。</strong> 同じ世界でシードだけを (でたらめ → Elo → 真の強さ) と替えると、どの方式の観測 PA も +0.05〜0.075 上がります。真の品質は誰も変わっていません。シードが正確なほど強い人が守られ、順当な結果になりやすいからです。教訓: シードの質が違う大会群や季の絶対値を比べてはいけません。</p>
+<p><strong>(b) でたらめでも少し当たる。</strong> でたらめなシード (真の品質 0.5) の PA は 0.525 です。参加者が 2 のべき乗に足りないとき、不戦勝はシード上位に配られ、不戦勝の選手は最下位の集団に入らないからです。2 のべき乗ちょうどの大会だけで計算すると 0.500 に戻り、不戦勝の多い人数 (11〜13 人) では 0.514 まで上がります。</p>
+<p><strong>(c) シードを組んだ側 (と似た方式) が、実力より良く、または悪く見える。</strong> 3.4 の較正した比較で、指標の種類ごとに向きが分かれました。</p>
+<div class="tablewrap"><table>
+<tr><th>指標の種類</th><th class="num">\(t\)</th><th>向き</th></tr>
+<tr><td>順位系 (相対順位差, 対数順位差, MASPR, PA)</td><td class="num">+5.8〜+8.9</td><td>組んだ側が良く見える</td></tr>
+<tr><td>勝敗系と ULG、UF、確信度 AUC</td><td class="num">−1.6〜+1.9</td><td>歪まない</td></tr>
+<tr><td>生の目盛りのギャップ系 (順位差 (生の目盛り), 全試合の回戦差)</td><td class="num">−1.7〜−3.5</td><td>組んだ側が悪く見える</td></tr>
+</table></div>
+<p>仕組みは「平均への回帰」です。表を組んだ方式が低く見誤った選手ほど極端な枠 (1 位対 64 位) に置かれます。その選手が勝ったとき、組んだ方式の目盛りでだけアップセットの幅が最大になるので、生の目盛りの指標では組んだ側が悪く見えます。逆に順位系では、表がシード上位を守るので最終順位がシードに寄り、組んだ側が良く見えます。勝敗の向きだけを見る指標は、似た方式なら向きの答えがほぼ同じなので歪みません。</p>
+<p>表を組む方式を取り替えた 5 つの世界で、各方式の観測 PA が「較正した無関係な並び」よりどれだけ高く出たか (ポイント) です。</p>
+<div class="tablewrap"><table>
+<tr><th>採点される方式</th><th class="num">JJPR でシード</th><th class="num">SPSP でシード</th><th class="num">直対単体でシード</th><th class="num">Elo でシード</th><th class="num">真の強さでシード</th></tr>
+<tr><td>JJPR</td><td class="num"><strong>+4.5</strong></td><td class="num">+2.9</td><td class="num">+2.3</td><td class="num">+0.9</td><td class="num">−0.6</td></tr>
+<tr><td>順位評価単体 (tj)</td><td class="num">+3.5</td><td class="num">+3.0</td><td class="num">+2.2</td><td class="num">+1.0</td><td class="num">−0.6</td></tr>
+<tr><td>SPSP (ens)</td><td class="num">+2.9</td><td class="num"><strong>+3.3</strong></td><td class="num">+2.7</td><td class="num">+1.1</td><td class="num">−0.4</td></tr>
+<tr><td>直対単体 (bt)</td><td class="num">+2.3</td><td class="num">+3.0</td><td class="num"><strong>+3.0</strong></td><td class="num">+1.3</td><td class="num">−0.3</td></tr>
+<tr><td>Glicko-2</td><td class="num">+1.9</td><td class="num">+2.0</td><td class="num">+1.9</td><td class="num">+1.6</td><td class="num">−0.4</td></tr>
+<tr><td>Elo</td><td class="num"></td><td class="num"></td><td class="num"></td><td class="num"><strong>+2.5</strong></td><td class="num"></td></tr>
+</table></div>
+<p>読み方: どの世界でも一番盛られるのは表を組んだ方式で、次にそれに似た方式です。組んだ方式自身の盛られ幅は JJPR &gt; SPSP &gt; 直対単体 &gt; Elo の順で、シードが「大会の順位から直接作られている」ほど大きくなります。真の強さでシードすると誰も盛られません (Glicko-2 が毎回持っていた +1.6〜2.0 の底上げ分まで消えます)。つまり盛られる正体は「シードの見誤りを方式が共有していること」で、見誤りのないシードでは共有しようがない、ということです。</p>
+<p>実データへの注意: 日本の大会の実際のシードは、多くが JJPR を基準にスタッフが調整して組まれています。SPSP が表を組んでいなくても、JJPR に似た並びをする方式 (順位評価を含む SPSP もそうです) は順位系の指標で良く見えます。</p>
+
+<h3 id="s4-5">4.5 部分的なランキングの扱い</h3>
+<p>UltRank のように上位 K 人しか順位を持たないランキングは、順位のある選手同士の組と試合だけで採点します。比べる相手の方式も、その選手だけを取り出して 1 から並べ直します (シードも最終順位もその中での順位に振り直す)。実データの UltRank 比較 (5.2 節) はこの手順で、実装は <code>eval/seed_metrics.py</code> の subset 処理です。</p>
+<p>絞って測った値は、全参加者で測った値より悪くなります。上位の選手同士は実力差が小さく、当てにくいからです。真の強さでシードした世界 (方式は Glicko-2、37 大会) で、完全なランキングを全参加者で測ると PA 0.810 / FWR 0.718 / MASPR 1.246 / ULG 0.272 ですが、真の強さ上位 200 人の中だけで測ると PA 0.649 / FWR 0.611 / MASPR 1.686 / ULG 0.459 です (<code>simlab/partial_coverage_check.py</code>)。MASPR・対数順位差・ULG は、絞ると参加者が減ってシード番号が 1 から詰め直されるので目盛りも変わります。どの指標でも、絞った値と絞っていない値を並べて比べてはいけません。</p>
+<h3 id="s4-6">4.6 まとめの表</h3>
+<div class="tablewrap"><table>
+<tr><th>指標</th><th>妥当性</th><th>検出力 (全体)</th><th>検出力 (帯内)</th><th>シードの歪み</th><th>解釈性</th></tr>
+<tr><td>PA / \(\tau\)</td><td>◎</td><td>◎</td><td>△</td><td>良く見える +5〜9</td><td>◎</td></tr>
+<tr><td>MASPR</td><td>◎</td><td>○</td><td>◎</td><td>良く見える +7〜8</td><td>◎</td></tr>
+<tr><td>対数順位差 / 相対順位差 / \(\rho\)</td><td>◎</td><td>◎</td><td>◎</td><td>良く見える +8〜9</td><td>○</td></tr>
+<tr><td><strong>ULG</strong></td><td>◎</td><td><strong>◎</strong></td><td>○</td><td><strong>歪まない</strong></td><td>△</td></tr>
+<tr><td><strong>FWR</strong></td><td>◎ 最も安定</td><td>○</td><td>✕</td><td><strong>歪まない</strong></td><td>◎</td></tr>
+<tr><td>UF</td><td>○</td><td>○</td><td>計測なし</td><td>歪まない</td><td>○</td></tr>
+<tr><td>生の目盛りのギャップ系</td><td>不安定</td><td>計測なし</td><td>計測なし</td><td>悪く見える</td><td>計測なし</td></tr>
+<tr><td>アップセット 1 件あたりの UF / 確信度 AUC</td><td>世界による</td><td>計測なし</td><td>計測なし</td><td>歪まない</td><td>計測なし</td></tr>
+</table></div>
+<p>記号の基準: 妥当性は 4.1 の平均で 0.95 以上を ◎、0.90 以上を ○ とし、特定の世界で 0.5 を下回るものは別に書きました。検出力 (全体) は 4.2 の平均 \(|t|\) で 6 以上を ◎、3 以上を ○、3 未満を △。検出力 (帯内) は 4.3 の帯内 \(t\) の中央値で 6 以上を ◎、3 以上を ○、2 以上を △、2 未満を ✕ としました。</p>
+<p>強い軸同士が両立しません。帯の中で信号が残る順位系は歪みが最大で、歪まない FWR は帯の中で無力です。解釈性を除く 4 つの計測軸のすべてで ○ 以上なのは ULG だけでした。ここから運用規則を決めました。</p>
+<ul>
+<li>方式の優劣の判定は ULG と FWR で行う。</li>
+<li>帯別の分析は ULG を主に使う。</li>
+<li>順位系 (PA, MASPR) は併記するが、それだけでは判断しない。順位系だけが改善を示し勝敗系が示さないときは、シードの歪みを疑い、勝敗系の答えを採る。</li>
+</ul>
+
+<h3 id="s4-7">4.7 採用しなかった指標と、その理由</h3>
+<p>候補に挙げて試したうえで外した指標です。「悪い指標」というより、この用途 (方式の優劣の判定と帯別の分析) に合わなかったものとして書きます。</p>
+<dl>
+<dt>確信度 AUC</dt>
+<dd>予想が自信を持っている試合 (レート差が大きい試合) ほど順当に終わるか、を測る指標です。方式の中身を見る指標としては筋が良いのですが、方式ごとにレート差の目盛りが違うので、方式同士を並べる用途では妥当性が平均 0.889、ある世界で 0.08 まで崩れました。検出力も最低で、真の品質 6% の差に 8 割の確率で気づくのに 684 大会かかります (4 季 180 大会ではまず無理です)。方式の比較には使わず、1 つの方式の中で「レート差が試合結果をどれだけ説明するか」を見るときだけの指標と位置づけました。</dd>
+<dt>アップセット 1 件あたりの UF</dt>
+<dd>UF の分母を全試合数ではなくアップセットの件数にした版です。「アップセットは少ないが起きると大きい方式」と「小さいアップセットが多い方式」の順序を取り違えます。アップセットを減らすほど分母が減って 1 件あたりが重くなるので、良い方式が罰される向きです。妥当性は平均 0.905、ある世界で 0.41 でした。分母は全試合数に固定します (ULG と UF はそうしています)。</dd>
+<dt>生の目盛りのギャップ系 (順位差 (生の目盛り)、全試合の回戦差)</dt>
+<dd>順位の数字の差や回戦数の差を対数にせずそのまま足す版です。大規模大会の下位の大きな数字に支配されるうえ、4.4 の (c) で見たように、シードを組んだ側が悪く見える向きの歪みを持ちます。全試合の回戦差は、参加者の偏りやシードの出所を入れた世界で妥当性が 0.4〜0.6 まで落ちました。現実に近い条件ほど壊れる指標は使えません。</dd>
+<dt>相対順位差・対数順位差</dt>
+<dd>順位系の中で検出力が高い (4.2 の平均 \(|t|\) で 6.0 と 5.6) のですが、シードの歪みも最大 (+8〜9) で、妥当性もある世界で 0.49 まで落ちました。同じ順位系なら、意味が通じて歪みがやや小さい MASPR と PA を残し、この 2 つは外しました。</dd>
+<dt>順位相関係数 (Kendall の \(\tau\)、Spearman の \(\rho\))</dt>
+<dd>独立した指標ではありません。\(\tau\) は PA の一次変換 (\(\tau = 2\,\mathrm{PA} - 1\))、\(\rho\) は順位差の 2 乗和の単調変換なので、それぞれ PA と相対順位差の行がそのまま当てはまります。相関係数の形にすると 4.4 の歪みが見えにくくなるだけなので、割合や差の形で書く方を採りました。</dd>
+<dt>2 乗版 (MASPR の RMSE、ULG の RMSE)</dt>
+<dd>大きなズレを強く数える版です。実データの全指標での再採点 (5.3) には入れましたが、答えは元の版とほぼ同じ向きで、少数の大きなアップセットに値が引きずられるぶん検定が不安定になります。追加の情報がないので採用していません。</dd>
+<dt>同じ 2 人の再戦を 1 回に数える FWR</dt>
+<dd>同じ大会で同じ 2 人が 2 回当たる (敗者側で再戦する) 試合を 1 回に数える版です。再戦は通常の FWR でも試合数の 1 割程度で、値はほぼ変わらず、検定の \(t\) が小さくなるだけでした。</dd>
+</dl>
+<p>指標ではなく集計法で外したものが 1 つあります。大会ごとに指標を出してから大会平均を取る方法です。3.6 に書いたとおり、MASPR で方式の優劣の符号が反転した事故があり、以後は選手単位・試合単位の合計に統一しています。</p>
+<p>逆に、外さずに役割を限定したものが順位系 (PA、MASPR) です。シードの歪みがあるので優劣の判定には使いませんが、「何回戦ぶんズレたか」「2 人の上下が何割当たったか」は説明なしで通じるので、結果表には必ず併記しています。</p>
+
+<h2 id="s5">5. 実データ (篝火 4 シーズン 180 大会) に当てはめる</h2>
+<p>対象は篝火 #11〜#15 で区切った 4 季 (2023 年 10 月〜2026 年 5 月) の 100 人以上の大会 180 件です。各大会の直前時点のランキングからシードを作り、設定を変えた版と基準版を同じ大会で採点して、大会単位の対応付き \(t\) を出します。以下の \(t\) はすべて「正 = 変えた版が良い」に揃えてあります。</p>
+
+<h3 id="s5-1">5.1 方式の比較</h3>
+<p>素の Glicko-2 などは過去データを見ていない状態から学習するので、学習が浅い最初の季を除いた 3 季で比べます。</p>
+<div class="tablewrap"><table>
+<tr><th>方式</th><th class="num">PA</th><th class="num">FWR</th><th class="num">ULG (低いほど良い)</th><th class="num">MASPR (低いほど良い)</th></tr>
+<tr><td>SPSP (ens)</td><td class="num">0.860</td><td class="num">0.784</td><td class="num">0.173</td><td class="num">0.988</td></tr>
+<tr><td>直対単体 (bt)</td><td class="num">0.854</td><td class="num">0.785</td><td class="num">0.169</td><td class="num">0.996</td></tr>
+<tr><td>順位単体 (tj)</td><td class="num">0.855</td><td class="num">0.772</td><td class="num">0.187</td><td class="num">1.020</td></tr>
+<tr><td>Glicko-2 (素)</td><td class="num">0.833</td><td class="num">0.765</td><td class="num">0.190</td><td class="num">1.059</td></tr>
+<tr><td>JJPR (参考)</td><td class="num">0.831</td><td class="num">0.745</td><td class="num">0.225</td><td class="num">1.145</td></tr>
+<tr><td>Elo (素)</td><td class="num">0.820</td><td class="num">0.752</td><td class="num">0.208</td><td class="num">1.111</td></tr>
+<tr><td>Bradley-Terry 最尤 (一括)</td><td class="num">0.796</td><td class="num">0.732</td><td class="num">0.237</td><td class="num">1.230</td></tr>
+</table></div>
+<p>SPSP の組み合わせ方式は、歪まない指標でも他の方式に有意に勝ちます (ULG の大会単位の対応付き \(t\): Glicko-2 で 7.4)。JJPR は参考値です。試合を学習しない方式であり、実際のシードの基準でもあるので、PA は 4.4 の仕組みで高めに出ます。13 種類の指標で方式を並べると、11 種類で同じ順 (bt ≈ ens &gt; tj &gt; Glicko-2 &gt; Elo &gt; 最尤) になり、ずれたのは順位系だけでした。</p>
+
+<h3 id="s5-2">5.2 UltRank との比較は、集計期間で分ける</h3>
+<p>UltRank 2025 Japan は 200 人の順位表で、2024 年 12 月 17 日から 2025 年 12 月 15 日の結果をもとに後から作られています。掲載選手同士に絞ってシードを振り直し、期間の前・中・後で分けました (PA / FWR / ULG)。</p>
+<div class="tablewrap"><table>
+<tr><th></th><th>期間前 (69 大会)</th><th>期間中 (56 大会)</th><th>期間後 (23 大会)</th></tr>
+<tr><td>SPSP</td><td>0.774 / 0.674 / 0.327</td><td>0.723 / 0.661 / 0.380</td><td>0.741 / 0.678 / 0.380</td></tr>
+<tr><td>UltRank</td><td>0.701 / 0.660 / 0.369</td><td><strong>0.722 / 0.659 / 0.350</strong></td><td>0.714 / 0.651 / 0.401</td></tr>
+</table></div>
+<p>期間中だけ UltRank が互角以上に見えます。評価している結果そのものを見て作られたランキングだからです。純粋な予想になる期間後では、PA と FWR で 2.7 ポイント下、ULG も 0.02 悪い値でした。</p>
+
+<h3 id="s5-3">5.3 来季の設定変更を採点し直す</h3>
+<p>来季に入れる予定だった 4 つの変更を、1 つずつ基準と比べました。</p>
+<div class="tablewrap"><table>
+<tr><th>変更</th><th>内容</th><th class="num">ULG</th><th class="num">FWR</th><th class="num">PA (参考)</th><th>読み</th></tr>
+<tr><td>FFIX</td><td>Glicko-2 ライブラリがレーティングの 2 乗を誤って使う箇所を直す</td><td class="num">−0.96</td><td class="num">+1.02</td><td class="num">−0.14</td><td>精度は変わらない (正しさのための修正)</td></tr>
+<tr><td>dk3</td><td>直対評価の 180 日ピークを古いほど減らす</td><td class="num">+0.72</td><td class="num">−0.77</td><td class="num">+2.52</td><td>多くの指標で良い方向 (FWR だけはほぼ変わらず)。4 つの中で一番筋が良い</td></tr>
+<tr><td>lv3wd</td><td>レベル 3 の順位評価に平日大会を含める</td><td class="num">+1.47</td><td class="num">−0.15</td><td class="num">+0.80</td><td>季によって良かったり悪かったり</td></tr>
+<tr><td>bo5k</td><td>3 本先取の試合の変動量を 1.25 倍</td><td class="num">−0.32</td><td class="num">−0.11</td><td class="num">+2.62</td><td>順位系だけが良い (要注意の形)</td></tr>
+</table></div>
+<p>bo5k は「順位系だけ改善」の形だったので、倍率 K を変えて調べました。基準 (K=1) との ULG の \(t\) は、K=0.8 で −0.40、1.1 で +1.27、1.25 で −0.32、1.5 で −1.79、1.75 で −2.61、2.0 で −3.51 でした。山は 1.1 付近で、1.5 以上は歪まない指標で単調に悪くなります。予定の 1.25 は山を過ぎていたので 1.1 に下げます。</p>
+<p>lv3wd は、平日大会の順位ポイントに係数 W (1 未満) を掛ける形に変えました。W=0.5 で ULG +1.63 (4 季すべて正)、FWR +0.59 となり、W=1 (そのまま含める) にあった季依存が消えました。W=0.25 と 0.75 も試しましたが 0.25〜0.75 の範囲では差がなく平らで、180 大会では優劣を付けられません。0.5 は「平日は半分」という解釈のしやすさで選びました。</p>
+<p>直対評価側でも、レベル 3 の選手の平日試合を 0.5 倍の変動量で学習する変更を試しました。単独では上位層でわずかに悪くなりましたが、他の変更と組み合わせると効果が上乗せされました。</p>
+<div class="tablewrap"><table>
+<tr><th>組み合わせ (現行との差)</th><th class="num">ULG</th><th class="num">FWR</th><th class="num">PA</th></tr>
+<tr><td>当初案 (4 変更をそのまま)</td><td class="num">+1.67</td><td class="num">+0.58</td><td class="num">+3.24</td></tr>
+<tr><td>改訂 (K=1.1, W=0.5)</td><td class="num">+2.54</td><td class="num">−0.08</td><td class="num">+4.49</td></tr>
+<tr><td>改訂 + 平日の直対を 0.5 倍</td><td class="num"><strong>+3.89</strong></td><td class="num"><strong>+1.32</strong></td><td class="num">+6.19</td></tr>
+</table></div>
+<p>最終案は ULG の季別が +1.55 / +2.12 / +2.15 / +1.95 と 4 季すべてで \(t \approx 2\)、改訂前との直接比較でも ULG +2.67、FWR +2.24 と、歪まない 2 指標で有意でした。指標を見直したことで、当初案より良い設定にたどり着けたことになります。</p>
+
+<h3 id="s5-4">5.4 実力帯別</h3>
+<p>最終順位の帯 (1〜8 位、9〜16 位、…、2 のべき乗幅で 1025 位以下まで) ごとに、帯内の PA と、帯内の選手同士の試合の FWR / ULG を比べました。結論を先に書くと、トップは直対単体、裾野は組み合わせ、中間は判定できず、です。</p>
+<p>帯を 1〜64 / 65〜512 / 513 位以下の 3 つにまとめ、直対単体と SPSP を 4 つの判定で突き合わせました (<code>eval/seed_metrics_band_boundary.py</code>)。勝敗系 2 本は、両者の予想の勝者が食い違った帯内試合だけでどちらが当たったかの二項 \(z\) と、帯内試合 ULG の大会単位の対応付き \(t\)。順位系 2 本は、上下の予想が食い違った帯内ペアの二項 \(z\) と、帯の選手の MASPR の対応付き \(t\) です。符号は正 = 直対単体が良い、括弧は 3 季の符号です。</p>
+<div class="tablewrap"><table>
+<tr><th>帯</th><th class="num">食い違い試合 \(z\)</th><th class="num">ULG \(t\)</th><th class="num">食い違いペア \(z\)</th><th class="num">MASPR \(t\)</th><th>判定 (勝敗系)</th></tr>
+<tr><td>1〜64</td><td class="num">+1.5 (+++)</td><td class="num">+4.4 (+++)</td><td class="num">+2.4 (+++)</td><td class="num">+2.0 (+++)</td><td>直対単体</td></tr>
+<tr><td>65〜512</td><td class="num">+1.9 (+++)</td><td class="num">−0.4 (−+−)</td><td class="num">−19.0 (−−−)</td><td class="num">−2.9 (−−−)</td><td>どっこい</td></tr>
+<tr><td>513 以下</td><td class="num">−3.1 (−−−)</td><td class="num">−2.0 (−−−)</td><td class="num">−107.9 (−−−)</td><td class="num">−5.3 (−−−)</td><td>SPSP</td></tr>
+</table></div>
+<ul>
+<li>1〜64 位: 4 本すべて直対単体で、3 季とも同じ向き。細分すると 1〜8 位と 17〜64 位で ULG が有意 (\(t\) 2.9、3.5)。</li>
+<li>65〜512 位: 勝敗系は直対単体寄り (食い違い試合で 3 季とも直対が多く当たるが \(z\) 1.9)、順位系は SPSP。順位系の差は 4.4 の歪みと同じ向きで、大きさも +0.2 ポイント程度なので判定に使いません。</li>
+<li>513 位以下: 勝敗系 2 本とも SPSP で、3 季とも同じ向き。細分すると 513〜1024 位は食い違い試合で SPSP (\(z\) −2.3、3 季同方向) だが ULG は直対寄り (\(t\) +1.1、符号は季でばらつく) と割れ、1025 位以下で両方が SPSP (ULG \(t\) −2.1) に揃います。</li>
+<li>9〜16 位の帯は、どの方式でも一番当てにくい帯でした。</li>
+</ul>
+<p>補足 (65〜512 位の差の出所): SPSP がシードに使われていない初期の季から +0.2 ポイント前後で一定だったので、SPSP 自身が表を組んだ効果ではありません。JJPR のシード列を実際のシードの代わりにして、SPSP と直対単体が逆の予想をした 7.9 万組を調べると、「JJPR と同じ側に付いた方が勝つ」構造 (SPSP が JJPR 側のとき 54.3%、直対単体が JJPR 側のとき 52.6%) でした。つまりこの帯の差は「JJPR に似た並びをする頻度の差」でほぼ説明できます。</p>
+
+<h2 id="s6">6. 再現手順</h2>
+<pre><code># 標準評価 (篝火 4 季) のシードダンプ。設定を変えた版は環境変数を付けて同じ手順
+SPSP_EVAL_DUMP_SEEDS=~/spsp-eval-dumps/seeds_14_15.jsonl python3 v3/eval_v4_ultrank_pertour.py 14_15.txt on
+# 変えた版と基準の対応付き比較 (全指標の t)
+python3 eval/seed_metrics_arm.py --base ~/spsp-eval-dumps/seeds_1*.jsonl --arm ~/spsp-eval-dumps/seeds_arm_dk3_*.jsonl --label dk3 --out arm_dk3.json
+# 方式比較 (jjpr / Glicko-2 / Elo / 最尤を時系列で学習)、UltRank の期間分割、帯別
+python3 eval/seed_metrics_methods.py --dump ... --phase jjpr ; ... --phase replay --ckpt ... --max-sec 240
+python3 eval/seed_metrics_ult_window.py --dump ... --jjpr-cache ... --seeds ...
+python3 eval/seed_metrics_bands.py --dump ... --seeds ...
+# 指標の検証 (合成世界)
+sh simlab/run_all.sh simlab/configs/basic.json
+python3 simlab/bias_metrics.py --run simlab/runs/selfens
+python3 simlab/favoritism_by_method.py --run simlab/runs/jjprseed</code></pre>
+<p>実装上の識別子との対応: PA = <code>pair_acc</code>、MASPR = <code>spr_abs</code>、FWR = <code>match_acc</code>、ULG = <code>upset_loggap_per_match</code>、UF = <code>uf_per_match</code>、対数順位差 = <code>logdiff_abs</code>、相対順位差 = <code>rankdiff_rel</code>、確信度 AUC = <code>conf_auc</code>、順位差 (生の目盛り) = <code>upset_gap_rel_per_match</code>、全試合の回戦差 = <code>match_w2wgap_per_match</code>。</p>
+<p>レポート本体は <code>eval/reports/validated_metrics_202608/REPORT.md</code> (<a href="../b/simlab/realeval.html">公開版</a>)、合成世界の横断レポートは <a href="../b/simlab/">こちら</a> です。</p>
+
+<div class="navlinks"><a href="./">ブログ目次</a><a href="ranking-quality.html">簡易版: ランキングの良さはどうすれば測れる？</a><a href="simulation-theory.html">対戦シミュレーションの理論と分析</a></div>
+</main>
+<script src="../nav.js"></script>
+</body>
+</html>

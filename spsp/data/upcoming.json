@@ -1,5 +1,5 @@
 {
-  "generated_at": 1788718506,
+  "generated_at": 1788761253,
   "country_code": "JP",
   "lookahead_days": 21,
   "count": 45,
@@ -21,7 +21,7 @@
           "event_id": 1690052,
           "event_slug": "tournament/7-542/event/on",
           "event_name": "シングルス（１on１トーナメント）",
-          "num_entrants": 14,
+          "num_entrants": 16,
           "type": 1,
           "start_at": 1788768000
         }
@@ -37,14 +37,14 @@
       "city": "渋谷区",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 5,
+      "num_attendees": 7,
       "url": "/tournament/140-shibuya-tatsu",
       "events": [
         {
           "event_id": 1700567,
           "event_slug": "tournament/140-shibuya-tatsu/event/singles",
           "event_name": "Singles",
-          "num_entrants": 5,
+          "num_entrants": 7,
           "type": 1,
           "start_at": 1788861600
         }
@@ -60,14 +60,14 @@
       "city": "札幌市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 8,
+      "num_attendees": 9,
       "url": "/tournament/epochi-2-1",
       "events": [
         {
           "event_id": 1702313,
           "event_slug": "tournament/epochi-2-1/event/ultimate-singles",
           "event_name": "Ultimate Singles",
-          "num_entrants": 8,
+          "num_entrants": 9,
           "type": 1,
           "start_at": 1788863400
         }
@@ -83,7 +83,7 @@
       "city": "中野区",
       "venue_name": "Red Bull Gaming Sphere Tokyo",
       "country_code": "JP",
-      "num_attendees": 53,
+      "num_attendees": 55,
       "url": "/tournament/weekly-smash-party-244",
       "events": [
         {
@@ -98,7 +98,7 @@
           "event_id": 1701650,
           "event_slug": "tournament/weekly-smash-party-244/event/casual-tournament",
           "event_name": "カジュアルトーナメント / Casual Tournament",
-          "num_entrants": 2,
+          "num_entrants": 3,
           "type": 1,
           "start_at": 1788944400
         }
@@ -183,14 +183,14 @@
       "city": "渋谷区",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 8,
+      "num_attendees": 9,
       "url": "/tournament/shibuya-g-g-smash-weekly-79",
       "events": [
         {
           "event_id": 1702416,
           "event_slug": "tournament/shibuya-g-g-smash-weekly-79/event/singles",
           "event_name": "Singles",
-          "num_entrants": 8,
+          "num_entrants": 9,
           "type": 1,
           "start_at": 1789036200
         }
@@ -229,14 +229,14 @@
       "city": "台東区",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 15,
+      "num_attendees": 17,
       "url": "/tournament/11-545",
       "events": [
         {
           "event_id": 1690064,
           "event_slug": "tournament/11-545/event/on",
           "event_name": "シングルス（１on１トーナメント）",
-          "num_entrants": 15,
+          "num_entrants": 17,
           "type": 1,
           "start_at": 1789113600
         }
@@ -321,14 +321,14 @@
       "city": "知立市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 103,
+      "num_attendees": 104,
       "url": "/tournament/sp5-2",
       "events": [
         {
           "event_id": 1632234,
           "event_slug": "tournament/sp5-2/event/gokusuma-sp5",
           "event_name": "GOKUSUMA SP5",
-          "num_entrants": 103,
+          "num_entrants": 104,
           "type": 1,
           "start_at": 1789178400
         }
@@ -459,14 +459,14 @@
       "city": "中野区",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 46,
+      "num_attendees": 47,
       "url": "/tournament/to-get-off-3",
       "events": [
         {
           "event_id": 1636160,
           "event_slug": "tournament/to-get-off-3/event/ultimate-singles",
           "event_name": "Ultimate Singles",
-          "num_entrants": 46,
+          "num_entrants": 47,
           "type": 1,
           "start_at": 1789270200
         }
@@ -988,14 +988,14 @@
       "city": "浜松市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 27,
+      "num_attendees": 28,
       "url": "/tournament/sp16-3",
       "events": [
         {
           "event_id": 1695652,
           "event_slug": "tournament/sp16-3/event/1on1",
           "event_name": "1on1",
-          "num_entrants": 25,
+          "num_entrants": 26,
           "type": 1,
           "start_at": 1790388000
         }

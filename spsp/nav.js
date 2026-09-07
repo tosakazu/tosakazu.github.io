@@ -74,6 +74,7 @@
     if (/\/pref\//.test(p))          return 'pref-list';
     if (/\/events\//.test(p))        return 'events';
     if (/\/sim\//.test(p))           return 'sim';
+    if (/\/blog\//.test(p))          return 'blog';
     if (/\/news\//.test(p))          return 'news';
     if (/\/vote\.html$/.test(p))     return 'vote';
     if (/\/p\//.test(p))             return 'player';
@@ -83,7 +84,7 @@
   const cur = currentPage();
   const isRanking = cur === 'ranking' || cur === 'local-series' || cur === 'local-ranking' || cur === 'char-list' || cur === 'char-ranking' || cur === 'pref-list' || cur === 'pref-ranking' || cur === 'events' || cur === 'sim';
   const isSeeding = cur === 'seed' || cur === 'seed-upload' || cur === 'priority';
-  const isMethod  = ['overview', 'details', 'eval', 'math'].includes(cur);
+  const isMethod  = ['overview', 'details', 'eval', 'math', 'blog'].includes(cur);
 
   const html =
     `<nav class="nav">
@@ -114,6 +115,7 @@
           <a href="${prefix}details.html"${cur === 'details' ? ' class="current"' : ''} role="menuitem">理論編・概念</a>
           <a href="${prefix}eval.html"${cur === 'eval' ? ' class="current"' : ''} role="menuitem">理論編・評価</a>
           <a href="${prefix}math.html"${cur === 'math' ? ' class="current"' : ''} role="menuitem">理論編・数式</a>
+          <a href="${prefix}blog/"${cur === 'blog' ? ' class="current"' : ''} role="menuitem">ブログ</a>
         </div>
       </div>
       <div class="nav-dropdown nav-news${cur === 'news' ? ' has-current' : ''}">
