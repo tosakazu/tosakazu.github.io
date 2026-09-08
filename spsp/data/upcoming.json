@@ -1,5 +1,5 @@
 {
-  "generated_at": 1788866590,
+  "generated_at": 1788868913,
   "country_code": "JP",
   "lookahead_days": 21,
   "count": 52,
@@ -298,14 +298,14 @@
       "city": "熊本市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 24,
+      "num_attendees": 25,
       "url": "/tournament/sp-34-3",
       "events": [
         {
           "event_id": 1683907,
           "event_slug": "tournament/sp-34-3/event/sp-34",
           "event_name": "肥後ブラSP#34",
-          "num_entrants": 24,
+          "num_entrants": 25,
           "type": 1,
           "start_at": 1789171200
         }
@@ -367,14 +367,14 @@
       "city": "知立市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 110,
+      "num_attendees": 111,
       "url": "/tournament/sp5-2",
       "events": [
         {
           "event_id": 1632234,
           "event_slug": "tournament/sp5-2/event/gokusuma-sp5",
           "event_name": "GOKUSUMA SP5",
-          "num_entrants": 110,
+          "num_entrants": 111,
           "type": 1,
           "start_at": 1789178400
         }
@@ -390,7 +390,7 @@
       "city": "台東区",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 5,
+      "num_attendees": 6,
       "url": "/tournament/12-545-5",
       "events": [
         {
@@ -781,14 +781,14 @@
       "city": "台東区",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 24,
+      "num_attendees": 25,
       "url": "/tournament/19-552",
       "events": [
         {
           "event_id": 1701381,
           "event_slug": "tournament/19-552/event/on",
           "event_name": "シングルス（１on１トーナメント）",
-          "num_entrants": 24,
+          "num_entrants": 25,
           "type": 1,
           "start_at": 1789786800
         }
@@ -1057,14 +1057,14 @@
       "city": "札幌市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 13,
+      "num_attendees": 14,
       "url": "/tournament/fist-of-flavor-2",
       "events": [
         {
           "event_id": 1697262,
           "event_slug": "tournament/fist-of-flavor-2/event/fist-of-flavor",
           "event_name": "Fist.of.Flavor",
-          "num_entrants": 13,
+          "num_entrants": 14,
           "type": 1,
           "start_at": 1790388000
         }
