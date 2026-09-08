@@ -1,6 +1,6 @@
 /* SPSP ポイント予想 計算コア (v3 エンジンの JS 移植)
  *
- * 移植元 (spsp-ranking-v2):
+ * 移植元 (spsp-ranking):
  *  - glicko2: .venv/.../glicko2/glicko2.py (Ryan Kirkman 2.1.0)
  *    ※ _f が rd^2 でなく rating^2 を使う「本家ライブラリのバグ」まで忠実に再現する
  *      (本番エンジンがこのライブラリで学習しているため、直すと数値が合わない)
