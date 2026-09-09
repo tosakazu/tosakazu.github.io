@@ -1,5 +1,5 @@
 {
-  "generated_at": 1788903961,
+  "generated_at": 1788912116,
   "country_code": "JP",
   "lookahead_days": 21,
   "count": 51,
@@ -68,14 +68,14 @@
       "city": "京都市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 9,
+      "num_attendees": 10,
       "url": "/tournament/dsw-68",
       "events": [
         {
           "event_id": 1702333,
           "event_slug": "tournament/dsw-68/event/singletournament",
           "event_name": "SingleTournament",
-          "num_entrants": 9,
+          "num_entrants": 10,
           "type": 1,
           "start_at": 1788951600
         }
@@ -321,14 +321,14 @@
       "city": "知立市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 111,
+      "num_attendees": 110,
       "url": "/tournament/sp5-2",
       "events": [
         {
           "event_id": 1632234,
           "event_slug": "tournament/sp5-2/event/gokusuma-sp5",
           "event_name": "GOKUSUMA SP5",
-          "num_entrants": 111,
+          "num_entrants": 110,
           "type": 1,
           "start_at": 1789178400
         }
@@ -942,14 +942,14 @@
       "city": "福岡市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 29,
+      "num_attendees": 30,
       "url": "/tournament/revival-15",
       "events": [
         {
           "event_id": 1693500,
           "event_slug": "tournament/revival-15/event/1on1",
           "event_name": "1on1トーナメント",
-          "num_entrants": 29,
+          "num_entrants": 30,
           "type": 1,
           "start_at": 1790128800
         }
@@ -1149,14 +1149,14 @@
       "city": "大東市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 15,
+      "num_attendees": 17,
       "url": "/tournament/73-sp-1",
       "events": [
         {
           "event_id": 1702406,
           "event_slug": "tournament/73-sp-1/event/1on1",
           "event_name": "予選あり1on1トーナメント",
-          "num_entrants": 15,
+          "num_entrants": 17,
           "type": 1,
           "start_at": 1790474400
         }
