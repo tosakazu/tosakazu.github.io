@@ -1,5 +1,5 @@
 {
-  "generated_at": 1788956319,
+  "generated_at": 1788957721,
   "country_code": "JP",
   "lookahead_days": 21,
   "count": 52,
@@ -137,14 +137,14 @@
       "city": "大阪市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 12,
+      "num_attendees": 13,
       "url": "/tournament/hit-195-maesuma-hit-195",
       "events": [
         {
           "event_id": 1703046,
           "event_slug": "tournament/hit-195-maesuma-hit-195/event/singles-tournament",
           "event_name": "Singles Tournament",
-          "num_entrants": 12,
+          "num_entrants": 13,
           "type": 1,
           "start_at": 1789034400
         }
@@ -252,14 +252,14 @@
       "city": "熊本市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 28,
+      "num_attendees": 29,
       "url": "/tournament/sp-34-3",
       "events": [
         {
           "event_id": 1683907,
           "event_slug": "tournament/sp-34-3/event/sp-34",
           "event_name": "肥後ブラSP#34",
-          "num_entrants": 28,
+          "num_entrants": 29,
           "type": 1,
           "start_at": 1789171200
         }
