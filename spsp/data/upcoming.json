@@ -1,5 +1,5 @@
 {
-  "generated_at": 1788936371,
+  "generated_at": 1788938649,
   "country_code": "JP",
   "lookahead_days": 21,
   "count": 51,
@@ -29,7 +29,7 @@
           "event_id": 1701650,
           "event_slug": "tournament/weekly-smash-party-244/event/casual-tournament",
           "event_name": "カジュアルトーナメント / Casual Tournament",
-          "num_entrants": 4,
+          "num_entrants": 6,
           "type": 1,
           "start_at": 1788944400
         }
@@ -91,14 +91,14 @@
       "city": "台東区",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 14,
+      "num_attendees": 15,
       "url": "/tournament/10-544",
       "events": [
         {
           "event_id": 1690056,
           "event_slug": "tournament/10-544/event/on",
           "event_name": "シングルス（１on１トーナメント）",
-          "num_entrants": 14,
+          "num_entrants": 15,
           "type": 1,
           "start_at": 1789027200
         }
@@ -137,14 +137,14 @@
       "city": "大阪市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 7,
+      "num_attendees": 8,
       "url": "/tournament/hit-195-maesuma-hit-195",
       "events": [
         {
           "event_id": 1703046,
           "event_slug": "tournament/hit-195-maesuma-hit-195/event/singles-tournament",
           "event_name": "Singles Tournament",
-          "num_entrants": 7,
+          "num_entrants": 8,
           "type": 1,
           "start_at": 1789034400
         }
@@ -850,14 +850,14 @@
       "city": "港区",
       "venue_name": "Pio, Tokyo",
       "country_code": "JP",
-      "num_attendees": 1018,
+      "num_attendees": 1019,
       "url": "/tournament/sp13-umeburasp13",
       "events": [
         {
           "event_id": 1648718,
           "event_slug": "tournament/sp13-umeburasp13/event/singles",
           "event_name": "シングルストーナメント / Singles",
-          "num_entrants": 1018,
+          "num_entrants": 1019,
           "type": 1,
           "start_at": 1789866000
         }
@@ -1057,14 +1057,14 @@
       "city": "和泉市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 17,
+      "num_attendees": 18,
       "url": "/tournament/innosuma-grand-3",
       "events": [
         {
           "event_id": 1672480,
           "event_slug": "tournament/innosuma-grand-3/event/sp-1on1",
           "event_name": "スマブラSP 1on1 トーナメント",
-          "num_entrants": 17,
+          "num_entrants": 18,
           "type": 1,
           "start_at": 1790388000
         }
