@@ -22,8 +22,8 @@
 
     SCOPE: 'user.identity',
 
-    // 投稿ページを正規に配信している場所。ここ以外 (spsp.games などの
-    // 検証・ビルド用配信) では認証を開始せず、正規 URL へ案内する。
+    // 投稿ページを正規に配信している場所 = GitHub Pages。ここ以外 (ConoHa WING の
+    // 直配信 = 検証・プレビュー用) では認証を開始せず、正規 URL へ案内する。
     CANONICAL_ORIGIN: 'https://tosakazu.github.io',
     CANONICAL_BASE: '/spsp/',
 

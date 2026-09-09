@@ -150,7 +150,7 @@
     return out;
   }
 
-  /** 正規の配信元 (GitHub Pages) にいるか。spsp.games 等では false。 */
+  /** 正規の配信元 (GitHub Pages) にいるか。プレビュー配信 (ConoHa WING 直配信) では false。 */
   // ── nonce の保存 / 取り出し ──
   // 読み書きは storage が使えない環境 (プライベートブラウズ等) でも落とさない。
 

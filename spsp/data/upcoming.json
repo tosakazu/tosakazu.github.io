@@ -1,5 +1,5 @@
 {
-  "generated_at": 1788938649,
+  "generated_at": 1788941007,
   "country_code": "JP",
   "lookahead_days": 21,
   "count": 51,
@@ -321,14 +321,14 @@
       "city": "知立市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 110,
+      "num_attendees": 111,
       "url": "/tournament/sp5-2",
       "events": [
         {
           "event_id": 1632234,
           "event_slug": "tournament/sp5-2/event/gokusuma-sp5",
           "event_name": "GOKUSUMA SP5",
-          "num_entrants": 110,
+          "num_entrants": 111,
           "type": 1,
           "start_at": 1789178400
         }
@@ -1080,14 +1080,14 @@
       "city": "浜松市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 30,
+      "num_attendees": 31,
       "url": "/tournament/sp16-3",
       "events": [
         {
           "event_id": 1695652,
           "event_slug": "tournament/sp16-3/event/1on1",
           "event_name": "1on1",
-          "num_entrants": 28,
+          "num_entrants": 29,
           "type": 1,
           "start_at": 1790388000
         }
@@ -1149,14 +1149,14 @@
       "city": "大東市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 27,
+      "num_attendees": 28,
       "url": "/tournament/73-sp-1",
       "events": [
         {
           "event_id": 1702406,
           "event_slug": "tournament/73-sp-1/event/1on1",
           "event_name": "予選あり1on1トーナメント",
-          "num_entrants": 27,
+          "num_entrants": 28,
           "type": 1,
           "start_at": 1790474400
         }
