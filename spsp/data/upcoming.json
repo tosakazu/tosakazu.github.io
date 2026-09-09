@@ -1,32 +1,9 @@
 {
-  "generated_at": 1788976904,
+  "generated_at": 1788987731,
   "country_code": "JP",
   "lookahead_days": 21,
-  "count": 51,
+  "count": 50,
   "tournaments": [
-    {
-      "tournament_id": 949676,
-      "tournament_slug": "tournament/dsw-68",
-      "tournament_name": "新京都DSW#68",
-      "start_at": 1788951600,
-      "end_at": 1788962400,
-      "is_online": false,
-      "city": "京都市",
-      "venue_name": "",
-      "country_code": "JP",
-      "num_attendees": 12,
-      "url": "/tournament/dsw-68",
-      "events": [
-        {
-          "event_id": 1702333,
-          "event_slug": "tournament/dsw-68/event/singletournament",
-          "event_name": "SingleTournament",
-          "num_entrants": 12,
-          "type": 1,
-          "start_at": 1788951600
-        }
-      ]
-    },
     {
       "tournament_id": 943847,
       "tournament_slug": "tournament/10-544",
@@ -83,14 +60,14 @@
       "city": "大阪市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 17,
+      "num_attendees": 18,
       "url": "/tournament/hit-195-maesuma-hit-195",
       "events": [
         {
           "event_id": 1703046,
           "event_slug": "tournament/hit-195-maesuma-hit-195/event/singles-tournament",
           "event_name": "Singles Tournament",
-          "num_entrants": 17,
+          "num_entrants": 18,
           "type": 1,
           "start_at": 1789034400
         }
