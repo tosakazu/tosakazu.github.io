@@ -1,5 +1,5 @@
 {
-  "generated_at": 1788955308,
+  "generated_at": 1788956319,
   "country_code": "JP",
   "lookahead_days": 21,
   "count": 52,
@@ -252,14 +252,14 @@
       "city": "熊本市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 27,
+      "num_attendees": 28,
       "url": "/tournament/sp-34-3",
       "events": [
         {
           "event_id": 1683907,
           "event_slug": "tournament/sp-34-3/event/sp-34",
           "event_name": "肥後ブラSP#34",
-          "num_entrants": 27,
+          "num_entrants": 28,
           "type": 1,
           "start_at": 1789171200
         }
