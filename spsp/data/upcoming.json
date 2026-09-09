@@ -1,5 +1,5 @@
 {
-  "generated_at": 1788933780,
+  "generated_at": 1788936371,
   "country_code": "JP",
   "lookahead_days": 21,
   "count": 51,
@@ -14,7 +14,7 @@
       "city": "中野区",
       "venue_name": "Red Bull Gaming Sphere Tokyo",
       "country_code": "JP",
-      "num_attendees": 61,
+      "num_attendees": 63,
       "url": "/tournament/weekly-smash-party-244",
       "events": [
         {
