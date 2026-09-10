@@ -1,55 +1,9 @@
 {
-  "generated_at": 1789052543,
+  "generated_at": 1789063313,
   "country_code": "JP",
   "lookahead_days": 21,
-  "count": 55,
+  "count": 53,
   "tournaments": [
-    {
-      "tournament_id": 943847,
-      "tournament_slug": "tournament/10-544",
-      "tournament_name": "10(木)上野スマコミ#544(オープン)",
-      "start_at": 1789027200,
-      "end_at": 1789048800,
-      "is_online": false,
-      "city": "台東区",
-      "venue_name": "",
-      "country_code": "JP",
-      "num_attendees": 24,
-      "url": "/tournament/10-544",
-      "events": [
-        {
-          "event_id": 1690056,
-          "event_slug": "tournament/10-544/event/on",
-          "event_name": "シングルス（１on１トーナメント）",
-          "num_entrants": 24,
-          "type": 1,
-          "start_at": 1789027200
-        }
-      ]
-    },
-    {
-      "tournament_id": 949721,
-      "tournament_slug": "tournament/shibuya-g-g-smash-weekly-79",
-      "tournament_name": "Shibuya G.G.Smash Weekly 79",
-      "start_at": 1789030800,
-      "end_at": 1789047000,
-      "is_online": false,
-      "city": "渋谷区",
-      "venue_name": "",
-      "country_code": "JP",
-      "num_attendees": 18,
-      "url": "/tournament/shibuya-g-g-smash-weekly-79",
-      "events": [
-        {
-          "event_id": 1702416,
-          "event_slug": "tournament/shibuya-g-g-smash-weekly-79/event/singles",
-          "event_name": "Singles",
-          "num_entrants": 18,
-          "type": 1,
-          "start_at": 1789036200
-        }
-      ]
-    },
     {
       "tournament_id": 950027,
       "tournament_slug": "tournament/hit-195-maesuma-hit-195",
@@ -90,7 +44,7 @@
           "event_id": 1690064,
           "event_slug": "tournament/11-545/event/on",
           "event_name": "シングルス（１on１トーナメント）",
-          "num_entrants": 35,
+          "num_entrants": 36,
           "type": 1,
           "start_at": 1789113600
         }
@@ -152,14 +106,14 @@
       "city": "大阪市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 7,
+      "num_attendees": 8,
       "url": "/tournament/347-act-2",
       "events": [
         {
           "event_id": 1704847,
           "event_slug": "tournament/347-act-2/event/ultimate-singles",
           "event_name": "Ultimate singles",
-          "num_entrants": 7,
+          "num_entrants": 8,
           "type": 1,
           "start_at": 1789123200
         }
@@ -267,14 +221,14 @@
       "city": "台東区",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 9,
+      "num_attendees": 10,
       "url": "/tournament/12-545-5",
       "events": [
         {
           "event_id": 1703762,
           "event_slug": "tournament/12-545-5/event/on",
           "event_name": "シングルス（１on１トーナメント）",
-          "num_entrants": 8,
+          "num_entrants": 9,
           "type": 1,
           "start_at": 1789182000
         }
@@ -359,14 +313,14 @@
       "city": "渋谷区",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 62,
+      "num_attendees": 64,
       "url": "/tournament/to-win-13",
       "events": [
         {
           "event_id": 1694656,
           "event_slug": "tournament/to-win-13/event/singles",
           "event_name": "Singles",
-          "num_entrants": 62,
+          "num_entrants": 64,
           "type": 1,
           "start_at": 1789261200
         }
@@ -520,14 +474,14 @@
       "city": "渋谷区",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 5,
+      "num_attendees": 6,
       "url": "/tournament/141-shibuya-tatsu-1",
       "events": [
         {
           "event_id": 1705861,
           "event_slug": "tournament/141-shibuya-tatsu-1/event/singles",
           "event_name": "Singles",
-          "num_entrants": 5,
+          "num_entrants": 6,
           "type": 1,
           "start_at": 1789466400
         }
@@ -589,14 +543,14 @@
       "city": "中野区",
       "venue_name": "Red Bull Gaming Sphere Tokyo",
       "country_code": "JP",
-      "num_attendees": 5,
+      "num_attendees": 6,
       "url": "/tournament/weekly-smash-party-245",
       "events": [
         {
           "event_id": 1706670,
           "event_slug": "tournament/weekly-smash-party-245/event/special-1on1-ultimate-singles",
           "event_name": "SPECIAL 1on1/ Ultimate Singles",
-          "num_entrants": 5,
+          "num_entrants": 6,
           "type": 1,
           "start_at": 1789549200
         }
