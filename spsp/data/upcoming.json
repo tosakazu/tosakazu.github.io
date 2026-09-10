@@ -1,8 +1,8 @@
 {
-  "generated_at": 1788987731,
+  "generated_at": 1788998510,
   "country_code": "JP",
   "lookahead_days": 21,
-  "count": 50,
+  "count": 51,
   "tournaments": [
     {
       "tournament_id": 943847,
@@ -14,7 +14,7 @@
       "city": "台東区",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 18,
+      "num_attendees": 19,
       "url": "/tournament/10-544",
       "events": [
         {
@@ -60,14 +60,14 @@
       "city": "大阪市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 18,
+      "num_attendees": 19,
       "url": "/tournament/hit-195-maesuma-hit-195",
       "events": [
         {
           "event_id": 1703046,
           "event_slug": "tournament/hit-195-maesuma-hit-195/event/singles-tournament",
           "event_name": "Singles Tournament",
-          "num_entrants": 18,
+          "num_entrants": 19,
           "type": 1,
           "start_at": 1789034400
         }
@@ -244,14 +244,14 @@
       "city": "知立市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 111,
+      "num_attendees": 113,
       "url": "/tournament/sp5-2",
       "events": [
         {
           "event_id": 1632234,
           "event_slug": "tournament/sp5-2/event/gokusuma-sp5",
           "event_name": "GOKUSUMA SP5",
-          "num_entrants": 111,
+          "num_entrants": 113,
           "type": 1,
           "start_at": 1789178400
         }
@@ -320,7 +320,7 @@
           "event_id": 1692196,
           "event_slug": "tournament/epochi-making-1/event/ultimate-singles",
           "event_name": "Ultimate Singles",
-          "num_entrants": 37,
+          "num_entrants": 38,
           "type": 1,
           "start_at": 1789254060
         }
@@ -1151,6 +1151,29 @@
           "num_entrants": 1,
           "type": 1,
           "start_at": 1790582400
+        }
+      ]
+    },
+    {
+      "tournament_id": 949679,
+      "tournament_slug": "tournament/dsw-71",
+      "tournament_name": "新京都DSW#71",
+      "start_at": 1790766000,
+      "end_at": 1790776800,
+      "is_online": false,
+      "city": "京都市",
+      "venue_name": "",
+      "country_code": "JP",
+      "num_attendees": 1,
+      "url": "/tournament/dsw-71",
+      "events": [
+        {
+          "event_id": 1702336,
+          "event_slug": "tournament/dsw-71/event/singletournament",
+          "event_name": "SingleTournament",
+          "num_entrants": 1,
+          "type": 1,
+          "start_at": 1790766000
         }
       ]
     }
