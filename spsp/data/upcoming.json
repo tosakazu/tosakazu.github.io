@@ -1,8 +1,8 @@
 {
-  "generated_at": 1788998510,
+  "generated_at": 1789009677,
   "country_code": "JP",
   "lookahead_days": 21,
-  "count": 51,
+  "count": 52,
   "tournaments": [
     {
       "tournament_id": 943847,
@@ -21,7 +21,7 @@
           "event_id": 1690056,
           "event_slug": "tournament/10-544/event/on",
           "event_name": "シングルス（１on１トーナメント）",
-          "num_entrants": 15,
+          "num_entrants": 19,
           "type": 1,
           "start_at": 1789027200
         }
@@ -83,14 +83,14 @@
       "city": "台東区",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 31,
+      "num_attendees": 32,
       "url": "/tournament/11-545",
       "events": [
         {
           "event_id": 1690064,
           "event_slug": "tournament/11-545/event/on",
           "event_name": "シングルス（１on１トーナメント）",
-          "num_entrants": 30,
+          "num_entrants": 31,
           "type": 1,
           "start_at": 1789113600
         }
@@ -175,14 +175,14 @@
       "city": "熊本市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 29,
+      "num_attendees": 30,
       "url": "/tournament/sp-34-3",
       "events": [
         {
           "event_id": 1683907,
           "event_slug": "tournament/sp-34-3/event/sp-34",
           "event_name": "肥後ブラSP#34",
-          "num_entrants": 29,
+          "num_entrants": 30,
           "type": 1,
           "start_at": 1789171200
         }
@@ -244,14 +244,14 @@
       "city": "知立市",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 113,
+      "num_attendees": 114,
       "url": "/tournament/sp5-2",
       "events": [
         {
           "event_id": 1632234,
           "event_slug": "tournament/sp5-2/event/gokusuma-sp5",
           "event_name": "GOKUSUMA SP5",
-          "num_entrants": 113,
+          "num_entrants": 114,
           "type": 1,
           "start_at": 1789178400
         }
@@ -520,14 +520,14 @@
       "city": "渋谷区",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 1,
+      "num_attendees": 2,
       "url": "/tournament/141-shibuya-tatsu-1",
       "events": [
         {
           "event_id": 1705861,
           "event_slug": "tournament/141-shibuya-tatsu-1/event/singles",
           "event_name": "Singles",
-          "num_entrants": 1,
+          "num_entrants": 2,
           "type": 1,
           "start_at": 1789466400
         }
@@ -566,14 +566,14 @@
       "city": "中野区",
       "venue_name": "Red Bull Gaming Sphere Tokyo",
       "country_code": "JP",
-      "num_attendees": 4,
+      "num_attendees": 5,
       "url": "/tournament/weekly-smash-party-245",
       "events": [
         {
           "event_id": 1706670,
           "event_slug": "tournament/weekly-smash-party-245/event/special-1on1-ultimate-singles",
           "event_name": "SPECIAL 1on1/ Ultimate Singles",
-          "num_entrants": 4,
+          "num_entrants": 5,
           "type": 1,
           "start_at": 1789549200
         }
@@ -672,6 +672,29 @@
       ]
     },
     {
+      "tournament_id": 951954,
+      "tournament_slug": "tournament/sumao2026-18",
+      "tournament_name": "スマ王/SumaO2026 #18",
+      "start_at": 1789720200,
+      "end_at": 1789736400,
+      "is_online": false,
+      "city": "立川市",
+      "venue_name": "",
+      "country_code": "JP",
+      "num_attendees": 2,
+      "url": "/tournament/sumao2026-18",
+      "events": [
+        {
+          "event_id": 1707025,
+          "event_slug": "tournament/sumao2026-18/event/sp-1on1",
+          "event_name": "スマブラSP 1on1",
+          "num_entrants": 2,
+          "type": 1,
+          "start_at": 1789720200
+        }
+      ]
+    },
+    {
       "tournament_id": 948903,
       "tournament_slug": "tournament/347-act",
       "tournament_name": "【第347回】スマACT",
@@ -727,14 +750,14 @@
       "city": "台東区",
       "venue_name": "",
       "country_code": "JP",
-      "num_attendees": 29,
+      "num_attendees": 31,
       "url": "/tournament/19-552",
       "events": [
         {
           "event_id": 1701381,
           "event_slug": "tournament/19-552/event/on",
           "event_name": "シングルス（１on１トーナメント）",
-          "num_entrants": 29,
+          "num_entrants": 31,
           "type": 1,
           "start_at": 1789786800
         }
@@ -819,14 +842,14 @@
       "city": "港区",
       "venue_name": "Pio, Tokyo",
       "country_code": "JP",
-      "num_attendees": 1021,
+      "num_attendees": 1022,
       "url": "/tournament/sp13-umeburasp13",
       "events": [
         {
           "event_id": 1648718,
           "event_slug": "tournament/sp13-umeburasp13/event/singles",
           "event_name": "シングルストーナメント / Singles",
-          "num_entrants": 1021,
+          "num_entrants": 1022,
           "type": 1,
           "start_at": 1789866000
         }
