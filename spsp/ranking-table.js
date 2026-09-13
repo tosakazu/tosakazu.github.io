@@ -437,10 +437,6 @@
       this.columns = cols.map(resolveColumn);
       this._render();
     }
-    setColumnVisibility(id, visible) {
-      // 簡易: 該当 column 自体は残し、CSS 切替 (not implemented yet — call setColumns instead)
-      throw new Error('setColumnVisibility not implemented; use setColumns to update column list');
-    }
     setPlayerHrefPrefix(prefix) {
       this.playerHrefPrefix = prefix;
       this.refresh();

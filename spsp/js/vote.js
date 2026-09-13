@@ -221,16 +221,14 @@
   }
 
   function fetchEligibility(uid) {
-    return fetch('players/' + encodeURIComponent(uid) + '.json').then(function (res) {
-      if (res.status === 404) return { state: 'not_player' };
-      if (!res.ok) throw new Error('http ' + res.status);
-      return res.json().then(function (rec) {
-        var chars = rec && rec.characters;
-        var candidates = voteCandidates(chars);
-        if (candidates === null) return { state: 'eligible', candidates: null };
-        if (candidates.length >= 2) return { state: 'double', candidates: candidates };
-        return { state: 'char_exists', chars: chars };
-      });
+    // 選手 JSON は分割されている (js/player_data.js)。characters は安定部分、ranks は players_current.json
+    return window.SPSPPlayerData.load('', uid, { history: false }).then(function (rec) {
+      if (!rec) return { state: 'not_player' };
+      var chars = rec && rec.characters;
+      var candidates = voteCandidates(chars);
+      if (candidates === null) return { state: 'eligible', candidates: null };
+      if (candidates.length >= 2) return { state: 'double', candidates: candidates };
+      return { state: 'char_exists', chars: chars };
     });
   }
 

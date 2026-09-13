@@ -159,6 +159,7 @@
 <div id="nav-root"></div>
 <script src="../js/html.js"></script>
 <script src="../js/data.js"></script>
+<script src="../js/player_data.js"></script>
 <script src="../nav.js"></script>
 <main>
   <div class="page-title">🔮 スコアシミュレーション</div>
@@ -298,12 +299,14 @@
       if (!r.ok) throw new Error('大会データの取得に失敗 (' + r.status + ')');
       return r.json();
     }),
-    UID ? fetch(DATA_BASE + 'players/' + UID + '.json')
-            .then(function (r) { return r.ok ? r.json() : null; })
-            .catch(function () { return null; })
+    // 選手 JSON は分割されている (安定部分 + players_current.json + 履歴)。組み立ては ../js/player_data.js
+    UID ? SPSPPlayerData.load(DATA_BASE, UID).catch(function () { return null; })
         : Promise.resolve(null),
     loadJsonl(DATA_BASE + 'latest_tjpr_full.jsonl'),
+    // 集計対象の実効フィルタ (meta.json params.LV_FILTERS_EFFECTIVE) で calc.js の定数を上書き
+    fetch(DATA_BASE + 'meta.json').then(function (r) { return r.ok ? r.json() : null; }).catch(function () { return null; }),
   ]).then(function (res) {
+    if (res[4] && res[4].params && res[4].params.LV_FILTERS_EFFECTIVE && C.setLvFilters) C.setLvFilters(res[4].params.LV_FILTERS_EFFECTIVE);
     (res[0].uids || []).forEach(function (u) { OVERSEAS.add(u); });
     UPCOMING = res[1];
     PLAYER = res[2];
@@ -774,10 +777,9 @@
       var base = { rating: rating, rd: 350, lastTs: null };
       if (!uid || !m) return Promise.resolve(base);
       if (oppCache.has(uid)) return oppCache.get(uid);
-      var p = fetch(DATA_BASE + 'players/' + uid + '.json').then(function (r) {
-        if (!r.ok) throw new Error();
-        return r.json();
-      }).then(function (pj) {
+      // 相手は bt_timeline_g2 と tournaments[].ts だけ要る (安定部分に入っている) → 履歴は取らない
+      var p = SPSPPlayerData.load(DATA_BASE, uid, { history: false }).then(function (pj) {
+        if (!pj) throw new Error();
         var tl = pj.bt_timeline_g2 || [];
         return {
           rating: rating,

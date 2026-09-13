@@ -122,7 +122,10 @@
       while (queue.length) {
         const uid = queue.shift();
         try {
-          STATE.players.set(uid, await fetchJson(`../players/${uid}.json`));
+          // 選手 JSON は分割されている (安定部分 + players_current.json)。ranks は揮発部分から。
+          // 履歴は要らない。無ければ __missing (= DB 未登録) として扱う (../js/player_data.js)
+          const rec = await SPSPPlayerData.load('../', uid, { history: false });
+          STATE.players.set(uid, rec || { __missing: true });
         } catch (e) {
           // 通信エラー: __missing とは区別して保持 (missing=DB未登録, error=取得失敗)
           STATE.players.set(uid, { __error: String(e && e.message || e) });

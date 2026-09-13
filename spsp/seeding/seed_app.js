@@ -528,24 +528,6 @@ window.addEventListener('scroll', hideHelp, true);
 injectHelpIcons(document.getElementById('seed-app-root'));
 
 // ── Chart.js (lazy load on first graph use) ──
-let CHART_LOADED = false;
-function loadScript(src) {
-  return new Promise((resolve, reject) => {
-    const s = document.createElement('script');
-    s.src = src;
-    s.onload = resolve;
-    s.onerror = reject;
-    document.head.appendChild(s);
-  });
-}
-async function ensureChartJs() {
-  if (CHART_LOADED) return;
-  await loadScript('https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js');
-  await loadScript('https://cdn.jsdelivr.net/npm/luxon@3.4.4/build/global/luxon.min.js');
-  await loadScript('https://cdn.jsdelivr.net/npm/chartjs-adapter-luxon@1.3.1/dist/chartjs-adapter-luxon.umd.min.js');
-  CHART_LOADED = true;
-}
-
 // ── 本体 ──
 
 const DATA = [];
@@ -3553,6 +3535,7 @@ function applyCsvOrderIfReady(fromFetch) {
   dropAppliedOrder();
   if (SEEDOPT_RESULT) resetSeedOptResultPanel('CSV を読み込んだため被り回避の結果をクリアしました。再実行してください。');
   saveManual(); renderManualUI();
+  const settingNotes = _applyCsvSettingColumns(CSV_SOURCE.rows);
   let msg = `✅ ${CSV_SOURCE.label}: ${matched}人を照合し基準順位に反映しました。`;
   if (restCount) msg += ` CSV に無い参加者 ${restCount}人は SPSP 順で末尾。`;
   if (settingNotes.length) msg += ` (CSV の設定で${settingNotes.join('・')})`;
@@ -3962,11 +3945,10 @@ function renderSpecStatus() {
     `順位指定 ${n(SEED_SPEC.pins)} / ウェーブ指定 ${n(SEED_SPEC.waves)} / 固定 ${n(SEED_SPEC.locks)}名 を保持中。`);
 }
 
-// spec CSV の行を適用: 照合 → 順位/ウェーブ/固定を抽出 → 並び組み直し + SEED_SPEC 更新。
-function applySpecRows(rows, label) {
-  if (!DATA.length) { _specStatus('先に参加者を読み込んでください。', true); return; }
-  // 作業状況 CSV (エクスポート) の pools / waves 列があれば設定に反映してから解釈する。
-  // 共有された CSV を読むだけで同じプール構成になる。
+// 作業状況 CSV (エクスポート) の pools / waves 列があれば設定に反映する。共有された CSV を読むだけで同じ
+// プール構成になる。戻り値 = 変更内容の説明 (無ければ空)。spec CSV と順位 CSV の両方の適用で使う
+// (以前は順位 CSV 側で未定義の settingNotes を参照して ReferenceError になっていた)。
+function _applyCsvSettingColumns(rows) {
   const settingNotes = [];
   for (const [col, id, label2] of [['pools', 'so-pools', 'プール数'], ['waves', 'so-waves', 'ウェーブ数']]) {
     const row = rows.find((r) => _csvPick(r, [col]) != null);
@@ -3978,6 +3960,15 @@ function applySpecRows(rows, label) {
     }
   }
   if (settingNotes.length) updateIntraToggleState();
+  return settingNotes;
+}
+
+// spec CSV の行を適用: 照合 → 順位/ウェーブ/固定を抽出 → 並び組み直し + SEED_SPEC 更新。
+function applySpecRows(rows, label) {
+  if (!DATA.length) { _specStatus('先に参加者を読み込んでください。', true); return; }
+  // 作業状況 CSV (エクスポート) の pools / waves 列があれば設定に反映してから解釈する。
+  // 共有された CSV を読むだけで同じプール構成になる。
+  const settingNotes = _applyCsvSettingColumns(rows);
   const P = Math.max(1, parseInt((document.getElementById('so-pools') || {}).value, 10) || 1);
   const waveMap = currentWaveMap(P);
   const W = waveMap.reduce((mx, w) => Math.max(mx, w), 0) + 1;

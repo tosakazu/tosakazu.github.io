@@ -11,6 +11,7 @@
 <link rel="stylesheet" href="ranking-table.css">
 <script src="js/html.js"></script>
 <script src="js/data.js"></script>
+<script src="js/player_data.js"></script>
 <script src="ranking-table.js"></script>
 <script src="player-detail.js"></script>
 <!-- Open Graph -->
@@ -530,34 +531,12 @@
 </div>
 
 <div class="footer" id="footer-info"></div>
-<div class="footer" style="margin-top:-12px"><span class="site-version" style="font-size:11px;color:#9ca3af">v 327cb4e · 2026-09-13 06:06 UTC</span></div>
+<div class="footer" style="margin-top:-12px"><span class="site-version" style="font-size:11px;color:#9ca3af">v bd680b5 · 2026-09-13 09:13 UTC</span></div>
 
 <button id="scroll-top" aria-label="ページの一番上へ戻る" title="一番上へ" hidden>↑</button>
 
 <!-- Chart.js (lazy load on first graph use) -->
 <script>
-let CHART_LOADED = false;
-function loadScript(src) {
-  return new Promise((resolve, reject) => {
-    const s = document.createElement('script');
-    s.src = src;
-    s.onload = resolve;
-    s.onerror = reject;
-    document.head.appendChild(s);
-  });
-}
-async function ensureChartJs() {
-  if (CHART_LOADED) return;
-  await loadScript('https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js');
-  await loadScript('https://cdn.jsdelivr.net/npm/luxon@3.4.4/build/global/luxon.min.js');
-  await loadScript('https://cdn.jsdelivr.net/npm/chartjs-adapter-luxon@1.3.1/dist/chartjs-adapter-luxon.umd.min.js');
-  CHART_LOADED = true;
-}
-</script>
-
-<script>
-'use strict';
-
 const DATA = [];
 let META = null;
 let currentMethod = 'ensemble';
@@ -597,7 +576,7 @@ async function loadData() {
     }
     // ヘッダ (nav bar) に「最終更新時刻 · バージョン」を表示
     const genTime = (META.generated_at || META.eval_date || '').split('.')[0].replace('T', ' ');
-    const SITE_VERSION_FULL = 'v 327cb4e · 2026-09-13 06:06 UTC';
+    const SITE_VERSION_FULL = 'v bd680b5 · 2026-09-13 09:13 UTC';
     const versionShort = SITE_VERSION_FULL.split(' · ')[0] || SITE_VERSION_FULL;
     const navMeta = document.getElementById('meta-info');
     if (navMeta) navMeta.textContent = `最終更新 ${genTime} · ${versionShort}`;
@@ -703,324 +682,12 @@ function render() {
 
 
 
-function buildChartsSection(rec) {
-  // hasLocal = seed/demo ページ (event-local rank が存在する)
-  const hasLocal = rec.ranks.global_ensemble != null;
-  const rankTabs = hasLocal
-    ? `<div class="chart-tab active" data-chart="rank-local">順位推移 (大会内)</div>
-       <div class="chart-tab" data-chart="rank-global">順位推移 (全国)</div>`
-    : `<div class="chart-tab active" data-chart="rank-global">順位の推移</div>`;
-  return `
-    <div class="detail-section">
-      <h4>📈 履歴グラフ</h4>
-      <div class="chart-content" data-uid="${rec.user_id}">
-        <div class="chart-tabs">
-          ${rankTabs}
-          <div class="chart-tab" data-chart="tjpr_elo">順位評価 スコアの推移</div>
-          <div class="chart-tab" data-chart="bt_elo">直対評価 スコアの推移</div>
-          <div class="chart-tab" data-chart="points">大会別 計上pt</div>
-        </div>
-        <div class="chart-wrap">
-          <div class="chart-area"><canvas></canvas></div>
-          <div class="chart-status"></div>
-        </div>
-      </div>
-    </div>
-  `;
-}
-
-// sortTournaments / uidToEnsembleRank / buildTournamentTable / buildH2HSection /
-// buildDetailContent / DETAIL_CACHE / fetchPlayerDetail / escapeHtml は SPSPDetail
-// (= site/player-detail.js) に集約済. tourSortMode も SPSPDetail 内部で管理.
-
-// 詳細パネル (大会別 / 直接対決) を SPSPDetail に委譲するための cfg.
 function getDetailCfg() {
   return {
     getMeta: () => META || {},
     getDataArray: () => DATA,
     pathPrefix: '',  // メインランキングはルート直下
   };
-}
-
-// ── Local-rank chart helpers (seed/demo only) ──
-// 全参加者の history を遅延ロード。snapshot 日 -> 各 uid の global rank を保持。
-let ALL_HISTORIES = null;          // Map<uid, history array>
-let ALL_HISTORIES_LOADING = null;  // promise (in-flight)
-const HIST_PATH_PREFIX = (window.PLAYERS_DIR && (window.PLAYERS_DIR + '/'))
-  || (window.location.pathname.includes('/demo/') ? '../../players/'
-      : window.location.pathname.includes('/seed/') ? '../players/'
-      : 'players/');
-
-async function ensureAllHistories(progressFn) {
-  if (ALL_HISTORIES) return ALL_HISTORIES;
-  if (ALL_HISTORIES_LOADING) return ALL_HISTORIES_LOADING;
-  ALL_HISTORIES_LOADING = (async () => {
-    const map = new Map();
-    const uids = DATA.filter(r => r.user_id != null && !r.unranked).map(r => r.user_id);
-    const total = uids.length;
-    let done = 0;
-    const BATCH = 30;
-    for (let i = 0; i < uids.length; i += BATCH) {
-      const slice = uids.slice(i, i + BATCH);
-      await Promise.all(slice.map(async (uid) => {
-        try {
-          if (DETAIL_CACHE.has(uid)) {
-            map.set(uid, (DETAIL_CACHE.get(uid).history) || []);
-          } else {
-            const res = await fetch(`${HIST_PATH_PREFIX}${uid}.json`);
-            if (!res.ok) return;
-            const j = await res.json();
-            DETAIL_CACHE.set(uid, j);
-            map.set(uid, j.history || []);
-          }
-        } catch (e) {}
-      }));
-      done += slice.length;
-      if (progressFn) progressFn(done, total);
-    }
-    ALL_HISTORIES = map;
-    return map;
-  })();
-  return ALL_HISTORIES_LOADING;
-}
-
-function computeLocalRankSeries(uid, allHist, k_hist, k_now) {
-  // 各 snapshot day d ごとに entrants をその day の global rank で並べ、uid の event-local 順位を出す。
-  // 1) snapshot 日のリストを META から取得。Chart.js は時系列順に並べる必要があるので、
-  //    日付昇順 = days_ago 降順 (720, 690, ..., 30) でイテレート。
-  const days = (META && META.snapshot_days) ? META.snapshot_days.slice() : [];
-  days.sort((a, b) => b - a);  // 720, 690, ..., 30 (古い→新しい)
-  // 2) 各 day で entrants -> rank マップ
-  const result = [];
-  for (const d of days) {
-    const vals = [];
-    for (const [u, hist] of allHist.entries()) {
-      const h = (hist || []).find(x => x.d === d);
-      if (!h) continue;
-      const v = h[k_hist];
-      if (v == null || v <= 0) continue;
-      vals.push([u, v]);
-    }
-    vals.sort((a, b) => a[1] - b[1]);
-    const idx = vals.findIndex(p => p[0] === uid);
-    if (idx >= 0) result.push({ d, localRank: idx + 1 });
-  }
-  // 現在値 = DATA を rec.ranks[k_now] (= seed/demo の event-local rank) で並べた時の位置
-  // → そのまま rec.ranks[k_now]
-  return result;
-}
-
-function computeEventLocalRankNow(uid, k_global) {
-  // DATA 全体を k_global の global rank で並べ、uid の位置 (= event-local 順位) を返す
-  const vals = DATA
-    .filter(r => !r.unranked && r.user_id != null && r.ranks[k_global] != null && r.ranks[k_global] > 0)
-    .map(r => [r.user_id, r.ranks[k_global]]);
-  vals.sort((a, b) => a[1] - b[1]);
-  const idx = vals.findIndex(p => p[0] === uid);
-  return idx >= 0 ? idx + 1 : null;
-}
-
-async function renderRankLocalChart(rec, container, canvas, status, dateFromDaysAgo) {
-  status.textContent = '全参加者の履歴をロード中 …';
-  const allHist = await ensureAllHistories((done, total) => {
-    status.textContent = `履歴ロード中 ${done}/${total} …`;
-  });
-  status.textContent = '大会内ローカル順位を計算中 …';
-  // k_global = 現在値計算用の global rank key
-  // rec.ranks.tjpr / bt_gated は seed/demo では global を保持しているため、
-  // event-local 順位を出すには DATA 全体を sort し直す必要がある
-  const series = [
-    { k_hist: 'ens',    k_global: 'global_ensemble',  label: '総合評価', color: '#dc2626' },
-    { k_hist: 'tjpr_r', k_global: 'global_tjpr',      label: '順位評価',       color: '#d97706' },
-    { k_hist: 'bt_g_r', k_global: 'global_bt_gated',  label: '直対評価',       color: '#16a34a' },
-  ];
-  const datasets = series.map(s => {
-    const past = computeLocalRankSeries(rec.user_id, allHist, s.k_hist);
-    const nowVal = computeEventLocalRankNow(rec.user_id, s.k_global);
-    return {
-      label: s.label,
-      data: past.map(p => ({ x: dateFromDaysAgo(p.d), y: p.localRank }))
-        .concat(nowVal != null && nowVal > 0 ? [{ x: META.eval_date, y: nowVal }] : []),
-      borderColor: s.color,
-      backgroundColor: s.color + '40',
-      tension: 0.1, spanGaps: true,
-    };
-  });
-  container._chart = new Chart(canvas, {
-    type: 'line',
-    data: { datasets },
-    options: {
-      responsive: true, maintainAspectRatio: false,
-      scales: {
-        x: { type: 'time', time: { unit: 'month', tooltipFormat: 'yyyy-MM-dd' },
-             ticks: { color: '#6b7280' }, grid: { color: '#f3f4f6' } },
-        y: { reverse: true, title: { display: true, text: '大会内順位 (小さい=上位)', color: '#6b7280' },
-             ticks: { color: '#6b7280' }, grid: { color: '#f3f4f6' } },
-      },
-      plugins: { legend: { labels: { color: '#374151' } } },
-    },
-  });
-  const total = DATA.filter(r => !r.unranked).length;
-  status.textContent = `大会内 ${total} 名中の遷移 + 今日 (${META.eval_date})`;
-}
-
-// ── Chart rendering ──
-async function renderChart(rec, chartType, container) {
-  const status = container.querySelector('.chart-status');
-  status.textContent = 'Chart.js 読み込み中…';
-  await ensureChartJs();
-  const canvas = container.querySelector('canvas');
-  if (container._chart) { container._chart.destroy(); container._chart = null; }
-
-  const evalDate = new Date(META.eval_date + 'T00:00:00');
-  const dateFromDaysAgo = (days) => {
-    const d = new Date(evalDate);
-    d.setDate(d.getDate() - days);
-    return d.toISOString().slice(0, 10);
-  };
-  const hist = (rec.history || []).slice().sort((a, b) => b.d - a.d);
-
-  if (chartType === 'rank-local') {
-    await renderRankLocalChart(rec, container, canvas, status, dateFromDaysAgo);
-    return;
-  }
-  if (chartType === 'rank-global' || chartType === 'rank') {
-    // 全国順位グラフ: history (= global) + current global rank (rec.ranks.global_* があれば優先)
-    const series = [
-      { k_hist: 'ens',    k_now: 'ensemble', k_global: 'global_ensemble', label: '総合評価', color: '#dc2626' },
-      { k_hist: 'tjpr_r', k_now: 'tjpr',     k_global: 'global_tjpr',     label: '順位評価',       color: '#d97706' },
-      { k_hist: 'bt_g_r', k_now: 'bt_gated', k_global: 'global_bt_gated', label: '直対評価',       color: '#16a34a' },
-    ];
-    const datasets = series.map(s => {
-      const nowVal = rec.ranks[s.k_global] != null ? rec.ranks[s.k_global] : rec.ranks[s.k_now];
-      return {
-      label: s.label,
-      data: hist.map(h => ({ x: dateFromDaysAgo(h.d), y: h[s.k_hist] }))
-        .concat([{ x: META.eval_date, y: nowVal }])
-        .filter(p => p.y != null && p.y > 0),  // 0/null は ranked-out として除外
-      borderColor: s.color,
-      backgroundColor: s.color + '40',
-      tension: 0.1, spanGaps: true,
-      };
-    });
-    container._chart = new Chart(canvas, {
-      type: 'line',
-      data: { datasets },
-      options: {
-        responsive: true, maintainAspectRatio: false,
-        scales: {
-          x: { type: 'time', time: { unit: 'month', tooltipFormat: 'yyyy-MM-dd' },
-               ticks: { color: '#6b7280' }, grid: { color: '#f3f4f6' } },
-          y: { reverse: true, title: { display: true, text: '順位 (小さい=上位)', color: '#6b7280' },
-               ticks: { color: '#6b7280' }, grid: { color: '#f3f4f6' } },
-        },
-        plugins: { legend: { labels: { color: '#374151' } } },
-      },
-    });
-    status.textContent = `${hist.length} スナップショット + 今日 (${META.eval_date})`;
-  }
-  else if (chartType === 'tjpr_elo' || chartType === 'bt_elo') {
-    const seriesByType = {
-      tjpr_elo: { k_hist: 'tjpr_e', k_now: 'tjpr_elo',     label: '順位評価', color: '#d97706', title: '順位評価 スコア' },
-      bt_elo:   { k_hist: 'bt_g_e', k_now: 'bt_gated_elo', label: '直対評価', color: '#16a34a', title: '直対評価 スコア' },
-    };
-    const s = seriesByType[chartType];
-    const datasets = [{
-      label: s.label,
-      data: hist.map(h => ({ x: dateFromDaysAgo(h.d), y: h[s.k_hist] }))
-        .concat([{ x: META.eval_date, y: rec.scores[s.k_now] }])
-        .filter(p => p.y != null),
-      borderColor: s.color,
-      backgroundColor: s.color + '40',
-      tension: 0.1, spanGaps: true,
-      pointRadius: 4,
-    }];
-    container._chart = new Chart(canvas, {
-      type: 'line',
-      data: { datasets },
-      options: {
-        responsive: true, maintainAspectRatio: false,
-        scales: {
-          x: { type: 'time', time: { unit: 'month', tooltipFormat: 'yyyy-MM-dd' },
-               ticks: { color: '#6b7280' }, grid: { color: '#f3f4f6' } },
-          y: { title: { display: true, text: s.title, color: '#6b7280' },
-               ticks: { color: '#6b7280' }, grid: { color: '#f3f4f6' } },
-        },
-        plugins: { legend: { labels: { color: '#374151' } } },
-      },
-    });
-    const cur = chartType === 'tjpr_elo' ? rec.scores.tjpr_elo : rec.scores.bt_gated_elo;
-    status.textContent = `現在 ${s.label} スコア ${cur.toFixed(1)}`;
-  }
-  else if (chartType === 'points') {
-    // Per-tournament points: raw + weighted (after age/pos decay)
-    const scale = (META.params && META.params.TJPR_ELO_SCALE) || 100.0;
-    const ts = (rec.tournaments || []).slice().filter(t => t.tjpr_raw > 0).sort((a, b) => a.date.localeCompare(b.date));
-    // Embed tournament meta in each point for tooltip access
-    const datasets = [{
-      label: '基本pt (素点 × ' + scale + ')',
-      data: ts.map(t => ({ x: t.date, y: t.tjpr_raw * scale, _t: t })),
-      backgroundColor: '#dc2626',
-      borderColor: '#dc262680',
-      pointRadius: 5, pointHoverRadius: 8,
-      showLine: false,
-    }, {
-      label: '計上pt (age × pos_decay 適用 × ' + scale + ')',
-      data: ts.map(t => ({ x: t.date, y: t.tjpr_w * scale, _t: t })),
-      backgroundColor: '#d97706',
-      borderColor: '#d9770680',
-      pointRadius: 5, pointHoverRadius: 8,
-      showLine: false,
-    }];
-    container._chart = new Chart(canvas, {
-      type: 'scatter',
-      data: { datasets },
-      options: {
-        responsive: true, maintainAspectRatio: false,
-        interaction: { mode: 'nearest', intersect: true },
-        scales: {
-          x: { type: 'time', time: { unit: 'month', tooltipFormat: 'yyyy-MM-dd' },
-               ticks: { color: '#6b7280' }, grid: { color: '#f3f4f6' } },
-          y: { title: { display: true, text: '順位評価 計上pt', color: '#6b7280' },
-               ticks: { color: '#6b7280' }, grid: { color: '#f3f4f6' } },
-        },
-        plugins: {
-          legend: { labels: { color: '#374151' } },
-          tooltip: {
-            backgroundColor: '#ffffff',
-            borderColor: '#e5e7eb', borderWidth: 1,
-            titleColor: '#111827', bodyColor: '#374151',
-            padding: 10,
-            callbacks: {
-              title: (items) => {
-                if (!items.length) return '';
-                const t = items[0].raw._t;
-                return `${t.date}  ${t.name || ''}`;
-              },
-              label: (item) => {
-                const t = item.raw._t;
-                const lines = [
-                  `${item.dataset.label}: ${item.parsed.y.toFixed(2)}`,
-                  `順位: ${t.place || '?'} / ${t.nent}`,
-                ];
-                if (t.is_weekend !== undefined) {
-                  const tags = [t.is_weekend ? (t.is_weekend_real === false ? '実質休日' : '休日')
-                                            : (t.is_weekend_real && !t.is_pre ? '実質平日' : '平日')];
-                  if (t.is_smapa) tags.push('スマパ');
-                  if (t.is_pre) tags.push('プレ大会');
-                  if (t.is_restricted) tags.push('制限大会');
-                  if (t.is_lower_class) tags.push('下位クラス');
-                  lines.push(tags.join(' / '));
-                }
-                return lines;
-              },
-            },
-          },
-        },
-      },
-    });
-    status.textContent = `${ts.length} 大会 (順位評価 計上pt あり) · 現在スコア ${rec.scores.tjpr_elo.toFixed(2)} · 点をタップ/ホバーで詳細`;
-  }
 }
 
 // ── Events ──
@@ -1148,36 +815,6 @@ document.getElementById('tbody').addEventListener('click', e => {
     expand.remove();
     return;
   }
-  // Handle chart toggle button (inside detail-row). 現状 buildChartsSection は detail panel
-  // から呼ばれていないが, 将来 chart-toggle ボタンを追加した時に動くよう listener は残す.
-  if (e.target.classList.contains('chart-toggle')) {
-    e.stopPropagation();
-    const container = e.target.parentElement.querySelector('.chart-content');
-    container.style.display = 'block';
-    e.target.style.display = 'none';
-    const rec = DATA.find(r => r.user_id == e.target.dataset.uid);
-    const defaultChart = (rec.ranks.global_ensemble != null) ? 'rank-local' : 'rank-global';
-    renderChart(rec, defaultChart, container).catch(err => {
-      container.querySelector('.chart-status').textContent = 'グラフ描画エラー: ' + err.message;
-      console.error(err);
-    });
-    return;
-  }
-  // Chart tab switch (inside detail-row)
-  if (e.target.classList.contains('chart-tab')) {
-    e.stopPropagation();
-    const tabs = e.target.parentElement;
-    const container = tabs.closest('.chart-content');
-    tabs.querySelectorAll('.chart-tab').forEach(t => t.classList.remove('active'));
-    e.target.classList.add('active');
-    const uid = container.dataset.uid;
-    const rec = DATA.find(r => r.user_id == uid);
-    renderChart(rec, e.target.dataset.chart, container).catch(err => {
-      container.querySelector('.chart-status').textContent = 'グラフ描画エラー: ' + err.message;
-      console.error(err);
-    });
-    return;
-  }
   // main-row クリックは RankingTable rowClick callback (= mainRowClickHandler) で処理.
 });
 
@@ -1262,13 +899,15 @@ SPSPShare.setup(document.getElementById('share-icon-btn'), () => ({
     // - datetime (ISO 8601 with time, e.g. "2026-05-19T15:30:00") があればそれを使う
     // - date のみ → ローカル 00:00:00 と解釈
     const entryTs = (n) => {
+      // news.json の時刻は JST。ゾーン無しの文字列は +09:00 として解釈する (閲覧者の場所に依らない)
       if (n.datetime) {
-        const t = new Date(n.datetime).getTime();
+        const dts = /(Z|[+-]\d{2}:?\d{2})$/.test(n.datetime) ? n.datetime : (n.datetime + '+09:00');
+        const t = new Date(dts).getTime();
         return isNaN(t) ? 0 : t;
       }
       if (n.date) {
         const m = /^(\d{4})-(\d{2})-(\d{2})/.exec(n.date);
-        if (m) return new Date(+m[1], +m[2]-1, +m[3]).getTime();
+        if (m) return Date.parse(`${m[1]}-${m[2]}-${m[3]}T00:00:00+09:00`);
       }
       return 0;
     };

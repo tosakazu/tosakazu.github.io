@@ -8,6 +8,7 @@
 <link rel="stylesheet" href="../ranking-table.css">
 <script src="../js/html.js"></script>
 <script src="../js/data.js"></script>
+<script src="../js/player_data.js"></script>
 <script src="../ranking-table.js"></script>
 <script src="../player-detail.js"></script>
 <style>
@@ -101,6 +102,13 @@
     .status { width: 100%; font-size: 10px; }
     .table-wrap { padding: 0 8px 24px; max-width: 100vw; overflow-x: hidden; }
   }
+  /* 展開行の大会タグ (player-detail.js が出す。index.html と同じ) */
+  .tag-wk { color: #dc2626; font-size: 10px; padding: 1px 5px; background: rgba(220, 38, 38, 0.08); border-radius: 8px; }
+  .tag-wd { color: #6b7280; font-size: 10px; padding: 1px 5px; background: rgba(107, 114, 128, 0.08); border-radius: 8px; }
+  .tag-sm { color: #d97706; font-size: 10px; padding: 1px 5px; background: rgba(217, 119, 6, 0.10); border-radius: 8px; margin-left: 4px; }
+  .tag-pre { color: #6b21a8; font-size: 10px; padding: 1px 5px; background: rgba(168, 85, 247, 0.12); border-radius: 8px; margin-left: 4px; }
+  .tag-res { color: #be123c; font-size: 10px; padding: 1px 5px; background: rgba(225, 29, 72, 0.10); border-radius: 8px; margin-left: 4px; }
+  .tag-lc  { color: #0369a1; font-size: 10px; padding: 1px 5px; background: rgba(2, 132, 199, 0.10); border-radius: 8px; margin-left: 4px; }
 </style>
 </head>
 <body>
@@ -328,7 +336,21 @@ document.getElementById('tbody').addEventListener('click', e => {
     if (!section) return;
     const key = tabBtn.dataset.tab;
     section.querySelectorAll('.detail-tab').forEach(t => t.classList.toggle('active', t.dataset.tab === key));
-    section.querySelectorAll('.tab-content').forEach(c => c.classList.toggle('active', c.dataset.tab === key));
+    // player-detail.js の markup は .detail-tab-content.tab-<key> (表示は style.display で切替)
+    section.querySelectorAll('.detail-tab-content').forEach(c => {
+      c.style.display = c.classList.contains('tab-' + key) ? '' : 'none';
+    });
+    return;
+  }
+  // H2H 「もっと見る」: 勝/負 両方の hidden を表示 (player-detail.js の .h2h-expand-btn / .h2h-extra)
+  const h2hBtn = e.target.closest('.h2h-expand-btn');
+  if (h2hBtn) {
+    e.stopPropagation();
+    const wrap = h2hBtn.closest('.tab-h2h');
+    if (!wrap) return;
+    wrap.querySelectorAll('.h2h-extra').forEach(x => x.style.display = '');
+    const expandDiv = h2hBtn.closest('.h2h-expand');
+    if (expandDiv) expandDiv.remove();
     return;
   }
   const sortToggle = e.target.closest('.tour-sort-toggle');
@@ -339,18 +361,9 @@ document.getElementById('tbody').addEventListener('click', e => {
     if (!rec) return;
     const tabContent = sortToggle.closest('.tab-tour');
     if (!tabContent) return;
-    const cfg = getDetailCfg();
-    cfg.tourSortKey = (cfg.tourSortKey === 'date') ? 'tjpr' : 'date';
-    tabContent.innerHTML = window.SPSPDetail.buildTournamentTable(rec, cfg);
-    return;
-  }
-  const h2hToggle = e.target.closest('.h2h-toggle');
-  if (h2hToggle) {
-    e.stopPropagation();
-    const target = h2hToggle.nextElementSibling;
-    if (target && target.classList.contains('h2h-body')) {
-      target.classList.toggle('open'); h2hToggle.classList.toggle('open');
-    }
+    // 並び順は player-detail.js 内部の tourSortMode (影響順 / 日付順) を切り替えて描き直す
+    window.SPSPDetail.toggleSortMode();
+    tabContent.innerHTML = window.SPSPDetail.buildTournamentTable(rec, getDetailCfg());
     return;
   }
 });

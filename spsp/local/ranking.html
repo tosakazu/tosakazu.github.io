@@ -9,6 +9,7 @@
 <link rel="stylesheet" href="../ranking-table.css">
 <script src="../js/html.js"></script>
 <script src="../js/data.js"></script>
+<script src="../js/player_data.js"></script>
 <script src="../ranking-table.js"></script>
 <script src="../player-detail.js"></script>
 <style>
@@ -397,32 +398,6 @@ const STATE = {
 function getQueryParam(name) {
   const url = new URL(location.href);
   return url.searchParams.get(name);
-}
-
-function getRank(rec, method) {
-  if (rec.unranked) return Infinity;
-  return rec.ranks[method] || Infinity;
-}
-function getScore(rec, method) {
-  if (rec.unranked) return -Infinity;
-  switch (method) {
-    case 'tjpr': return rec.scores.tjpr_elo;
-    case 'bt_gated': return rec.scores.bt_gated_elo;
-    case 'ensemble':
-    default:
-      return rec.scores.ensemble_avg_score != null
-        ? rec.scores.ensemble_avg_score
-        : (rec.scores.tjpr_elo + rec.scores.bt_gated_elo) / 2;
-  }
-}
-function formatScore(rec, method) {
-  if (rec.unranked) return '–';
-  return getScore(rec, method).toFixed(1);
-}
-function formatAvgRank(rec, method) {
-  if (rec.unranked) return '–';
-  const ar = rec.scores.ensemble_avg_rank;
-  return ar != null ? `#${ar.toFixed(1)}` : '–';
 }
 
 function filterParticipants() {

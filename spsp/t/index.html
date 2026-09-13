@@ -340,6 +340,7 @@
 <div id="nav-root"></div>
 <script src="../js/html.js"></script>
 <script src="../js/data.js"></script>
+<script src="../js/player_data.js"></script>
 <script src="../nav.js"></script>
 <script src="../share.js"></script>
 
@@ -438,7 +439,7 @@
   </div>
 
   <div class="footer" id="footer-info">
-    <span class="site-version" style="font-size:11px;color:#9ca3af">v 327cb4e · 2026-09-13 06:06 UTC</span>
+    <span class="site-version" style="font-size:11px;color:#9ca3af">v bd680b5 · 2026-09-13 09:13 UTC</span>
   </div>
 </main>
 
@@ -450,6 +451,7 @@ const TID = parseInt(params.get('id') || location.hash.replace(/^#/, '') || '0')
 
 let META = null;
 let TOURNEY = null;
+let CURRENT = null;            // players_current.json (全選手の現在順位。SPSPPlayerData.currentRank で引く)
 let TOURNEY_PREF = null;       // この大会の開催地 都道府県 (tournament_prefectures.json[TID])
 let CHAR_EMOJI_BY_UID = null;  // uid -> メイン使用キャラ絵文字 (character_index × char_emoji)
 
@@ -463,16 +465,19 @@ function charEmojiOf(uid) {
 async function load() {
   if (!TID || TID < 1) { showNotFound(); return; }
   try {
-    const [metaRes, tRes, tprefRes, charIdxRes, charEmojiRes] = await Promise.all([
+    const [metaRes, tRes, tprefRes, charIdxRes, charEmojiRes, curFile] = await Promise.all([
       fetch('../meta.json'),
       fetch(`../tournaments/${TID}.json`),
       fetch('../data/tournament_prefectures.json').catch(() => null),
       fetch('../data/character_index.json').catch(() => null),
       fetch('../data/char_emoji.json').catch(() => null),
+      // 参加者の現在の全国順位 (大会 JSON には当時の値だけがある。../js/player_data.js)
+      SPSPPlayerData.loadCurrent('../').catch(() => null),
     ]);
     if (!tRes.ok) { showNotFound(); return; }
     META = await metaRes.json();
     TOURNEY = await tRes.json();
+    CURRENT = curFile;
     if (tprefRes && tprefRes.ok) {
       try { TOURNEY_PREF = (await tprefRes.json())[String(TID)] || null; } catch (e) {}
     }
@@ -522,11 +527,15 @@ function placeClass(p) {
 }
 
 // 大会ページの「全国 #」は参加前 (= 大会開催時点) の順位を表示する.
-// pretour_ranks が無い古いデータは global_ranks (= 現在) に fallback.
+// pretour_ranks が無い古いデータは現在の順位 (players_current.json) に fallback.
 function preRank(p, field) {
   if (p && p.pretour_ranks && p.pretour_ranks[field] != null) return p.pretour_ranks[field];
-  if (p && p.global_ranks && p.global_ranks[field] != null) return p.global_ranks[field];
-  return null;
+  return curRank(p, field);
+}
+// 現在の全国順位。大会 JSON からは外した (毎ビルド全大会が書き換わる原因だった) ので players_current.json から
+function curRank(p, field) {
+  if (p && p.global_ranks && p.global_ranks[field] != null) return p.global_ranks[field];   // 旧データ互換
+  return p ? SPSPPlayerData.currentRank(CURRENT, p.user_id, field) : null;
 }
 
 // 当時のレベル表記. lv = 当時の TJPR レベル (実 cascade スナップショット由来),
@@ -632,7 +641,7 @@ function render() {
     }).join('');
   }
   const ELO_PER_UNIT = (META.params && META.params.ELO_PER_UNIT) || 29.48;
-  const TJPR_SCALE = (META.params && META.params.TJPR_ELO_SCALE) || 100;
+  const TJPR_SCALE = (META.params && META.params.TJPR_ELO_SCALE) || 17.5;
 
   // setupPaginated: player page と同等の prev/next + ページ表示式 pagination.
   function setupPaginated(items, elId, pagerId, renderFn, emptyMsg) {
@@ -738,7 +747,7 @@ let stdFilter = '';
 function renderStandings() {
   const list = document.getElementById('std-list');
   const ELO_PER_UNIT = (META.params && META.params.ELO_PER_UNIT) || 29.48;
-  const TJPR_SCALE = (META.params && META.params.TJPR_ELO_SCALE) || 100;
+  const TJPR_SCALE = (META.params && META.params.TJPR_ELO_SCALE) || 17.5;
   const ft = stdFilter.toLowerCase();
   const rows = TOURNEY.standings.filter(p => !ft || (p.display || '').toLowerCase().includes(ft));
   list.innerHTML = rows.map(p => {
@@ -747,8 +756,7 @@ function renderStandings() {
     const er = preRank(p, 'ensemble');                         // 当時 (参加前) の全国#
     const after = (er != null && p.rank_delta_ensemble != null) // T直後 (大会結果確定直後) の全国#
       ? (er - p.rank_delta_ensemble) : null;
-    const cur = (p.global_ranks && p.global_ranks.ensemble != null) // 現在の全国#
-      ? p.global_ranks.ensemble : null;
+    const cur = curRank(p, 'ensemble');                        // 現在の全国#
     const grank = er != null
       ? `<div class="sub">当時全国 #${er}${after != null ? ' → #' + after : ''}${cur != null ? ' ・現在 #' + cur : ''}</div>` : '';
     // SPR chip. sub 行に seed 番号を表示 (= 他 chip と高さ揃える).

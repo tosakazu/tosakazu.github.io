@@ -541,6 +541,7 @@
 <div id="nav-root"></div>
 <script src="../js/html.js"></script>
 <script src="../js/data.js"></script>
+<script src="../js/player_data.js"></script>
 <script src="../nav.js"></script>
 <script src="../share.js"></script>
 
@@ -712,13 +713,14 @@
   </div>
 
   <div class="footer" id="footer-info">
-    <span class="site-version" style="font-size:11px;color:#9ca3af">v 327cb4e · 2026-09-13 06:06 UTC</span>
+    <span class="site-version" style="font-size:11px;color:#9ca3af">v bd680b5 · 2026-09-13 09:13 UTC</span>
   </div>
 </main>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/luxon@3.4.4/build/global/luxon.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-luxon@1.3.1/dist/chartjs-adapter-luxon.umd.min.js"></script>
+<script>if (window.luxon && window.luxon.Settings) { window.luxon.Settings.defaultZone = 'Asia/Tokyo'; }  // チャートの日付は閲覧者の場所に依らず JST</script>
 <script>
 'use strict';
 
@@ -803,7 +805,7 @@ function buildLatestResultSection() {
   }
   // 順位評価 / 直対評価 chips (= 出場大会一覧の行と同じ表記、▶ 展開の中)
   const ELO_PER_UNIT2 = (META.params && META.params.ELO_PER_UNIT) || 29.48;
-  const TJPR_SCALE2 = (META.params && META.params.TJPR_ELO_SCALE) || 100;
+  const TJPR_SCALE2 = (META.params && META.params.TJPR_ELO_SCALE) || 17.5;
   const w = (t.tjpr_w || 0) * TJPR_SCALE2;
   const base = (t.tjpr_raw || 0) * TJPR_SCALE2;
   const tjprChip = `<div class="chip"><span class="lbl">順位評価</span>${
@@ -865,13 +867,17 @@ async function buildRivalsSection() {
   const docs = (await Promise.allSettled(tours.map(t =>
     fetch(`../tournaments/${t.event_id}.json`).then(r => { if (!r.ok) throw new Error(r.status); return r.json(); })
   ))).filter(r => r.status === 'fulfilled').map(r => r.value);
+  // 現在の全国順位は大会 JSON には無い (players_current.json から引く。読み込み済みなので即時)
+  const CUR = await SPSPPlayerData.loadCurrent('../').catch(() => null);
   const info = new Map();   // uid -> {display, rank} (新しい大会優先)
   const vsN = new Map(), coN = new Map();
   docs.forEach(doc => {
     (doc.standings || []).forEach(s => {
       if (s.user_id === UID) return;
       if (!info.has(s.user_id)) {
-        info.set(s.user_id, { display: s.display, rank: (s.global_ranks || {}).ensemble });
+        // 旧形式の大会 JSON (global_ranks 入り) が残っている切替直後の時間差でも順位が出るように fallback
+        const _cr = SPSPPlayerData.currentRank(CUR, s.user_id);
+        info.set(s.user_id, { display: s.display, rank: _cr != null ? _cr : (s.global_ranks || {}).ensemble });
       }
       coN.set(s.user_id, (coN.get(s.user_id) || 0) + 1);
     });
@@ -924,11 +930,10 @@ async function buildRivalsSection() {
   ];
   // subrank 系の 名前 + 全国順位 は players/<uid>.json から取得 (最大8件)
   const needFetch = cats[2].items.concat(cats[3].items).map(c => c.uid);
-  const fetched = await Promise.allSettled(needFetch.map(uid =>
-    fetch(`../players/${uid}.json`).then(r => { if (!r.ok) throw new Error(r.status); return r.json(); })));
+  const fetched = await Promise.allSettled(needFetch.map(uid => SPSPPlayerData.load('../', uid, { history: false })));
   const fmap = new Map();
   fetched.forEach((r, i) => {
-    if (r.status === 'fulfilled') fmap.set(needFetch[i], { display: r.value.display, rank: (r.value.ranks || {}).ensemble });
+    if (r.status === 'fulfilled' && r.value) fmap.set(needFetch[i], { display: r.value.display, rank: (r.value.ranks || {}).ensemble });
   });
   cats[2].items.concat(cats[3].items).forEach(c => {
     const f = fmap.get(c.uid);
@@ -972,8 +977,9 @@ async function buildYosouSection() {
     const up = await fetch('../data/upcoming_entrants.json', { cache: 'no-cache' })
       .then(r => { if (!r.ok) throw new Error(r.status); return r.json(); });
     const lv = (PLAYER && PLAYER.scores && PLAYER.scores.shared_cascade_lv) || 1;
-    // ⚠️ /b/sim/calc.js の LV_FILTERS と同期して更新すること (本番 LV_DEFS, env 適用後)
-    const MIN_NENT_GT = [0, 0, 8, 24, 32, 48];
+    // 集計対象の規模条件は meta.json の実効フィルタ (params.LV_FILTERS_EFFECTIVE) から。無い古い meta では従来の定数
+    const _eff = (META.params && META.params.LV_FILTERS_EFFECTIVE) || null;
+    const MIN_NENT_GT = [0, 1, 2, 3, 4, 5].map(l => _eff ? ((_eff[String(l)] || {}).min_nent_gt || 0) : [0, 0, 8, 24, 32, 48][l]);
     const passes = ev => {
       const nent = ev.num_entrants || (ev.entrants && ev.entrants.length) || 0;
       if (ev.is_non_serious || nent < 5) return false;  // 全 Lv 共通の除外
@@ -1058,9 +1064,11 @@ function fmtRank(r) { return r != null && r > 0 ? r.toLocaleString() : '—'; }
 async function loadData() {
   if (!UID || UID < 1) { showNotFound('URL に uid パラメータがありません。'); return; }
   try {
-    const [metaRes, playerRes, overseasRes, charIdxRes, charEmojiRes, prefRes, subrankRes] = await Promise.all([
+    // 選手 JSON は安定部分 (players/) + 揮発部分 (players_current.json) + 履歴 (history/) に分かれている。
+    // SPSPPlayerData.load が以前の 1 ファイルと同じ形に組み立てる (../js/player_data.js)
+    const [metaRes, playerRec, overseasRes, charIdxRes, charEmojiRes, prefRes, subrankRes] = await Promise.all([
       fetch('../meta.json'),
-      fetch(`../players/${UID}.json`),
+      SPSPPlayerData.load('../', UID),
       fetch('../data/overseas.json').catch(() => null),
       fetch('../data/character_index.json').catch(() => null),
       fetch('../data/char_emoji.json').catch(() => null),
@@ -1085,12 +1093,12 @@ async function loadData() {
     if (charIdxRes && charIdxRes.ok) {
       try { CHAR_IDX = await charIdxRes.json(); } catch (e) {}
     }
-    if (!playerRes.ok) {
+    if (!playerRec) {
       showNotFound(`このプレイヤー (uid=${UID}) は SPSP の DB に履歴がないため、詳細を表示できません。`);
       return;
     }
     META = await metaRes.json();
-    PLAYER = await playerRes.json();
+    PLAYER = playerRec;
     // 新しい player JSON は main_rec を埋め込み済み。
     // 古い player JSON (display/ranks なし) の場合は JSONL から fallback で探す。
     if (PLAYER.display && PLAYER.ranks) {
@@ -1472,7 +1480,7 @@ function render() {
   }).join('');
 
   const ELO_PER_UNIT = (META.params && META.params.ELO_PER_UNIT) || 29.48;
-  const TJPR_SCALE = (META.params && META.params.TJPR_ELO_SCALE) || 100;
+  const TJPR_SCALE = (META.params && META.params.TJPR_ELO_SCALE) || 17.5;
 
   // ── フィルタ state + 補助 ──
   FILTER = { period: '6m', kind: 'all' };
@@ -2525,7 +2533,7 @@ function renderScoreChart(which) {
   const isBT = (which === 'bt');
   const isTJPR = (which === 'tjpr');
   const ELO_LOCAL = (META.params && META.params.ELO_PER_UNIT) || 29.48;
-  const TJPR_SCALE_LOCAL = (META.params && META.params.TJPR_ELO_SCALE) || 100;
+  const TJPR_SCALE_LOCAL = (META.params && META.params.TJPR_ELO_SCALE) || 17.5;
   RANK_CHART = new Chart(canvas, {
     type: 'line',
     data: { datasets },

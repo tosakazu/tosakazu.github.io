@@ -302,8 +302,9 @@
     var recentKValid = !isNaN(recentK) && recentK > 0;
     var recentCutoff = null;
     if (recentOnly && recentKValid) {
-      var cd = new Date();
-      cd.setMonth(cd.getMonth() - recentK);
+      // 最終参加日 (JST の暦日) と比べるので、しきい値も JST の暦日で作る (UTC の今日だと深夜に 1 日ずれる)
+      var cd = new Date(Date.now() + 9 * 3600 * 1000);
+      cd.setUTCMonth(cd.getUTCMonth() - recentK);
       recentCutoff = cd.toISOString().slice(0, 10);
     }
     var prefSet = selPrefs.length ? new Set(selPrefs) : null;

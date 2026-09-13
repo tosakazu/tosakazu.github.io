@@ -168,7 +168,8 @@
     var nodes = scope.querySelectorAll(LOADING_SEL);
     for (var i = 0; i < nodes.length; i++) {
       var n = nodes[i];
-      if (!LOADING_RE.test(n.textContent || '')) continue;
+      // 文言一致 (日本語) か data-loading 属性 (文言に依らない印) のどちらか
+      if (!n.hasAttribute('data-loading') && !LOADING_RE.test(n.textContent || '')) continue;
       // 「見つかりません」等の予備枠は display:none で置いてあるので触らない
       if (n.style && n.style.display === 'none') continue;
       inline(n, { sub: true });

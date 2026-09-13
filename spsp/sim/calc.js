@@ -205,6 +205,22 @@
     5: { minNentGt: 48, weekendOnly: true, excludeCapped: true },
   };
 
+  // meta.json の params.LV_FILTERS_EFFECTIVE ({lv: {min_nent_gt, weekend_only, exclude_capped}}) で上書きする。
+  // 本番の設定 (Settings) 適用後の実効フィルタなので、上の定数を手で同期しなくてよい。
+  function setLvFilters(eff) {
+    if (!eff) return;
+    for (var lv = 1; lv <= 6; lv++) {
+      var f = eff[String(lv)];
+      if (f === undefined) continue;
+      if (f === null || !Object.keys(f).length) { LV_FILTERS[lv] = null; continue; }
+      var o = {};
+      if (f.min_nent_gt !== undefined && f.min_nent_gt !== null) o.minNentGt = f.min_nent_gt;
+      if (f.weekend_only) o.weekendOnly = true;
+      if (f.exclude_capped) o.excludeCapped = true;
+      LV_FILTERS[lv] = o;
+    }
+  }
+
   // meta: {nent, isWeekend, isCapped}
   function tournamentPassesLv(lv, meta) {
     var f = LV_FILTERS[lv];
@@ -442,5 +458,6 @@
     createEnsemblePredictor: createEnsemblePredictor,
     LV_PARAMS: LV_PARAMS,
     LV_FILTERS: LV_FILTERS,
+    setLvFilters: setLvFilters,
   };
 });

@@ -1472,7 +1472,7 @@
     if (input.initialSeedOrder != null) {
       const init = input.initialSeedOrder;
       if (!Array.isArray(init) || init.length !== N ||
-          init.slice().sort().join(' ') !== ranking.slice().sort().join(' ')) {
+          init.slice().sort().join('\0') !== ranking.slice().sort().join('\0')) {
         throw new Error('initialSeedOrder は ranking の permutation にしてください。');
       }
       seedOrder = init.slice();

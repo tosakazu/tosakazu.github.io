@@ -138,62 +138,6 @@
   }
 
   /**
-   * Build seedMapping from parsed CSV rows using configurable column names.
-   * @param {Array<Object>} rows
-   * @param {string} seedIdCol default "seedId"
-   * @param {string} phaseSeedCol default "phaseseed"
-   * @returns {Array<{seedId: any, seedNum: any}>}
-   */
-  function buildSeedMapping(rows, seedIdCol, phaseSeedCol) {
-    const sid = seedIdCol || 'seedId';
-    const psd = phaseSeedCol || 'phaseseed';
-    if (!rows.length) throw new Error('CSV に行がありません');
-    if (!(sid in rows[0])) throw new Error('CSV に列 "' + sid + '" がありません');
-    if (!(psd in rows[0])) throw new Error('CSV に列 "' + psd + '" がありません');
-    const mapping = [];
-    for (let i = 0; i < rows.length; i++) {
-      const r = rows[i];
-      const seedId = r[sid];
-      const seedNum = r[psd];
-      if (seedId === undefined || seedId === '' || seedNum === undefined || seedNum === '') {
-        continue;  // skip incomplete rows (e.g. unranked players with blank seedId)
-      }
-      mapping.push({ seedId: seedId, seedNum: seedNum });
-    }
-    if (!mapping.length) throw new Error('有効な (seedId, ' + psd + ') ペアが 1 つもありません');
-    return mapping;
-  }
-
-  /**
-   * Try to derive a phase ID directly from a start.gg URL or pure numeric ID.
-   * Supports:
-   *   - "1234567"                                     → "1234567"
-   *   - ".../admin/tournament/<slug>/brackets/<id>"   → <id> (legacy URL)
-   *   - ".../admin/tournament/<slug>/seeding/<E>/<P>" → <P> (phase ID, 2nd number)
-   * Tournament event URLs ("/tournament/<slug>/event/<slug>") return null —
-   * those need an API lookup via fetchEventPhases.
-   */
-  function extractPhaseIdFromUrl(urlOrId) {
-    if (!urlOrId) return null;
-    const s = String(urlOrId).trim();
-    if (/^\d+$/.test(s)) return s;
-    let m = s.match(/seeding\/\d+\/(\d+)/);
-    if (m) return m[1];
-    m = s.match(/brackets\/(\d+)/);
-    if (m) return m[1];
-    return null;
-  }
-
-  /**
-   * Detect whether the input looks like a tournament event URL
-   * (needs API lookup to resolve phase ID).
-   */
-  function isEventUrl(input) {
-    if (!input) return false;
-    return /tournament\/[^\/\s?#]+\/event\/[^\/\s?#]+/.test(String(input));
-  }
-
-  /**
    * Parse event slug pair from URL.
    */
   function parseEventSlug(input) {
@@ -213,31 +157,6 @@
     }
   `;
 
-  /**
-   * Resolve phase ID from an event URL. Returns the first phase ID.
-   * Throws on error.
-   */
-  async function resolveEventPhase(eventUrl, token) {
-    const parsed = parseEventSlug(eventUrl);
-    if (!parsed) throw new Error('Event URL の形式が不正です');
-    const res = await fetch(STARTGG_API, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
-      body: JSON.stringify({ query: PHASE_LOOKUP_QUERY, variables: { slug: parsed.slug } }),
-    });
-    if (!res.ok) {
-      let body = '';
-      try { body = await res.text(); } catch (e) {}
-      throw new Error('HTTP ' + res.status + ': ' + body.substring(0, 200));
-    }
-    const body = await res.json();
-    if (body.errors && body.errors.length) throw new Error('GraphQL: ' + body.errors.map(e => e.message).join(' | '));
-    const ev = body.data && body.data.event;
-    if (!ev) throw new Error('event が見つかりません: ' + parsed.slug);
-    if (!ev.phases || !ev.phases.length) throw new Error('event に phase がありません');
-    return { phaseId: String(ev.phases[0].id), eventName: ev.name, phases: ev.phases };
-  }
-
   global.SmashSeed = {
     STARTGG_API,
     UPDATE_MUTATION,
@@ -246,9 +165,5 @@
     fetchSheetsCsv,
     readCsvFile,
     parseCsv,
-    buildSeedMapping,
-    extractPhaseIdFromUrl,
-    isEventUrl,
-    resolveEventPhase,
   };
 })(typeof window !== 'undefined' ? window : globalThis);

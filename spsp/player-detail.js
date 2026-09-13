@@ -115,7 +115,7 @@
     if (!ts.length) return '<div class="empty-msg">大会データなし</div>';
     const meta = (cfg.getMeta && cfg.getMeta()) || {};
     const params = meta.params || {};
-    const scale = params.TJPR_ELO_SCALE || 100.0;
+    const scale = params.TJPR_ELO_SCALE || 17.5;   // meta.json params.TJPR_ELO_SCALE (無い古い meta では同じ既定値)
     const ELO_PER_UNIT = params.ELO_PER_UNIT || 29.4809;
     const TOP_N = 10;
     const paths = resolvePaths(cfg);
@@ -357,10 +357,11 @@
   async function fetchPlayerDetail(uid, cfg) {
     if (uid == null) throw new Error('user_id がありません (DB 不在プレイヤー)');
     if (DETAIL_CACHE.has(uid)) return DETAIL_CACHE.get(uid);
-    const paths = resolvePaths(cfg);
-    const res = await fetch(`${paths.playersPath}${uid}.json`);
-    if (!res.ok) throw new Error(`HTTP ${res.status}`);
-    const data = await res.json();
+    // 選手 JSON は分割されている (安定部分 + players_current.json + 履歴)。組み立ては js/player_data.js
+    // (このファイルより前に読み込まれていること)。index.html のグラフが history を使うので履歴も取る。
+    const pre = (cfg && cfg.pathPrefix != null) ? cfg.pathPrefix : '';
+    const data = await global.SPSPPlayerData.load(pre, uid);
+    if (!data) throw new Error('HTTP 404');
     DETAIL_CACHE.set(uid, data);
     return data;
   }
