@@ -100,6 +100,7 @@ const SEED_APP_SKELETON_HTML = `
     <input type="search" id="search" placeholder="プレイヤー名 / UID で検索…" autocomplete="off" style="display:none">
     <button id="csv-btn" disabled style="background:#16a34a;color:#fff;border:none;padding:8px 14px;border-radius:6px;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;display:none">CSV ダウンロード</button>
     <button id="upload-btn" disabled style="background:#b91c1c;color:#fff;border:none;padding:8px 14px;border-radius:6px;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;display:none">start.gg にシード適用</button>
+    <label id="auto-opt-label" style="display:none;font-size:12px;color:#374151;white-space:nowrap"><input type="checkbox" id="so-auto-apply" checked> 適用時に被り回避を自動実行</label>
     <span class="status" id="status">大会 URL を入力して「参加者を取得」を押してください</span>
   </div>
   <div id="error-help" style="display:none;margin-top:8px"></div>
@@ -107,7 +108,7 @@ const SEED_APP_SKELETON_HTML = `
 
 <!-- 🔀 被り回避最適化パネル -->
 <div id="seedopt-panel" style="display:none;max-width:1400px;margin:14px auto 0;padding:12px 24px">
-  <details style="border:1px solid #e5e7eb;border-radius:8px;padding:14px;background:#fafafa">
+  <details id="seedopt-details" style="border:1px solid #e5e7eb;border-radius:8px;padding:14px;background:#fafafa">
     <summary style="cursor:pointer;list-style:revert">
       <strong style="font-size:14px;color:#111827">🔀 被り回避最適化</strong>
       <span style="font-size:11px;color:#6b7280">地域被り（都道府県）と直近再対戦を避けるようシード順を最適化します。</span>
@@ -134,7 +135,7 @@ const SEED_APP_SKELETON_HTML = `
       <label title="全員のトーナメント想定順位が元シードから変わらない範囲でのみ入れ替える"><input type="checkbox" id="so-keep-deplace" checked> トーナメント順位固定</label>
       <label title="プール分けに加えて、予選抜け後の本戦で当たる組み合わせも避ける（ダブルイリミ専用）"><input type="checkbox" id="so-scope-winners" checked> 勝者側ブラケットも考慮</label>
       <label title="平日扱いの大会での対戦も「直接対戦」に含める"><input type="checkbox" id="so-include-weekday"> 平日大会を含む</label>
-      <label><input type="checkbox" id="so-avoid-series"> 同シリーズの再戦を強めに避ける</label>
+      <label><input type="checkbox" id="so-avoid-series" checked> 同シリーズの再戦を強めに避ける</label>
       <span id="so-series-box" style="display:none;font-size:11px;color:#6b7280">
         <select id="so-series-select" style="padding:3px 5px;border:1px solid #d1d5db;border-radius:5px;font-size:12px;max-width:220px">
           <option value="">（シリーズを選択）</option>
@@ -142,7 +143,7 @@ const SEED_APP_SKELETON_HTML = `
         <span id="so-series-note" style="margin-left:5px"></span>
       </span>
       <label title="東京・神奈川・埼玉・千葉を同じ地域として扱う"><input type="checkbox" id="so-group-minamikanto" checked> 東京・神奈川・埼玉・千葉をまとめる</label>
-      <label title="兵庫・大阪・京都を同じ地域として扱う"><input type="checkbox" id="so-group-keihanshin"> 兵庫・大阪・京都をまとめる</label>
+      <label title="兵庫・大阪・京都を同じ地域として扱う"><input type="checkbox" id="so-group-keihanshin" checked> 兵庫・大阪・京都をまとめる</label>
     </div>
     <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:8px;font-size:12px;color:#374151">
       <span id="so-shiftlimit-label" style="font-weight:600">シードズレ上限:</span>
@@ -151,15 +152,16 @@ const SEED_APP_SKELETON_HTML = `
       <label>／ ±2は <input type="number" id="so-shift2" min="1" style="width:52px"> 位まで</label>
       <label>／ ±3は <input type="number" id="so-shift3" min="1" style="width:52px"> 位まで</label>
       <label>／ ±4は <input type="number" id="so-shift4" min="1" style="width:52px"> 位まで</label>
+      <label>／ ±5は <input type="number" id="so-shift5" min="1" style="width:52px"> 位まで</label>
       <label>／ 全順位で最大 ±<input type="number" id="so-maxshift" min="0" step="1" placeholder="なし" style="width:56px"></label>
-      <span style="color:#9ca3af;font-size:10px">（段階指定を超えた順位は無制限。全て空欄=制約なし。空のまま大会を読み込むと規模別の既定値が入る）</span>
+      <span style="color:#9ca3af;font-size:10px">（段階指定を超えた順位は無制限。全て空欄=制約なし。空のまま大会を読み込むと既定値が入る）</span>
     </div>
     <div style="margin-top:10px;font-size:12px;color:#374151;max-width:360px">
       <div style="display:flex;align-items:center;gap:8px">
         <span id="so-orderpow-label" style="font-weight:600" title="元順位からのシードズレ罰則の強さ。左ほどズレの大きさを許容して大きく動かし、右ほど大きなズレを強く罰して小さく動かす。0 = ズレを罰しない">ズレ抑制</span>
-        <span id="so-orderpow-val" style="font-variant-numeric:tabular-nums;font-weight:700;font-size:11px;background:#f3f4f6;border:1px solid #e5e7eb;border-radius:10px;padding:1px 10px;min-width:34px;text-align:center">2</span>
+        <span id="so-orderpow-val" style="font-variant-numeric:tabular-nums;font-weight:700;font-size:11px;background:#f3f4f6;border:1px solid #e5e7eb;border-radius:10px;padding:1px 10px;min-width:34px;text-align:center">2.5</span>
       </div>
-      <input type="range" id="so-orderpow" min="0" max="5" step="0.5" value="2" style="display:block;width:100%;margin:8px 0 3px;accent-color:#dc2626">
+      <input type="range" id="so-orderpow" min="0" max="5" step="0.5" value="2.5" style="display:block;width:100%;margin:8px 0 3px;accent-color:#dc2626">
       <div style="display:flex;justify-content:space-between;font-size:10px;color:#9ca3af">
         <span>大きく動かす</span><span>小さく動かす</span>
       </div>
@@ -350,6 +352,7 @@ const HELP_TEXT = {
   // ── 出力 ──
   'csv-btn': '今の並びを CSV でダウンロードします。他のツールへの受け渡しに。',
   'upload-btn': '⚠️ 今の並びを start.gg の本番シードとして書き込みます (取り消しは start.gg 側で)。',
+  'so-auto-apply': 'オンなら、シード適用ボタンを押したときに被り回避最適化 (下のパネルの設定どおり) を実行してから、その結果を start.gg に書き込みます。反映済みの最適化があればそれをそのまま使います。',
   'spec-export': '今の作業状況を CSV に保存します。📌 パネルから読み込めば作業を再開できます。',
   'bracket-preview': '今のシード順で組んだトーナメント表を別ページで開きます。URL を共有すれば同じ画面を見せられます。',
 
@@ -359,8 +362,8 @@ const HELP_TEXT = {
   'so-stop': '探索を途中で打ち切り、その時点の最良の並びを反映します。',
   'so-orderpow-label': '元のランキング順からどれだけズラしてよいか。左ほど被り回避を優先、右ほど元の順位を尊重します。',
   'so-mode': '探索アルゴリズム。通常は既定のままで構いません。',
-  'so-avoid-series': '今回と同じ大会シリーズで当たったことのあるペアを、普通の再戦より強めに引き離します。',
-  'so-series-select': 'どのシリーズでの再戦を避けるか。大会名から自動で選ばれます。',
+  'so-avoid-series': '同じ大会シリーズで当たったことのあるペアを、普通の再戦より強めに引き離します。シリーズは大会名から自動判定。判定できなければこの罰則なしで最適化します。',
+  'so-series-select': 'どのシリーズでの再戦を避けるか。大会名から自動で選ばれます。違っていたら選び直してください。',
   'so-shiftlimit-label': '各選手が元のランキング順からどれだけシードを動かしてよいかの上限。上位ほど厳しくしたいときに使います。',
   'so-maxshift': '順位帯に関係なく、全員に効くシードズレの上限。',
 
@@ -371,7 +374,7 @@ const HELP_TEXT = {
 // アイコンを付ける対象。ここに id を並べるだけで付く。
 const HELP_TARGETS = [
   'token', 'event-url', 'fetch-btn', 'phase-select', 'pc-group-count', 'pc-phase-name',
-  'csv-btn', 'upload-btn', 'spec-export', 'bracket-preview',
+  'csv-btn', 'upload-btn', 'so-auto-apply', 'spec-export', 'bracket-preview',
   'so-pools', 'so-waves', 'so-run', 'so-stop', 'so-cancel',
   'so-enable-intra', 'so-avoid-region', 'so-avoid-recent', 'so-keep-deplace',
   'so-scope-winners', 'so-include-weekday', 'so-group-minamikanto', 'so-group-keihanshin',
@@ -1546,6 +1549,80 @@ function downloadCsv() {
   setTimeout(() => URL.revokeObjectURL(url), 1000);
 }
 
+// 適用の confirm に出す「何の順か」。被り回避・手動調整の反映があれば添える。
+function uploadOrderLabel() {
+  const base = {
+    ensemble: '総合評価', tjpr: '順位評価', bt_gated: '直対評価',
+  }[currentMethod] || '総合評価';
+  const extra = [];
+  if (MANUAL) extra.push('手動調整');
+  if (APPLIED_ORDER) extra.push('被り回避');
+  return extra.length ? `${base} (${extra.join('・')} 反映済み)` : base;
+}
+
+function isAutoOptimizeOn() {
+  const cb = document.getElementById('so-auto-apply');
+  return !!(cb && cb.checked);
+}
+
+// 被り回避パネル (折りたたみ) を開く。自動実行時にレポートが見えるように。
+function openSeedOptPanel() {
+  const d = document.getElementById('seedopt-details');
+  if (d) d.open = true;
+}
+
+/**
+ * シード適用前の自動被り回避。true = そのまま適用に進んでよい。
+ * - チェック OFF → 何もしない (true)。
+ * - 反映済みの最適化 (APPLIED_ORDER) がある → そのまま使う (true)。
+ * - 実行中の最適化がある → 止めて false (二重実行しない)。
+ * - それ以外 → パネルを開いて最適化を回し、完了 (= 自動反映) を待つ。完了しなければ false。
+ */
+async function ensureAutoOptimizeForUpload() {
+  if (!isAutoOptimizeOn()) return true;
+  if (SEEDOPT_WORKER) {
+    alert('被り回避最適化を実行中です。完了 (または中断) してからシード適用してください。');
+    return false;
+  }
+  if (APPLIED_ORDER) return true;
+  openSeedOptPanel();
+  const status = document.getElementById('status');
+  clearError();
+  if (status) status.textContent = '被り回避最適化を実行中… (完了すると適用の確認が出ます)';
+  const ok = await runSeedOptimizeAndWait();
+  if (ok) return true;
+  const progress = document.getElementById('so-progress');
+  const why = ((progress && progress.textContent) || '').replace(/^⚠\s*/, '').trim();
+  showError('被り回避最適化が完了しなかったため、シード適用を中止しました' + (why ? `: ${why}` : '')
+    + ' 「適用時に被り回避を自動実行」を外すと、今の並びのまま適用できます。');
+  return false;
+}
+
+// runSeedOptimize の完了を待つ Promise 化。resolve(true) = 完了して反映済み、
+// resolve(false) = 事前チェックで始まらなかった / エラー / 非対応 / 別の取得で止まった。
+// 決着は finishSeedOptimize (完了) と cleanupSeedOptWorker (それ以外の終了) から。
+let SEEDOPT_WAITER = null;
+function settleSeedOptWaiter(ok) {
+  const w = SEEDOPT_WAITER;
+  SEEDOPT_WAITER = null;
+  if (w) w(!!ok);
+}
+function runSeedOptimizeAndWait() {
+  return new Promise((resolve) => {
+    settleSeedOptWaiter(false);   // 取り残しがあれば片付ける
+    SEEDOPT_WAITER = resolve;
+    runSeedOptimize().then(() => {
+      // worker が生成されていない = 事前チェック (形式・シリーズ未選択・ズレ上限の順序) で
+      // 止まった。理由は so-progress に出ている。
+      if (!SEEDOPT_WORKER) settleSeedOptWaiter(false);
+    }).catch((e) => {
+      const progress = document.getElementById('so-progress');
+      if (progress) progress.textContent = '⚠ ' + e.message;
+      cleanupSeedOptWorker();
+    });
+  });
+}
+
 async function uploadToStartgg() {
   if (!DATA.length) return;
   // csv モード: start.gg 未接続なら大会 URL から自動で phase/seeds を取得する
@@ -1559,15 +1636,17 @@ async function uploadToStartgg() {
   if (!EVENT_CONTEXT) return;
   const token = getToken();
   if (!token) { alert('トークンを入力してください'); return; }
+  // 「適用時に被り回避を自動実行」(既定 ON): パネルの設定どおりに最適化を回し、完了した
+  // 並びを適用する。反映済みの最適化があればそれを使う (押すたびに回し直さない)。
+  // 最適化が完了しなかった (非対応形式・データ取得失敗・エラー) ときは適用しない。
+  if (!(await ensureAutoOptimizeForUpload())) return;
   if (EVENT_CONTEXT.phaseId == null) {
     // entrants フォールバックで取得した event (= phase 未作成)。
     // phase を作成してからシード適用する.
     await createPhaseThenUpload(token);
     return;
   }
-  const methodLabel = {
-    ensemble: '総合評価', tjpr: '順位評価', bt_gated: '直対評価',
-  }[currentMethod] || '総合評価';
+  const methodLabel = uploadOrderLabel();
   const recs = orderedRecs();
   const mapping = [];
   for (let i = 0; i < recs.length; i++) {
@@ -1606,9 +1685,7 @@ const PHASES_RECHECK_QUERY = `
 // entrantId → seedId を対応付け → updatePhaseSeeding。admin 権限が必要 (= 通常の適用と同じ).
 async function createPhaseThenUpload(token) {
   const status = document.getElementById('status');
-  const methodLabel = {
-    ensemble: '総合評価', tjpr: '順位評価', bt_gated: '直対評価',
-  }[currentMethod] || '総合評価';
+  const methodLabel = uploadOrderLabel();
   // UI からプール数 / phase 名を取得 (= phase-create-row)
   let groupCount = parseInt(document.getElementById('pc-group-count').value, 10);
   if (!Number.isFinite(groupCount) || groupCount < 1) groupCount = 1;
@@ -1665,8 +1742,8 @@ async function createPhaseThenUpload(token) {
     showError('作成した phase の seeds と参加者の対応付けに失敗しました。「取得」をやり直してから再度シード適用してください。');
     return;
   }
-  // 通常 path と同じ mapping 構築 + 送信 (= confirm は冒頭で済んでいる)
-  const recs = DATA.slice().sort((a, b) => (a.ranks[currentMethod] || 1e9) - (b.ranks[currentMethod] || 1e9));
+  // 通常 path と同じ並び (手動調整・被り回避の反映を含む) で mapping 構築 + 送信 (= confirm は冒頭で済んでいる)
+  const recs = orderedRecs();
   const mapping = [];
   for (let i = 0; i < recs.length; i++) {
     if (recs[i].seedId == null) continue;
@@ -1701,6 +1778,8 @@ function setParticipantsUiVisible(visible) {
   if (sr) sr.style.display = disp;
   if (cb) cb.style.display = disp;
   if (ub) ub.style.display = disp;
+  const al = document.getElementById('auto-opt-label');
+  if (al) al.style.display = disp;
   const panel = document.getElementById('seedopt-panel');
   if (panel) panel.style.display = disp;
   const spec = document.getElementById('spec-panel');
@@ -2493,23 +2572,20 @@ function applyModeDefaults() {
   if (d.saCooling != null) document.getElementById('so-cooling').value = d.saCooling;
   if (d.maxItersScale != null) document.getElementById('so-itersscale').value = d.maxItersScale;
 }
-// 大会規模ごとのシードズレ上限の既定値 [±0, ±1, ±2, ±3, ±4 それぞれ「〜位まで」]。
-// 上位ほど絶対的な意味が強いので厳しく、規模が大きいほど深い帯まで段階をかける。
+// シードズレ上限の既定値 [±0, ±1, ±2, ±3, ±4, ±5 それぞれ「〜位まで」]。
+// 上位 4 人は固定、以降は 8 / 16 / 32 / 64 / 128 位まで段階的に緩める (2026-09-14 から規模によらず同じ)。
+// 大会規模より小さい段は実質効かないだけなので、規模別には分けない。
+const SHIFT_LIMIT_PRESET = [4, 8, 16, 32, 64, 128];
 function shiftPresetForSize(n) {
   if (!n) return null;
-  if (n <= 48) return [null, 8, 16, 24, null];     // 〜32人規模: ±1≤8 / ±2≤16 / ±3≤24 / 25位〜無制限
-  if (n <= 160) return [null, 16, 32, 64, null];   // 〜128人規模
-  if (n <= 320) return [null, 16, 32, 64, 128];    // 〜256人規模
-  if (n <= 640) return [null, 24, 48, 96, 192];    // 〜512人規模
-  return [null, 32, 64, 128, 256];                 // 1024人規模〜
+  return SHIFT_LIMIT_PRESET.slice();
 }
-// 規模別既定を入れる。全欄が空、または「前回の自動プリセットのまま (手入力なし)」の
-// ときだけ上書きする — 別の大会を読み込み直したら新しい規模の既定に更新される。
-// ユーザーが1欄でも書き換えていたら触らない。
-let _lastShiftPrefill = null;   // 直近に自動で入れた値 (['','16',…] 形式)
+// 既定を入れる。全欄が空、または「前回の自動プリセットのまま (手入力なし)」の
+// ときだけ上書きする。ユーザーが1欄でも書き換えていたら触らない。
+let _lastShiftPrefill = null;   // 直近に自動で入れた値 (['4','8',…] 形式)
+const SHIFT_LIMIT_IDS = ['so-shift0', 'so-shift1', 'so-shift2', 'so-shift3', 'so-shift4', 'so-shift5'];
 function prefillShiftLimits(n) {
-  const els = ['so-shift0', 'so-shift1', 'so-shift2', 'so-shift3', 'so-shift4']
-    .map(id => document.getElementById(id));
+  const els = SHIFT_LIMIT_IDS.map(id => document.getElementById(id));
   if (els.some(e => !e)) return;
   const cur = els.map(e => (e.value || '').trim());
   const untouched = cur.every(v => v === '') ||
@@ -2555,10 +2631,11 @@ function cachedFetchers(prefix) {
 }
 
 // ── 同シリーズ再マッチ: 対象シリーズの判定 ────────────────────────────
-// 大会一覧 (tournaments.json, 約3MB) は「同シリーズの再戦を強めに避ける」を
-// ONにしたときだけ取りに行く (既定OFF の機能のために常時ロードはしない)。
-// 判定結果は必ず画面に出し、選び直せるようにする — 黙って別シリーズの罰則を
-// 掛けたり、黙って無効化したりしない。
+// 大会一覧 (tournaments.json, 約3MB) は「同シリーズの再戦を強めに避ける」が ON のとき
+// (2026-09-14 から既定 ON) に、大会の読み込み時と実行時に取りに行く。
+// 判定結果は必ず画面に出し、選び直せるようにする — 黙って別シリーズの罰則を掛けない。
+// 判定できなかった大会 (初開催など) はシリーズ罰則なしで実行し、その旨を進捗に出す
+// (2026-09-14 ユーザー確認済み)。
 let SERIES_INDEX = null;          // { seriesOf, seriesNames } | null
 let SERIES_INDEX_LOADING = null;  // 多重ロード防止の Promise
 let SERIES_USER_PICKED = false;   // ユーザーが手で選んだら自動判定で上書きしない
@@ -2765,17 +2842,20 @@ async function runSeedOptimize() {
   const keepDePlace = document.getElementById('so-keep-deplace').checked;
   // 「平日大会を含む」(既定OFF) の反転が excludeWeekday (= 既定で平日を除外)。
   const excludeWeekday = !document.getElementById('so-include-weekday').checked;
-  // 同シリーズ再マッチ (既定OFF)。ON なのに対象シリーズが決まっていないときは
-  // 黙って無効化せず、ここで止めて選ばせる。
-  const avoidSeriesRematch = document.getElementById('so-avoid-series').checked;
-  const targetSeries = avoidSeriesRematch
-    ? ((document.getElementById('so-series-select') || {}).value || '') : '';
-  if (avoidSeriesRematch && !targetSeries) {
-    progress.textContent = SERIES_INDEX
-      ? '⚠ 同シリーズの再戦を避けるには、対象シリーズを選んでください。'
-      : '⚠ 大会一覧を読み込み中です。シリーズ欄が出てから実行してください。';
-    return;
+  // 同シリーズ再マッチ (既定ON)。対象シリーズは大会名から自動判定した選択欄の値。
+  // 大会一覧がまだ無ければここで読み込んで判定を待つ (読み込み中に実行されても止めない)。
+  // 判定できなかった (初開催など・ユーザーが「選択なし」にした・一覧の取得失敗) ときは
+  // シリーズ罰則なしで実行し、進捗の注記に明示する (2026-09-14 ユーザー確認済み)。
+  const avoidSeriesCb = document.getElementById('so-avoid-series').checked;
+  const seriesSelValue = () => ((document.getElementById('so-series-select') || {}).value || '');
+  let targetSeries = avoidSeriesCb ? seriesSelValue() : '';
+  if (avoidSeriesCb && !targetSeries && !SERIES_INDEX) {
+    progress.textContent = '大会一覧を読み込んでシリーズを判定中…';
+    try { await updateSeriesToggleState(); } catch (e) { /* 失敗は note に出ている */ }
+    targetSeries = seriesSelValue();
   }
+  const seriesUndetected = avoidSeriesCb && !targetSeries;
+  const avoidSeriesRematch = avoidSeriesCb && !!targetSeries;
   // 地域グルーピングのトグル（南関東 / 兵庫・大阪・京都）。
   const groupMinamiKanto = document.getElementById('so-group-minamikanto').checked;
   const groupKeihanshin = document.getElementById('so-group-keihanshin').checked;
@@ -2794,16 +2874,16 @@ async function runSeedOptimize() {
     seriesMult: Math.max(1, numDef('so-seriesmult', 3)),
     W_series: Math.max(0, numDef('so-wseries', 0.3)),
     bracketScope: scopeWinners ? 'winners' : undefined,   // undefined→既定 'pools'
-    // シードズレ上限の段階指定 ([±0,±1,±2,±3,±4] それぞれ「何位まで」)。全空欄なら未指定。
+    // シードズレ上限の段階指定 ([±0,±1,±2,±3,±4,±5] それぞれ「何位まで」)。全空欄なら未指定。
     shiftLimitRanks: (() => {
-      const arr = ['so-shift0', 'so-shift1', 'so-shift2', 'so-shift3', 'so-shift4']
+      const arr = ['so-shift0', 'so-shift1', 'so-shift2', 'so-shift3', 'so-shift4', 'so-shift5']
         .map(id => { const v = parseInt(document.getElementById(id).value, 10); return Number.isFinite(v) ? Math.max(1, v) : null; });
       return arr.some(v => v != null) ? arr : undefined;
     })(),
     W_region: numDef('so-wregion', 1.0),
     W_recent: numDef('so-wrecent', 0.3),
     W_order: Math.max(0, numDef('so-worder', 0)),
-    orderPow: Math.max(0, numDef('so-orderpow', 2)),   // ズレ数調整スライダー (0〜5, 0.5刻み。0=ズレを罰しない)
+    orderPow: Math.max(0, numDef('so-orderpow', 2.5)),   // ズレ数調整スライダー (0〜5, 0.5刻み。0=ズレを罰しない。既定 2.5)
     prefWeight: document.getElementById('so-prefweight').value,
     roundWeights: csvNums('so-roundweights'),   // undefined→既定
     kInter: csvNums('so-kinter'),
@@ -2895,6 +2975,10 @@ async function runSeedOptimize() {
   if (m.targetSeries) {
     note += ` · 同シリーズ「${m.targetSeries}」で対戦済 ${m.seriesPairs} 組`;
     if (m.seriesIndexError) note += ` · ⚠ 大会一覧の取得に失敗（同シリーズ判定なし）`;
+  } else if (seriesUndetected) {
+    note += SERIES_INDEX
+      ? ' · シリーズ判定なし（同シリーズ罰則は掛けていません）'
+      : ' · ⚠ 大会一覧の取得に失敗（同シリーズ罰則は掛けていません）';
   }
   if (lockUids.length) {
     const nPool = lockUids.filter(u => seedLocks[u] === 'pool').length;
@@ -2978,7 +3062,9 @@ function resetSeedOptResultPanel(msg) {
   showOptCancelBtn(false);
   const p = document.getElementById('so-progress'); if (p) p.textContent = msg || '';
 }
-function cleanupSeedOptWorker() {
+function cleanupSeedOptWorker(opts) {
+  // 完了以外の終了 (エラー・非対応・別の取得・途中 throw) は、適用前の自動実行を失敗で決着させる。
+  if (!(opts && opts.keepWaiter)) settleSeedOptWaiter(false);
   document.getElementById('so-run').disabled = false;
   document.getElementById('so-stop').style.display = 'none';
   // 実行開始時に隠した取り消しボタンを戻す。前回の反映が残ったまま失敗・中断した
@@ -3004,7 +3090,7 @@ function finishSeedOptimize(result, displayOf, note, ranking, interInfo) {
     return;
   }
   if (!interInfo) {
-    cleanupSeedOptWorker();
+    cleanupSeedOptWorker({ keepWaiter: true });   // 決着は反映後 (この関数の末尾)
     SEEDOPT_RESULT = result;
     progress.textContent = `${note} ｜ 完了${result.stoppedEarly ? '（中断）' : ''}`;
   }
@@ -3297,6 +3383,7 @@ function finishSeedOptimize(result, displayOf, note, ranking, interInfo) {
     // 完了したら自動で反映する。「最適化したのにプレビューや CSV が元のまま」を
     // 起こさないため (2026-08-14)。戻したいときは「最適化を取り消す」。
     applySeedOptimize();
+    settleSeedOptWaiter(!!APPLIED_ORDER);   // 適用前の自動実行 (runSeedOptimizeAndWait) を進める
   }
 }
 
