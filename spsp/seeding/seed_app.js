@@ -124,10 +124,9 @@ const SEED_APP_SKELETON_HTML = `
       </label>
       <span id="so-waves-label" style="font-size:11px;color:#9ca3af"></span>
       <span id="so-format-label" style="font-size:11px;color:#9ca3af"></span>
-      <button id="so-run" style="background:#2563eb;color:#fff;border:none;padding:8px 16px;border-radius:6px;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit">最適化を実行</button>
+      <span style="display:inline-flex;align-items:center;gap:4px"><button id="so-run" style="background:#2563eb;color:#fff;border:none;padding:8px 16px;border-radius:6px;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit">最適化を実行</button></span>
       <button id="so-stop" disabled style="background:#6b7280;color:#fff;border:none;padding:8px 14px;border-radius:6px;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;display:none">中断して結果を反映</button>
       <button id="so-cancel" title="最適化を無かったことにして、実行する直前の並びに戻します" style="background:#fff;color:#374151;border:1px solid #d1d5db;padding:8px 14px;border-radius:6px;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;display:none">最適化を取り消す</button>
-      <button id="so-reset-defaults" style="margin-left:auto;background:#fff;color:#6b7280;border:1px solid #d1d5db;padding:6px 10px;border-radius:6px;font-size:11px;cursor:pointer;font-family:inherit">設定を既定に戻す</button>
     </div>
     <div style="display:flex;gap:16px;flex-wrap:wrap;align-items:center;margin-top:10px;font-size:12px;color:#374151">
       <label title="プール内で何回戦目に当たるかも最適化する（プール内順位を少し動かす）"><input type="checkbox" id="so-enable-intra" checked> プール内変動</label>
@@ -233,6 +232,9 @@ const SEED_APP_SKELETON_HTML = `
           </div>
         </div>
       </details>
+    </div>
+    <div style="margin-top:8px;display:flex;justify-content:flex-end;align-items:center;gap:4px">
+      <button id="so-reset-defaults" style="background:#fff;color:#6b7280;border:1px solid #d1d5db;padding:6px 10px;border-radius:6px;font-size:11px;cursor:pointer;font-family:inherit">設定を既定に戻す</button>
     </div>
     <div id="so-progress" style="margin-top:10px;font-size:12px;color:#374151"></div>
     <div id="so-report" style="margin-top:10px;font-size:12px;color:#374151"></div>
