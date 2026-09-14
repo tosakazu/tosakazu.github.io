@@ -127,6 +127,7 @@ const SEED_APP_SKELETON_HTML = `
       <button id="so-run" style="background:#2563eb;color:#fff;border:none;padding:8px 16px;border-radius:6px;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit">最適化を実行</button>
       <button id="so-stop" disabled style="background:#6b7280;color:#fff;border:none;padding:8px 14px;border-radius:6px;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;display:none">中断して結果を反映</button>
       <button id="so-cancel" title="最適化を無かったことにして、実行する直前の並びに戻します" style="background:#fff;color:#374151;border:1px solid #d1d5db;padding:8px 14px;border-radius:6px;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;display:none">最適化を取り消す</button>
+      <button id="so-reset-defaults" style="margin-left:auto;background:#fff;color:#6b7280;border:1px solid #d1d5db;padding:6px 10px;border-radius:6px;font-size:11px;cursor:pointer;font-family:inherit">設定を既定に戻す</button>
     </div>
     <div style="display:flex;gap:16px;flex-wrap:wrap;align-items:center;margin-top:10px;font-size:12px;color:#374151">
       <label title="プール内で何回戦目に当たるかも最適化する（プール内順位を少し動かす）"><input type="checkbox" id="so-enable-intra" checked> プール内変動</label>
@@ -353,6 +354,7 @@ const HELP_TEXT = {
   'csv-btn': '今の並びを CSV でダウンロードします。他のツールへの受け渡しに。',
   'upload-btn': '⚠️ 今の並びを start.gg の本番シードとして書き込みます (取り消しは start.gg 側で)。',
   'so-auto-apply': 'オンなら、シード適用ボタンを押したときに被り回避最適化 (下のパネルの設定どおり) を実行してから、その結果を start.gg に書き込みます。反映済みの最適化があればそれをそのまま使います。',
+  'so-reset-defaults': 'パネルの設定 (チェック・ズレ上限・ズレ抑制・上級者向け) はこのブラウザに自動保存されます。このボタンで既定に戻し、保存も消します。',
   'spec-export': '今の作業状況を CSV に保存します。📌 パネルから読み込めば作業を再開できます。',
   'bracket-preview': '今のシード順で組んだトーナメント表を別ページで開きます。URL を共有すれば同じ画面を見せられます。',
 
@@ -375,7 +377,7 @@ const HELP_TEXT = {
 const HELP_TARGETS = [
   'token', 'event-url', 'fetch-btn', 'phase-select', 'pc-group-count', 'pc-phase-name',
   'csv-btn', 'upload-btn', 'so-auto-apply', 'spec-export', 'bracket-preview',
-  'so-pools', 'so-waves', 'so-run', 'so-stop', 'so-cancel',
+  'so-pools', 'so-waves', 'so-run', 'so-stop', 'so-cancel', 'so-reset-defaults',
   'so-enable-intra', 'so-avoid-region', 'so-avoid-recent', 'so-keep-deplace',
   'so-scope-winners', 'so-include-weekday', 'so-group-minamikanto', 'so-group-keihanshin',
   'so-orderpow-label', 'so-shiftlimit-label', 'so-maxshift',
@@ -2715,6 +2717,7 @@ function initSeedOptPanel() {
   // 古い結果が新しいデータの上に done で届いて適用できてしまうため、必ず止める。
   cleanupSeedOptWorker();
   applyModeDefaults();
+  restoreSeedOptSettings();   // 保存済みの設定 (多点数・冷却・反復は applyModeDefaults が上書きするので、その後に戻す)
   // プール数の既定: start.gg から取得できたプール数 → なければ phase 作成 UI のプール数 → 1。
   const fetched = EVENT_CONTEXT && EVENT_CONTEXT.poolCount;
   if (Number.isFinite(fetched) && fetched >= 1) {
@@ -4414,4 +4417,113 @@ function applySeedLockChoice(uid) {
   if (poolsEl) poolsEl.addEventListener('input', () => renderManualUI());
   const wavesEl = document.getElementById('so-waves');
   if (wavesEl) wavesEl.addEventListener('input', () => renderManualUI());
+})();
+
+// ───────────────────────── 被り回避パネルの設定の保存 (2026-09-14) ─────────────────────────
+// チェック・ズレ上限・ズレ抑制・上級者向けパラメータ・「適用時に被り回避を自動実行」を
+// このブラウザ (localStorage) に保存し、次回開いたときに戻す。
+// 保存するのは「既定と違う項目」だけ (既定値を後で変えたとき、触っていない項目には新しい既定が効くように)。
+// 大会ごとに自動で入る値 (プール数・ウェーブ数・対象シリーズ) は保存しない。
+const SEEDOPT_SETTINGS_KEY = 'spsp_seedopt_settings_v1';
+const SEEDOPT_SETTINGS_SKIP = new Set(['so-pools', 'so-waves', 'so-series-select']);
+let SEEDOPT_DEFAULTS = null;   // 起動時 (markup) の値 = 既定。シードズレ上限は SHIFT_LIMIT_PRESET。
+
+function seedOptSettingFields() {
+  const panel = document.getElementById('seedopt-panel');
+  const els = panel ? Array.from(panel.querySelectorAll('input[id^="so-"], select[id^="so-"]')) : [];
+  const auto = document.getElementById('so-auto-apply');
+  if (auto) els.push(auto);
+  return els.filter((e) => !SEEDOPT_SETTINGS_SKIP.has(e.id));
+}
+function seedOptFieldValue(el) { return el.type === 'checkbox' ? el.checked : el.value; }
+function setSeedOptFieldValue(el, v) {
+  if (el.type === 'checkbox') el.checked = !!v;
+  else el.value = (v == null) ? '' : String(v);
+}
+function snapshotSeedOptDefaults() {
+  if (SEEDOPT_DEFAULTS) return SEEDOPT_DEFAULTS;
+  SEEDOPT_DEFAULTS = {};
+  for (const el of seedOptSettingFields()) SEEDOPT_DEFAULTS[el.id] = seedOptFieldValue(el);
+  // ズレ上限の欄は markup では空で、大会を読むと既定 (SHIFT_LIMIT_PRESET) が入る。既定はそちら。
+  SHIFT_LIMIT_IDS.forEach((id, k) => { if (id in SEEDOPT_DEFAULTS) SEEDOPT_DEFAULTS[id] = String(SHIFT_LIMIT_PRESET[k]); });
+  return SEEDOPT_DEFAULTS;
+}
+function loadSeedOptSettings() {
+  try {
+    const raw = localStorage.getItem(SEEDOPT_SETTINGS_KEY);
+    const obj = raw ? JSON.parse(raw) : null;
+    return (obj && typeof obj === 'object') ? obj : null;
+  } catch (e) { return null; }
+}
+/** 今の欄の値のうち既定と違うものを保存する。戻り値 = 保存した差分。 */
+function saveSeedOptSettings() {
+  const defs = snapshotSeedOptDefaults();
+  const diff = {};
+  for (const el of seedOptSettingFields()) {
+    const v = seedOptFieldValue(el);
+    // ズレ上限の空欄 (まだ既定が入っていない) は「触っていない」扱い。
+    if (SHIFT_LIMIT_IDS.includes(el.id) && v === '') continue;
+    if (v !== defs[el.id]) diff[el.id] = v;
+  }
+  try {
+    if (Object.keys(diff).length) localStorage.setItem(SEEDOPT_SETTINGS_KEY, JSON.stringify(diff));
+    else localStorage.removeItem(SEEDOPT_SETTINGS_KEY);
+  } catch (e) { /* private mode など。保存できなくても動作は変えない */ }
+  return diff;
+}
+/** 保存済みの設定を欄に戻す。戻り値 = 戻した項目数。 */
+function restoreSeedOptSettings() {
+  snapshotSeedOptDefaults();
+  const saved = loadSeedOptSettings();
+  if (!saved) return 0;
+  let n = 0;
+  for (const el of seedOptSettingFields()) {
+    if (!Object.prototype.hasOwnProperty.call(saved, el.id)) continue;
+    setSeedOptFieldValue(el, saved[el.id]);
+    n += 1;
+  }
+  if (n) refreshSeedOptDerivedUi();
+  return n;
+}
+/** 設定を既定に戻し、保存も消す。 */
+function resetSeedOptSettings() {
+  const defs = snapshotSeedOptDefaults();
+  for (const el of seedOptSettingFields()) setSeedOptFieldValue(el, defs[el.id]);
+  try { localStorage.removeItem(SEEDOPT_SETTINGS_KEY); } catch (e) {}
+  applyModeDefaults();   // 探索モードの既定に応じた多点数・冷却・反復
+  // ズレ上限は既定を入れた状態 = 「自動で入れた値」扱いにする (次の大会読み込みで通常どおり更新される)。
+  _lastShiftPrefill = SHIFT_LIMIT_IDS.map((id) => { const e = document.getElementById(id); return e ? e.value : ''; });
+  refreshSeedOptDerivedUi();
+  Promise.resolve(updateSeriesToggleState()).catch(() => {});
+  const p = document.getElementById('so-progress');
+  if (p) p.textContent = '設定を既定に戻しました。';
+}
+/** 値に連動する表示 (スライダーの数値・プール内変動の有効/無効・シリーズ欄の出し入れ) を更新。 */
+function refreshSeedOptDerivedUi() {
+  const op = document.getElementById('so-orderpow');
+  const opv = document.getElementById('so-orderpow-val');
+  if (op && opv) opv.textContent = op.value;
+  updateIntraToggleState();
+  const cb = document.getElementById('so-avoid-series');
+  const box = document.getElementById('so-series-box');
+  if (cb && box) box.style.display = cb.checked ? '' : 'none';
+}
+
+(function wireSeedOptSettings() {
+  const panel = document.getElementById('seedopt-panel');
+  if (!panel) return;
+  snapshotSeedOptDefaults();
+  restoreSeedOptSettings();
+  // 欄が変わるたびに保存 (change: チェック・select・確定した入力 / input: スライダーと入力中の数値)。
+  const onEdit = (ev) => {
+    const t = ev.target;
+    if (!t || !t.id || !/^so-/.test(t.id) || SEEDOPT_SETTINGS_SKIP.has(t.id)) return;
+    saveSeedOptSettings();
+  };
+  panel.addEventListener('change', onEdit);
+  panel.addEventListener('input', onEdit);
+  const auto = document.getElementById('so-auto-apply');
+  if (auto) auto.addEventListener('change', () => saveSeedOptSettings());
+  const reset = document.getElementById('so-reset-defaults');
+  if (reset) reset.addEventListener('click', resetSeedOptSettings);
 })();
