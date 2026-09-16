@@ -1,5 +1,6 @@
 // seed_data.js — シード被り回避の「データ取得・集計」層。
-//   - fetch は行うが DOM には触れない。fetchPlayer / fetchPrefs は注入可能（テスト・別環境用）。
+//   - fetch は行うが DOM には触れない。fetchPlayer / fetchPrefs / fetchGeo は注入可能（テスト・別環境用）。
+//   - 地域まとめ (南関東・京阪神) は site/data/geo.json の seed_groups から (setGeoCatalog / ensureGeoCatalog)。
 //   - 出力は seed_optimizer.optimize() の入力データ部（prefByUid / prefCounts / recentPair / recentMeta）。
 // 設計: docs/seed_collision_avoidance.md §3
 //
@@ -96,26 +97,39 @@
     return { series: null, source: null };
   }
 
-  // 地域グルーピング: 被り回避では近隣の県を同一地域として扱う。
-  // 各グループは UI トグルで個別に ON/OFF できる（buildRegionGroups）。
-  const REGION_GROUP_DEFS = {
-    // 南関東(埼玉・千葉・神奈川・東京)。既定 ON。
-    minamiKanto: { '埼玉県': '南関東', '千葉県': '南関東', '神奈川県': '南関東', '東京都': '南関東' },
-    // 京阪神(兵庫・大阪・京都)。既定 OFF。
-    keihanshin: { '兵庫県': '京阪神', '大阪府': '京阪神', '京都府': '京阪神' },
-  };
-
-  // トグル指定からグルーピング表を組み立てる。既定: 南関東 ON / 京阪神 OFF。
-  function buildRegionGroups(opts) {
-    opts = opts || {};
-    const g = {};
-    if (opts.minamiKanto !== false) Object.assign(g, REGION_GROUP_DEFS.minamiKanto);
-    if (opts.keihanshin === true) Object.assign(g, REGION_GROUP_DEFS.keihanshin);
-    return g;
+  // ── 地理単位のカタログ (site/data/geo.json)。定義元は smash_database の scripts/<地域>/geo.py ──
+  // 被り回避の地域まとめ (seed_groups: 南関東・京阪神 …) はここから読む。ここに県名を書かない。
+  let GEO = null;
+  function setGeoCatalog(cat) {
+    if (!cat || !Array.isArray(cat.units) || !Array.isArray(cat.seed_groups)) {
+      throw new Error('geo.json の形が違います (units / seed_groups が無い)');
+    }
+    GEO = cat;
+    return GEO;
+  }
+  function geoCatalog() { return GEO; }
+  // 未読込なら fetchers.fetchGeo で読む (2 回目以降はキャッシュ)。無ければ throw (黙って空のまとめにしない)。
+  async function ensureGeoCatalog(fetchers) {
+    if (GEO) return GEO;
+    if (!fetchers || typeof fetchers.fetchGeo !== 'function') throw new Error('geo.json 未読込 (fetchGeo が無い)');
+    return setGeoCatalog(await fetchers.fetchGeo());
   }
 
-  // 既定（南関東のみ）。後方互換のため従来名も残す。
-  const DEFAULT_REGION_GROUPS = buildRegionGroups();
+  // トグル指定 {<seed_group id>: bool} からグルーピング表 {unit id → まとめ名} を組み立てる。
+  // 指定の無いまとめは geo.json の default に従う。geo.json 未読込なら throw。
+  function buildRegionGroups(opts, lang) {
+    opts = opts || {};
+    lang = lang || 'ja';
+    if (!GEO) throw new Error('geo.json 未読込: SeedData.setGeoCatalog / ensureGeoCatalog を先に呼ぶ');
+    const g = {};
+    for (const sg of GEO.seed_groups) {
+      const on = Object.prototype.hasOwnProperty.call(opts, sg.id) ? !!opts[sg.id] : !!sg.default;
+      if (!on) continue;
+      const label = (sg.name && (sg.name[lang] || sg.name.ja || sg.name.en)) || sg.id;
+      for (const u of sg.units) g[u] = label;
+    }
+    return g;
+  }
 
   const DEFAULT_DATA_PARAMS = {
     // 日付減衰の制御点 [[日, 重み], ...]（線形補間。最後の点より後は0）。
@@ -150,6 +164,12 @@
       fetchPrefs: async () => {
         const res = await fetch(`${prefix}data/player_prefectures.json`);
         if (!res.ok) throw new Error(`player_prefectures.json HTTP ${res.status}`);
+        return res.json();
+      },
+      // 地理単位のカタログ (単位の一覧・並び順・地域まとめ)。
+      fetchGeo: async () => {
+        const res = await fetch(`${prefix}data/geo.json`);
+        if (!res.ok) throw new Error(`geo.json HTTP ${res.status}`);
         return res.json();
       },
       // 大会一覧 (event_id → シリーズ名)。同シリーズ再マッチ罰則を使うときだけ取りに行く
@@ -209,7 +229,8 @@
     // 都道府県（地域グルーピング適用。既定で南関東をまとめる）。
     // prefsOptional=true（例: 地域被り回避 OFF でレポート表示にしか使わない）のときは
     // 取得失敗を致命にせず meta.prefsError に積んで続行する。既定(false)は従来どおり throw。
-    const regionGroups = opts.regionGroups || DEFAULT_REGION_GROUPS;
+    if (!opts.regionGroups) await ensureGeoCatalog(fetchers);   // 既定のまとめは geo.json から (未読込なら fetchGeo で読む)
+    const regionGroups = opts.regionGroups || buildRegionGroups();   // 未指定 = geo.json の default
     const prefByUid = {};
     const prefCounts = {};
     let prefsError = null;
@@ -373,7 +394,8 @@
     buildSeedData, fetchAllPlayers, defaultFetchers,
     dateToDays, sizeWeightFn, recentDecayFn, pairKey,
     buildRegionGroups, buildSeriesIndex, detectSeries, normalizeSeriesName,
-    DEFAULT_DATA_PARAMS, DEFAULT_REGION_GROUPS, REGION_GROUP_DEFS,
+    setGeoCatalog, geoCatalog, ensureGeoCatalog,
+    DEFAULT_DATA_PARAMS,
   };
   global.SeedData = API;
   if (typeof module !== 'undefined' && module.exports) module.exports = API;

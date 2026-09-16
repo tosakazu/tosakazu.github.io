@@ -142,8 +142,8 @@ const SEED_APP_SKELETON_HTML = `
         </select>
         <span id="so-series-note" style="margin-left:5px"></span>
       </span>
-      <label title="東京・神奈川・埼玉・千葉を同じ地域として扱う"><input type="checkbox" id="so-group-minamikanto" checked> 東京・神奈川・埼玉・千葉をまとめる</label>
-      <label title="兵庫・大阪・京都を同じ地域として扱う"><input type="checkbox" id="so-group-keihanshin" checked> 兵庫・大阪・京都をまとめる</label>
+      <label title="近隣の県を同じ地域として扱う (対象は geo.json の定義。読み込むと県名が入る)"><input type="checkbox" id="so-group-minamikanto" checked> <span id="so-group-minamikanto-txt">南関東をまとめる</span></label>
+      <label title="近隣の県を同じ地域として扱う (対象は geo.json の定義。読み込むと県名が入る)"><input type="checkbox" id="so-group-keihanshin" checked> <span id="so-group-keihanshin-txt">京阪神をまとめる</span></label>
     </div>
     <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:8px;font-size:12px;color:#374151">
       <span id="so-shiftlimit-label" style="font-weight:600">シードズレ上限:</span>
@@ -2631,7 +2631,30 @@ function cachedFetchers(prefix) {
       PREFS_CACHE = await base.fetchPrefs();
       return PREFS_CACHE;
     },
+    fetchGeo: () => base.fetchGeo(),   // キャッシュは SeedData 側 (ensureGeoCatalog)
   };
+}
+
+// ── 地理単位のカタログ (geo.json): 地域まとめトグルの県名ラベルはここから ──
+// トグルの id は so-group-<seed_group id を小文字化> (minamiKanto → so-group-minamikanto)。
+function applyGeoLabels(geo) {
+  if (!geo || !Array.isArray(geo.seed_groups)) return;
+  for (const sg of geo.seed_groups) {
+    const txt = document.getElementById(`so-group-${String(sg.id).toLowerCase()}-txt`);
+    if (!txt) continue;
+    const units = (sg.units || []).map((u) => String(u).replace(/[都府県]$/, ''));
+    const name = (sg.name && (sg.name.ja || sg.name.en)) || sg.id;
+    txt.textContent = `${units.join('・')}をまとめる`;
+    const label = txt.closest('label');
+    if (label) label.title = `${name}: ${units.join('・')}を同じ地域として扱う`;
+    const ico = label && label.querySelector('.help-ico');
+    if (ico) ico.dataset.help = label.title;
+  }
+}
+async function ensureGeoForSeed() {
+  const geo = await SeedData.ensureGeoCatalog(cachedFetchers('../'));
+  applyGeoLabels(geo);
+  return geo;
 }
 
 // ── 同シリーズ再マッチ: 対象シリーズの判定 ────────────────────────────
@@ -2952,6 +2975,8 @@ async function runSeedOptimize() {
     if (targetSeries) dataParams.targetSeries = targetSeries;   // 同シリーズ分の集計対象
     if (recentDecayPoints) dataParams.recentDecayPoints = recentDecayPoints;  // 空欄なら既定を使う
     // 地域グルーピング表をトグルから構築（避けない地域があっても prefByUid 計算は行い、罰則側で無効化）。
+    // まとめの定義 (どの県か) は geo.json。未読込ならここで読む (失敗は下の catch でデータ取得失敗として表示)。
+    await SeedData.ensureGeoCatalog(cachedFetchers('../'));
     const regionGroups = SeedData.buildRegionGroups({ minamiKanto: groupMinamiKanto, keihanshin: groupKeihanshin });
     bundle = await SeedData.buildSeedData(ranking, Object.assign({
       prefix: '../',
@@ -4514,6 +4539,11 @@ function refreshSeedOptDerivedUi() {
 (function wireSeedOptSettings() {
   const panel = document.getElementById('seedopt-panel');
   if (!panel) return;
+  // 地域まとめトグルの県名 (geo.json) を起動時に入れる。失敗は進捗欄に出す (実行時にも読み直す)。
+  ensureGeoForSeed().catch((e) => {
+    const p = document.getElementById('so-progress');
+    if (p) p.textContent = '⚠ geo.json (地域の定義) を読めませんでした: ' + e.message;
+  });
   snapshotSeedOptDefaults();
   restoreSeedOptSettings();
   // 欄が変わるたびに保存 (change: チェック・select・確定した入力 / input: スライダーと入力中の数値)。
