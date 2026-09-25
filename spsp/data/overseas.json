@@ -556,6 +556,7 @@
     582165,
     584227,
     585880,
+    589350,
     593646,
     593795,
     597657,
@@ -2120,5 +2121,5 @@
     3448249,
     3468182
   ],
-  "_comment": "海外タグ UIDs (2119 名, build_overseas_json.py 生成物・手編集しない)。地域外 country のランキング収録者 2154 名 + overseas_manual.json の country 未登録 4 名 − home_uids (地域勢扱い) 33 名 − 住んでそう勢 (2y 12大会+ & 8ヶ月+) 7 名。"
+  "_comment": "海外タグ UIDs (2120 名, build_overseas_json.py 生成物・手編集しない)。地域外 country のランキング収録者 2155 名 + overseas_manual.json の country 未登録 4 名 − home_uids (地域勢扱い) 33 名 − 住んでそう勢 (2y 12大会+ & 8ヶ月+) 7 名。"
 }
